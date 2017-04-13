@@ -1,7 +1,18 @@
 <?php
 /**
- * DZCP - deV!L`z ClanPortal 1.7.0
- * http://www.dzcp.de
+ * DZCP - deV!L`z ClanPortal - Mainpage ( dzcp.de )
+ * deV!L`z Clanportal ist ein Produkt von CodeKing,
+ * geändert dürch my-STARMEDIA und Codedesigns.
+ *
+ * Diese Datei ist ein Bestandteil von dzcp.de
+ * Diese Version wurde speziell von Lucas Brucksch (Codedesigns) für dzcp.de entworfen bzw. verändert.
+ * Eine Weitergabe dieser Datei außerhalb von dzcp.de ist nicht gestattet.
+ * Sie darf nur für die Private Nutzung (nicht kommerzielle Nutzung) verwendet werden.
+ *
+ * Homepage: http://www.dzcp.de
+ * E-Mail: info@web-customs.com
+ * E-Mail: lbrucksch@codedesigns.de
+ * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
 if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
@@ -25,11 +36,6 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                                     if (empty($_POST['eintrag'])) {
                                         notification::add_error(_empty_eintrag);
                                     }
-
-                                    $smarty->caching = false;
-                                    $smarty->assign('nick',common::autor(common::$userid));
-                                    $form = $smarty->fetch('file:['.common::$tmpdir.']'.'page/editor_regged.tpl');
-                                    $smarty->clearAllAssign();
                                 } else {
                                     common::$sql['default']->insert("INSERT INTO `{prefix_newscomments}` SET `news` = ?,`datum` = ?,`nick` = ?,`email` = ?,`hp` = ?,`reg` = ?,`comment` = ?, `ip` = ?;",
                                     array($news_id,time(),common::data('nick'),common::data('email'),
@@ -89,18 +95,19 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                     notification::set_global(true);
                     break;
                 case 'edit':
-                    $get = common::$sql['default']->fetch("SELECT `reg`,`comment`,`hp`,`email`,`nick` FROM `{prefix_newscomments}` WHERE `id` = ?;",array(intval($_GET['cid'])));
+                    $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`comment`,`hp`,`email`,`nick` FROM `{prefix_newscomments}` WHERE `id` = ?;",array(intval($_GET['cid'])));
                     if (common::$userid >= 1 && ($get['reg'] == common::$userid || common::permission('news'))) {
                         javascript::set('AnchorMove', 'comForm');
 
-                        $form = show("page/editor_regged", array("nick" => common::autor($get['reg']), "von" => _autor));
-                        $add = show("page/comments_add", array("titel" => _comments_edit,
-                                                               "form" => $form,
-                                                               "what" => _button_value_edit,
-                                                               "prevurl" => '../news/?action=compreview&do=edit&id=' . $_GET['id'] . '&cid=' . $_GET['cid'],
-                                                               "action" => '?action=show&amp;do=editcom&amp;id=' . $_GET['id'] . '&amp;cid=' . $_GET['cid'],
-                                                               "id" => (isset($_GET['id']) ? $_GET['id'] : '1'),
-                                                               "posteintrag" => stringParser::decode($get['comment'])));
+                        $smarty->caching = false;
+                        $smarty->assign('nick',common::autor($get['reg']));
+                        $smarty->assign('action','?action=show&amp;do=editcom&amp;id=' . $get['id'] .'&amp;cid=' . intval($_GET['cid']));
+                        $smarty->assign('prevurl','../news/?action=compreview&do=edit&id=' . $get['id'] .'&cid=' . intval($_GET['cid']));
+                        $smarty->assign('id',$get['id']);
+                        $smarty->assign('posteintrag',stringParser::decode($get['comment']));
+                        $smarty->assign('notification',notification::get_tr());
+                        $add = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/comments_edit.tpl');
+                        $smarty->clearAllAssign();
                     } else {
                         javascript::set('AnchorMove', 'notification-box');
                         notification::set_global(false);
@@ -188,16 +195,9 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
             if (settings::get("reg_newscomments") && !common::$chkMe) {
                 $add = _error_unregistered_nc;
             } else {
-                if (empty($form)) {
-                    $smarty->caching = false;
-                    $smarty->assign('nick',common::autor(common::$userid));
-                    $form = $smarty->fetch('file:['.common::$tmpdir.']'.'page/editor_regged.tpl');
-                    $smarty->clearAllAssign();
-                }
-
                 if (!common::ipcheck("ncid(".$_GET['id'].")", settings::get('f_newscom')) && empty($add)) {
                     $smarty->caching = false;
-                    $smarty->assign('form',$form);
+                    $smarty->assign('nick',common::autor(common::$userid));
                     $smarty->assign('action','?action=show&amp;do=add&amp;id=' . (isset($_GET['id']) ? $_GET['id'] : '1'));
                     $smarty->assign('prevurl','../news/?action=compreview&id=' . (isset($_GET['id']) ? $_GET['id'] : '1'));
                     $smarty->assign('id',(isset($_GET['id']) ? $_GET['id'] : '1'));

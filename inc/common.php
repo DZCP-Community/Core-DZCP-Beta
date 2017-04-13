@@ -1,7 +1,18 @@
 <?php
 /**
- * DZCP - deV!L`z ClanPortal 1.7.0
- * http://www.dzcp.de
+ * DZCP - deV!L`z ClanPortal - Mainpage ( dzcp.de )
+ * deV!L`z Clanportal ist ein Produkt von CodeKing,
+ * geändert dürch my-STARMEDIA und Codedesigns.
+ *
+ * Diese Datei ist ein Bestandteil von dzcp.de
+ * Diese Version wurde speziell von Lucas Brucksch (Codedesigns) für dzcp.de entworfen bzw. verändert.
+ * Eine Weitergabe dieser Datei außerhalb von dzcp.de ist nicht gestattet.
+ * Sie darf nur für die Private Nutzung (nicht kommerzielle Nutzung) verwendet werden.
+ *
+ * Homepage: http://www.dzcp.de
+ * E-Mail: info@web-customs.com
+ * E-Mail: lbrucksch@codedesigns.de
+ * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
 if(!defined('is_api')) { define('is_api', false); }
@@ -2394,7 +2405,7 @@ class common {
      * @param array $order
      * @return string
      */
-    public static function orderby_sql(array $order_by=array(),string $default_order='',string $join='',array $order = array('ASC','DESC')) {
+    public static function orderby_sql(array $order_by=array(),string $default_order='',string $join='',array $order = ['ASC','DESC']) {
         if (!isset($_GET['order']) || empty($_GET['order']) || !in_array($_GET['order'], $order) ||
             !isset($_GET['orderby']) || empty($_GET['orderby']) || !in_array($_GET['orderby'], $order_by) ||
             empty($_GET['orderby']) || empty($_GET['order'])) {
@@ -2423,7 +2434,7 @@ class common {
      * @param array $sql_std
      * @return int
      */
-    public static function cnt(string $db,string $where = "",string $what = "id",array $sql_std=array()) {
+    public static function cnt(string $db,string $where = "",string $what = "id",array $sql_std= []) {
         $cnt = self::$sql['default']->fetch("SELECT COUNT(".$what.") AS `cnt` FROM `".$db."` ".$where.";",$sql_std,'cnt');
         if(self::$sql['default']->rowCount() >= 1) {
             return $cnt;
@@ -2440,7 +2451,7 @@ class common {
      * @param array $sql_std
      * @return array
      */
-    public static function cnt_multi(string $db,string $where = "",array $whats = array('id'),array $sql_std=array()) {
+    public static function cnt_multi(string $db, string $where = "", array $whats = ['id'], array $sql_std=[]) {
         $cnt_sql = "";
         foreach ($whats as $what) {
             $cnt_sql .= "COUNT(".$what.") AS `cnt_".$what."`,";
@@ -2462,7 +2473,7 @@ class common {
      * @param array $sql_std
      * @return int
      */
-    public static function sum(string $db,string $where = "",string $what = "id",array $sql_std=array()) {
+    public static function sum(string $db,string $where = "",string $what = "id",array $sql_std=[]) {
         $sum = self::$sql['default']->fetch("SELECT SUM(".$what.") AS `sum` FROM `".$db."` ".$where.";",$sql_std,'sum');
         if(self::$sql['default']->rowCount() >= 1) {
             return $sum;
@@ -2479,7 +2490,7 @@ class common {
      * @param array $sql_std
      * @return array
      */
-    public static function sum_multi(string $db,string $where = "",array $whats = array('id'),array $sql_std=array()) {
+    public static function sum_multi(string $db, string $where = "", array $whats = ['id'], array $sql_std=[]) {
         $sum_sql = "";
         foreach ($whats as $what) {
             $sum_sql .= "SUM(".$what.") AS `sum_".$what."`,";
@@ -2542,7 +2553,7 @@ class common {
      */
     public static function lang(string $lng) {
         if(!file_exists(basePath."/inc/lang/languages/".$lng.".php")) {
-            $files = self::get_files(basePath.'/inc/lang/languages/',false,true,array('php'));
+            $files = self::get_files(basePath.'/inc/lang/languages/',false,true,['php']);
             $lng = str_replace('.php','',$files[0]);
         }
 
@@ -2557,7 +2568,8 @@ class common {
     public static function userid() {
         if (empty($_SESSION['id']) || empty($_SESSION['pwd'])) { return 0; }
         if(!dbc_index::issetIndex('user_'.intval($_SESSION['id']))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ? AND `pwd` = ?;",array(intval($_SESSION['id']),$_SESSION['pwd']));
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ? AND `pwd` = ?;",
+                [intval($_SESSION['id']),$_SESSION['pwd']]);
             if (!self::$sql['default']->rowCount()) { return 0; }
             dbc_index::setIndex('user_'.$get['id'], $get, 2);
             return $get['id'];

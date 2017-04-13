@@ -1,10 +1,18 @@
 <?php
-
 /**
+ * DZCP - deV!L`z ClanPortal - Mainpage ( dzcp.de )
+ * deV!L`z Clanportal ist ein Produkt von CodeKing,
+ * geändert dürch my-STARMEDIA und Codedesigns.
  *
-<a href="http://www.dzcp.de/newscenter/?action=show&amp;id=1&amp;nID=258" title="DZCP 1.6.0.2 Kalender Minifix V1602.00.03" target="_blank">DZCP 1.6.0.2 Kalender Minifix V1602.00.03</a>
- * - <a href="http://www.dzcp.de/newscenter/?action=show&amp;id=1&amp;nID=259" title="Vorschau auf DZCP 1.6.0.3 * Bugfix &amp;  Enhancement Release *" target="_blank">Vorschau auf DZCP 1.6.0.3 * Bugfix &amp;  Enhancement Release *</a>
- * - <a href="http://www.dzcp.de/newscenter/?action=show&amp;id=1&amp;nID=260" title="deV!L`z Clanportal 1.6.0.3 zum Download bereit" target="_blank">deV!L`z Clanportal 1.6.0.3 zum Download bereit</a>
+ * Diese Datei ist ein Bestandteil von dzcp.de
+ * Diese Version wurde speziell von Lucas Brucksch (Codedesigns) für dzcp.de entworfen bzw. verändert.
+ * Eine Weitergabe dieser Datei außerhalb von dzcp.de ist nicht gestattet.
+ * Sie darf nur für die Private Nutzung (nicht kommerzielle Nutzung) verwendet werden.
+ *
+ * Homepage: http://www.dzcp.de
+ * E-Mail: info@web-customs.com
+ * E-Mail: lbrucksch@codedesigns.de
+ * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
 ob_start();

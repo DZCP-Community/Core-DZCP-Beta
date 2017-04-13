@@ -34,7 +34,6 @@
   </td>
 </tr>
 </table>
-{$notification_page}
 <table class="mainContent" cellspacing="1">
 {$showmore}
 <!-- end news_show_full.tpl -->
