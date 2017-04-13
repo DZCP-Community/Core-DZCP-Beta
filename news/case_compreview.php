@@ -9,14 +9,14 @@ if(defined('_News') && common::$chkMe >= 1) {
     //-> Edit news comment
     if($do == 'edit') {
         $get = common::$sql['default']->fetch("SELECT `reg`,`datum` FROM `{prefix_newscomments}` WHERE `id` = ?;",array(intval($_GET['cid'])));
-        $get_id = 1;
+        $get_postid = isset($_GET['cid']) && $_GET['cid'] >= 1 ? $_GET['cid'] : 1;
         $get_userid = $get['reg'];
         $get_date = $get['datum'];
         $regCheck = !$get['reg'] ? false : true;
         $editedby = show(_edited_by, array("autor" => common::cleanautor(common::$userid),
                                            "time" => date("d.m.Y H:i", time())._uhr));
     } else { //-> Add new news comment
-        $get_id = common::cnt('{prefix_newscomments}', " WHERE `news` = ".intval($_GET['id']))+1;
+        $get_postid = common::cnt('{prefix_newscomments}', " WHERE `news` = ".intval($_GET['id']))+1;
         $get_userid = common::$userid;
         $get_date = time();
         $regCheck = common::$chkMe >= 1 ? true : false;
@@ -31,7 +31,7 @@ if(defined('_News') && common::$chkMe >= 1) {
 
     //-> Post titel
     $smarty->caching = false;
-    $smarty->assign('postid',$get_id);
+    $smarty->assign('postid',$get_postid);
     $smarty->assign('datum',date("d.m.Y", $get_date));
     $smarty->assign('zeit',date("H:i", $get_date));
     $smarty->assign('edit','');
