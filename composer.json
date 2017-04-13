@@ -1,0 +1,17 @@
+{
+  "name": "dzcp/mainpage",
+  "description": "description_text",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "author's name",
+      "email": "email@example.com"
+    }
+  ],
+  "require": {
+    "ckeditor/ckeditor": "4.6.2",
+    "phpmailer/phpmailer": "v5.2.23",
+    "smarty/smarty": "v3.1.31"
+  }
+}

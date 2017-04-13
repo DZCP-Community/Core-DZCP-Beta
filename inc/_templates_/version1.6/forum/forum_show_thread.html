@@ -1,0 +1,37 @@
+<table class="mainContent" width="100%" border="1" cellspacing="0" cellpadding="0">
+    <tr>
+        <td class="contentHead" colspan="5"><span class="fontBold">&nbsp;[lang_forum_head_threads]&nbsp;</span></td>
+    </tr>
+</table>
+<table class="forumBG" cellspacing="0" width="100%">
+    <tbody>
+        <tr>
+            <th class="forumTH" colspan="2">&nbsp;[lang_forum_thread]&nbsp;</th>
+            <th class="forumTH" width="120">&nbsp;[lang_autor]&nbsp;</th>
+            <th class="forumTH" width="40">&nbsp;[lang_replies]&nbsp;</th>
+            <th class="forumTH" width="40">&nbsp;[lang_hits]&nbsp;</th>
+            <th class="forumTH" width="175">&nbsp;[lang_forum_lpost]&nbsp;</th>
+        </tr>          
+        [threads]
+        <tr align="center">
+            <td class="forumTD" colspan="6">
+                <form method="post" action="?action=show&kid=[kid]&id=[id]">
+                    <span class="gensmall">[lang_forum_sort_by]</span>
+                    <select name="sortby" id="sk">
+                        <option value="autor">[lang_autor]</option>
+                        <option value="time">[lang_forum_sort_bcc]</option>
+                        <option value="posts">[lang_replies]</option>
+                        <option value="bcc">[lang_forum_sort_bcc]</option>
+                        <option value="hits">[lang_hits]</option>
+                    </select> 
+                    <select name="orderby" id="sd">
+                        <option value="desc">[lang_forum_sort_descending]</option>
+                        <option value="asc">[lang_forum_sort_ascending]</option>
+                    </select>&nbsp;
+                    <input class="submit" id="contentSubmit" type="submit" name="sort" value="[lang_forum_go]">
+                    <input class="submit" id="newPostSubmit" type="button" value="[lang_forum_new_thread]" onclick="DZCP.goTo('../forum/?action=thread&do=add&kid=[kid]')">
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>

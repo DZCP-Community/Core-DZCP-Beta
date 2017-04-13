@@ -1,0 +1,1 @@
+[<span class="fontItalic">{$viewed} {lang msgID="hits"}</span>]
