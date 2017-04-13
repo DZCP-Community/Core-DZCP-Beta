@@ -45,3 +45,12 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+*.htpasswd
+.idea/*
+________anleitung.txt
+________login_________.txt
+version.txt
+rss.xml
+*.gz
+*.phar
+inc/configs/config.php
