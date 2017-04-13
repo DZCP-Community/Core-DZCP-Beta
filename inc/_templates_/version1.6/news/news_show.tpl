@@ -1,3 +1,4 @@
+<!-- start news_show.tpl -->
 <tr>
 	<td class="contentHead" colspan="5" align="center"><span class="fontBold">{$sticky} {if $intern}{lang msgID="votes_intern"}{/if} {$titel}</span></td>
 </tr>
@@ -26,3 +27,4 @@
 		</table>
 	</td>
 </tr>
+<!-- end news_show.tpl -->
