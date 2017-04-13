@@ -54,3 +54,4 @@ rss.xml
 *.gz
 *.phar
 inc/configs/config.php
+vendor/*
