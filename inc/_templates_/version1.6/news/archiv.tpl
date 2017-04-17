@@ -1,3 +1,4 @@
+<!-- start archiv.tpl -->
 <tr>
   <td class="contentHead" colspan="5">
     <table class="hperc" cellspacing="0">
@@ -19,3 +20,4 @@
 <tr>
   <td class="contentBottom" colspan="5">&nbsp;</td>
 </tr>
+<!-- end archiv.tpl -->
