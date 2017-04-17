@@ -232,6 +232,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                 $smarty->caching = false;
                 $smarty->assign('link',stringParser::decode($get_news['link1']));
                 $smarty->assign('url',utf8_decode($get_news['url1']));
+                $smarty->assign('target',"_blank");
                 $links1 = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/news_link.tpl');
                 $smarty->clearAllAssign();
             }
@@ -241,6 +242,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                 $smarty->caching = false;
                 $smarty->assign('link',stringParser::decode($get_news['link2']));
                 $smarty->assign('url',utf8_decode($get_news['url2']));
+                $smarty->assign('target',"_blank");
                 $links2 = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/news_link.tpl');
                 $smarty->clearAllAssign();
             }
@@ -250,6 +252,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                 $smarty->caching = false;
                 $smarty->assign('link',stringParser::decode($get_news['link3']));
                 $smarty->assign('url',utf8_decode($get_news['url3']));
+                $smarty->assign('target',"_blank");
                 $links3 = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/news_link.tpl');
                 $smarty->clearAllAssign();
             }

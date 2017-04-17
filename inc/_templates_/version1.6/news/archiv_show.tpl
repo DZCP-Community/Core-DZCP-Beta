@@ -1,0 +1,9 @@
+<!-- start archiv_show.tpl -->
+<tr>
+  <td class="{$class}">{$date}</td>
+  <td class="{$class}">{$titel}</td>
+  <td class="{$class}">{$kat}</td>
+  <td class="{$class}">{$autor}</td>
+  <td class="{$class}" align="center">{$comments}</td>
+</tr>
+<!-- end archiv_show.tpl -->
