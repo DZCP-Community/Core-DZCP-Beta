@@ -26,7 +26,11 @@ ob_implicit_flush(false);
 
     ## SETTINGS ##
     $dir = "sites";
-    common::addNoCacheHeaders(); //No Browser-Cache
+    header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 3600));
+    header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+    header("Cache-Control: no-store, no-cache, must-revalidate");
+    header("Cache-Control: post-check=0, pre-check=0", false);
+    header("Pragma: no-cache");
     $is_debug = isset($_GET['debug']);
 
     ## SECTIONS ##
@@ -48,23 +52,6 @@ ob_implicit_flush(false);
         case 'conjob':
             $version = new dzcp_version(false);
             $version->runUpdate();
-            break;
-        case 'autocomplete':
-            if($_GET['type'] == 'srv') {
-                if($_GET['game'] == 'nope') {
-                    echo json_encode(array('qport' => ''));
-                } else {
-                    $protocols_array = GameQ::getGames();
-                    foreach ($protocols_array AS $gameq => $info) {
-                        if($gameq == $_GET['game'] && $info['autocomplete']) {
-                            echo json_encode(array('qport' => $info['port'])); 
-                            break; 
-                        }
-                    }
-
-                    echo json_encode(array('qport' => ''));
-                }
-            }
             break;
         case 'securimage':
             if(!headers_sent()) {

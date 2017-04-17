@@ -19,9 +19,9 @@ if(_adminMenu != 'true') exit;
 $where = $where.': '._config_useradd_head;
 
 if(isset($_POST['user'])) {
-    $check_user = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `user`= ?;", array(stringParser::encode($_POST['user'])));
-    $check_nick = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `nick`= ?;", array(stringParser::encode($_POST['nick'])));
-    $check_email = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `email`= ?;", array(stringParser::encode($_POST['email'])));
+    $check_user = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `user`= ?;", [stringParser::encode($_POST['user'])]);
+    $check_nick = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `nick`= ?;", [stringParser::encode($_POST['nick'])]);
+    $check_email = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `email`= ?;", [stringParser::encode($_POST['email'])]);
 
     if(empty($_POST['user'])) {
         $show = common::error(_empty_user, 1);
@@ -56,8 +56,8 @@ if(isset($_POST['user'])) {
                           . "`level` = ?, "
                           . "`time` = ?, "
                           . "`status` = 1;",
-                array(stringParser::encode($_POST['user']),stringParser::encode($_POST['nick']),stringParser::encode($_POST['email']),stringParser::encode($pwd),settings::get('default_pwd_encoder'),stringParser::encode($_POST['rlname']),intval($_POST['sex']),
-                (!$bday ? 0 : strtotime($bday)),stringParser::encode($_POST['city']),stringParser::encode($_POST['land']),$time=time(),intval($_POST['level']),$time));
+                [stringParser::encode($_POST['user']),stringParser::encode($_POST['nick']),stringParser::encode($_POST['email']),stringParser::encode($pwd),settings::get('default_pwd_encoder'),stringParser::encode($_POST['rlname']),intval($_POST['sex']),
+                (!$bday ? 0 : strtotime($bday)),stringParser::encode($_POST['city']),stringParser::encode($_POST['land']),$time=time(),intval($_POST['level']),$time]);
 
         $insert_id = common::$sql['default']->lastInsertId();
         common::setIpcheck("createuser(".$_SESSION['id']."_".$insert_id.")");
@@ -72,23 +72,23 @@ if(isset($_POST['user'])) {
             $permissions = ', '.substr($permissions, 0, -2);
         }
 
-        common::$sql['default']->insert("INSERT INTO `{prefix_permissions}` SET `user` = ?".$permissions.";",array($insert_id));
+        common::$sql['default']->insert("INSERT INTO `{prefix_permissions}` SET `user` = ?".$permissions.";", [$insert_id]);
 
         // internal boardpermissions
         if(!empty($_POST['board'])) {
             foreach ($_POST['board'] AS $boardname) {
-                common::$sql['default']->insert("INSERT INTO `{prefix_f_access}` SET `user` = ?, `forum` = ?;",array($insert_id,$boardname));
+                common::$sql['default']->insert("INSERT INTO `{prefix_f_access}` SET `user` = ?, `forum` = ?;", [$insert_id,$boardname]);
             }
         }
 
         $groups = common::$sql['default']->select("SELECT * FROM `{prefix_groups}`;");
         foreach($groups as $get_group) {
             if(isset($_POST['group'.$get_group['id']])) {
-                common::$sql['default']->insert("INSERT INTO `{prefix_groupuser}` SET `user`  = ?, `group` = ?;",array($insert_id,intval($_POST['squad'.$get_group['id']])));
+                common::$sql['default']->insert("INSERT INTO `{prefix_groupuser}` SET `user`  = ?, `group` = ?;", [$insert_id,intval($_POST['squad'.$get_group['id']])]);
             }
 
             if(isset($_POST['group'.$get_group['id']])) {
-                common::$sql['default']->insert("INSERT INTO `{prefix_userposis}` SET `user` = ?, `posi` = ?, `group` = ?;",array($insert_id,intval($_POST['sqpos'.$get_group['id']]),$get_group['id']));
+                common::$sql['default']->insert("INSERT INTO `{prefix_userposis}` SET `user` = ?, `posi` = ?, `group` = ?;", [$insert_id,intval($_POST['sqpos'.$get_group['id']]),$get_group['id']]);
             }
         }
 
@@ -104,7 +104,7 @@ if(isset($_POST['user'])) {
 
             if($tmpname) {
                 $imageinfo = getimagesize($tmpname);
-                foreach(array("jpg", "gif", "png") as $tmpendung) {
+                foreach(["jpg", "gif", "png"] as $tmpendung) {
                     if(file_exists(basePath."/inc/images/uploads/userpics/".$insert_id.".".$tmpendung)) {
                         @unlink(basePath."/inc/images/uploads/userpics/".$insert_id.".".$tmpendung);
                     }
@@ -126,7 +126,7 @@ if(isset($_POST['user'])) {
 
             if($tmpname) {
                 $imageinfo = getimagesize($tmpname);
-                foreach(array("jpg", "gif", "png") as $tmpendung) {
+                foreach(["jpg", "gif", "png"] as $tmpendung) {
                     if(file_exists(basePath."/inc/images/uploads/useravatare/".$insert_id.".".$tmpendung)) {
                         @unlink(basePath."/inc/images/uploads/useravatare/".$insert_id.".".$tmpendung);
                     }
@@ -137,30 +137,30 @@ if(isset($_POST['user'])) {
             }
         }
 
-        common::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?, `lastvisit` = ?;",array($insert_id,time()));
+        common::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?, `lastvisit` = ?;", [$insert_id,time()]);
         $show = common::info(_uderadd_info, "../admin/");
     }
 }
 
 if(empty($show)) {
-    $dropdown_age = show(_dropdown_date, array("day" => common::dropdown("day",0,1),
+    $dropdown_age = show(_dropdown_date, ["day" => common::dropdown("day",0,1),
                                                "month" => common::dropdown("month",0,1),
-                                               "year" => common::dropdown("year",0,1)));
+                                               "year" => common::dropdown("year",0,1)]);
 
     $qrygroups = common::$sql['default']->select("SELECT `id`,`name` FROM `{prefix_groups}` ORDER BY `id`;"); $egroups = "";
     foreach($qrygroups as $getgroups) {
         $qrypos = common::$sql['default']->select("SELECT `id`,`position` FROM `{prefix_positions}` ORDER BY `pid`;"); $posi = "";
         foreach($qrypos as $getpos) {
-            $posi .= show(_select_field_posis, array("value" => $getpos['id'], "sel" => "", "what" => stringParser::decode($getpos['position'])));
+            $posi .= show(_select_field_posis, ["value" => $getpos['id'], "sel" => "", "what" => stringParser::decode($getpos['position'])]);
         }
 
-        $egroups .= show(_checkfield_squads, array("id" => $getgroups['id'], "check" => "","eposi" => $posi,"squad" => stringParser::decode($getgroups['name'])));
+        $egroups .= show(_checkfield_squads, ["id" => $getgroups['id'], "check" => "","eposi" => $posi,"squad" => stringParser::decode($getgroups['name'])]);
     }
 
-    $show = show($dir."/register", array("groups" => $egroups,
+    $show = show($dir."/register", ["groups" => $egroups,
                                          "getpermissions" => common::getPermissions(),
                                          "getboardpermissions" => common::getBoardPermissions(),
                                          "dropdown_age" => $dropdown_age,
                                          "country" => common::show_countrys(),
-                                         "alvl" => ""));
+                                         "alvl" => ""]);
 }

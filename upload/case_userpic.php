@@ -34,13 +34,13 @@ if(defined('_Upload')) {
                             $file_info[0],$file_info[1],$file_info[2]);
 
                         if(!array_key_exists($file_info['mime'], config::$extensions)) {
-                           $error = show(_upload_usergallery_info, array('userpicsize' => settings::get('upicsize')));
+                           $error = show(_upload_usergallery_info, ['userpicsize' => settings::get('upicsize')]);
                            $index = common::error($error, 1);
                         } else {
                             if($_FILES['file']['size'] > (settings::get('upicsize')*1000)) {
                                 $index = common::error(_upload_wrong_size, 1);
                             } else {
-                                foreach(array("jpg", "gif", "png") as $tmpendung) {
+                                foreach(["jpg", "gif", "png"] as $tmpendung) {
                                     if(file_exists(basePath."/inc/images/uploads/userpics/".common::$userid.".".$tmpendung))
                                         unlink(basePath."/inc/images/uploads/userpics/".common::$userid.".".$tmpendung);
                                 }
@@ -56,7 +56,7 @@ if(defined('_Upload')) {
                 }
             break;
             case 'deletepic':
-                foreach(array("jpg", "gif", "png") as $tmpendung) {
+                foreach(["jpg", "gif", "png"] as $tmpendung) {
                     if(file_exists(basePath."/inc/images/uploads/userpics/".common::$userid.".".$tmpendung))
                         unlink(basePath."/inc/images/uploads/userpics/".common::$userid.".".$tmpendung);
                 }
@@ -64,11 +64,11 @@ if(defined('_Upload')) {
                 $index = common::info(_delete_pic_successful, "../user/?action=editprofile");
             break;
             default:
-                $infos = show(_upload_userpic_info, array("userpicsize" => settings::get('upicsize')));
-                $index = show($dir."/upload", array("uploadhead" => _upload_head,
+                $infos = show(_upload_userpic_info, ["userpicsize" => settings::get('upicsize')]);
+                $index = show($dir."/upload", ["uploadhead" => _upload_head,
                                                     "name" => "file",
                                                     "action" => "?action=userpic&amp;do=upload",
-                                                    "infos" => $infos));
+                                                    "infos" => $infos]);
             break;
         }
     }

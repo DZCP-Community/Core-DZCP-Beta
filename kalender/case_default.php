@@ -34,7 +34,7 @@ else if(isset($_GET['y']))
 $month = '';
 for($i = 1; $i <= 12; $i++) {
     $sel = $monat == $i ? 'selected="selected"' : '';
-    $mname = array("1" => _jan,
+    $mname = ["1" => _jan,
                    "2" => _feb,
                    "3" => _mar,
                    "4" => _apr,
@@ -45,19 +45,19 @@ for($i = 1; $i <= 12; $i++) {
                    "9" => _sep,
                    "10" => _okt,
                    "11" => _nov,
-                   "12" => _dez);
+                   "12" => _dez];
 
-    $month .= show(_select_field, array("value" => common::cal($i),
+    $month .= show(_select_field, ["value" => common::cal($i),
                                         "sel" => $sel,
-                                        "what" => $mname[$i]));
+                                        "what" => $mname[$i]]);
 }
 
 $year = '';
 for( $i = date("Y")-5; $i < date("Y")+3; $i++) {
     $sel = $jahr == $i ? 'selected="selected"' : '';
-    $year .= show(_select_field, array("value" => $i,
+    $year .= show(_select_field, ["value" => $i,
                                        "sel" => $sel,
-                                       "what" => $i));
+                                       "what" => $i]);
 }
 
 $ktoday = mktime(0,0,0,date("n"),date("d"),date("Y"));
@@ -94,7 +94,7 @@ while($i <= 31 && checkdate($monat, $i, $jahr)) {
 
             //Events
             $event = "";
-            $qry = common::$sql['default']->select("SELECT `datum`,`title` FROM `{prefix_events}` WHERE DATE_FORMAT(FROM_UNIXTIME(datum), '%d.%m.%Y') = ?;",array(common::cal($i).".".$monat.".".$jahr));
+            $qry = common::$sql['default']->select("SELECT `datum`,`title` FROM `{prefix_events}` WHERE DATE_FORMAT(FROM_UNIXTIME(datum), '%d.%m.%Y') = ?;", [common::cal($i).".".$monat.".".$jahr]);
             if(common::$sql['default']->rowCount()) {
                 $infoEvent = '';
                 foreach($qry as $get) {
@@ -115,13 +115,13 @@ while($i <= 31 && checkdate($monat, $i, $jahr)) {
             if(!checkdate($monat, $i, $jahr)) {
                 $data .= '<td class="calDay"></td>';
             } elseif($datum == $ktoday) {
-                $data .= show($dir."/day", array("day" => $day,
+                $data .= show($dir."/day", ["day" => $day,
                                                  "event" => $events,
-                                                 "class" => "calToday"));
+                                                 "class" => "calToday"]);
             } else {
-                $data .= show($dir."/day", array("day" => $day,
+                $data .= show($dir."/day", ["day" => $day,
                                                  "event" => $events,
-                                                 "class" => "calDay"));
+                                                 "class" => "calDay"]);
             }
             
             $i++;
@@ -131,4 +131,4 @@ while($i <= 31 && checkdate($monat, $i, $jahr)) {
     $show .= "<tr>".$data."</tr>";
 }
 
-$index = show($dir."/kalender", array("monate" => $month, "jahr" => $year, "show" => $show));
+$index = show($dir."/kalender", ["monate" => $month, "jahr" => $year, "show" => $show]);

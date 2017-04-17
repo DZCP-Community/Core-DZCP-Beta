@@ -27,8 +27,8 @@ $where = _site_impressum;
 $smarty = common::getSmarty(); //Use Smarty
 
 ## SECTIONS ##
-$index = show($dir."/impressum", array("show_domain" =>stringParser::decode(settings::get('i_domain')), 
-                                       "show_autor" => bbcode::parse_html(settings::get('i_autor'))));
+$index = show($dir."/impressum", ["show_domain" =>stringParser::decode(settings::get('i_domain')), 
+                                       "show_autor" => bbcode::parse_html(settings::get('i_autor'))]);
 
 ## INDEX OUTPUT ##
 $title = common::$pagetitle." - ".$where;

@@ -16,5 +16,5 @@
  */
 
 function avatar() {
-    return common::$chkMe >= 1 ? show("menu/avatars", array("avatar_show" => common::useravatar(0,70,70))) : '';
+    return common::$chkMe >= 1 ? show("menu/avatars", ["avatar_show" => common::useravatar(0,70,70)]) : '';
 }

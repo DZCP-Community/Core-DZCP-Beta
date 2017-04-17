@@ -17,11 +17,11 @@
 
 if(defined('_Upload')) {
     if(common::permission('partners')) {
-        $infos = show(_upload_partners_info, array("userpicsize" => settings::get('upicsize')));
-        $index = show($dir."/upload", array("uploadhead" => _upload_partners_head,
+        $infos = show(_upload_partners_info, ["userpicsize" => settings::get('upicsize')]);
+        $index = show($dir."/upload", ["uploadhead" => _upload_partners_head,
                                             "name" => "file",
                                             "action" => "?action=partners&amp;do=upload",
-                                            "infos" => $infos));
+                                            "infos" => $infos]);
         if($do == "upload") {
             $tmpname = $_FILES['file']['tmp_name'];
             $name = $_FILES['file']['name'];

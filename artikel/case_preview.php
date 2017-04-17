@@ -16,35 +16,35 @@
  */
 
 if(defined('_Artikel')) {
-    $getkat = common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;",array(intval($_POST['kat'])));
+    $getkat = common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [intval($_POST['kat'])]);
     $links1 = ""; $links2 = ""; $links3 = ""; $links = "";
     if($_POST['url1']) {
         $rel = _related_links;
-        $links1 = show(_artikel_link, array("link" => stringParser::decode($_POST['link1']),
-                                            "url" => common::links(stringParser::decode($_POST['url1']))));
+        $links1 = show(_artikel_link, ["link" => stringParser::decode($_POST['link1']),
+                                            "url" => common::links(stringParser::decode($_POST['url1']))]);
     }
     
     if($_POST['url2']) {
         $rel = _related_links;
-        $links2 = show(_artikel_link, array("link" => stringParser::decode($_POST['link2']),
-                                            "url" => common::links(stringParser::decode($_POST['url2']))));
+        $links2 = show(_artikel_link, ["link" => stringParser::decode($_POST['link2']),
+                                            "url" => common::links(stringParser::decode($_POST['url2']))]);
     }
     
     if($_POST['url3']) {
         $rel = _related_links;
-        $links3 = show(_artikel_link, array("link" => stringParser::decode($_POST['link3']),
-                                            "url" => common::links(stringParser::decode($_POST['url3']))));
+        $links3 = show(_artikel_link, ["link" => stringParser::decode($_POST['link3']),
+                                            "url" => common::links(stringParser::decode($_POST['url3']))]);
     }
 
     if(!empty($links1) || !empty($links2) || !empty($links3)) {
-        $links = show(_artikel_links, array("link1" => $links1,
+        $links = show(_artikel_links, ["link1" => $links1,
                                             "link2" => $links2,
                                             "link3" => $links3,
-                                            "rel" => $rel));
+                                            "rel" => $rel]);
     }
 
     $artikelimage = '../inc/images/newskat/'.stringParser::decode($getkat['katimg']);
-    foreach(array("jpg", "gif", "png") as $tmpendung) {
+    foreach(["jpg", "gif", "png"] as $tmpendung) {
         if(file_exists(basePath."/inc/images/uploads/artikel/".$get['id'].".".$tmpendung)) {
             $artikelimage = '../inc/images/uploads/artikel/'.$get['id'].'.'.$tmpendung;
             break;
@@ -63,7 +63,7 @@ if(defined('_Artikel')) {
 
     $html = $bbcode->Parse($input);
     
-    $index = show($dir."/show_more", array("titel" => $_POST['titel'],
+    $index = show($dir."/show_more", ["titel" => $_POST['titel'],
                                            "id" => $get['id'],
                                            "comments" => "",
                                            "display" => "inline",
@@ -73,7 +73,7 @@ if(defined('_Artikel')) {
                                            "text" => $html,
                                            "datum" => date("j.m.y H:i")._uhr,
                                            "links" => $links,
-                                           "autor" => common::autor(common::$userid)));
+                                           "autor" => common::autor(common::$userid)]);
 
     common::update_user_status_preview();
     header('Content-Type: text/html; charset=utf-8');

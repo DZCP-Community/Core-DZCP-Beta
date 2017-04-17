@@ -393,8 +393,12 @@ if(defined('_Forum')) {
         $vid = "";
         }
 
-        $editedby = show(_edited_by, array("autor" => common::autor(common::$userid),
-                                           "time" => date("d.m.Y H:i", time())._uhr));
+          //-> Editby Text
+          $smarty->caching = false;
+          $smarty->assign('autor',common::autor(common::$userid));
+          $smarty->assign('time',date("d.m.Y H:i", time()));
+          $editedby = $smarty->fetch('string:'._edited_by);
+          $smarty->clearAllAssign();
 
           common::$sql['default']->update("UPDATE `{prefix_forumthreads}`
                              SET `topic`    = '".stringParser::encode($_POST['topic'])."',

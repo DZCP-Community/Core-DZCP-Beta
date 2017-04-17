@@ -19,7 +19,7 @@ function events() {
     $qry = common::$sql['default']->select("SELECT `id`,`datum`,`title`,`event` "
                       . "FROM `{prefix_events}` "
                       . "WHERE `datum` > ? "
-                      . "ORDER BY `datum` LIMIT ".settings::get('m_events').";",array(time()));
+                      . "ORDER BY `datum` LIMIT ".settings::get('m_events').";", [time()]);
     $eventbox = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qry as $get) {
@@ -27,12 +27,12 @@ function events() {
                     _datum.'\', \''.date("H:i", $get['datum'])._uhr.';'.
                     date("d.m.Y", $get['datum']).'\')" onmouseout="DZCP.hideInfo()"';
             
-            $events = show(_next_event_link, array("datum" => date("d.m.",$get['datum']),
+            $events = show(_next_event_link, ["datum" => date("d.m.",$get['datum']),
                                                    "timestamp" => $get['datum'],
                                                    "event" => stringParser::decode($get['title']),
-                                                   "info" => $info));
+                                                   "info" => $info]);
 
-            $eventbox .= show("menu/event", array("events" => $events, "info" => $info));
+            $eventbox .= show("menu/event", ["events" => $events, "info" => $info]);
         }
     }
 

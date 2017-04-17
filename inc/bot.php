@@ -25,12 +25,12 @@ require(basePath."/inc/config.php");
 require(basePath."/inc/bbcode.php");
 
 ##  * Bot Trap *
-if(!common::$sql['default']->rows("SELECT `id` FROM `{prefix_ipban}` WHERE `ip` = ? LIMIT 1;",array(common::$userip))) {
-    $data_array = array();
+if(!common::$sql['default']->rows("SELECT `id` FROM `{prefix_ipban}` WHERE `ip` = ? LIMIT 1;", [common::$userip])) {
+    $data_array = [];
     $data_array['confidence'] = ''; $data_array['frequency'] = ''; $data_array['lastseen'] = '';
     $data_array['banned_msg'] = stringParser::encode('SpamBot detected by System * Bot Trap *');
     common::$sql['default']->insert("INSERT INTO `{prefix_ipban}` SET `time` = ?, `ip` = ?, `data` = ?, `typ` = 3;",
-            array(time(),common::$userip,serialize($data_array)));
+            [time(),common::$userip,serialize($data_array)]);
     common::check_ip(); // IP Prufung * No IPV6 Support *
 }
 ob_end_flush();

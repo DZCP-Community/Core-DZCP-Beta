@@ -32,7 +32,7 @@ if(defined('_Upload')) {
                 else if($size > settings::get('upicsize')."000")
                     $index = common::error(_upload_wrong_size, 1);
                 else  {
-                    foreach(array("jpg", "gif", "png") as $tmpendung) {
+                    foreach(["jpg", "gif", "png"] as $tmpendung) {
                         if(file_exists(basePath."/inc/images/uploads/useravatare/".common::$userid.".".$tmpendung))
                             @unlink(basePath."/inc/images/uploads/useravatare/".common::$userid.".".$tmpendung);
                     }
@@ -44,7 +44,7 @@ if(defined('_Upload')) {
                 }
             break;
             case 'delete':
-                foreach(array("jpg", "gif", "png") as $tmpendung) {
+                foreach(["jpg", "gif", "png"] as $tmpendung) {
                     if(file_exists(basePath."/inc/images/uploads/useravatare/".common::$userid.".".$tmpendung))
                         @unlink(basePath."/inc/images/uploads/useravatare/".common::$userid.".".$tmpendung);
                 }
@@ -52,11 +52,11 @@ if(defined('_Upload')) {
                 $index = common::info(_delete_pic_successful, "../user/?action=editprofile");
             break;
             default:
-                $infos = show(_upload_userava_info, array("userpicsize" => settings::get('upicsize')));
-                $index = show($dir."/upload", array("uploadhead" => _upload_ava_head,
+                $infos = show(_upload_userava_info, ["userpicsize" => settings::get('upicsize')]);
+                $index = show($dir."/upload", ["uploadhead" => _upload_ava_head,
                                                     "name" => "file",
                                                     "action" => "?action=avatar&amp;do=upload",
-                                                    "infos" => $infos));
+                                                    "infos" => $infos]);
             break;
         }
     }

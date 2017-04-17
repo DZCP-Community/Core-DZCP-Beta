@@ -23,7 +23,7 @@ function counter($js=false) {
                 "<script language=\"javascript\" type=\"text/javascript\">DZCP.initDynLoader('navCounter','counter','',true);</script>";
     } else {
         if(!common::$isSpider) {
-                $get2day = common::$sql['default']->fetch("SELECT `visitors` FROM `{prefix_counter}` WHERE `today` = ?;",array(date("j.n.Y")));
+                $get2day = common::$sql['default']->fetch("SELECT `visitors` FROM `{prefix_counter}` WHERE `today` = ?;", [date("j.n.Y")]);
                 if(common::$sql['default']->rowCount()) {
                     $v_today = $get2day['visitors'];
                 }
@@ -35,7 +35,7 @@ function counter($js=false) {
                 $yesterday = $tag.".".$monat.".".$jahr;
 
                 $yDay = 0;
-                $getyday = common::$sql['default']->fetch("SELECT `visitors` FROM `{prefix_counter}` WHERE `today` = ?;",array($yesterday));
+                $getyday = common::$sql['default']->fetch("SELECT `visitors` FROM `{prefix_counter}` WHERE `today` = ?;", [$yesterday]);
                 if(common::$sql['default']->rowCount()) {
                     $yDay = $getyday['visitors'];
                 }
@@ -49,7 +49,7 @@ function counter($js=false) {
 
                 $info = '';
                 if(($online_reg = common::online_reg()) != 0) {
-                    $qryo = common::$sql['default']->select("SELECT `id` FROM `{prefix_users}` WHERE (time+1800) > ? AND `online` = 1 ORDER BY `nick`;",array(time()));
+                    $qryo = common::$sql['default']->select("SELECT `id` FROM `{prefix_users}` WHERE (time+1800) > ? AND `online` = 1 ORDER BY `nick`;", [time()]);
                     $kats = ''; $text = '';
                     if(common::$sql['default']->rowCount()) {
                         foreach($qryo as $geto) {
@@ -64,7 +64,7 @@ function counter($js=false) {
             if(empty($where)) {
                 $where = '';
             }
-                $counter = show("menu/counter", array("v_today" => $v_today,
+                $counter = show("menu/counter", ["v_today" => $v_today,
                                                       "v_yesterday" => $yDay,
                                                       "v_all" => ($getstats['allvisitors']),
                                                       "v_perday" => round($getstats['avgvisitors'], 2),
@@ -72,7 +72,7 @@ function counter($js=false) {
                                                       "g_online" => strval(common::online_guests($where)),
                                                       "u_online" => strval($online_reg),
                                                       "info" => $info,
-                                                      "v_online" => $getstats['maxonline']));
+                                                      "v_online" => $getstats['maxonline']]);
         }
     }
 

@@ -27,7 +27,7 @@ if(defined('_Votes')) {
 
     $qry = common::$sql['default']->select('SELECT votes.*,sum(votes_result.`stimmen`) as `ges_stimmen` FROM `{prefix_votes}` as votes, `{prefix_vote_results}` as `votes_result`'
             . ' WHERE votes.`id` = votes_result.`vid` '.$whereIntern.$fvote.''
-            . ' GROUP by votes.`id` '.common::orderby_sql(array('titel','datum','von','ges_stimmen'), 'ORDER BY `datum`;'));
+            . ' GROUP by votes.`id` '.common::orderby_sql(['titel','datum','von','ges_stimmen'], 'ORDER BY `datum`;'));
     foreach($qry as $get) {
         $qryv = common::$sql['default']->select('SELECT * FROM `{prefix_vote_results}` '
                            . 'WHERE `vid` = '.$get['id'].' ORDER BY `id`;');
@@ -47,20 +47,20 @@ if(defined('_Votes')) {
             if($ipcheck || cookie::get('vid_'.$get['id']) != false || $get['closed']) {
                 $percent = @round($getv['stimmen']/$stimmen*100,2);
                 $rawpercent = @round($getv['stimmen']/$stimmen*100,0);
-                $balken = show(_votes_balken, array("width" => $rawpercent));
+                $balken = show(_votes_balken, ["width" => $rawpercent]);
                 $result_head = _votes_results_head;
                 $votebutton = "";
-                $results .= show($dir."/votes_results", array("answer" => stringParser::decode($getv['sel']),
+                $results .= show($dir."/votes_results", ["answer" => stringParser::decode($getv['sel']),
                                                               "percent" => $percent,
                                                               "class" => $class,
                                                               "stimmen" => $getv['stimmen'],
-                                                              "balken" => $balken));
+                                                              "balken" => $balken]);
             } else {
                 $result_head = _votes_results_head_vote;
                 $votebutton = '<input id="voteSubmit_'.$get['id'].'" type="submit" value="'._button_value_vote.'" class="submit" />';
-                $results .= show($dir."/votes_vote", array("id" => $getv['id'],
+                $results .= show($dir."/votes_vote", ["id" => $getv['id'],
                                                            "answer" => stringParser::decode($getv['sel']),
-                                                           "class" => $class));
+                                                           "class" => $class]);
             }
         }
 
@@ -79,14 +79,14 @@ if(defined('_Votes')) {
         }
 
         $ftitel = $get['forum'] ? stringParser::decode($get['titel']).' (Forum)' : stringParser::decode($get['titel']);
-        $titel = show(_votes_titel, array("titel" => $ftitel,
+        $titel = show(_votes_titel, ["titel" => $ftitel,
                                           "vid" => $get['id'],
                                           "icon" => $moreicon,
-                                          "intern" => $intern));
+                                          "intern" => $intern]);
 
         $closed = $get['closed'] ? _closedicon_votes : '';
         $class = ($color2 % 2) ? "contentMainSecond" : "contentMainFirst"; $color2++;
-        $show .= show($dir."/votes_show", array("datum" => date("d.m.Y", $get['datum']),
+        $show .= show($dir."/votes_show", ["datum" => date("d.m.Y", $get['datum']),
                                                 "titel" => $titel,
                                                 "vid" => $get['id'],
                                                 "display" => $display,
@@ -97,16 +97,16 @@ if(defined('_Votes')) {
                                                 "autor" => common::autor($get['von']),
                                                 "class" => $class,
                                                 "votebutton" => $votebutton,
-                                                "stimmen" => $stimmen));
+                                                "stimmen" => $stimmen]);
     }
 
     if(empty($show)) {
-        $show = show(_no_entrys_yet, array("colspan" => "4"));
+        $show = show(_no_entrys_yet, ["colspan" => "4"]);
     }
     
-    $index = show($dir."/votes", array("show" => $show,
+    $index = show($dir."/votes", ["show" => $show,
                                        "order_titel" => common::orderby('titel'),
                                        "order_autor" => common::orderby('von'),
                                        "order_datum" => common::orderby('datum'),
-                                       "order_stimmen" => common::orderby('ges_stimmen')));
+                                       "order_stimmen" => common::orderby('ges_stimmen')]);
 }

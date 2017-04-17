@@ -20,15 +20,15 @@ if(defined('_Votes')) {
         if(empty($_POST['vote'])) {
             $index = common::error(_vote_no_answer);
         } else {
-            $get = common::$sql['default']->fetch("SELECT `id`,`closed`,`intern` FROM `{prefix_votes}` WHERE `id` = ?;",array(intval($_GET['id'])));
+            $get = common::$sql['default']->fetch("SELECT `id`,`closed`,`intern` FROM `{prefix_votes}` WHERE `id` = ?;", [intval($_GET['id'])]);
             if($get['intern'] && common::$chkMe >= 1) {
                 if(!common::count_clicks('vote',$get['id'])) {
                     $index = common::error(_error_voted_again,1);
                 } else if($get['closed']) {
                     $index = common::error(_error_vote_closed,1);
                 } else {
-                    common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `votes` = (votes+1) WHERE `user` = ?;",array(common::$userid));
-                    common::$sql['default']->update("UPDATE `{prefix_vote_results}` SET `stimmen` = (stimmen+1) WHERE `id` = ?;",array(intval($_POST['vote'])));
+                    common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `votes` = (votes+1) WHERE `user` = ?;", [common::$userid]);
+                    common::$sql['default']->update("UPDATE `{prefix_vote_results}` SET `stimmen` = (stimmen+1) WHERE `id` = ?;", [intval($_POST['vote'])]);
 
                     common::setIpcheck("vid_".intval($_GET['id']),false);
                     common::setIpcheck("vid(".intval($_GET['id']).")");
@@ -44,10 +44,10 @@ if(defined('_Votes')) {
                     $index = common::error(_error_vote_closed,1);
                 } else {
                     if(common::$userid >= 1) {
-                        common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `votes` = (votes+1) WHERE `user` = ?;",array(common::$userid));
+                        common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `votes` = (votes+1) WHERE `user` = ?;", [common::$userid]);
                     }
 
-                    common::$sql['default']->update("UPDATE `{prefix_vote_results}` SET `stimmen` = (stimmen+1) WHERE `id` = ?;",array(intval($_POST['vote'])));
+                    common::$sql['default']->update("UPDATE `{prefix_vote_results}` SET `stimmen` = (stimmen+1) WHERE `id` = ?;", [intval($_POST['vote'])]);
                     common::setIpcheck("vid_".intval($_GET['id']),false);
                     common::setIpcheck("vid(".intval($_GET['id']).")");
 
@@ -74,17 +74,17 @@ if(defined('_Votes')) {
         if(empty($_POST['vote'])) {
             $index = common::error(_vote_no_answer);
         } else {
-            $get = common::$sql['default']->fetch("SELECT `id`,`closed` FROM `{prefix_votes}` WHERE `id` = ?;",array(intval($_GET['id'])));
+            $get = common::$sql['default']->fetch("SELECT `id`,`closed` FROM `{prefix_votes}` WHERE `id` = ?;", [intval($_GET['id'])]);
             if(!common::count_clicks('vote',$get['id'])) {
                 $index = common::error(_error_voted_again,1);
             } else if($get['closed']) {
                 $index = common::error(_error_vote_closed,1);
             } else {
                 if(common::$userid >= 1) {
-                    common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `votes` = (votes+1) WHERE `user` = ?;",array(common::$userid));
+                    common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `votes` = (votes+1) WHERE `user` = ?;", [common::$userid]);
                 }
 
-                common::$sql['default']->update("UPDATE `{prefix_vote_results}` SET `stimmen` = (stimmen+1) WHERE `id` = ?;",array(intval($_POST['vote'])));
+                common::$sql['default']->update("UPDATE `{prefix_vote_results}` SET `stimmen` = (stimmen+1) WHERE `id` = ?;", [intval($_POST['vote'])]);
                 common::setIpcheck("vid_".intval($_GET['id']),false);
                 common::setIpcheck("vid(".intval($_GET['id']).")");
 

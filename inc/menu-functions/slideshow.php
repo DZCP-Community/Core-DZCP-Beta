@@ -28,23 +28,23 @@ function slideshow() {
                 $slideroverlay = '<div class="slideroverlay"><h2>'.bbcode::parse_html(common::wrap(stringParser::decode($get['bez']))).'</h2><span>'.bbcode::parse_html(common::wrap(stringParser::decode($get['desc']))).'</span></div>';
 
             $image = '';
-            foreach(array("jpg", "gif", "png") as $endung) {
+            foreach(["jpg", "gif", "png"] as $endung) {
                 if(file_exists(basePath."/inc/images/slideshow/".$get['id'].".".$endung)) {
                     $image = "../inc/images/slideshow/".$get['id'].".".$endung;
                     break;
                 }
             }
 
-            $pic .= show("menu/slideshowbild", array("image" => "<img src=\"".$image."\" alt=\"\" />",
+            $pic .= show("menu/slideshowbild", ["image" => "<img src=\"".$image."\" alt=\"\" />",
                                                      "link" => "'".$get['url']."'",
                                                      "bez" => common::cut(stringParser::decode($get['bez']),32),
                                                      "text" => $slideroverlay,
-                                                     "target" => $get['target']));
+                                                     "target" => $get['target']]);
 
             $tabs .= '<a href="#" class="slidertabs" id="slider'.$get['id'].'"></a>';
         }
 
-        return show("menu/slideshow", array("pic" => $pic, "tabs" => $tabs));
+        return show("menu/slideshow", ["pic" => $pic, "tabs" => $tabs]);
     }
 
     return '';

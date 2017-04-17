@@ -29,7 +29,7 @@ $rootmenu = null;
 $settingsmenu = null;
 $contentmenu = null;
 $addonsmenu = null;
-$amenu = array();
+$amenu = [];
 
 ## SECTIONS ##
 if (!isset($_SESSION['id']) || empty($_SESSION['id']) || !common::admin_perms($_SESSION['id'])) {
@@ -57,7 +57,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['id']) || !common::admin_perms($_
     }
 
     //Site Permissions
-    $files = common::get_files(basePath . '/admin/menu/', false, true, array('xml'));
+    $files = common::get_files(basePath . '/admin/menu/', false, true, ['xml']);
     if (count($files)) {
         foreach ($files AS $file_xml) {
             if (file_exists(basePath . '/admin/menu/' . str_replace('.xml', '.php', $file_xml))) {
@@ -73,7 +73,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['id']) || !common::admin_perms($_
                 if ($ora && common::$chkMe == 4 && common::rootAdmin())
                     $permission = true;
 
-                foreach (array("jpg", "gif", "png") AS $end) {
+                foreach (["jpg", "gif", "png"] AS $end) {
                     if (file_exists(basePath . '/admin/menu/' . str_replace('.xml', '', $file_xml) . '.' . $end))
                         break;
                 }
@@ -82,7 +82,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['id']) || !common::admin_perms($_
                 $menu = (string) $xml->Menu;
                 $type = str_replace('.xml', '', $file_xml);
                 if (!empty($menu) && !empty($rights) && $permission)
-                    $amenu[$menu][$type] = show("['[link]','?admin=[name]','background-image:url(menu/[name]." . $end . ");'],\n", array("link" => $link, 'name' => $type));
+                    $amenu[$menu][$type] = show("['[link]','?admin=[name]','background-image:url(menu/[name]." . $end . ");'],\n", ["link" => $link, 'name' => $type]);
             }
         }
     }
@@ -123,7 +123,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['id']) || !common::admin_perms($_
 
     //DZCP.de Version
     $version = new dzcp_version(false);
-    $index = show($dir . "/admin", array("version" => '<b>DZCP-Live: '.$version->getLiveVersion()['version'].' - '.$version->getLiveVersion()['release'].
+    $index = show($dir . "/admin", ["version" => '<b>DZCP-Live: '.$version->getLiveVersion()['version'].' - '.$version->getLiveVersion()['release'].
         ' / DZCP-Development: '.$version->getDevVersion()['version'].' - '.$version->getDevVersion()['release'].'</b>',
                                          "einst" => _config_einst,
                                          "content" => _content,
@@ -141,7 +141,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['id']) || !common::admin_perms($_
                                          "cdminc2" => $cdminc2,
                                          "addons1" => $addons1,
                                          "addons2" => $addons2,
-                                         "show" => $show));
+                                         "show" => $show]);
 }
 
 ## INDEX OUTPUT ##

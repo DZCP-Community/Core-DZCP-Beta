@@ -16,5 +16,5 @@
  */
 
 function search() {
-    return show("menu/search", array("searchword" => (empty($_GET['searchword']) ? _search_word : $_GET['searchword'])));
+    return show("menu/search", ["searchword" => (empty($_GET['searchword']) ? _search_word : $_GET['searchword'])]);
 }

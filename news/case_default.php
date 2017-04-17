@@ -31,7 +31,7 @@ if(defined('_News')) {
     $qry = common::$sql['default']->select("SELECT * FROM `{prefix_news}` WHERE `sticky` >= ? AND `datum` <= ? AND "
             . "`public` = 1 ".(common::permission("intnews") ? "" : "AND `intern` = 0")." ".$n_kat." "
             . "ORDER BY `datum` DESC LIMIT ".(($page - 1)*settings::get('m_news')).",".settings::get('m_news').";",
-            array(($time=time()),$time));
+            [($time=time()),$time]);
 
     $show_sticky = '';
     if(common::$sql['default']->rowCount()) {
@@ -44,8 +44,8 @@ if(defined('_News')) {
 
             //Bild
             $newsimage = '../inc/images/newskat/'.stringParser::decode(common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;",
-                    array($get['kat']),'katimg'));
-            foreach(array("jpg", "gif", "png") as $tmpendung) {
+                    [$get['kat']],'katimg'));
+            foreach(["jpg", "gif", "png"] as $tmpendung) {
                 if(file_exists(basePath."/inc/images/uploads/news/".$get['id'].".".$tmpendung)) {
                     $newsimage = '../inc/images/uploads/news/'.$get['id'].'.'.$tmpendung;
                     break;
@@ -80,7 +80,7 @@ if(defined('_News')) {
     $qry = common::$sql['default']->select("SELECT * FROM `{prefix_news}` WHERE `sticky` < ? AND `datum` <= ? "
             . "AND `public` = 1 ".(common::permission("intnews") ? "" : "AND `intern` = 0")." ".$n_kat." "
             . "ORDER BY `datum` DESC LIMIT ".($page - 1)*settings::get('m_news').",".settings::get('m_news').";",
-            array(($time=time()),$time));
+            [($time=time()),$time]);
     if(common::$sql['default']->rowCount()) {
         foreach($qry as $get) {
             //-> Viewed
@@ -91,8 +91,8 @@ if(defined('_News')) {
 
             //-> News-Kategorie Bild
             $newsimage = '../inc/images/newskat/'.stringParser::decode(common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;",
-                    array($get['kat']),'katimg'));
-            foreach(array("jpg", "gif", "png") as $tmpendung) {
+                    [$get['kat']],'katimg'));
+            foreach(["jpg", "gif", "png"] as $tmpendung) {
                 //-> News Bild by ID
                 if(file_exists(basePath."/inc/images/uploads/news/".$get['id'].".".$tmpendung)) {
                     $newsimage = '../inc/images/uploads/news/'.$get['id'].'.'.$tmpendung;

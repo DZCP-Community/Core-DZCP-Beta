@@ -19,21 +19,21 @@ function l_news() {
     $qry = common::$sql['default']->select("SELECT `id`,`titel`,`autor`,`datum`,`kat`,`public`,`timeshift` "
                       . "FROM `{prefix_news}` "
                       . "WHERE `public` = 1 AND `datum` <= ? ".(common::permission("intnews") ? "" : "AND `intern` = 0")." "
-                      . "ORDER BY `id` DESC LIMIT ".settings::get('m_lnews').";",array(time()));
+                      . "ORDER BY `id` DESC LIMIT ".settings::get('m_lnews').";", [time()]);
 
     $l_news = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qry as $get) {
-            $getkat = common::$sql['default']->fetch("SELECT `kategorie` FROM `{prefix_newskat}` WHERE `id` = ?;",array($get['kat']));
+            $getkat = common::$sql['default']->fetch("SELECT `kategorie` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get['kat']]);
             $info = !settings::get('allowhover') == 1 ? '' : 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['titel'])).'\', \''.
                   _datum.';'._autor.';'._news_admin_kat.';'._comments_head.'\', \''.date("d.m.Y H:i", $get['datum'])._uhr.';'.
                 common::fabo_autor($get['autor']).';'.common::jsconvert(stringParser::decode($getkat['kategorie'])).';'.
-                common::cnt('{prefix_newscomments}',"WHERE `news` = ?","id",array($get['id'])).'\')" onmouseout="DZCP.hideInfo()"';
+                common::cnt('{prefix_newscomments}',"WHERE `news` = ?","id", [$get['id']]).'\')" onmouseout="DZCP.hideInfo()"';
 
-            $l_news .= show("menu/last_news", array("id" => $get['id'],
+            $l_news .= show("menu/last_news", ["id" => $get['id'],
                                                     "titel" => common::cut(stringParser::decode($get['titel']),settings::get('l_lnews')),
                                                     "datum" => date("d.m.Y", $get['datum']),
-                                                    "info" => $info));
+                                                    "info" => $info]);
         }
     }
 

@@ -25,19 +25,19 @@ function ftopics() {
         foreach($qry as $get) {
             if($f == settings::get('m_ftopics')) { break; }
             if(common::forum_intern($get['kid'])) {
-                $lp = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",array($get['id']));
+                $lp = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id", [$get['id']]);
                 $pagenr = ceil($lp/settings::get('m_fposts'));
                 $page = !$pagenr ? 1 : $pagenr;
                 $info = !settings::get('allowhover') == 1 ? '' : 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['topic'])).'\', \''.
                         _forum_kat.';'._forum_posts.';'._forum_lpost.'\', \''.stringParser::decode($get['kattopic']).';'.++$lp.';'.
                         date("d.m.Y H:i", $get['lp'])._uhr.'\')" onmouseout="DZCP.hideInfo()"';
                 
-                $ftopics .= show("menu/forum_topics", array("id" => $get['id'],
+                $ftopics .= show("menu/forum_topics", ["id" => $get['id'],
                                                             "pagenr" => $page,
                                                             "p" => $lp,
                                                             "titel" => common::cut(stringParser::decode($get['topic']),settings::get('l_ftopics')),
                                                             "info" => $info,
-                                                            "kid" => $get['kid']));
+                                                            "kid" => $get['kid']]);
                 $f++;
             }
         }

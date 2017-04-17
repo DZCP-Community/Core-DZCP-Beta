@@ -9,7 +9,7 @@
 class dzcp_event
 {
     public $event = NULL;
-    public $json_array = array();
+    public $json_array = [];
     public $contenttype = NULL;
     private $get = NULL;
 
@@ -18,14 +18,14 @@ class dzcp_event
         $this->get = $_GET;
         $this->event = '';
         $this->contenttype = 'json';
-        if(GUMP::is_valid($this->get, array('input' => 'required|valid_json_string')) === true) {
+        if(GUMP::is_valid($this->get, ['input' => 'required|valid_json_string']) === true) {
             $this->json_array = json_decode($this->get['input'],true);
-            if(GUMP::is_valid($this->json_array, array('event' => 'required|alpha')) === true) {
+            if(GUMP::is_valid($this->json_array, ['event' => 'required|alpha']) === true) {
                 $this->event = strtolower(trim($this->json_array['event']));
             }
 
             //ContentType XML,JSON OR JSONP for Javascript
-            if(GUMP::is_valid($this->json_array, array('type' => 'required|alpha')) === true) {
+            if(GUMP::is_valid($this->json_array, ['type' => 'required|alpha']) === true) {
                 switch ($this->json_array['type']) {
                     case 'xml':
                         $this->contenttype = 'xml';

@@ -30,8 +30,14 @@ if(defined('_Forum')) {
         $guestCheck = true;
         $pUId = $get['t_reg'];
       }
-      $editedby = show(_edited_by, array("autor" => common::cleanautor(common::$userid),
-                                         "time" => date("d.m.Y H:i", time())._uhr));
+
+      //-> Editby Text
+      $smarty->caching = false;
+      $smarty->assign('autor',common::cleanautor(common::$userid));
+      $smarty->assign('time',date("d.m.Y H:i", time()));
+      $editedby = $smarty->fetch('string:'._edited_by);
+      $smarty->clearAllAssign();
+
       $tID = $get['id'];
     } else {
       $get_datum = time();
@@ -57,18 +63,35 @@ if(defined('_Forum')) {
       $email = common::CryptMailto(stringParser::decode($getu['email']),_emailicon_forum);
       $pn = _forum_pn_preview;
 
-      if(empty($getu['hp'])) $hp = "";
-      else $hp = show(_hpicon_forum, array("hp" => $getu['hp']));
-      if(common::data("signatur",$pUId)) $sig = _sig.bbcode::parse_html(common::data("signatur",$pUId),true);
-      else $sig = "";
+      //-> Homepage Link
+      $hp = "";
+      if (!empty($getu['hp'])) {
+        $smarty->caching = false;
+        $smarty->assign('hp',common::links(stringParser::decode($getu['hp'])));
+        $hp = $smarty->fetch('string:'._hpicon_forum);
+        $smarty->clearAllAssign();
+      }
+
+      if(common::data("signatur",$pUId))
+        $sig = _sig.bbcode::parse_html(common::data("signatur",$pUId),true);
+      else
+        $sig = "";
+
       $onoff = common::onlinecheck(common::$userid);
       $userposts = show(_forum_user_posts, array("posts" => common::userstats("forumposts",$pUId)+1));
     } else {
-        $pn = "";
+      $pn = "";
         $email = common::CryptMailto($_POST['email'],_emailicon_forum);
-        if(empty($_POST['hp'])) $hp = "";
-        else $hp = show(_hpicon_forum, array("hp" => common::links($_POST['hp'])));
+
+      //-> Homepage Link
+      $hp = "";
+      if (!empty($_POST['hp'])) {
+        $smarty->caching = false;
+        $smarty->assign('hp',common::links($_POST['hp']));
+        $hp = $smarty->fetch('string:'._hpicon_forum);
+        $smarty->clearAllAssign();
       }
+    }
 
     $getw = common::$sql['default']->fetch("SELECT s1.kid,s1.topic,s2.kattopic,s2.sid
                 FROM `{prefix_forumthreads}` AS s1
@@ -161,15 +184,29 @@ if(defined('_Forum')) {
       $email = common::CryptMailto(stringParser::decode($getu['email']),_emailicon_forum);
       $pn = _forum_pn_preview;
 
-      if(empty($getu['hp'])) $hp = "";
-      else $hp = show(_hpicon_forum, array("hp" => $getu['hp']));
+      //-> Homepage Link
+      $hp = "";
+      if (!empty($getu['hp'])) {
+        $smarty->caching = false;
+        $smarty->assign('hp',common::links(stringParser::decode($getu['hp'])));
+        $hp = $smarty->fetch('string:'._hpicon_forum);
+        $smarty->clearAllAssign();
+      }
+
       if(common::data("signatur",$pUId)) $sig = _sig.bbcode::parse_html(common::data("signatur",$pUId),true);
       else $sig = "";
     } else {
       $pn = "";
       $email = common::CryptMailto($_POST['email'],_emailicon_forum);
-      if(empty($_POST['hp'])) $hp = "";
-      else $hp = show(_hpicon_forum, array("hp" => common::links($_POST['hp'])));
+
+      //-> Homepage Link
+      $hp = "";
+      if (!empty($_POST['hp'])) {
+        $smarty->caching = false;
+        $smarty->assign('hp',common::links($_POST['hp']));
+        $hp = $smarty->fetch('string:'._hpicon_forum);
+        $smarty->clearAllAssign();
+      }
     }
 
     $index = show($dir."/forum_posts_show", array("nick" => common::cleanautor($pUId, '', $_POST['nick'], $_POST['email']),

@@ -20,7 +20,7 @@ if (!defined('_Downloads')) exit();
 if(settings::get("reg_dl") && !common::$chkMe)
     $index = common::error(_error_unregistered);
 else {
-    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_downloads}` WHERE `id` = ?;",array(intval($_GET['id'])));
+    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_downloads}` WHERE `id` = ?;", [intval($_GET['id'])]);
     if(common::$sql['default']->rowCount()) {
         if(!common::permission('dlintern') && $get['intern']) {
             $index = common::error(_error_no_access);
@@ -58,7 +58,7 @@ else {
             else
                 $traffic = @round(($size/1048576)*$get['hits'],2).' MB';
 
-            $getfile = show(_dl_getfile, array("file" => $rawfile));
+            $getfile = show(_dl_getfile, ["file" => $rawfile]);
 
             if(!$size) {
                 $dlsize = $traffic = 'n/a';
@@ -77,7 +77,7 @@ else {
                 $date = date("d.m.Y H:i",$get['date'])._uhr;
 
             $lastdate = date("d.m.Y H:i",$get['last_dl'])._uhr;
-            $index = show($dir."/info", array("getfile" => $getfile,
+            $index = show($dir."/info", ["getfile" => $getfile,
                                               "br1" => $br1,
                                               "br2" => $br2,
                                               "date" => $date,
@@ -97,7 +97,7 @@ else {
                                               "speed_dsl16128" => $speed_dsl16128,
                                               "size" => $dlsize,
                                               "besch" => bbcode::parse_html($get['beschreibung']),
-                                              "file" => $rawfile));
+                                              "file" => $rawfile]);
         }
     } else
         $index = common::error(_id_dont_exist,1);

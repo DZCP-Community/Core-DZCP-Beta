@@ -17,16 +17,16 @@
 
 if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
     $news_id = intval($_GET['id']); $add = ''; $notification_p = '';
-    if (common::$sql['default']->fetch("SELECT `intern` FROM `{prefix_news}` WHERE `id` = ?;",array($news_id),'intern') && !common::permission("intnews")) {
+    if (common::$sql['default']->fetch("SELECT `intern` FROM `{prefix_news}` WHERE `id` = ?;", [$news_id],'intern') && !common::permission("intnews")) {
         $index = common::error(_error_wrong_permissions, 1);
     } else {
-        $get_news = common::$sql['default']->fetch("SELECT * FROM `{prefix_news}` WHERE `id` = ?".(common::permission("news") ? ";" : " AND public = 1;"),array($news_id));
+        $get_news = common::$sql['default']->fetch("SELECT * FROM `{prefix_news}` WHERE `id` = ?".(common::permission("news") ? ";" : " AND public = 1;"), [$news_id]);
         if (!common::$sql['default']->rowCount()) {
             $index = common::error(_id_dont_exist, 1);
         } else {
             switch ($do) {
                 case 'add':
-                    if (common::$sql['default']->rows("SELECT `id` FROM `{prefix_news}` WHERE `id` = ?;",array($news_id)) != 0) {
+                    if (common::$sql['default']->rows("SELECT `id` FROM `{prefix_news}` WHERE `id` = ?;", [$news_id]) != 0) {
                         if (!common::$chkMe) {
                             $index = common::error(_error_have_to_be_logged, 1);
                         } else {
@@ -38,18 +38,18 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                                     }
                                 } else {
                                     common::$sql['default']->insert("INSERT INTO `{prefix_newscomments}` SET `news` = ?,`datum` = ?,`nick` = ?,`email` = ?,`hp` = ?,`reg` = ?,`comment` = ?, `ip` = ?;",
-                                    array($news_id,time(),common::data('nick'),common::data('email'),
+                                    [$news_id,time(),common::data('nick'),common::data('email'),
                                         (isset($_POST['hp']) && !common::$userid ? common::links($_POST['hp']) : common::links(common::data('hp'))),
-                                        intval(common::$userid),stringParser::encode($_POST['comment']),common::$userip));
+                                        intval(common::$userid),stringParser::encode($_POST['comment']),common::$userip]);
                                     common::setIpcheck("ncid(" . $news_id . ")");
                                     notification::set_global(false);
                                     javascript::set('AnchorMove', 'notification-box');
-                                    $_POST = array(); //Clear Post
+                                    $_POST = []; //Clear Post
                                     $notification_p = notification::add_success(_comment_added);
                                     notification::set_global(true);
                                 }
                             } else {
-                                notification::add_error(show(_error_flood_post, array("sek" => settings::get('f_newscom'))));
+                                notification::add_error(show(_error_flood_post, ["sek" => settings::get('f_newscom')]));
                             }
                         }
                     } else {
@@ -59,9 +59,9 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                 case 'delete':
                     javascript::set('AnchorMove', 'notification-box');
                     notification::set_global(false);
-                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_newscomments}` WHERE `id` = ?;",array(($cid = intval($_GET['cid']))),'reg');
+                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_newscomments}` WHERE `id` = ?;", [($cid = intval($_GET['cid']))],'reg');
                     if (common::$userid >= 1 && ($reg == common::$userid || common::permission('news'))) {
-                        common::$sql['default']->delete("DELETE FROM `{prefix_newscomments}` WHERE `id` = ?;",array($cid));
+                        common::$sql['default']->delete("DELETE FROM `{prefix_newscomments}` WHERE `id` = ?;", [$cid]);
                         $notification_p = notification::add_success(_comment_deleted);
                     } else {
                         $notification_p = notification::add_error(_error_wrong_permissions);
@@ -72,18 +72,24 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                 case 'editcom':
                     notification::set_global(false);
                     javascript::set('AnchorMove', 'notification-box');
-                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_newscomments}` WHERE `id` = ?;",array(($cid = intval($_GET['cid']))),'reg');
+                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_newscomments}` WHERE `id` = ?;", [($cid = intval($_GET['cid']))],'reg');
                     if (common::$sql['default']->rowCount() && !empty($_POST['comment'])) {
                         if (common::$userid >= 1 && ($reg == common::$userid || common::permission('news'))) {
-                            $editedby = show(_edited_by, array("autor" => common::autor(common::$userid), "time" => date("d.m.Y H:i", time()) . _uhr));
+                            //-> Editby Text
+                            $smarty->caching = false;
+                            $smarty->assign('autor',common::autor(common::$userid));
+                            $smarty->assign('time',date("d.m.Y H:i", time()));
+                            $editedby = $smarty->fetch('string:'._edited_by);
+                            $smarty->clearAllAssign();
+
                             common::$sql['default']->update("UPDATE `{prefix_newscomments}` SET `nick` = ?, `email` = ?, `hp` = ?, `comment` = ?, `editby` = ?
-                                          WHERE `id` = ?;",array((isset($_POST['nick']) ? stringParser::encode($_POST['nick']) : ''),
+                                          WHERE `id` = ?;", [(isset($_POST['nick']) ? stringParser::encode($_POST['nick']) : ''),
                                           (isset($_POST['email']) ? stringParser::encode($_POST['email']) : ''),
                                           (isset($_POST['hp']) ? common::links($_POST['hp']) : ''),
                                           (isset($_POST['comment']) ? stringParser::encode($_POST['comment']) : ''),
-                                          stringParser::encode($editedby),$cid));
+                                          stringParser::encode($editedby),$cid]);
 
-                            $_POST = array(); //Clear Post
+                            $_POST = []; //Clear Post
                             $notification_p = notification::add_success(_comment_edited);
                         } else {
                             $notification_p = notification::add_error(_error_edit_post);
@@ -95,7 +101,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                     notification::set_global(true);
                     break;
                 case 'edit':
-                    $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`comment`,`hp`,`email`,`nick` FROM `{prefix_newscomments}` WHERE `id` = ?;",array(intval($_GET['cid'])));
+                    $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`comment`,`hp`,`email`,`nick` FROM `{prefix_newscomments}` WHERE `id` = ?;", [intval($_GET['cid'])]);
                     if (common::$userid >= 1 && ($get['reg'] == common::$userid || common::permission('news'))) {
                         javascript::set('AnchorMove', 'comForm');
 
@@ -123,33 +129,38 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
              ************************/
             //Update viewed
             if (common::count_clicks('news', $news_id)) {
-                common::$sql['default']->update("UPDATE `{prefix_news}` SET `viewed` = (viewed+1) WHERE `id` = ?;",array($news_id));
+                common::$sql['default']->update("UPDATE `{prefix_news}` SET `viewed` = (viewed+1) WHERE `id` = ?;", [$news_id]);
             }
 
             //News Comments
             $qryc = common::$sql['default']->select("SELECT * FROM `{prefix_newscomments}` WHERE `news` = ? "
                                 ."ORDER BY `datum` DESC LIMIT ".($page - 1)*settings::get('m_comments').",".settings::get('m_comments').";",
-                                array($news_id));
+                                [$news_id]);
             
             $entrys = common::cnt('{prefix_newscomments}', " WHERE `news` = ".$news_id);
             $i = ($entrys - ($page - 1) * settings::get('m_comments')); $comments = '';
             foreach($qryc as $getc) {
                 $edit = ""; $delete = "";
                 if ((common::$chkMe >= 1 && $getc['reg'] == common::$userid) || common::permission("news")) {
-                    $edit = show("page/button_edit_single", array("id" => $get_news['id'],
+                    $edit = show("page/button_edit_single", ["id" => $get_news['id'],
                                                                   "action" => "action=show&amp;do=edit&amp;cid=" . $getc['id'],
-                                                                  "title" => _button_title_edit));
+                                                                  "title" => _button_title_edit]);
 
-                    $delete = show("page/button_delete_single", array("id" => $get_news['id'],
+                    $delete = show("page/button_delete_single", ["id" => $get_news['id'],
                                                                       "action" => "action=show&amp;do=delete&amp;cid=" . $getc['id'],
                                                                       "title" => _button_title_del,
-                                                                      "del" => _confirm_del_entry));
+                                                                      "del" => _confirm_del_entry]);
                 }
 
                 $email = ""; $hp = ""; $avatar = ""; $onoff = "";
                 if (!$getc['reg']) {
-                    if ($getc['hp']) {
-                        $hp = show(_hpicon_forum, ["hp" => common::links(stringParser::decode($getc['hp']))]);
+                    //-> Homepage Link
+                    $hp = "";
+                    if (!empty($getc['hp'])) {
+                        $smarty->caching = false;
+                        $smarty->assign('hp',common::links(stringParser::decode($getc['hp'])));
+                        $hp = $smarty->fetch('string:'._hpicon_forum);
+                        $smarty->clearAllAssign();
                     }
 
                     if ($getc['email']) {
@@ -268,7 +279,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
             }
 
             $intern = $get_news['intern'] ? _votes_intern : "";
-            $newsimage = '../inc/images/newskat/'.common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;",array($get_news['kat']),'katimg');
+            $newsimage = '../inc/images/newskat/'.common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get_news['kat']],'katimg');
             foreach (["jpg", "gif", "png"] as $tmpendung) {
                 if (file_exists(basePath . "/inc/images/uploads/news/".$get_news['id'].".".$tmpendung)) {
                     $newsimage = '../inc/images/uploads/news/'.$get_news['id'].'.'.$tmpendung;

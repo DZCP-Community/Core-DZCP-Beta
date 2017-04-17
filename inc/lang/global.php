@@ -62,7 +62,7 @@ define('_dropdown_date2', '<select id="tag" name="tag" class="dropdown">[tag]</s
 define('_buddys_yesicon', '<img src="../inc/images/buddys_yes.gif" alt="" class="icon" />');
 define('_buddys_noicon', '<img src="../inc/images/buddys_no.gif" alt="" class="icon" />');
 define('_closedicon_votes', '<img src="../inc/images/closed_votes.gif" alt="" class="icon" />');
-define('_hpicon_forum', '<a href="[hp]" target="_blank"><img src="../inc/images/forum_hp.gif" alt="" title="[hp]" class="icon" /></a>');
+define('_hpicon_forum', '<a href="{$hp}" target="_blank"><img src="../inc/images/forum_hp.gif" alt="" title="{$hp}" class="icon" /></a>');
 define('_emailicon_forum', '<a href=\\"mailto:"+d+"\\"><img src=\\"../inc/images/forum_email.gif\\" title="+d+" class=\\"icon\\" /></a>');
 define('_forum_pn_preview', '<img src="../inc/images/forum_pn.gif" alt="" class="icon" style="cursor:pointer" />');
 define('_forum_zitat_preview', '<img src="../inc/images/zitat.gif" alt="" class="icon" style="cursor:pointer" />');

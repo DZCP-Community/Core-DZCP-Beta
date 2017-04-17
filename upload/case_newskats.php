@@ -22,11 +22,11 @@ if(defined('_Upload')) {
         else
             $action = "?action=newskats&amp;do=upload";
 
-        $infos = show(_upload_usergallery_info, array("userpicsize" => settings::get('upicsize')));
-        $index = show($dir."/upload", array("uploadhead" => _upload_newskats_head,
+        $infos = show(_upload_usergallery_info, ["userpicsize" => settings::get('upicsize')]);
+        $index = show($dir."/upload", ["uploadhead" => _upload_newskats_head,
                                             "name" => "file",
                                             "action" => $action,
-                                            "infos" => "-"));
+                                            "infos" => "-"]);
 
         if($do == "upload") {
             $tmpname = $_FILES['file']['tmp_name'];

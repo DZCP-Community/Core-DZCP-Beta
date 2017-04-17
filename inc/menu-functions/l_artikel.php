@@ -24,18 +24,18 @@ function l_artikel() {
     $l_articles = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qry as $get) {
-            $getkat = common::$sql['default']->fetch("SELECT `kategorie` FROM `{prefix_newskat}` WHERE `id` = ?;",array($get['kat']));
+            $getkat = common::$sql['default']->fetch("SELECT `kategorie` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get['kat']]);
             $text = strip_tags(stringParser::decode($get['text']));
             $info = !settings::get('allowhover') == 1 ? '' : 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['titel'])).'\', \''._datum.';'.
                     _autor.';'._news_admin_kat.';'._comments_head.'\', \''.date("d.m.Y H:i", $get['datum'])._uhr.';'.
                 common::fabo_autor($get['autor']).';'.common::jsconvert(stringParser::decode($getkat['kategorie'])).';'.
-                common::cnt('{prefix_acomments}',"WHERE `artikel` = ?","id",array($get['id'])).'\')" onmouseout="DZCP.hideInfo()"';
+                common::cnt('{prefix_acomments}',"WHERE `artikel` = ?","id", [$get['id']]).'\')" onmouseout="DZCP.hideInfo()"';
             
-            $l_articles .= show("menu/last_artikel", array("id" => $get['id'],
+            $l_articles .= show("menu/last_artikel", ["id" => $get['id'],
                                                            "titel" => common::cut(stringParser::decode($get['titel']),settings::get('l_lartikel')),
                                                            "text" => common::cut(bbcode::parse_html($text),260),
                                                            "datum" => date("d.m.Y", $get['datum']),
-                                                           "info" => $info));
+                                                           "info" => $info]);
         }
     }
 

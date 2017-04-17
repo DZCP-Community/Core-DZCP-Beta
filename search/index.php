@@ -218,44 +218,44 @@ default:
                          ORDER BY date DESC");
             if(common::$sql['default']->rowCount())
             {
-              $lpost = show(_forum_thread_lpost, array("nick" => common::autor($getlp['reg'], '', $getlp['nick'], stringParser::decode($getlp['email'])),
-                                                       "date" => date("d.m.y H:i", $getlp['date'])._uhr));
+              $lpost = show(_forum_thread_lpost, ["nick" => common::autor($getlp['reg'], '', $getlp['nick'], stringParser::decode($getlp['email'])),
+                                                       "date" => date("d.m.y H:i", $getlp['date'])._uhr]);
               $lpdate = $getlp['date'];
             } else {
               $lpost = "-";
               $lpdate = "";
             }
 
-            $threadlink = show(_forum_thread_search_link, array("topic" => common::cut(stringParser::decode($get['topic']),settings::get('l_forumtopic')),
+            $threadlink = show(_forum_thread_search_link, ["topic" => common::cut(stringParser::decode($get['topic']),settings::get('l_forumtopic')),
                                                                 "id" => $get['id'],
                                                                 "sticky" => $sticky,
                                                                 "hl" => $_GET['search'],
                                                                 "closed" => $closed,
                                                                 "lpid" => $cntpage+1,
-                                                                "page" => $pagenr));
+                                                                "page" => $pagenr]);
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
 
-            $results .= show($dir."/forum_search_results", array("new" => common::check_new($get['lp']),
+            $results .= show($dir."/forum_search_results", ["new" => common::check_new($get['lp']),
                                                                  "topic" => $threadlink,
                                                                  "subtopic" => common::cut(stringParser::decode($get['subtopic']),settings::get('l_forumsubtopic')),
                                                                  "hits" => $get['hits'],
                                                                  "replys" => common::cnt("{prefix_forumposts}", " WHERE sid = '".$get['id']."'"),
                                                                  "class" => $class,
                                                                  "lpost" => $lpost,
-                                                                 "autor" => common::autor($get['t_reg'], '', $get['t_nick'], $get['t_email'])));
+                                                                 "autor" => common::autor($get['t_reg'], '', $get['t_nick'], $get['t_email'])]);
           }
         }
 
         $nav = common::nav($entrys,$maxfsearch,$getstr);
-        $show = show($dir."/forum_search_show", array("head" => _forum_search_results,
+        $show = show($dir."/forum_search_show", ["head" => _forum_search_results,
                                                       "autor" => _autor,
                                                       "thread" => _forum_thread,
                                                       "lpost" => _forum_lpost,
                                                       "nav" => $nav,
                                                       "results" => $results,
                                                       "replys" => _forum_replys,
-                                                      "hits" => _hits));
+                                                      "hits" => _hits]);
     }
   }
 //Diverse Abfragen
@@ -273,7 +273,7 @@ default:
     $all_board = 'checked="checked"';
   }
 
-  $index = show($dir."/search", array("head" => /*_search_head*/_forum_search_head,
+  $index = show($dir."/search", ["head" => /*_search_head*/_forum_search_head,
                                       "searchwords" => _search_word,
                                       "board" => _forum,
                                       "fkats" => $fkats,
@@ -301,7 +301,7 @@ default:
                                       "all" => _search_forum_all,
                                       "full" => _search_type_full,
                                       "intitle" => _search_type_title,
-                                      ));
+  ]);
 break;
 case 'site';
     $qry = common::$sql['default']->select("SELECT * FROM `{prefix_news}`
@@ -309,11 +309,11 @@ case 'site';
              ORDER BY titel ASC");
     foreach($qry as $get) {
     $class = ($color % 2) ? "contentMainFirst" : "contentMainSecond"; $color++;
-    $shownews .= show($dir."/search_show", array("class" => $class,
+    $shownews .= show($dir."/search_show", ["class" => $class,
                                                "type" => 'news',
                                                "href" => '../news/index.php?action=show&amp;id='.$get['id'],
                                                "titel" => stringParser::decode($get['titel'])
-                                              ));
+    ]);
   }
 
   unset($class);
@@ -322,12 +322,11 @@ case 'site';
              ORDER BY titel ASC");
     foreach($qry as $get) {
     $class = ($color % 2) ? "contentMainFirst" : "contentMainSecond"; $color++;
-    $showartikel .= show($dir."/search_show", array(
+    $showartikel .= show($dir."/search_show", [
                                                "href" => '../artikel/index.php?action=show&amp;id='.$get['id'],
                                                "class" => $class,
                                                "type" => 'artikel',
-                                               "titel" => stringParser::decode($get['titel'])
-                                              ));
+                                               "titel" => stringParser::decode($get['titel'])]);
   }
 
   unset($class);
@@ -336,23 +335,23 @@ case 'site';
              ORDER BY titel ASC");
   foreach($qry as $get) {
     $class = ($color % 2) ? "contentMainFirst" : "contentMainSecond"; $color++;
-    $showsites .= show($dir."/search_show", array(
+    $showsites .= show($dir."/search_show", [
                                                "href" => '../sites/?show='.$get['id'],
                                                "class" => $class,
                                                "type" => 'site',
                                                "titel" => stringParser::decode($get['titel'])
-                                              ));
+    ]);
   }
 
   if(!empty($shownews)) $shownews = '<tr><td class="contentMainTop"><b>'._news.'</b></td></tr>'.$shownews;
   if(!empty($showartikel)) $showartikel = '<tr><td class="contentMainTop"><b>'._artikel.'</b></td></tr>'.$showartikel;
   if(!empty($showsites)) $showsites = '<tr><td class="contentMainTop"><b>'._search_sites.'</b></td></tr>'.$showsites;
 
-  $index = show($dir."/search_global", array("shownews" => $shownews,
+  $index = show($dir."/search_global", ["shownews" => $shownews,
                                              "showartikel" => $showartikel,
                                              "showsites" => $showsites,
                                              "results" => _search_results,
-                                  ));
+  ]);
 break;
 endswitch;
 

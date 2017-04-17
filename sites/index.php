@@ -53,12 +53,12 @@ default:
                             . "FROM `{prefix_sites}` AS `s1` "
                             . "LEFT JOIN `{prefix_navi}` AS `s2` "
                             . "ON s1.`id` = s2.`editor` "
-                            . "WHERE s1.`id` = ?;",array(intval($_GET['show'])));
+                            . "WHERE s1.`id` = ?;", [intval($_GET['show'])]);
     if(common::$sql['default']->rowCount()) {
         $navi_access = false;
         $navi = common::$sql['default']->fetch("SELECT s2.level FROM `{prefix_navi}` AS `s1` "
                 . "LEFT JOIN `{prefix_navi_kats}` AS `s2` ON s1.`kat` = s2.`placeholder` "
-                . "WHERE s1.`editor` = ?;",array($get['id']));
+                . "WHERE s1.`editor` = ?;", [$get['id']]);
         if(common::$sql['default']->rowCount()) {
             $navi_access = !(common::$chkMe >= $navi['level'] || common::admin_perms(common::$userid));
         }
@@ -73,7 +73,7 @@ default:
                 $inhalt = phpParser(stringParser::decode($get['text']),$get['php']);
             }
 
-            $index = show($dir."/sites", array("titel" => stringParser::decode($get['titel']), "inhalt" => $inhalt));
+            $index = show($dir."/sites", ["titel" => stringParser::decode($get['titel']), "inhalt" => $inhalt]);
         }
     } else {
         $index = common::error(_sites_not_available,1);
@@ -87,7 +87,7 @@ case 'preview';
         $inhalt = phpParser(stringParser::decode($_POST['inhalt']),(isset($_POST['php']) && common::permission('phpexecute')));
     }
 
-    $index = show($dir."/sites", array("titel" => stringParser::decode($_POST['titel']), "inhalt" => $inhalt));
+    $index = show($dir."/sites", ["titel" => stringParser::decode($_POST['titel']), "inhalt" => $inhalt]);
     exit(utf8_encode('<table class="mainContent" cellspacing="1"'.$index.'</table>'));
 break;
 endswitch;

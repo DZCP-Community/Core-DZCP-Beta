@@ -587,7 +587,7 @@ define('_akt_version', 'DZCP Version');
 define('_forum_searchlink', '- <a href="../search/">Forensuche</a> -');
 define('_msg_deleted', 'Die Nachricht wurde erfolgreich gel&ouml;scht!');
 define('_info_reg_valid', 'Du hast dich erfolgreich registriert!<br />Dein Passwort wurde dir an die Emailadresse [email] gesendet.');
-define('_edited_by', '<br /><br /><i>zuletzt editiert von [autor] am [time]</i>');
+define('_edited_by', '<br /><br /><i>zuletzt editiert von {$autor} am {$time} &nbsp;Uhr</i>');
 define('_linkus_empty_text', 'Du musst eine Banner-URL angeben!');
 define('_empty_news_title', 'Du musst einen Newstitel angeben!');
 define('_member_admin_votes', 'Interne Umfragen sehen');

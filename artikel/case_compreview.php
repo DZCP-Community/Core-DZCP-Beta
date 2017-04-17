@@ -17,7 +17,7 @@
 
 if(defined('_Artikel')) {
     if($do == 'edit') {
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_acomments}` WHERE `id` = ?;",array(intval($_GET['cid'])));
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_acomments}` WHERE `id` = ?;", [intval($_GET['cid'])]);
 
         $get_id = '?';
         $get_userid = $get['reg'];
@@ -29,10 +29,14 @@ if(defined('_Artikel')) {
             $pUId = $get['reg'];
         }
 
-        $editedby = show(_edited_by, array("autor" => common::cleanautor(common::$userid),
-                                           "time" => date("d.m.Y H:i", time())._uhr));
+        //-> Editby Text
+        $smarty->caching = false;
+        $smarty->assign('autor',common::cleanautor(common::$userid));
+        $smarty->assign('time',date("d.m.Y H:i", time()));
+        $editedby = $smarty->fetch('string:'._edited_by);
+        $smarty->clearAllAssign();
     } else {
-        $get_id = common::cnt("{prefix_acomments}", " WHERE `artikel` = ?;","id",array(intval($_GET['id'])))+1;
+        $get_id = common::cnt("{prefix_acomments}", " WHERE `artikel` = ?;","id", [intval($_GET['id'])])+1;
         $get_userid = common::$userid;
         $get_date = time();
         $regCheck = false;
@@ -49,11 +53,18 @@ if(defined('_Artikel')) {
         $get_email = isset($_POST['email']) ? $_POST['email'] : '';
         $get_nick = isset($_POST['nick']) ? $_POST['nick'] : '';
 
-        $hp = $get_hp ? show(_hpicon_forum, array("hp" => common::links($get_hp))) : "";
+        //-> Homepage Link
+        $hp = "";
+        if (!empty($get_hp)) {
+            $smarty->caching = false;
+            $smarty->assign('hp',common::links($get_hp));
+            $hp = $smarty->fetch('string:'._hpicon_forum);
+            $smarty->clearAllAssign();
+        } unset($get_hp);
+
         $email = $get_email ? '<br />'.common::CryptMailto($get_email,_emailicon_forum) : "";
         $onoff = ""; $avatar = "";
-
-
+        
         $smarty->caching = true;
         $smarty->assign('nick',stringParser::decode($get_nick));
         $smarty->assign('email',$get_email);
@@ -66,13 +77,13 @@ if(defined('_Artikel')) {
         $nick = common::cleanautor($get_userid);
     }
 
-    $titel = show(_eintrag_titel, array("postid" => $get_id,
+    $titel = show(_eintrag_titel, ["postid" => $get_id,
                                         "datum" => date("d.m.Y", $get_date),
                                         "zeit" => date("H:i", $get_date)._uhr,
                                         "edit" => '',
-                                        "delete" => ''));
+                                        "delete" => '']);
 
-    $index = show("page/comments_show", array("titel" => $titel,
+    $index = show("page/comments_show", ["titel" => $titel,
                                               "comment" => bbcode::parse_html($_POST['comment']),
                                               "nick" => $nick,
                                               "editby" => bbcode::parse_html($editedby),
@@ -81,7 +92,7 @@ if(defined('_Artikel')) {
                                               "avatar" => common::useravatar($get_userid),
                                               "onoff" => $onoff,
                                               "rank" => common::getrank($get_userid),
-                                              "ip" => common::$userip._only_for_admins));
+                                              "ip" => common::$userip._only_for_admins]);
 
     common::update_user_status_preview();
     header("Content-Type: text/html; charset=utf-8");

@@ -21,7 +21,7 @@
  **/
 function languages() {
     $lang="";
-    $files = common::get_files(basePath.'/inc/lang/languages/',false,true,array('php'));
+    $files = common::get_files(basePath.'/inc/lang/languages/',false,true, ['php']);
     for($i=0;$i<=count($files)-1;$i++) {
         $file = str_replace('.php','',$files[$i]);
         $upFile = strtoupper(substr($file,0,1)).substr($file,1);

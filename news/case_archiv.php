@@ -26,13 +26,13 @@ if(defined('_News')) {
     $qry = common::$sql['default']->select("SELECT `id`,`titel`,`autor`,`datum`,`kat`,`text`
                    FROM `{prefix_news}`
                    ".$intern."
-                   ".common::orderby_sql(array("datum","autor","titel","kat"), 'ORDER BY datum DESC')."
+                   ".common::orderby_sql(["datum","autor","titel","kat"], 'ORDER BY datum DESC')."
                    LIMIT ".($page - 1)*settings::get('m_archivnews').",".settings::get('m_archivnews').";");
     $entrys = common::cnt('{prefix_news}', " ".$intern);
 
     //News Loop
     foreach($qry as $get) {
-        $getk = common::$sql['default']->fetch("SELECT `kategorie` FROM `{prefix_newskat}` WHERE `id` = ?;",array($get['kat']));
+        $getk = common::$sql['default']->fetch("SELECT `kategorie` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get['kat']]);
 
         //News Link
         $smarty->caching = false;

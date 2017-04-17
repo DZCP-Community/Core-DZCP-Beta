@@ -613,7 +613,7 @@ define('_forum_searchlink' , '- <a href="../search/">Board search</a> -');
 define('_msg_deleted' , 'The message was successfully deleted!');
 define('_info_reg_valid' , 'You successfully registered on this page!<br />
 Your password were send to your e-mail adress [email]');
-define('_edited_by' , '<br /><br /><i>last edited by [autor] at [time]</i>');
+define('_edited_by' , '<br /><br /><i>last edited by {$autor} at {$time}&nbsp;h</i>');
 define('_linkus_empty_text' , 'You have to indicate an url of the banner!');
 define('_empty_news_title' , 'You have to indicate a news headline!');
 define('_member_admin_votes' , 'View internal votes');

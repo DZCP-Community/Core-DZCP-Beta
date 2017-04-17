@@ -7,7 +7,7 @@
 define('DZCPApi', true);
 
 //-> Neue PHP Liberty's oder Classen einbinden
-if($libs_files = common::get_files(basePathAPI.'/libs/',false,true,array('php'))) {
+if($libs_files = common::get_files(basePathAPI.'/libs/',false,true, ['php'])) {
     foreach($libs_files AS $func)
     { require_once(basePathAPI.'/libs/'.$func); }
     unset($libs_files,$func);

@@ -57,7 +57,7 @@ require_once(basePath.'/inc/sfs.php');
 class common {
     //Public
     public static $database = NULL;
-    public static $sql = array();
+    public static $sql = [];
     public static $securimage = NULL;
     public static $isSpider = false;
     public static $httphost = NULL;
@@ -78,9 +78,12 @@ class common {
     public static $chkMe = 0;
 
     //Private
-    private static $menu_index = array();
+    private static $menu_index = [];
 
     //Functions
+    /**
+     * common constructor.
+     */
     public function __construct()
     {
         //->Set default timezone
@@ -180,7 +183,7 @@ class common {
 
         //-> Laden der Menus
         if(!is_api) {
-            if ($menu_functions_index = self::get_files(basePath . '/inc/menu-functions', false, true, array('php'))) {
+            if ($menu_functions_index = self::get_files(basePath . '/inc/menu-functions', false, true, ['php'])) {
                 foreach ($menu_functions_index as $mfphp) {
                     $file = str_replace('.php', '', $mfphp);
                     if ($file != 'navi') {
@@ -207,8 +210,8 @@ class common {
         self::$smarty->setTemplateDir(basePath.'/inc/_templates_')
             ->setCompileDir(basePath.'/inc/_templates_c_')
             ->setCacheDir(basePath.'/inc/_cache_')
-            ->setPluginsDir(array(basePath.'/inc/plugins',
-                basePath.'/vendor/smarty/libs/plugins'))
+            ->setPluginsDir([basePath.'/inc/plugins',
+                basePath.'/vendor/smarty/libs/plugins'])
             ->setConfigDir(basePath.'/inc/configs');
 
         if($folders = self::get_files(basePath.'/inc/_templates_',true)) {
@@ -222,11 +225,11 @@ class common {
         //-> Auslesen der Cookies und automatisch anmelden
         if(!is_api && cookie::get('id') != false && cookie::get('pkey') != false && empty($_SESSION['id']) && !self::checkme()) {
             //-> Permanent Key aus der Datenbank suchen
-            $get_almgr = self::$sql['default']->fetch("SELECT `id`,`uid`,`update`,`expires` FROM `{prefix_autologin}` WHERE `pkey` = ? AND `uid` = ?;",array(cookie::get('pkey'), cookie::get('id')));
+            $get_almgr = self::$sql['default']->fetch("SELECT `id`,`uid`,`update`,`expires` FROM `{prefix_autologin}` WHERE `pkey` = ? AND `uid` = ?;", [cookie::get('pkey'), cookie::get('id')]);
             if(self::$sql['default']->rowCount()) {
                 if((!$get_almgr['update'] || (time() < ($get_almgr['update'] + $get_almgr['expires'])))) {
                     //-> User aus der Datenbank suchen
-                    $get = self::$sql['default']->fetch("SELECT `id`,`user`,`nick`,`pwd`,`email`,`level`,`time` FROM `{prefix_users}` WHERE `id` = ? AND `level` != 0;",array(cookie::get('id')));
+                    $get = self::$sql['default']->fetch("SELECT `id`,`user`,`nick`,`pwd`,`email`,`level`,`time` FROM `{prefix_users}` WHERE `id` = ? AND `level` != 0;", [cookie::get('id')]);
                     if(self::$sql['default']->rowCount()) {
                         //-> Generiere neuen permanent-key
                         $permanent_key = md5(self::mkpwd(8));
@@ -235,7 +238,7 @@ class common {
 
                         //Update Autologin
                         self::$sql['default']->update("UPDATE `{prefix_autologin}` SET `ssid` = ?, `pkey` = ?, `ip` = ?, `host` = ?, `update` = ?, `expires` = ? WHERE `id` = ?;",
-                            array(session_id(),$permanent_key,self::$userip,gethostbyaddr(self::$userip),time(),autologin_expire,$get_almgr['id']));
+                            [session_id(),$permanent_key,self::$userip,gethostbyaddr(self::$userip),time(),autologin_expire,$get_almgr['id']]);
 
                         //-> Schreibe Werte in die Server Sessions
                         $_SESSION['id']         = $get['id'];
@@ -253,14 +256,14 @@ class common {
 
                         //-> Aktualisiere Datenbank
                         self::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ip` = ? WHERE `id` = ?;",
-                            array(session_id(),self::$userip,$get['id']));
+                            [session_id(),self::$userip,$get['id']]);
 
                         //-> Aktualisiere die User-Statistik
-                        self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `logins` = logins+1 WHERE `user` = ?;",array($get['id']));
+                        self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `logins` = logins+1 WHERE `user` = ?;", [$get['id']]);
 
                         //-> Aktualisiere Ip-Count Tabelle
-                        foreach(self::$sql['default']->select("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ip` = ? AND `uid` = 0;",array(self::$userip)) as $get_ci) {
-                            self::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ? WHERE `id` = ?;",array($get['id'],$get_ci['id']));
+                        foreach(self::$sql['default']->select("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ip` = ? AND `uid` = 0;", [self::$userip]) as $get_ci) {
+                            self::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ? WHERE `id` = ?;", [$get['id'],$get_ci['id']]);
                         }
 
                         unset($get,$permanent_key,$get_almgr,$get_ci); //Clear Mem
@@ -274,7 +277,7 @@ class common {
                         $_SESSION['akl_id']    = 0;
                     }
                 } else {
-                    self::$sql['default']->delete("DELETE FROM `{prefix_autologin}` WHERE `id` = ?;",array($get_almgr['id']));
+                    self::$sql['default']->delete("DELETE FROM `{prefix_autologin}` WHERE `id` = ?;", [$get_almgr['id']]);
                     self::dzcp_session_destroy();
                 }
             }
@@ -320,45 +323,45 @@ class common {
          */
         if(!is_api && session_id()) {
             $userdns = self::DNSToIp(self::$userip);
-            if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `update` <= ? AND `sessid` = ?;",array(time(),session_id()))) {
+            if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `update` <= ? AND `sessid` = ?;", [time(),session_id()])) {
                 $bot = self::SearchBotDetect();
                 self::$sql['default']->update("UPDATE `{prefix_iptodns}` SET `time` = ?, `update` = ?, `ip` = ?, `agent` = ?, `dns` = ?, `bot` = ?, `bot_name` = ?, `bot_fullname` = ? WHERE `sessid` = ?;",
-                    array((time()+10*60),(time()+60),self::$userip,stringParser::encode(self::$UserAgent),stringParser::encode($userdns),($bot['bot'] ? 1 : 0),stringParser::encode($bot['name']),stringParser::encode($bot['fullname']),session_id()));
+                    [(time()+10*60),(time()+60),self::$userip,stringParser::encode(self::$UserAgent),stringParser::encode($userdns),($bot['bot'] ? 1 : 0),stringParser::encode($bot['name']),stringParser::encode($bot['fullname']),session_id()]);
                 unset($bot);
-            } else if(!self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ?;",array(session_id()))) {
+            } else if(!self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ?;", [session_id()])) {
                 $bot = self::SearchBotDetect();
                 self::$sql['default']->insert("INSERT INTO `{prefix_iptodns}` SET `sessid` = ?, `time` = ?, `ip` = ?, `agent` = ?, `dns` = ?, `bot` = ?, `bot_name` = ?, `bot_fullname` = ?;",
-                    array(session_id(),(time()+10*60),self::$userip,stringParser::encode(self::$UserAgent),stringParser::encode($userdns),($bot['bot'] ? 1 : 0),stringParser::encode($bot['name']),stringParser::encode($bot['fullname'])));
+                    [session_id(),(time()+10*60),self::$userip,stringParser::encode(self::$UserAgent),stringParser::encode($userdns),($bot['bot'] ? 1 : 0),stringParser::encode($bot['name']),stringParser::encode($bot['fullname'])]);
                 unset($bot);
             }
 
             //-> Cleanup DNS DB
-            $qryDNS = self::$sql['default']->select("SELECT `id`,`ip` FROM `{prefix_iptodns}` WHERE `time` <= ?;",array(time()));
+            $qryDNS = self::$sql['default']->select("SELECT `id`,`ip` FROM `{prefix_iptodns}` WHERE `time` <= ?;", [time()]);
             if(self::$sql['default']->rowCount()) {
                 foreach($qryDNS as $getDNS) {
-                    self::$sql['default']->delete("DELETE FROM `{prefix_iptodns}` WHERE `id` = ?;",array($getDNS['id']));
-                    self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `ip` = ?;",array($getDNS['ip']));
+                    self::$sql['default']->delete("DELETE FROM `{prefix_iptodns}` WHERE `id` = ?;", [$getDNS['id']]);
+                    self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `ip` = ?;", [$getDNS['ip']]);
                 } unset($getDNS);
             } unset($qryDNS);
 
             /*
              * Pruft ob mehrere Session IDs von der gleichen DNS kommen, sollte der Useragent keinen Bot Tag enthalten, wird ein Spambot angenommen.
              */
-            $get_sb_array = self::$sql['default']->select("SELECT `id`,`ip`,`bot`,`agent` FROM `{prefix_iptodns}` WHERE `dns` LIKE ?;",array(stringParser::encode($userdns)));
+            $get_sb_array = self::$sql['default']->select("SELECT `id`,`ip`,`bot`,`agent` FROM `{prefix_iptodns}` WHERE `dns` LIKE ?;", [stringParser::encode($userdns)]);
             if(self::$sql['default']->rowCount() >= 3 && !self::validateIpV4Range(self::$userip, '[192].[168].[0-255].[0-255]') &&
                 !self::validateIpV4Range(self::$userip, '[127].[0].[0-255].[0-255]') &&
                 !self::validateIpV4Range(self::$userip, '[10].[0-255].[0-255].[0-255]') &&
                 !self::validateIpV4Range(self::$userip, '[172].[16-31].[0-255].[0-255]')) {
                 foreach ($get_sb_array as $get_sb) {
                     if (!$get_sb['bot'] && !self::isSpider(stringParser::decode($get_sb['agent']))) {
-                        if (!self::$sql['default']->rows("SELECT `id` FROM `{prefix_ipban}` WHERE `ip` = ? LIMIT 1;", array(self::$userip))) {
-                            $data_array = array();
+                        if (!self::$sql['default']->rows("SELECT `id` FROM `{prefix_ipban}` WHERE `ip` = ? LIMIT 1;", [self::$userip])) {
+                            $data_array = [];
                             $data_array['confidence'] = '';
                             $data_array['frequency'] = '';
                             $data_array['lastseen'] = '';
                             $data_array['banned_msg'] = stringParser::encode('SpamBot detected by System * No BotAgent *');
                             $data_array['agent'] = $get_sb['agent'];
-                            self::$sql['default']->insert("INSERT INTO `{prefix_ipban}` SET `time` = ?, `ip` = ?, `data` = ?, `typ` = 3;", array(time(), $get_sb['ip'], serialize($data_array)));
+                            self::$sql['default']->insert("INSERT INTO `{prefix_ipban}` SET `time` = ?, `ip` = ?, `data` = ?, `typ` = 3;", [time(), $get_sb['ip'], serialize($data_array)]);
                             self::check_ip(); // IP Prufung * No IPV6 Support *
                             unset($data_array);
                         }
@@ -400,7 +403,7 @@ class common {
 
         //-> User Hits und Lastvisit aktualisieren
         if(self::$userid >= 1 && !is_ajax && !is_thumbgen && !is_api && isset($_SESSION['lastvisit'])) {
-            self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `hits` = (hits+1), `lastvisit` = ? WHERE `user` = ?;",array(intval($_SESSION['lastvisit']),intval(self::$userid)));
+            self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `hits` = (hits+1), `lastvisit` = ? WHERE `user` = ?;", [intval($_SESSION['lastvisit']),intval(self::$userid)]);
         }
     }
 
@@ -420,23 +423,6 @@ class common {
     }
 
     /**
-     * Startseite fur einen User abrufen
-     * @return string
-     */
-    public static function startpage() {
-        $startpageID = (self::$userid >= 1 ? self::data('startpage') : 0);
-        if(!$startpageID) { return 'user/?action=userlobby'; }
-        $get = self::$sql['default']->fetch("SELECT `url`,`level` FROM `{prefix_startpage}` WHERE `id` = ? LIMIT 1",array($startpageID));
-        if(!self::$sql['default']->rowCount()) {
-            self::$sql['default']->update("UPDATE `{prefix_users}` SET `startpage` = 0 WHERE `id` = ?;",array(self::$userid));
-            return 'user/?action=userlobby';
-        }
-
-        $page = $get['level'] <= self::$chkMe ? stringParser::decode($get['url']) : 'user/?action=userlobby';
-        return (!empty($page) ? $page : 'news/');
-    }
-
-    /**
      * Nickausgabe mit Profillink oder Emaillink (reg/nicht reg)
      * @param int $uid
      * @param string $class
@@ -450,21 +436,21 @@ class common {
         $uid = (!$uid ? self::$userid : $uid);
         if(!$uid) return '* No UserID! *';
         if(!dbc_index::issetIndex('user_'.intval($uid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;",array(intval($uid)));
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($uid)]);
             if(self::$sql['default']->rowCount()) {
                 dbc_index::setIndex('user_'.$get['id'], $get);
             } else {
                 $nickname = (!empty($cut)) ? self::cut(stringParser::decode($nick), $cut) : stringParser::decode($nick);
-                return self::CryptMailto($email,_user_link_noreg,array("nick" => $nickname, "class" => $class));
+                return self::CryptMailto($email,_user_link_noreg, ["nick" => $nickname, "class" => $class]);
             }
         }
 
         $nickname = (!empty($cut)) ? self::cut(stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick')), $cut) :stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick'));
-        return show(_user_link, array("id" => $uid,
+        return show(_user_link, ["id" => $uid,
             "country" => self::flag(dbc_index::getIndexKey('user_'.intval($uid), 'country')),
             "class" => $class,
             "get" => $add,
-            "nick" => $nickname));
+            "nick" => $nickname]);
     }
 
     /**
@@ -476,24 +462,24 @@ class common {
      */
     public static function autorcolerd(int $uid=0, $class="", $cut="") {
         if(!dbc_index::issetIndex('user_'.intval($uid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;",array(intval($uid)));
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($uid)]);
             if(self::$sql['default']->rowCount()) {
                 dbc_index::setIndex('user_'.$get['id'], $get);
             }
         }
 
         $position = dbc_index::getIndexKey('user_'.intval($uid), 'position');
-        $get = self::$sql['default']->fetch("SELECT `id`,`color` FROM `{prefix_positions}` WHERE `id` = ?;",array($position));
+        $get = self::$sql['default']->fetch("SELECT `id`,`color` FROM `{prefix_positions}` WHERE `id` = ?;", [$position]);
         if(!$position || !self::$sql['default']->rowCount()) {
             return self::autor($uid,$class,'','',$cut);
         }
 
         $nickname = (!empty($cut)) ? self::cut(stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick')), $cut) :stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick'));
-        return show(_user_link_colerd, array("id" => $uid,
+        return show(_user_link_colerd, ["id" => $uid,
             "country" => self::flag(dbc_index::getIndexKey('user_'.intval($uid), 'country')),
             "class" => $class,
             "color" => stringParser::decode($get['color']),
-            "nick" => $nickname));
+            "nick" => $nickname]);
     }
 
     /**
@@ -505,16 +491,16 @@ class common {
      */
     public static function cleanautor(int $uid=0, $class="", $nick="", $email="") {
         if(!dbc_index::issetIndex('user_'.intval($uid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;",array(intval($uid)));
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($uid)]);
             if(self::$sql['default']->rowCount()) {
                 dbc_index::setIndex('user_' . $get['id'], $get);
             } else {
-                return self::CryptMailto($email, _user_link_noreg, array("nick" => stringParser::decode($nick), "class" => $class));
+                return self::CryptMailto($email, _user_link_noreg, ["nick" => stringParser::decode($nick), "class" => $class]);
             }
         }
 
-        return show(_user_link_preview, array("id" => $uid, "country" => self::flag(dbc_index::getIndexKey('user_'.intval($uid), 'country')),
-            "class" => $class, "nick" =>stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick'))));
+        return show(_user_link_preview, ["id" => $uid, "country" => self::flag(dbc_index::getIndexKey('user_'.intval($uid), 'country')),
+            "class" => $class, "nick" =>stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick'))]);
     }
 
     /**
@@ -523,7 +509,7 @@ class common {
      */
     public static function rawautor(int $uid=0) {
         if(!dbc_index::issetIndex('user_'.intval($uid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;",array(intval($uid)));
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($uid)]);
             if(self::$sql['default']->rowCount()) {
                 dbc_index::setIndex('user_' . $get['id'], $get);
             } else {
@@ -543,13 +529,13 @@ class common {
      */
     public static function fabo_autor(int $uid,string $tpl=_user_link_fabo) {
         if(!dbc_index::issetIndex('user_'.intval($uid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;",array(intval($uid)));
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($uid)]);
             if(self::$sql['default']->rowCount()) {
                 dbc_index::setIndex('user_' . $get['id'], $get);
-                return show($tpl, array("id" => $uid, "nick" => stringParser::decode($get['nick'])));
+                return show($tpl, ["id" => $uid, "nick" => stringParser::decode($get['nick'])]);
             }
         } else {
-            return show($tpl, array("id" => $uid, "nick" =>stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick'))));
+            return show($tpl, ["id" => $uid, "nick" =>stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick'))]);
         }
 
         return '';
@@ -561,7 +547,7 @@ class common {
      * @return mixed
      */
     public static function jsconvert(string $txt)
-    { return str_replace(array("'","&#039;","\"","\r","\n"),array("\'","\'","&quot;","",""),$txt); }
+    { return str_replace(["'","&#039;","\"","\r","\n"], ["\'","\'","&quot;","",""],$txt); }
 
     /**
      * interner Forencheck
@@ -571,15 +557,15 @@ class common {
     public static function forum_intern(int $id=0) {
         if(!self::$chkMe) {
             $fget = self::$sql['default']->fetch("SELECT s1.`intern`,s2.`id` FROM `{prefix_forumkats}` AS `s1` LEFT JOIN `{prefix_forumsubkats}` AS `s2` ON s2.`sid` = s1.`id` WHERE s2.`id` = ?;",
-                array(intval($id)));
+                [intval($id)]);
             return (!$fget['intern']);
         } else if(self::$chkMe == 4) {
             return true;
         } else {
             $team = self::$sql['default']->rows("SELECT s1.`id` FROM `{prefix_f_access}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi` WHERE s2.`user` = ? AND s2.`posi` != 0 AND s1.`forum` = ?;",
-                array(intval(self::$userid),intval($id)));
+                [intval(self::$userid),intval($id)]);
             $user = self::$sql['default']->rows("SELECT `id` FROM `{prefix_f_access}` WHERE `user` = ? AND `forum` = ?;",
-                array(intval(self::$userid),intval($id)));
+                [intval(self::$userid),intval($id)]);
             return ($user || $team);
         }
     }
@@ -593,7 +579,7 @@ class common {
     public static function data(string $what='id',int $tid=0) {
         if (!$tid) { $tid = self::$userid; }
         if(!dbc_index::issetIndex('user_'.$tid)) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;",array(intval($tid)));
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($tid)]);
             dbc_index::setIndex('user_'.$tid, $get);
         }
 
@@ -627,7 +613,7 @@ class common {
      * @return mixed|string
      */
     public static function error(string $error,int $back=1) {
-        return show("errors/error", array("error" => $error, "back" => $back, "fehler" => _error, "backtopage" => _error_back));
+        return show("errors/error", ["error" => $error, "back" => $back, "fehler" => _error, "backtopage" => _error_back]);
     }
 
     /**
@@ -636,9 +622,9 @@ class common {
      * @return bool
      */
     public static function check_email(string $email) {
-        $rules = array('email' => 'required|valid_email');
-        $filters = array('email' => 'trim|sanitize_email');
-        return self::$gump->validate(self::$gump->filter(array('email'=>$email), $filters), $rules) === TRUE ? true : false;
+        $rules = ['email' => 'required|valid_email'];
+        $filters = ['email' => 'trim|sanitize_email'];
+        return self::$gump->validate(self::$gump->filter(['email'=>$email], $filters), $rules) === TRUE ? true : false;
     }
 
     /**
@@ -688,7 +674,7 @@ class common {
             $pagination .= "<a href='".$urlpart.$urlpart_extended."page=".$pagina_anterior."' class='pagination'>"._paginator_previous."</a>";
         }
 
-        $pager = array(); $pagination_f = '';
+        $pager = []; $pagination_f = '';
         for ($i = 1; $i <= $total_pages; $i++) {
             if ($i <= ($page - $maximum_links) - $offset_der || $i > ($page + $maximum_links) - $offset_izq) { $pager[$i] = false; continue; }
             $pagination_f .= ($i == $page ? "<div class='pagination active'>" .$i. "</div>" : "<a href='".$urlpart.$urlpart_extended."page=".$i."' class='pagination'>".$i."</a>");
@@ -781,7 +767,7 @@ class common {
     public static function userstats(string $what='id',int $tid=0) {
         if (!$tid) { $tid = self::$userid; }
         if(!dbc_index::issetIndex('userstats_'.$tid)) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_userstats}` WHERE `user` = ?;",array(intval($tid)));
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_userstats}` WHERE `user` = ?;", [intval($tid)]);
             dbc_index::setIndex('userstats_'.$tid, $get);
         }
 
@@ -837,7 +823,7 @@ class common {
      * @param bool $addon
      * @return mixed|string
      */
-    public static function show_runner(string $tpl="", string $dir="",array $array=array(),array $array_lang_constant=array(),array $array_block=array()) {
+    public static function show_runner(string $tpl="", string $dir="", array $array= [], array $array_lang_constant= [], array $array_block= []) {
         if(!empty($tpl) && $tpl != null) {
             $template = basePath."/".$dir.$tpl;
             if(file_exists($template.".html") && is_file($template.".html")) {
@@ -872,7 +858,7 @@ class common {
             unset($pholder);
 
             $tpl = (!self::$chkMe ? preg_replace("|<logged_in>.*?</logged_in>|is", "", $tpl) : preg_replace("|<logged_out>.*?</logged_out>|is", "", $tpl));
-            $tpl = str_ireplace(array("<logged_in>","</logged_in>","<logged_out>","</logged_out>"), '', $tpl);
+            $tpl = str_ireplace(["<logged_in>","</logged_in>","<logged_out>","</logged_out>"], '', $tpl);
 
             if(count($array) >= 1) {
                 foreach($array as $value => $code)
@@ -889,7 +875,7 @@ class common {
      * @return mixed
      */
     public static function pholderreplace(string $pholder) {
-        $search = array('@<script[^>]*?>.*?</script>@si','@<style[^>]*?>.*?</style>@siU','@<[\/\!][^<>]*?>@si','@<![\s\S]*?--[ \t\n\r]*>@');
+        $search = ['@<script[^>]*?>.*?</script>@si','@<style[^>]*?>.*?</style>@siU','@<[\/\!][^<>]*?>@si','@<![\s\S]*?--[ \t\n\r]*>@'];
         $pholder = preg_replace("#<script(.*?)</script>#is","",$pholder);
         $pholder = preg_replace("#<style(.*?)</style>#is","",$pholder);
         $pholder = preg_replace($search, '', $pholder);
@@ -913,12 +899,12 @@ class common {
      * @return mixed|string
      */
     public static function userpic(int $userid,int $width=170,int $height=210) {
-        foreach(array("jpg", "gif", "png") as $endung) {
+        foreach(["jpg", "gif", "png"] as $endung) {
             if (file_exists(basePath . "/inc/images/uploads/userpics/" . $userid . "." . $endung)) {
-                $pic = show(_userpic_link, array("id" => $userid, "endung" => $endung, "width" => $width, "height" => $height));
+                $pic = show(_userpic_link, ["id" => $userid, "endung" => $endung, "width" => $width, "height" => $height]);
                 break;
             } else {
-                $pic = show(_no_userpic, array("width" => $width, "height" => $height));
+                $pic = show(_no_userpic, ["width" => $width, "height" => $height]);
             }
         }
 
@@ -934,12 +920,12 @@ class common {
      */
     public static function useravatar(int $uid=0, int $width=100,int $height=100) {
         $uid = ($uid == 0 ? self::$userid : $uid);
-        foreach(array("jpg", "gif", "png") as $endung) {
+        foreach(["jpg", "gif", "png"] as $endung) {
             if (file_exists(basePath . "/inc/images/uploads/useravatare/" . $uid . "." . $endung)) {
-                $pic = show(_userava_link, array("id" => $uid, "endung" => $endung, "width" => $width, "height" => $height));
+                $pic = show(_userava_link, ["id" => $uid, "endung" => $endung, "width" => $width, "height" => $height]);
                 break;
             } else {
-                $pic = show(_no_userava, array("width" => $width, "height" => $height));
+                $pic = show(_no_userava, ["width" => $width, "height" => $height]);
             }
         }
 
@@ -956,7 +942,7 @@ class common {
         if(dbc_index::issetIndex('vote_results_'.$vid)) {
             $data = dbc_index::getIndex('vote_results_'.$vid);
         } else {
-            $data = self::$sql['default']->select("SELECT `what`,`sel` FROM `{prefix_vote_results}` WHERE `vid` = ?;",array(intval($vid)));
+            $data = self::$sql['default']->select("SELECT `what`,`sel` FROM `{prefix_vote_results}` WHERE `vid` = ?;", [intval($vid)]);
             dbc_index::setIndex('vote_results_'.$vid, $data);
         }
 
@@ -992,7 +978,7 @@ class common {
      * @param array $array_block
      * @return mixed|string
      */
-    public static function show(string $tpl="",array $array=array(),array $array_lang_constant=array(),array $array_block=array()) {
+    public static function show(string $tpl="", array $array= [], array $array_lang_constant= [], array $array_block= []) {
         return self::show_runner($tpl,"inc/_templates_/".self::$tmpdir."/",$array,$array_lang_constant,$array_block);
     }
 
@@ -1003,13 +989,13 @@ class common {
      * @return bool
      */
     public static function ipcheck(string $what,int $time = 0) {
-        $get = self::$sql['default']->fetch("SELECT `time`,`what` FROM `{prefix_ipcheck}` WHERE `what` = ? AND `ip` = ? ORDER BY `time` DESC;",array($what,self::$userip));
+        $get = self::$sql['default']->fetch("SELECT `time`,`what` FROM `{prefix_ipcheck}` WHERE `what` = ? AND `ip` = ? ORDER BY `time` DESC;", [$what,self::$userip]);
         if(self::$sql['default']->rowCount()) {
             if (preg_match("#vid#", $get['what'])) {
                 return true;
             } else {
                 if($get['time'] + $time < time()) {
-                    self::$sql['default']->delete("DELETE FROM `{prefix_ipcheck}` WHERE `what` = ? AND `ip` = ? AND time+?<?;",array($what,self::$userip,$time,time()));
+                    self::$sql['default']->delete("DELETE FROM `{prefix_ipcheck}` WHERE `what` = ? AND `ip` = ? AND time+?<?;", [$what,self::$userip,$time,time()]);
                 }
 
                 return ($get['time'] + $time > time() ? true : false);
@@ -1062,16 +1048,16 @@ class common {
     }
 
     public static function check_msg_emal() {
-        if(!is_ajax && !is_thumbgen && !is_api && !self::$isSpider && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;",array(session_id()))) {
+        if(!is_ajax && !is_thumbgen && !is_api && !self::$isSpider && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;", [session_id()])) {
             $qry = self::$sql['default']->select("SELECT s1.`an`,s1.`page`,s1.`titel`,s1.`sendmail`,s1.`id` AS `mid`, "
                 . "s2.`id`,s2.`nick`,s2.`email`,s2.`pnmail` FROM `{prefix_messages}` AS `s1` "
                 . "LEFT JOIN `{prefix_users}` AS `s2` ON s2.`id` = s1.`an` WHERE `page` = 0 AND `sendmail` = 0;");
             if(self::$sql['default']->rowCount()) {
                 foreach($qry as $get) {
                     if($get['pnmail']) {
-                        self::$sql['default']->update("UPDATE `{prefix_messages}` SET `sendmail` = 1 WHERE `id` = ?;",array($get['mid']));
-                        $subj = show(settings::get('eml_pn_subj'), array("domain" => self::$httphost));
-                        $message = show(self::bbcode_email(settings::get('eml_pn')), array("nick" => stringParser::decode($get['nick']), "domain" => self::$httphost, "titel" => $get['titel'], "clan" => settings::get('clanname')));
+                        self::$sql['default']->update("UPDATE `{prefix_messages}` SET `sendmail` = 1 WHERE `id` = ?;", [$get['mid']]);
+                        $subj = show(settings::get('eml_pn_subj'), ["domain" => self::$httphost]);
+                        $message = show(self::bbcode_email(settings::get('eml_pn')), ["nick" => stringParser::decode($get['nick']), "domain" => self::$httphost, "titel" => $get['titel'], "clan" => settings::get('clanname')]);
                         self::sendMail(stringParser::decode($get['email']), $subj, $message);
                     }
                 }
@@ -1219,19 +1205,19 @@ class common {
         if($squad) {
             if ($profil) {
                 $qry = self::$sql['default']->select("SELECT s1.`posi`,s2.`name` FROM `{prefix_userposis}` AS `s1` LEFT JOIN `{prefix_groups}` AS `s2` ON s1.`group` = s2.`id` "
-                    . "WHERE s1.`user` = ? AND s1.`group` = ? AND s1.`posi` != 0;",array(intval($tid),intval($squad)));
+                    . "WHERE s1.`user` = ? AND s1.`group` = ? AND s1.`posi` != 0;", [intval($tid),intval($squad)]);
             } else {
-                $qry = self::$sql['default']->select("SELECT `posi` FROM `{prefix_userposis}` WHERE `user` = ? AND `group` = ? AND `posi` != 0;",array(intval($tid),intval($squad)));
+                $qry = self::$sql['default']->select("SELECT `posi` FROM `{prefix_userposis}` WHERE `user` = ? AND `group` = ? AND `posi` != 0;", [intval($tid),intval($squad)]);
             }
 
             if(self::$sql['default']->rowCount()) {
                 foreach($qry as $get) {
-                    $position = self::$sql['default']->fetch("SELECT `position` FROM `{prefix_positions}` WHERE `id` = ?;",array(intval($get['posi'])),'position');
+                    $position = self::$sql['default']->fetch("SELECT `position` FROM `{prefix_positions}` WHERE `id` = ?;", [intval($get['posi'])],'position');
                     $squadname = (!empty($get['name']) ? '<b>' . $get['name'] . ':</b> ' : '');
                     return ($squadname.$position);
                 }
             } else {
-                $get = self::$sql['default']->fetch("SELECT `level`,`banned` FROM `{prefix_users}` WHERE `id` = ?;",array(intval($tid)));
+                $get = self::$sql['default']->fetch("SELECT `level`,`banned` FROM `{prefix_users}` WHERE `id` = ?;", [intval($tid)]);
                 if (!$get['level'] && !$get['banned']) {
                     return _status_unregged;
                 } elseif ($get['level'] == 1) {
@@ -1250,11 +1236,11 @@ class common {
             }
         } else {
             $get = self::$sql['default']->fetch("SELECT s1.*,s2.`position` FROM `{prefix_userposis}` AS `s1` LEFT JOIN `{prefix_positions}` AS `s2` "
-                . "ON s1.`posi` = s2.`id` WHERE s1.`user` = ? AND s1.`posi` != 0 ORDER BY s2.pid ASC;",array(intval($tid)));
+                . "ON s1.`posi` = s2.`id` WHERE s1.`user` = ? AND s1.`posi` != 0 ORDER BY s2.pid ASC;", [intval($tid)]);
             if(self::$sql['default']->rowCount()) {
                 return $get['position'];
             } else {
-                $get = self::$sql['default']->fetch("SELECT `level`,`banned` FROM `{prefix_users}` WHERE `id` = ?;",array(intval($tid)));
+                $get = self::$sql['default']->fetch("SELECT `level`,`banned` FROM `{prefix_users}` WHERE `id` = ?;", [intval($tid)]);
                 if (!$get['level'] && !$get['banned']) {
                     return _status_unregged;
                 } elseif ($get['level'] == 1) {
@@ -1299,7 +1285,7 @@ class common {
      * @return boolean
      */
     public static function isSpider(bool $SetUserAgent=false) {
-        $bots_basic = array('bot', 'b o t', 'spider', 'spyder', 'crawl', 'slurp', 'robo', 'yahoo', 'ask', 'google', '80legs', 'acoon',
+        $bots_basic = ['bot', 'b o t', 'spider', 'spyder', 'crawl', 'slurp', 'robo', 'yahoo', 'ask', 'google', '80legs', 'acoon',
             'altavista', 'al_viewer', 'appie', 'appengine-google', 'arachnoidea', 'archiver', 'asterias', 'ask jeeves', 'beholder',
             'bildsauger', 'bingsearch', 'bingpreview', 'bumblebee', 'bramptonmoose', 'cherrypicker', 'crescent', 'coccoc', 'cosmos',
             'docomo', 'drupact', 'emailsiphon', 'emailwolf', 'extractorpro', 'exalead ng', 'ezresult', 'feedfetcher', 'fido', 'fireball',
@@ -1313,7 +1299,7 @@ class common {
             'InfoSeek', 'WebFindBot', 'girafabot', 'crawler', 'www.galaxy.com', 'Googlebot', 'Googlebot/2.1', 'Google', 'Google Webmaster', 'Scooter',
             'James Bond', 'Slurp', 'msnbot', 'appie', 'FAST', 'WebBug', 'Spade', 'ZyBorg', 'rabaz', 'Baiduspider', 'Feedfetcher-Google',
             'TechnoratiSnoop', 'Rankivabot', 'Mediapartners-Google', 'Sogou web spider', 'WebAlta Crawler', 'MJ12bot',
-            'Yandex', 'YaDirectBot', 'StackRambler','DotBot','dotbot');
+            'Yandex', 'YaDirectBot', 'StackRambler','DotBot','dotbot'];
 
         $UserAgent = ($SetUserAgent ? $SetUserAgent : trim(self::GetServerVars('HTTP_USER_AGENT')));
         foreach ($bots_basic as $bot) {
@@ -1339,8 +1325,8 @@ class common {
      * Funktion um Dateien aus einem Verzeichnis auszulesen
      * @return array
      **/
-    public static function get_files(string $dir=null,bool $only_dir=false,bool $only_files=false,array $file_ext=array(),bool $preg_match=false,array $blacklist=array(),bool $blacklist_word=false) {
-        $files = array();
+    public static function get_files(string $dir=null, bool $only_dir=false, bool $only_files=false, array $file_ext= [], bool $preg_match=false, array $blacklist= [], bool $blacklist_word=false) {
+        $files = [];
         if(!file_exists($dir) && !is_dir($dir)) return $files;
         if($handle = @opendir($dir)) {
             if($only_dir) {
@@ -1412,7 +1398,7 @@ class common {
      * @return string
      */
     public static function onlinecheck(int $tid) {
-        $row = self::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `id` = ? AND (time+1800)>? AND `online` = 1;",array(intval($tid),time()));
+        $row = self::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `id` = ? AND (time+1800)>? AND `online` = 1;", [intval($tid),time()]);
         return $row ? "<img src=\"../inc/images/online.png\" alt=\"\" class=\"icon\" />" : "<img src=\"../inc/images/offline.png\" alt=\"\" class=\"icon\" />";
     }
 
@@ -1421,7 +1407,7 @@ class common {
      * @param int $userid
      */
     public static function set_lastvisit(int $userid) {
-        if(!self::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `id` = ? AND (time+1800)>?;",array(intval($userid),time()))) {
+        if(!self::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `id` = ? AND (time+1800)>?;", [intval($userid),time()])) {
             $_SESSION['lastvisit'] = intval(self::data("time"));
         }
     }
@@ -1480,8 +1466,8 @@ class common {
      */
     public static function visitorIp() {
         $SetIP = '0.0.0.0';
-        $ServerVars = array('REMOTE_ADDR','HTTP_CLIENT_IP','HTTP_X_FORWARDED_FOR','HTTP_X_FORWARDED',
-            'HTTP_FORWARDED_FOR','HTTP_FORWARDED','HTTP_VIA','HTTP_X_COMING_FROM','HTTP_COMING_FROM');
+        $ServerVars = ['REMOTE_ADDR','HTTP_CLIENT_IP','HTTP_X_FORWARDED_FOR','HTTP_X_FORWARDED',
+            'HTTP_FORWARDED_FOR','HTTP_FORWARDED','HTTP_VIA','HTTP_X_COMING_FROM','HTTP_COMING_FROM'];
         foreach ($ServerVars as $ServerVar) {
             if($IP=self::detectIP($ServerVar)) {
                 if (self::isIP($IP) && !self::validateIpV4Range($IP, '[192].[168].[0-255].[0-255]') &&
@@ -1528,18 +1514,6 @@ class common {
     }
 
     /**
-     * DZCP V1.7.0
-     * Browser-Cache nicht verwenden -> Ajax
-     */
-    public static function addNoCacheHeaders() {
-        header('Expires: '.gmdate('D, d M Y H:i:s \G\M\T', time() + 3600));
-        header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-        header("Cache-Control: no-store, no-cache, must-revalidate");
-        header("Cache-Control: post-check=0, pre-check=0", false);
-        header("Pragma: no-cache");
-    }
-
-    /**
      * Erkennt bekannte Bots am User Agenten
      */
     public static function SearchBotDetect() {
@@ -1549,32 +1523,32 @@ class common {
                 switch ($botdata['type']) {
                     case 1:
                         if(preg_match(utf8_decode($botdata['regexpattern']), self::$UserAgent, $matches)) {
-                            return array('fullname' => utf8_decode($botdata['name'])." V".trim($matches[1]), 'name' =>utf8_decode($botdata['name']), 'bot' => true);
+                            return ['fullname' => utf8_decode($botdata['name'])." V".trim($matches[1]), 'name' =>utf8_decode($botdata['name']), 'bot' => true];
                         }
                         break;
                     case 2:
                         if(preg_match(utf8_decode($botdata['regexpattern']), self::$UserAgent, $matches)) {
                             list($majorVer, $minorVer) = explode(".", $matches[1]);
-                            return array('fullname' => utf8_decode($botdata['name'])." V".trim($majorVer).'.'.trim($minorVer), 'name' =>utf8_decode($botdata['name']), 'bot' => true);
+                            return ['fullname' => utf8_decode($botdata['name'])." V".trim($majorVer).'.'.trim($minorVer), 'name' =>utf8_decode($botdata['name']), 'bot' => true];
                         }
                         break;
                     case 3:
                         if(preg_match(utf8_decode($botdata['regexpattern']), self::$UserAgent, $matches)) {
                             list($majorVer, $minorVer, $build) = explode(".", $matches[1]);
-                            return array('fullname' => utf8_decode($botdata['name'])." V".trim($majorVer).'.'.trim($minorVer).'.'.trim($build), 'name' =>utf8_decode($botdata['name']), 'bot' => true);
+                            return ['fullname' => utf8_decode($botdata['name'])." V".trim($majorVer).'.'.trim($minorVer).'.'.trim($build), 'name' =>utf8_decode($botdata['name']), 'bot' => true];
                         }
                         break;
                     default:
                         if(preg_match(utf8_decode($botdata['regexpattern']), self::$UserAgent)) {
                             if(empty($botdata['name_extra'])) $botdata['name_extra'] = $botdata['name'];
-                            return array('fullname' => utf8_decode($botdata['name_extra']), 'name' => utf8_decode($botdata['name']), 'bot' => true);
+                            return ['fullname' => utf8_decode($botdata['name_extra']), 'name' => utf8_decode($botdata['name']), 'bot' => true];
                         }
                         break;
                 }
             }
         }
 
-        return array('fullname'=>'',"name"=>'',"bot"=>false);
+        return ['fullname'=>'',"name"=>'',"bot"=>false];
     }
 
     /**
@@ -1582,7 +1556,7 @@ class common {
      */
     public static function check_ip() {
         if(!dbc_index::issetIndex('ip_check')) {
-            dbc_index::setIndex('ip_check', array());
+            dbc_index::setIndex('ip_check', []);
         }
 
         if(!self::isIP(self::$userip, true)) {
@@ -1599,7 +1573,7 @@ class common {
             //Banned IP
             if(!dbc_index::getIndexKey('ip_check', md5(self::$userip))) {
                 $ips = dbc_index::getIndex('ip_check');
-                foreach(self::$sql['default']->select("SELECT `id`,`typ`,`data` FROM `{prefix_ipban}` WHERE `ip` = ? AND `enable` = 1;",array(self::$userip)) as $banned_ip) {
+                foreach(self::$sql['default']->select("SELECT `id`,`typ`,`data` FROM `{prefix_ipban}` WHERE `ip` = ? AND `enable` = 1;", [self::$userip]) as $banned_ip) {
                     if($banned_ip['typ'] == 2 || $banned_ip['typ'] == 3) {
                         self::dzcp_session_destroy();
                         $banned_ip['data'] = unserialize($banned_ip['data']);
@@ -1608,14 +1582,14 @@ class common {
                 }
                 unset($banned_ip);
 
-                if(self::allow_url_fopen_support() && self::isIP(self::$userip) && !self::validateIpV4Range(self::$userip, '[192].[168].[0-255].[0-255]') &&
+                if((ini_get('allow_url_fopen') == 1) && self::isIP(self::$userip) && !self::validateIpV4Range(self::$userip, '[192].[168].[0-255].[0-255]') &&
                     !self::validateIpV4Range(self::$userip, '[127].[0].[0-255].[0-255]') &&
                     !self::validateIpV4Range(self::$userip, '[10].[0-255].[0-255].[0-255]') &&
                     !self::validateIpV4Range(self::$userip, '[172].[16-31].[0-255].[0-255]')) {
                     sfs::check(); //SFS Update
                     if(sfs::is_spammer()) {
                         self::$sql['default']->delete("DELETE FROM `{prefix_iptodns}` WHERE `sessid` = ?;",
-                            array(session_id()));
+                            [session_id()]);
                         self::dzcp_session_destroy();
                         die('Deine IP-Adresse ist auf <a href="http://www.stopforumspam.com/" target="_blank">http://www.stopforumspam.com/</a> gesperrt, die IP wurde zu oft fÃ¼r Spam Angriffe auf Webseiten verwendet.<p>
                              Your IP address is known on <a href="http://www.stopforumspam.com/" target="_blank">http://www.stopforumspam.com/</a>, your IP has been used for spam attacks on websites.');
@@ -1687,10 +1661,6 @@ class common {
         return false;
     }
 
-    public static function allow_url_fopen_support() {
-        return (ini_get('allow_url_fopen') == 1);
-    }
-
     /**
      * @param string $address
      * @param int $port
@@ -1722,7 +1692,7 @@ class common {
      * @return String
      **/
     public static function get_external_contents(string $url,bool $post=false,bool $nogzip=false,int $timeout=file_get_contents_timeout) {
-        if((!self::allow_url_fopen_support() && !use_curl || (use_curl && !extension_loaded('curl'))))
+        if((!(ini_get('allow_url_fopen') == 1) && !use_curl || (use_curl && !extension_loaded('curl'))))
             return false;
 
         $url_p = @parse_url($url);
@@ -1771,7 +1741,7 @@ class common {
             $gzip = false;
             if(function_exists('gzinflate') && !$nogzip) {
                 $gzip = true;
-                curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept-Encoding: gzip,deflate'));
+                curl_setopt($curl, CURLOPT_HTTPHEADER, ['Accept-Encoding: gzip,deflate']);
                 curl_setopt($curl, CURLINFO_HEADER_OUT, true);
             }
 
@@ -1799,7 +1769,7 @@ class common {
             if($url_p['scheme'] == 'https') //HTTPS not Supported!
                 $url = str_replace('https', 'http', $url);
 
-            $opts = array();
+            $opts = [];
             $opts['http']['method'] = "GET";
             $opts['http']['timeout'] = $timeout * 2;
 
@@ -1831,7 +1801,7 @@ class common {
      * @param string $template
      * @return string
      */
-    public static function CryptMailto(string $email='',string $template=_emailicon,array $custom=array()) {
+    public static function CryptMailto(string $email='',string $template=_emailicon,array $custom= []) {
         $smarty = self::getSmarty(); //Use Smarty
         if(empty($template) || empty($email) || !self::permission("editusers")) return '';
         $character_set = '+-.0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz';
@@ -1850,7 +1820,7 @@ class common {
         }
 
         $script.= 'document.getElementById("'.$id.'").innerHTML="'.$template.'"';
-        $script = "eval(\"".str_replace(array("\\",'"'),array("\\\\",'\"'), $script)."\")";
+        $script = "eval(\"".str_replace(["\\",'"'], ["\\\\",'\"'], $script)."\")";
         $script = '<script type="text/javascript">/*<![CDATA[*/'.$script.'/*]]>*/</script>';
         return '<span id="'.$id.'">[javascript protected email address]</span>'.$script;
     }
@@ -1862,7 +1832,7 @@ class common {
      */
     public static function setIpcheck(string $what = '',bool $time = true) {
         self::$sql['default']->insert("INSERT INTO `{prefix_ipcheck}` SET `ip` = ?, `user_id` = ?, `what` = ?, `time` = ?, `created` = ?;",
-            array(self::visitorIp(),intval(self::userid()),$what,($time ? time() : 0),time()));
+            [self::visitorIp(),intval(self::userid()),$what,($time ? time() : 0),time()]);
     }
 
     /**
@@ -1874,40 +1844,40 @@ class common {
      */
     public static function count_clicks(string $side_tag='',int $clickedID=0,bool $update=true) {
         if(!self::$isSpider) {
-            $qry = self::$sql['default']->select("SELECT `id`,`side` FROM `{prefix_clicks_ips}` WHERE `uid` = 0 AND `time` <= ?;",array(time()));
+            $qry = self::$sql['default']->select("SELECT `id`,`side` FROM `{prefix_clicks_ips}` WHERE `uid` = 0 AND `time` <= ?;", [time()]);
             if(self::$sql['default']->rowCount()) {
                 foreach($qry as $get) {
                     if($get['side'] != 'vote') {
-                        self::$sql['default']->delete("DELETE FROM `{prefix_clicks_ips}` WHERE `id` = ?;",array($get['id']));
+                        self::$sql['default']->delete("DELETE FROM `{prefix_clicks_ips}` WHERE `id` = ?;", [$get['id']]);
                     }
                 }
             }
 
             if(self::$chkMe != 'unlogged') {
-                if (self::$sql['default']->rows("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `uid` = ? AND `ids` = ? AND `side` = ?;", array(intval(self::$userid),intval($clickedID),$side_tag))) {
+                if (self::$sql['default']->rows("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `uid` = ? AND `ids` = ? AND `side` = ?;", [intval(self::$userid),intval($clickedID),$side_tag])) {
                     return false;
                 }
 
-                if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ip` = ? AND `ids` = ? AND `side` = ?;",array(self::$userip,intval($clickedID),$side_tag))) {
+                if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ip` = ? AND `ids` = ? AND `side` = ?;", [self::$userip,intval($clickedID),$side_tag])) {
                     if($update) {
                         self::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ?, `time` = ? WHERE `ip` = ? AND `ids` = ? AND `side` = ?;",
-                            array(intval(self::$userid),(time()+count_clicks_expires),self::$userip,intval($clickedID),$side_tag));
+                            [intval(self::$userid),(time()+count_clicks_expires),self::$userip,intval($clickedID),$side_tag]);
                     }
 
                     return false;
                 } else {
                     if($update) {
                         self::$sql['default']->insert("INSERT INTO `{prefix_clicks_ips}` SET `ip` = ?, `uid` = ?, `ids` = ?, `side` = ?, `time` = ?;",
-                            array(self::$userip, intval(self::$userid), intval($clickedID), $side_tag, (time() + count_clicks_expires)));
+                            [self::$userip, intval(self::$userid), intval($clickedID), $side_tag, (time() + count_clicks_expires)]);
                     }
 
                     return true;
                 }
             } else {
-                if(!self::$sql['default']->rows("SELECT id FROM `{prefix_clicks_ips}` WHERE `ip` = ? AND `ids` = ? AND `side` = ?;",array(self::$userip,intval($clickedID),$side_tag))) {
+                if(!self::$sql['default']->rows("SELECT id FROM `{prefix_clicks_ips}` WHERE `ip` = ? AND `ids` = ? AND `side` = ?;", [self::$userip,intval($clickedID),$side_tag])) {
                     if($update) {
                         self::$sql['default']->insert("INSERT INTO `{prefix_clicks_ips}` SET `ip` = ?, `uid` = 0, `ids` = ?, `side` = ?, `time` = ?;",
-                            array(self::$userip,intval($clickedID),$side_tag,(time()+count_clicks_expires)));
+                            [self::$userip,intval($clickedID),$side_tag,(time()+count_clicks_expires)]);
                     }
 
                     return true;
@@ -1927,8 +1897,8 @@ class common {
     public static function getPermissions(int $checkID = 0, int $pos = 0) {
         //Rechte des Users oder des Teams suchen
         if(!empty($checkID)) {
-            $check = empty($pos) ? 'user' : 'pos'; $checked = array();
-            $qry = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `".$check."` = ?;",array(intval($checkID)));
+            $check = empty($pos) ? 'user' : 'pos'; $checked = [];
+            $qry = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `".$check."` = ?;", [intval($checkID)]);
             if (self::$sql['default']->rowCount()) {
                 foreach($qry as $k => $v) {
                     if($k != 'id' && $k != 'user' && $k != 'pos' && $k != 'intforum') {
@@ -1939,7 +1909,7 @@ class common {
         }
 
         //Liste der Rechte zusammenstellen
-        $permission = array();
+        $permission = [];
         $qry = self::$sql['default']->show("SHOW COLUMNS FROM `dzcp_permissions`;");
         if(self::$sql['default']->rowCount()) {
             foreach($qry as $get) {
@@ -1978,11 +1948,11 @@ class common {
                 $kats = (empty($katbreak) ? '' : '<div style="clear:both">&nbsp;</div>').'<table class="hperc" cellspacing="1"><tr><td class="contentMainTop"><b>'.stringParser::decode($get["name"]).'</b></td></tr></table>';
                 $katbreak = 1; $break = 0; $fkats = '';
 
-                $qry2 = self::$sql['default']->select("SELECT `kattopic`,`id` FROM `{prefix_forumsubkats}` WHERE `sid` = ? ORDER BY `kattopic` ASC;",array($get['id'],));
+                $qry2 = self::$sql['default']->select("SELECT `kattopic`,`id` FROM `{prefix_forumsubkats}` WHERE `sid` = ? ORDER BY `kattopic` ASC;", [$get['id'],]);
                 if(self::$sql['default']->rowCount()) {
                     foreach($qry2 as $get2) {
                         $br = ($break % 2) ? '<br />' : ''; $break++;
-                        $chk = (self::$sql['default']->rows("SELECT `id` FROM `{prefix_f_access}` WHERE `".(empty($pos) ? 'user' : 'pos')."` = ? AND ".(empty($pos) ? 'user' : 'pos')." != 0 AND `forum` = ?;",array(intval($checkID),$get2['id'])) ? ' checked="checked"' : '');
+                        $chk = (self::$sql['default']->rows("SELECT `id` FROM `{prefix_f_access}` WHERE `".(empty($pos) ? 'user' : 'pos')."` = ? AND ".(empty($pos) ? 'user' : 'pos')." != 0 AND `forum` = ?;", [intval($checkID),$get2['id']]) ? ' checked="checked"' : '');
                         $fkats .= '<input type="checkbox" class="checkbox" id="board_'.$get2['id'].'" name="board['.$get2['id'].']" value="'.$get2['id'].'"'.$chk.' /><label for="board_'.$get2['id'].'"> '.stringParser::decode($get2['kattopic']).'</label> '.$br;
                     }
                 }
@@ -2009,8 +1979,8 @@ class common {
         }
 
         // no need for these admin areas & check user permission
-        $e = array('editusers', 'votes', 'contact', 'intnews', 'forum', 'dlintern','intforum');
-        $qry = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `user` = ?;",array(intval($userid)));
+        $e = ['editusers', 'votes', 'contact', 'intnews', 'forum', 'dlintern','intforum'];
+        $qry = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `user` = ?;", [intval($userid)]);
         if(self::$sql['default']->rowCount()) {
             foreach($qry as $v => $k) {
                 if($v != 'id' && $v != 'user' && $v != 'pos' && !in_array($v, $e)) {
@@ -2024,7 +1994,7 @@ class common {
 
         // check rank permission
         $qry = self::$sql['default']->select("SELECT s1.* FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi` WHERE s2.`user` = ? AND s2.`posi` != 0;",
-            array(intval($userid)));
+            [intval($userid)]);
         foreach($qry as $get) {
             foreach($get AS $v => $k) {
                 if($v != 'id' && $v != 'user' && $v != 'pos' && !in_array($v, $e)) {
@@ -2069,7 +2039,7 @@ class common {
         }
 
         $url = $pfad.'index.php';
-        $get_navi = self::$sql['default']->fetch("SELECT `internal` FROM `{prefix_navi}` WHERE `url` = ? OR `url` = ?;",array($pfad,$url));
+        $get_navi = self::$sql['default']->fetch("SELECT `internal` FROM `{prefix_navi}` WHERE `url` = ? OR `url` = ?;", [$pfad,$url]);
         if(self::$sql['default']->rowCount()) {
             if ($get_navi['internal']) {
                 return true;
@@ -2084,9 +2054,9 @@ class common {
      * @return bool|mixed|string
      */
     public static function check_msg() {
-        if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_messages}` WHERE `an` = ? AND `page` = 0;",array(intval($_SESSION['id'])))) {
-            self::$sql['default']->update("UPDATE `{prefix_messages}` SET `page` = 1 WHERE `an` = ?;",array(intval($_SESSION['id'])));
-            return show("user/new_msg", array("new" => _site_msg_new));
+        if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_messages}` WHERE `an` = ? AND `page` = 0;", [intval($_SESSION['id'])])) {
+            self::$sql['default']->update("UPDATE `{prefix_messages}` SET `page` = 1 WHERE `an` = ?;", [intval($_SESSION['id'])]);
+            return show("user/new_msg", ["new" => _site_msg_new]);
         }
 
         return false;
@@ -2102,7 +2072,7 @@ class common {
             return '<img src="../inc/images/flaggen/nocountry.gif" alt="" class="icon" />';
         }
 
-        foreach(array("jpg", "gif", "png") as $end) {
+        foreach(["jpg", "gif", "png"] as $end) {
             if (file_exists(basePath . "/inc/images/flaggen/" . $code . "." . $end)) {
                 break;
             }
@@ -2120,7 +2090,7 @@ class common {
             return '<img src=../inc/images/flaggen/nocountry.gif alt= class=icon />';
         }
 
-        foreach(array("jpg", "gif", "png") as $end) {
+        foreach(["jpg", "gif", "png"] as $end) {
             if (file_exists(basePath . "/inc/images/flaggen/" . $code . "." . $end)) {
                 break;
             }
@@ -2140,7 +2110,7 @@ class common {
         ## User aus der Datenbank suchen ##
         $get = self::$sql['default']->fetch("SELECT `id`,`time` FROM `{prefix_users}` "
             . "WHERE `id` = ? AND `sessid` = ? AND `ip` = ? AND level != 0;",
-            array(intval($_SESSION['id']),session_id(),stringParser::encode(self::$userip)));
+            [intval($_SESSION['id']),session_id(),stringParser::encode(self::$userip)]);
 
         if(self::$sql['default']->rowCount()) {
             ## Schreibe Werte in die Server Sessions ##
@@ -2153,7 +2123,7 @@ class common {
                 $_SESSION['lastvisit'] = self::data($get['id'], "time");
 
             ## Aktualisiere Datenbank ##
-            self::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1 WHERE `id` = ?;",array($get['id']));
+            self::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1 WHERE `id` = ?;", [$get['id']]);
         }
     }
 
@@ -2166,7 +2136,7 @@ class common {
     public static function isBanned(int $userid_set=0,bool $logout=true) {
         $userid_set = $userid_set ? $userid_set : self::$userid;
         if(self::checkme($userid_set) >= 1 || $userid_set) {
-            $get = self::$sql['default']->fetch("SELECT `banned` FROM `{prefix_users}` WHERE `id` = ? LIMIT 1;",array(intval($userid_set)));
+            $get = self::$sql['default']->fetch("SELECT `banned` FROM `{prefix_users}` WHERE `id` = ? LIMIT 1;", [intval($userid_set)]);
             if($get['banned']) {
                 if($logout) {
                     self::dzcp_session_destroy();
@@ -2196,13 +2166,13 @@ class common {
             if ($uid) {
                 // check rank permission
                 if (self::$sql['default']->rows("SELECT s1.`" . $check . "` FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi`"
-                    . "WHERE s2.`user` = ? AND s1.`" . $check . "` = 1 AND s2.`posi` != 0;", array(intval($uid)))) {
+                    . "WHERE s2.`user` = ? AND s1.`" . $check . "` = 1 AND s2.`posi` != 0;", [intval($uid)])) {
                     return true;
                 }
 
                 // check user permission
                 if (!dbc_index::issetIndex('user_permission_' . intval($uid))) {
-                    $permissions = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `user` = ?;", array(intval($uid)));
+                    $permissions = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `user` = ?;", [intval($uid)]);
                     dbc_index::setIndex('user_permission_' . intval($uid), $permissions);
                 }
 
@@ -2240,7 +2210,7 @@ class common {
         if (!$userid = ($userid_set != 0 ? intval($userid_set) : self::userid())) { return 0; }
         if (self::rootAdmin($userid)) { return 4; }
         if(!dbc_index::issetIndex('user_'.intval($userid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ? AND `pwd` = ? AND `ip` = ?;",array(intval($userid),$_SESSION['pwd'],$_SESSION['ip']));
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ? AND `pwd` = ? AND `ip` = ?;", [intval($userid),$_SESSION['pwd'],$_SESSION['ip']]);
             if (!self::$sql['default']->rowCount()) { return 0; }
             dbc_index::setIndex('user_'.$get['id'], $get);
             return $get['level'];
@@ -2274,23 +2244,23 @@ class common {
         if (!array_key_exists('path', $u)) {
             $u['path'] = '';
         }
-        return show("errors/info", array("msg" => $msg,
+        return show("errors/info", ["msg" => $msg,
             "url" => $u['path'],
             "rawurl" => html_entity_decode($url),
             "parts" => $parts,
             "timeout" => $timeout,
             "info" => _info,
             "weiter" => _weiter,
-            "backtopage" => _error_fwd));
+            "backtopage" => _error_fwd]);
     }
 
     /**
      * Updatet die Maximalen User die gleichzeitig online sind
      */
     public static function update_maxonline() {
-        $maxonline = self::$sql['default']->fetch("SELECT `maxonline` FROM `{prefix_counter}` WHERE `today` = ?;",array(date("j.n.Y")),'maxonline');
+        $maxonline = self::$sql['default']->fetch("SELECT `maxonline` FROM `{prefix_counter}` WHERE `today` = ?;", [date("j.n.Y")],'maxonline');
         if ($maxonline < ($count = self::cnt('{prefix_counter_whoison}'))) {
-            self::$sql['default']->update("UPDATE `{prefix_counter}` SET `maxonline` = ? WHERE `today` = ?;",array($count,date("j.n.Y")));
+            self::$sql['default']->update("UPDATE `{prefix_counter}` SET `maxonline` = ? WHERE `today` = ?;", [$count,date("j.n.Y")]);
         }
     }
 
@@ -2299,22 +2269,22 @@ class common {
      * @param string $where
      */
     public static function update_online(string $where='') {
-        if(!self::$isSpider && !empty($where) && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;",array(session_id()))) {
-            if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter_whoison}` WHERE `online` < ?;",array(time()))) { //Cleanup
-                self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `online` < ?;",array(time()));
+        if(!self::$isSpider && !empty($where) && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;", [session_id()])) {
+            if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter_whoison}` WHERE `online` < ?;", [time()])) { //Cleanup
+                self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `online` < ?;", [time()]);
             }
 
-            $get = self::$sql['default']->fetch("SELECT `id` FROM `{prefix_counter_whoison}` WHERE `ip` = ? AND `ssid` = ?;",array(self::$userip,session_id())); //Update Move
+            $get = self::$sql['default']->fetch("SELECT `id` FROM `{prefix_counter_whoison}` WHERE `ip` = ? AND `ssid` = ?;", [self::$userip,session_id()]); //Update Move
             if(self::$sql['default']->rowCount()) {
                 self::$sql['default']->update("UPDATE `{prefix_counter_whoison}` SET `whereami` = ?, `online` = ?, `login` = ?  WHERE `id` = ?;",
-                    array(stringParser::encode($where),(time()+1800),(!self::$chkMe ? 0 : 1),$get['id']));
+                    [stringParser::encode($where),(time()+1800),(!self::$chkMe ? 0 : 1),$get['id']]);
             } else {
                 self::$sql['default']->insert("INSERT INTO `{prefix_counter_whoison}` SET `ip` = ?, `ssid` = ?, `online` = ?, `whereami` = ?, `login` = ?;",
-                    array(self::$userip, session_id(),(time()+1800),stringParser::encode($where),(!self::$chkMe ? 0 : 1)));
+                    [self::$userip, session_id(),(time()+1800),stringParser::encode($where),(!self::$chkMe ? 0 : 1)]);
             }
 
             if(self::$chkMe) {
-                self::$sql['default']->update("UPDATE `{prefix_users}` SET `time` = ?, `whereami` = ? WHERE `id` = ?;",array(time(),stringParser::encode($where),intval(self::$userid)));
+                self::$sql['default']->update("UPDATE `{prefix_users}` SET `time` = ?, `whereami` = ? WHERE `id` = ?;", [time(),stringParser::encode($where),intval(self::$userid)]);
             }
         }
     }
@@ -2341,34 +2311,34 @@ class common {
      */
     public static function updateCounter() {
         $datum = time();
-        $get_agent = self::$sql['default']->fetch("SELECT `id`,`agent`,`bot` FROM `{prefix_iptodns}` WHERE `ip` = ?;",array(stringParser::encode(self::$userip)));
+        $get_agent = self::$sql['default']->fetch("SELECT `id`,`agent`,`bot` FROM `{prefix_iptodns}` WHERE `ip` = ?;", [stringParser::encode(self::$userip)]);
         if(self::$sql['default']->rowCount()) {
             if(!$get_agent['bot'] && !self::isSpider(stringParser::decode($get_agent['agent']))) {
-                if(self::$sql['default']->rows("SELECT id FROM `{prefix_counter_ips}` WHERE datum+? <= ? OR FROM_UNIXTIME(datum,'%d.%m.%Y') != ?;",array(self::$reload,time(),date("d.m.Y")))) {
-                    self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE datum+? <= ? OR FROM_UNIXTIME(datum,'%d.%m.%Y') != ?;",array(self::$reload,time(),date("d.m.Y")));
+                if(self::$sql['default']->rows("SELECT id FROM `{prefix_counter_ips}` WHERE datum+? <= ? OR FROM_UNIXTIME(datum,'%d.%m.%Y') != ?;", [self::$reload,time(),date("d.m.Y")])) {
+                    self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE datum+? <= ? OR FROM_UNIXTIME(datum,'%d.%m.%Y') != ?;", [self::$reload,time(),date("d.m.Y")]);
                 }
 
-                $get = self::$sql['default']->fetch("SELECT `datum` FROM `{prefix_counter_ips}` WHERE `ip` = ? AND FROM_UNIXTIME(datum,'%d.%m.%Y') = ?;",array(stringParser::encode(self::$userip),date("d.m.Y")));
+                $get = self::$sql['default']->fetch("SELECT `datum` FROM `{prefix_counter_ips}` WHERE `ip` = ? AND FROM_UNIXTIME(datum,'%d.%m.%Y') = ?;", [stringParser::encode(self::$userip),date("d.m.Y")]);
                 if(self::$sql['default']->rowCount()) {
                     $sperrzeit = $get['datum']+self::$reload;
                     if($sperrzeit <= time()) {
-                        self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE `ip` = ?;",array(stringParser::encode(self::$userip)));
-                        if (self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter}` WHERE `today` = '" . date("j.n.Y") . "';",array(date("j.n.Y")))) {
-                            self::$sql['default']->update("UPDATE `{prefix_counter}` SET `visitors` = (visitors+1) WHERE `today` = ?;",array(date("j.n.Y")));
+                        self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE `ip` = ?;", [stringParser::encode(self::$userip)]);
+                        if (self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter}` WHERE `today` = '" . date("j.n.Y") . "';", [date("j.n.Y")])) {
+                            self::$sql['default']->update("UPDATE `{prefix_counter}` SET `visitors` = (visitors+1) WHERE `today` = ?;", [date("j.n.Y")]);
                         } else {
-                            self::$sql['default']->insert("INSERT INTO `{prefix_counter}` SET `visitors` = 1 WHERE `today` = ?;",array(date("j.n.Y")));
+                            self::$sql['default']->insert("INSERT INTO `{prefix_counter}` SET `visitors` = 1 WHERE `today` = ?;", [date("j.n.Y")]);
                         }
 
-                        self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ip` = ?, `datum` = ?;",array(stringParser::encode(self::$userip),intval($datum)));
+                        self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ip` = ?, `datum` = ?;", [stringParser::encode(self::$userip),intval($datum)]);
                     }
                 } else {
-                    if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter}` WHERE `today` = ?;",array(date("j.n.Y")))) {
-                        self::$sql['default']->update("UPDATE `{prefix_counter}` SET `visitors` = (visitors+1) WHERE `today` = ?;",array(date("j.n.Y")));
+                    if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter}` WHERE `today` = ?;", [date("j.n.Y")])) {
+                        self::$sql['default']->update("UPDATE `{prefix_counter}` SET `visitors` = (visitors+1) WHERE `today` = ?;", [date("j.n.Y")]);
                     } else {
-                        self::$sql['default']->insert("INSERT INTO `{prefix_counter}` SET `visitors` = 1, `today` = ?;",array(date("j.n.Y")));
+                        self::$sql['default']->insert("INSERT INTO `{prefix_counter}` SET `visitors` = 1, `today` = ?;", [date("j.n.Y")]);
                     }
 
-                    self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ip` = ?, `datum` = ?;",array(stringParser::encode(self::$userip),intval($datum)));
+                    self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ip` = ?, `datum` = ?;", [stringParser::encode(self::$userip),intval($datum)]);
                 }
             }
         }
@@ -2405,7 +2375,7 @@ class common {
      * @param array $order
      * @return string
      */
-    public static function orderby_sql(array $order_by=array(),string $default_order='',string $join='',array $order = ['ASC','DESC']) {
+    public static function orderby_sql(array $order_by= [], string $default_order='', string $join='', array $order = ['ASC','DESC']) {
         if (!isset($_GET['order']) || empty($_GET['order']) || !in_array($_GET['order'], $order) ||
             !isset($_GET['orderby']) || empty($_GET['orderby']) || !in_array($_GET['orderby'], $order_by) ||
             empty($_GET['orderby']) || empty($_GET['order'])) {
@@ -2462,7 +2432,7 @@ class common {
             return $cnt;
         }
 
-        return array();
+        return [];
     }
 
     /**
@@ -2501,7 +2471,7 @@ class common {
             return $sum;
         }
 
-        return array();
+        return [];
     }
 
     /**
@@ -2532,8 +2502,8 @@ class common {
      * @return mixed
      */
     public static function bbcode_email(string $txt) {
-        return str_replace(array("&#91;","&#93;"),
-            array("[","]"),bbcode::parse_html($txt));
+        return str_replace(["&#91;","&#93;"],
+            ["[","]"],bbcode::parse_html($txt));
     }
 
     /**
@@ -2603,14 +2573,14 @@ class common {
         $java_vars .= '<script language="javascript" type="text/javascript" src="../vendor/ckeditor/ckeditor/adapters/jquery.js"></script>'."\n";
 
         if(settings::get("wmodus") && self::$chkMe != 4) {
-            $login = show("errors/wmodus_login", array("secure" => settings::get('securelogin') ? show("user/secure") : ''));
+            $login = show("errors/wmodus_login", ["secure" => settings::get('securelogin') ? show("user/secure") : '']);
             cookie::save(); //Save Cookie
-            echo show("errors/wmodus", array("tmpdir" => self::$tmpdir,
+            echo show("errors/wmodus", ["tmpdir" => self::$tmpdir,
                 "java_vars" => $java_vars,
                 "dir" => self::$designpath,
                 "sid" => (float)rand()/(float)getrandmax(),
                 "title" => strip_tags(stringParser::decode($title)),
-                "login" => $login));
+                "login" => $login]);
         } else {
             if(!self::$isSpider) {
                 self::updateCounter();
@@ -2620,7 +2590,7 @@ class common {
             //check permissions
             if(!self::$chkMe) {
                 $secure = settings::get('securelogin') ? show("menu/secure") : '';
-                $login = show("menu/login", array("secure" => $secure));
+                $login = show("menu/login", ["secure" => $secure]);
                 $check_msg = '';
             } else {
                 $check_msg = self::check_msg();
@@ -2632,15 +2602,14 @@ class common {
             $tmpldir=""; $tmps = self::get_files(basePath.'/inc/_templates_/',true);
             foreach ($tmps as $tmp) {
                 $selt = (self::$tmpdir == $tmp ? 'selected="selected"' : '');
-                $tmpldir .= show(_select_field, array("value" => "?tmpl_set=".$tmp,  "what" => $tmp,  "sel" => $selt));
+                $tmpldir .= show(_select_field, ["value" => "?tmpl_set=".$tmp,  "what" => $tmp,  "sel" => $selt]);
             }
 
             //misc vars
             $lang = $_SESSION['language'];
-            $template_switch = show("menu/tmp_switch", array("templates" => $tmpldir));
+            $template_switch = show("menu/tmp_switch", ["templates" => $tmpldir]);
             $clanname =stringParser::decode(settings::get("clanname"));
-            $headtitle = show(_index_headtitle, array("clanname" => $clanname));
-            $rss = $clanname;
+            $headtitle = show(_index_headtitle, ["clanname" => $clanname]);
             $title =stringParser::decode(strip_tags($title));
 
             if (self::check_internal_url()) {
@@ -2658,8 +2627,8 @@ class common {
 
             //filter placeholders
             $dir = self::$designpath; //after template index autodetect!!!
-            $blArr = array("[clanname]","[title]","[java_vars]","[template_switch]","[headtitle]","[login]",
-                "[index]","[rss]","[dir]","[where]","[lang]");
+            $blArr = ["[clanname]","[title]","[java_vars]","[template_switch]","[headtitle]","[login]",
+                "[index]","[rss]","[dir]","[where]","[lang]"];
             $pholdervars = '';
             for($i=0;$i<=count($blArr)-1;$i++) {
                 if (preg_match("#" . $blArr[$i] . "#", $pholder)) {
@@ -2675,7 +2644,7 @@ class common {
             $pholdervars = self::pholderreplace($pholdervars);
 
             //put placeholders in array
-            $arr = array();
+            $arr = [];
             $pholder = explode("^",$pholder);
             for($i=0;$i<=count($pholder)-1;$i++) {
                 if (strstr($pholder[$i], 'nav_')) {
@@ -2714,7 +2683,7 @@ class common {
 //###########################
 //OLD CODE
 //###########################
-function show(string $tpl="",array $array=array(),array $array_lang_constant=array(),array $array_block=array()) {
+function show(string $tpl="", array $array= [], array $array_lang_constant= [], array $array_block= []) {
     return common::show($tpl,$array,$array_lang_constant,$array_block);
 }
 
@@ -2725,21 +2694,21 @@ function show(string $tpl="",array $array=array(),array $array_lang_constant=arr
  */
 
 //-> Neue Kernel Funktionen einbinden, sofern vorhanden
-if($functions_files = common::get_files(basePath.'/inc/additional-kernel/',false,true,array('php'))) {
+if($functions_files = common::get_files(basePath.'/inc/additional-kernel/',false,true, ['php'])) {
     foreach($functions_files AS $func) {
         include(basePath.'/inc/additional-kernel/'.$func);
     } unset($functions_files,$func);
 }
 
 //-> Neue Languages einbinden, sofern vorhanden
-if($language_files = common::get_files(basePath.'/inc/additional-languages/'.$_SESSION['language'].'/',false,true,array('php'))) {
+if($language_files = common::get_files(basePath.'/inc/additional-languages/'.$_SESSION['language'].'/',false,true, ['php'])) {
     foreach($language_files AS $languages)
     { include(basePath.'/inc/additional-languages/'.$_SESSION['language'].'/'.$languages); }
     unset($language_files,$languages);
 }
 
 //-> Neue Funktionen einbinden, sofern vorhanden
-if($functions_files = common::get_files(basePath.'/inc/additional-functions/',false,true,array('php'))) {
+if($functions_files = common::get_files(basePath.'/inc/additional-functions/',false,true, ['php'])) {
     foreach($functions_files AS $func)
     { include(basePath.'/inc/additional-functions/'.$func); }
     unset($functions_files,$func);

@@ -18,13 +18,18 @@
 if(defined('_News') && common::$chkMe >= 1) {
     //-> Edit news comment
     if($do == 'edit') {
-        $get = common::$sql['default']->fetch("SELECT `reg`,`datum` FROM `{prefix_newscomments}` WHERE `id` = ?;",array(intval($_GET['cid'])));
+        $get = common::$sql['default']->fetch("SELECT `reg`,`datum` FROM `{prefix_newscomments}` WHERE `id` = ?;", [intval($_GET['cid'])]);
         $get_postid = isset($_GET['cid']) && $_GET['cid'] >= 1 ? $_GET['cid'] : 1;
         $get_userid = $get['reg'];
         $get_date = $get['datum'];
         $regCheck = !$get['reg'] ? false : true;
-        $editedby = show(_edited_by, array("autor" => common::cleanautor(common::$userid),
-                                           "time" => date("d.m.Y H:i", time())._uhr));
+
+        //-> Editby Text
+        $smarty->caching = false;
+        $smarty->assign('autor',common::cleanautor(common::$userid));
+        $smarty->assign('time',date("d.m.Y H:i", time()));
+        $editedby = $smarty->fetch('string:'._edited_by);
+        $smarty->clearAllAssign();
     } else { //-> Add new news comment
         $get_postid = common::cnt('{prefix_newscomments}', " WHERE `news` = ".intval($_GET['id']))+1;
         $get_userid = common::$userid;
@@ -36,8 +41,11 @@ if(defined('_News') && common::$chkMe >= 1) {
     //-> Homepage Link
     $get_hp = common::data('hp',$get_userid); $hp = "";
     if (!empty($get_hp)) {
-        $hp = show(_hpicon_forum, array("hp" => common::links($get_hp)));
-    }
+        $smarty->caching = false;
+        $smarty->assign('hp',common::links(stringParser::decode($get_hp)));
+        $hp = $smarty->fetch('string:'._hpicon_forum);
+        $smarty->clearAllAssign();
+    } unset($get_hp);
 
     //-> Post titel
     $smarty->caching = false;

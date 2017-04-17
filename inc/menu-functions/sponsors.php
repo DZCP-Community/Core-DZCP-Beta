@@ -20,11 +20,11 @@ function sponsors() {
     $sponsors = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qry as $get) {
-            $banner = show(_sponsors_bannerlink, array("id" => $get['id'],
+            $banner = show(_sponsors_bannerlink, ["id" => $get['id'],
                                                        "title" => htmlspecialchars(str_replace('http://', '', stringParser::decode($get['link']))),
-                                                       "banner" => (empty($get['xlink']) ? "../banner/sponsors/box_".$get['id'].".".$get['xend'] : stringParser::decode($get['xlink']))));
+                                                       "banner" => (empty($get['xlink']) ? "../banner/sponsors/box_".$get['id'].".".$get['xend'] : stringParser::decode($get['xlink']))]);
 
-            $sponsors .= show("menu/sponsors", array("banner" => $banner));
+            $sponsors .= show("menu/sponsors", ["banner" => $banner]);
         }
     }
 

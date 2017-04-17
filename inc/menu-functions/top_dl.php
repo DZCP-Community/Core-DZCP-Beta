@@ -24,14 +24,14 @@ function top_dl() {
         foreach($qry as $get) {
             $info = '';
             if(settings::get('allowhover') == 1) {
-                $getkat = common::$sql['default']->fetch("SELECT `name` FROM `{prefix_download_kat}` WHERE `id` = ?;",array($get['kat']));
+                $getkat = common::$sql['default']->fetch("SELECT `name` FROM `{prefix_download_kat}` WHERE `id` = ?;", [$get['kat']]);
                 $info = 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['download'])).'\', \''._datum.';'._dl_dlkat.';'._hits.'\', \''.date("d.m.Y H:i", $get['date'])._uhr.';'.common::jsconvert(stringParser::decode($getkat['name'])).';'.$get['hits'].'\')" onmouseout="DZCP.hideInfo()"';
             }
 
-            $top_dl .= show("menu/top_dl", array("id" => $get['id'],
+            $top_dl .= show("menu/top_dl", ["id" => $get['id'],
                                                  "titel" => common::cut(stringParser::decode($get['download']),settings::get('l_topdl')),
                                                  "info" => $info,
-                                                 "hits" => $get['hits']));
+                                                 "hits" => $get['hits']]);
         }
     }
 

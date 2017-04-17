@@ -24,23 +24,23 @@ class dzcp_version extends dzcp_event
 
     function getDevVersion() {
         $get = common::$sql['default']->fetch("SELECT `version`,`release` FROM `{prefix_addon_version}` WHERE `static_version` = ? AND `edition` = ?;",
-            array($this->dev_version, 'dev'));
+            [$this->dev_version, 'dev']);
         if (common::$sql['default']->rowCount()) {
-            return array('version' => stringParser::decode($get['version']),'release' => stringParser::decode($get['release']));
+            return ['version' => stringParser::decode($get['version']),'release' => stringParser::decode($get['release'])];
         }
     }
 
     function getLiveVersion() {
         $get = common::$sql['default']->fetch("SELECT `version`,`release` FROM `{prefix_addon_version}` WHERE `static_version` = ? AND `edition` = ?;",
-            array($this->version, 'stable'));
+            [$this->version, 'stable']);
         if (common::$sql['default']->rowCount()) {
-            return array('version' => stringParser::decode($get['version']),'release' => stringParser::decode($get['release']));
+            return ['version' => stringParser::decode($get['version']),'release' => stringParser::decode($get['release'])];
         }
     }
 
     function getVersion() {
         global $sql;
-        if(GUMP::is_valid($this->json_array, array('dzcp' => 'required')) === true) {
+        if(GUMP::is_valid($this->json_array, ['dzcp' => 'required']) === true) {
             if(count(($exp=explode('.',$this->json_array['dzcp']))) >= 4) {
                 $this->json_array['dzcp'] = $exp[0].'.'.$exp[1];
             }
@@ -48,7 +48,7 @@ class dzcp_version extends dzcp_event
             $this->version = $this->json_array['dzcp'];
         }
 
-        if(GUMP::is_valid($this->json_array, array('edition' => 'required')) === true) {
+        if(GUMP::is_valid($this->json_array, ['edition' => 'required']) === true) {
             $this->edition = $this->json_array['edition'];
         }
 
@@ -59,31 +59,31 @@ class dzcp_version extends dzcp_event
         //$CacheHash = $this->getCacheHash();
 
             $get = common::$sql['default']->fetch("SELECT `version`,`release`,`build`,`edition` FROM `{prefix_addon_version}` WHERE `static_version` = ? AND `edition` = ?;",
-                array($this->version, $this->edition));
+                [$this->version, $this->edition]);
             if (common::$sql['default']->rowCount()) {
                 switch ($this->contenttype) {
                     case 'xml':
-                        $output = xmlrpc_encode(array(
-                            'dzcp' => array(
+                        $output = xmlrpc_encode([
+                            'dzcp' => [
                                 'version' => stringParser::decode($get['version']),
                                 'release' => stringParser::decode($get['release']),
                                 'build' => stringParser::decode($get['build']),
                                 'edition' => stringParser::decode($get['edition'])
-                            )
-                        ));
+                            ]
+                        ]);
 
                         echo $output;
                         break;
                     case 'jsonp':
                     default:
-                        $output = json_encode(array(
-                                'dzcp' => array(
+                        $output = json_encode([
+                                'dzcp' => [
                                     'version' => stringParser::decode($get['version']),
                                     'release' => stringParser::decode($get['release']),
                                     'build' => stringParser::decode($get['build']),
                                     'edition' => stringParser::decode($get['edition'])
-                                )
-                            ));
+                                ]
+                        ]);
 
                         echo $output;
                         break;
@@ -91,6 +91,9 @@ class dzcp_version extends dzcp_event
             }
     }
 
+    /**
+     *
+     */
     function runUpdate() {
         $update_stable = false;
         $qryv = common::$sql['default']->select("SELECT `id`,`static_version`,`edition`,`updated` FROM `{prefix_addon_version}` WHERE `enabled` = 1;");
@@ -100,7 +103,7 @@ class dzcp_version extends dzcp_event
                     $xml = $this->updateGithub($getv['static_version'], $getv['edition']);
                     if (is_array($xml)) {
                         common::$sql['default']->update("UPDATE `{prefix_addon_version}` SET `version` = ?, `release` = ?, `build` = ?, `updated` = ? WHERE `id` = ?;",
-                            array(stringParser::encode($xml['version']), stringParser::encode($xml['release']), stringParser::encode($xml['build']), time(), $getv['id']));
+                            [stringParser::encode($xml['version']), stringParser::encode($xml['release']), stringParser::encode($xml['build']), time(), $getv['id']]);
                         if($getv['static_version'] == $this->version && $getv['edition'] == 'stable') {
                             $update_stable = true;
                         }
@@ -111,7 +114,7 @@ class dzcp_version extends dzcp_event
 
         if($update_stable) {
             $get = common::$sql['default']->fetch("SELECT `version` FROM `{prefix_addon_version}` WHERE `static_version` = ? AND `edition` = 'stable';",
-                array($this->version));
+                [$this->version]);
             if (common::$sql['default']->rowCount()) {
                 $this->writeOldVersionsFile(stringParser::decode($get['version']));
             }

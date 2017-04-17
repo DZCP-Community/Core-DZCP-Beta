@@ -30,7 +30,7 @@ function kalender($month="",$year="",$js=false) {
         }
 
         for($i = 1; $i <= 12; $i++) {
-            $mname = array("1" => _jan,
+            $mname = ["1" => _jan,
                            "2" => _feb,
                            "3" => _mar,
                            "4" => _apr,
@@ -41,7 +41,7 @@ function kalender($month="",$year="",$js=false) {
                            "9" => _sep,
                            "10" => _okt,
                            "11" => _nov,
-                           "12" => _dez);
+                           "12" => _dez];
 
             if($monat == $i) $month = $mname[$i];
         }
@@ -73,7 +73,7 @@ function kalender($month="",$year="",$js=false) {
 
                     $event = ""; $titleev = "";
                     $qry = common::$sql['default']->select("SELECT `datum`,`title` FROM `{prefix_events}` WHERE DATE_FORMAT(FROM_UNIXTIME(datum), '%d.%m.%Y') = ?;",
-                            array(common::cal($i).".".$monat.".".$jahr));
+                            [common::cal($i).".".$monat.".".$jahr]);
                     foreach($qry as $get) {
                         $event = "set";
                         $titleev .= '&lt;img src=../inc/images/event.png class=icon alt= /&gt;'.'&nbsp;'.common::jsconvert(_kal_event.stringParser::decode($get['title'])).'&lt;br />';
@@ -89,9 +89,9 @@ function kalender($month="",$year="",$js=false) {
                     if(!checkdate($monat, $i, $jahr))
                         $data .= '<td class="navKalEmpty"></td>';
                     elseif($datum == $today)
-                        $data .= show("menu/kal_day", array("day" => $day, "id" => "navKalToday"));
+                        $data .= show("menu/kal_day", ["day" => $day, "id" => "navKalToday"]);
                     else
-                        $data .= show("menu/kal_day", array("day" => $day, "id" => "navKalDays"));
+                        $data .= show("menu/kal_day", ["day" => $day, "id" => "navKalDays"]);
 
                     $i++;
                 }
@@ -116,13 +116,13 @@ function kalender($month="",$year="",$js=false) {
           $ly = $jahr;
         }
 
-        $kalender = show("menu/kalender", array("monat" => $month,
+        $kalender = show("menu/kalender", ["monat" => $month,
                                                 "show" => $show,
                                                 "year" => $jahr,
                                                 "nm" => $nm,
                                                 "ny" => $ny,
                                                 "lm" => $lm,
-                                                "ly" => $ly));
+                                                "ly" => $ly]);
 
     }
 

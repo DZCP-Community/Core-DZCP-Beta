@@ -23,7 +23,7 @@
  * Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
  */
 class BBCode_TEST {
-    protected $bbcode_table = array();
+    protected $bbcode_table = [];
 
     public function __construct () {
 
