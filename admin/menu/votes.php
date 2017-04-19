@@ -167,8 +167,12 @@ switch ($do) {
             }
         }
 
-        if(empty($show))
-            $show = show(_no_entrys_yet, array("colspan" => "6"));
+        if(empty($show)) {
+            $smarty->caching = false;
+            $smarty->assign('colspan',6);
+            $show = $smarty->fetch('string:'._no_entrys_yet);
+            $smarty->clearAllAssign();
+        }
         
         $show = show($dir."/votes", array("show" => $show));
     break;

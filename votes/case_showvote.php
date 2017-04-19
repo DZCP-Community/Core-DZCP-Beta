@@ -29,8 +29,12 @@ if(defined('_Votes')) {
             }
         }
 
-        if(empty($show))
-            $show = show(_no_entrys_yet, ["colspan" => "2"]);
+        if(empty($show)) {
+            $smarty->caching = false;
+            $smarty->assign('colspan',2);
+            $show = $smarty->fetch('string:'._no_entrys_yet);
+            $smarty->clearAllAssign();
+        }
 
         $index = show($dir."/voted", ["show" => $show]);
     } else

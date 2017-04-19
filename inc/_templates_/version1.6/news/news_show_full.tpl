@@ -12,9 +12,6 @@
         </td>
       </tr>
       <tr>
-        <td class="newsContent">{$klapp}</td>
-      </tr>
-      <tr id="more{$id}" style="display:{$dp};">
         <td class="newsContent">{$more}</td>
       </tr>
       <tr>

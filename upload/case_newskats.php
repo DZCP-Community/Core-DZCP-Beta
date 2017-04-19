@@ -39,7 +39,7 @@ if(defined('_Upload')) {
             else if($size > settings::get('upicsize')."000")
                 $index = common::error(_upload_wrong_size, 1);
             else {
-                if(move_uploaded_file($tmpname, basePath."/inc/images/newskat/".$_FILES['file']['name'])) {
+                if(move_uploaded_file($tmpname, basePath."/inc/images/uploads/newskat/".$_FILES['file']['name'])) {
                     if(isset($_GET['edit']))
                         $index = common::info(_info_upload_success, "../admin/?admin=news&amp;do=edit&amp;id=".$_GET['edit']."");
                     else

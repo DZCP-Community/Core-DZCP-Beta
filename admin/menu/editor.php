@@ -274,7 +274,10 @@ switch($do) {
         }
 
         if(empty($show)) {
-            $show = show(_no_entrys_yet, array("colspan" => "4"));
+            $smarty->caching = false;
+            $smarty->assign('colspan',4);
+            $show = $smarty->fetch('string:'._no_entrys_yet);
+            $smarty->clearAllAssign();
         }
 
         $show = show($dir."/editor", array("show" => $show));

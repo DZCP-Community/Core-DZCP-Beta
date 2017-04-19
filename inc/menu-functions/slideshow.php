@@ -29,8 +29,8 @@ function slideshow() {
 
             $image = '';
             foreach(["jpg", "gif", "png"] as $endung) {
-                if(file_exists(basePath."/inc/images/slideshow/".$get['id'].".".$endung)) {
-                    $image = "../inc/images/slideshow/".$get['id'].".".$endung;
+                if(file_exists(basePath."/inc/images/uploads/slideshow/".$get['id'].".".$endung)) {
+                    $image = "../inc/images/uploads/slideshow/".$get['id'].".".$endung;
                     break;
                 }
             }

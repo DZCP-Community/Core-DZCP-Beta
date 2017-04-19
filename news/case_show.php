@@ -142,14 +142,23 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
             foreach($qryc as $getc) {
                 $edit = ""; $delete = "";
                 if ((common::$chkMe >= 1 && $getc['reg'] == common::$userid) || common::permission("news")) {
-                    $edit = show("page/button_edit_single", ["id" => $get_news['id'],
-                                                                  "action" => "action=show&amp;do=edit&amp;cid=" . $getc['id'],
-                                                                  "title" => _button_title_edit]);
+                    $smarty->caching = true;
+                    $smarty->assign('action',"?action=show&amp;do=edit&amp;cid=" . $getc['id']."&amp;id=".$get_news['id']);
+                    $smarty->assign('title',_button_title_edit);
+                    $smarty->assign('idir','../inc/images');
+                    $edit = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/button_edit.tpl',
+                        common::getSmartyCacheHash('_button_edit_'.$get_news['id'].'_cid_'.$getc['id']));
+                    $smarty->clearAllAssign();
 
-                    $delete = show("page/button_delete_single", ["id" => $get_news['id'],
-                                                                      "action" => "action=show&amp;do=delete&amp;cid=" . $getc['id'],
-                                                                      "title" => _button_title_del,
-                                                                      "del" => _confirm_del_entry]);
+                    $smarty->caching = true;
+                    $smarty->assign('id',$get_news['id']);
+                    $smarty->assign('action',"?action=show&amp;do=delete&amp;cid=".$getc['id']."&amp;id=".$get_news['id']);
+                    $smarty->assign('title',_button_title_del);
+                    $smarty->assign('del',_confirm_del_entry);
+                    $smarty->assign('idir','../inc/images');
+                    $delete = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/button_delete.tpl',
+                        common::getSmartyCacheHash('_button_delete_'.$get_news['id'].'_cid_'.$getc['id']));
+                    $smarty->clearAllAssign();
                 }
 
                 $email = ""; $hp = ""; $avatar = ""; $onoff = "";
@@ -209,7 +218,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                 if (!common::ipcheck("ncid(".$_GET['id'].")", settings::get('f_newscom')) && empty($add)) {
                     $smarty->caching = false;
                     $smarty->assign('nick',common::autor(common::$userid));
-                    $smarty->assign('action','?action=show&amp;do=add&amp;id=' . (isset($_GET['id']) ? $_GET['id'] : '1'));
+                    $smarty->assign('action','../news/?action=show&amp;do=add&amp;id=' . (isset($_GET['id']) ? $_GET['id'] : '1'));
                     $smarty->assign('prevurl','../news/?action=compreview&id=' . (isset($_GET['id']) ? $_GET['id'] : '1'));
                     $smarty->assign('id',(isset($_GET['id']) ? $_GET['id'] : '1'));
                     $smarty->assign('posteintrag',(isset($_POST['comment']) ? $_POST['comment'] : ''));
@@ -226,17 +235,6 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
             $smarty->assign('add',$add);
             $showmore = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/comments.tpl');
             $smarty->clearAllAssign();
-
-            //-> Klapptext
-            $klapp = '';
-            if ($get_news['klapptext']) {
-                $smarty->caching = false;
-                $smarty->assign('klapplink', stringParser::decode($get_news['klapplink']));
-                $smarty->assign('which', 'expand');
-                $smarty->assign('id', $get_news['id']);
-                $klapp = $smarty->fetch('file:[' . common::$tmpdir . ']' . $dir . '/news_klapplink.tpl');
-                $smarty->clearAllAssign();
-            }
 
             $links1 = '';
             if(!empty($get_news['url1'])) {
@@ -279,7 +277,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
             }
 
             $intern = $get_news['intern'] ? _votes_intern : "";
-            $newsimage = '../inc/images/newskat/'.common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get_news['kat']],'katimg');
+            $newsimage = '../inc/images/uploads/newskat/'.common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get_news['kat']],'katimg');
             foreach (["jpg", "gif", "png"] as $tmpendung) {
                 if (file_exists(basePath . "/inc/images/uploads/news/".$get_news['id'].".".$tmpendung)) {
                     $newsimage = '../inc/images/uploads/news/'.$get_news['id'].'.'.$tmpendung;
@@ -294,21 +292,17 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
             $smarty->assign('kat',$newsimage);
             $smarty->assign('id',$get_news['id']);
             $smarty->assign('comments','');
-            $smarty->assign('showmore','');
-            $smarty->assign('dp','compact');
             $smarty->assign('notification_page',notification::get($notification_p));
             $smarty->assign('sticky','');
             $smarty->assign('intern',$intern);
-            $smarty->assign('showmore',$showmore);
-            $smarty->assign('klapp',$klapp);
-            $smarty->assign('more',bbcode::parse_html($get_news['klapptext']));
+            $smarty->assign('showmore',$showmore,true); //Comments
+            $smarty->assign('more',bbcode::parse_html($get_news['more']));
             $smarty->assign('text',bbcode::parse_html($get_news['text']));
             $smarty->assign('datum',date("j.m.y H:i", (empty($get_news['datum']) ? time() : $get_news['datum'])));
             $smarty->assign('links',$links);
             $smarty->assign('autor',common::autor($get_news['autor']));
             $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/news_show_full.tpl',common::getSmartyCacheHash('news_full_'.$get_news['id']));
             $smarty->clearAllAssign();
-
         }
     }
 }

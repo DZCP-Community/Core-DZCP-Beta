@@ -116,7 +116,7 @@ define('_delete', '<a href="?action=msg&amp;do=deletethis&amp;id=[id]"><img alt=
 define('_forum_delete', '<a href="?action=post&amp;do=delete&amp;id=[id]"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
 define('_newsc_delete', '<a href="?action=show&amp;id=[id]&amp;do=delete&cid=[cid]"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
 ## News ##
-define('_news_kat', '<img src="../inc/images/newskat/[img]" alt="" />');
+define('_news_kat', '<img src="../inc/images/uploads/newskat/[img]" alt="" />');
 define('_artikel_links', '<span class="fontItalic">[rel]</span><br />[link1] [link2] [link3]');
 define('_news_show_link', '<a href="../news/?action=show&amp;id=[id]">[titel]</a>');
 define('_news_stats', 'Insgesamt <span class="fontBold">[news] News</span> mit <span class="fontBold">[comments] [com]</span>');
@@ -154,7 +154,7 @@ define('_artikel_edit_link', 'editartikel&amp;id=[id]');
 define('_config_delete', '<a href="?admin=[what]&amp;do=delete&amp;id=[id]"><img src="../inc/images/delete.png" alt="" class="icon" /></a>');
 define('_config_edit', '<a href="?admin=[what]&amp;do=edit&amp;id=[id]"><img src="../inc/images/edit.png" alt="" class="icon" /></a>');
 define('_config_forum_kats_titel', '<a href="?admin=forum&amp;show=subkats&amp;id=[id]" style="display:block">[kat]</a>');
-define('_config_newskats_img', '<img src="../inc/images/newskat/[img]" alt="" />');
+define('_config_newskats_img', '<img src="../inc/images/uploads/newskat/[img]" alt="" />');
 define('_config_neskats_katbild_upload', '<a href="../upload/?action=newskats">upload</a>');
 define('_config_neskats_katbild_upload_edit', '<a href="../upload/?action=newskats&amp;edit=[id]">upload</a>');
 define('_config_newskats_editid', 'editnewskat&amp;id=[id]');

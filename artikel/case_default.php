@@ -16,7 +16,7 @@
  */
 
 if(defined('_Artikel')) {
-    $qry = common::$sql['default']->select("SELECT `id`,`kat`,`titel`,`datum`,`autor`,`text` "
+    $qry = common::$sql['default']->select("SELECT `id`,`kat`,`titel`,`datum`,`autor` "
             . "FROM `{prefix_artikel}` "
             . "WHERE `public` = 1 ".common::orderby_sql(["artikel","titel","datum","kat"], 'ORDER BY `datum` DESC')." "
             . "LIMIT ".($page - 1)*settings::get('m_artikel').",".settings::get('m_artikel').";");
@@ -25,25 +25,37 @@ if(defined('_Artikel')) {
         foreach($qry as $get) {
             $getk = common::$sql['default']->fetch("SELECT `kategorie` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get['kat']]);
             $titel = '<a style="display:block" href="?action=show&amp;id='.$get['id'].'">'.stringParser::decode($get['titel']).'</a>';
+
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $show .= show($dir."/artikel_show", ["titel" => $titel,
-                                                      "kat" => stringParser::decode($getk['kategorie']),
-                                                      "id" => $get['id'],
-                                                      "display" => "none",
-                                                      "class" => $class,
-                                                      "text" => bbcode::parse_html($get['text']),
-                                                      "datum" => date("d.m.Y", $get['datum']),
-                                                      "autor" => common::autor($get['autor'])]);
+
+            //-> Gen List
+            $smarty->caching = true;
+            $smarty->assign('autor',common::autor($get['autor']));
+            $smarty->assign('date',date("d.m.y", $get['datum']));
+            $smarty->assign('titel',$titel);
+            $smarty->assign('class',$class);
+            $smarty->assign('kat',stringParser::decode($getk['kategorie']));
+            $smarty->assign('comments',common::cnt('{prefix_newscomments}'," WHERE `news` = ".$get['id']));
+            $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/artikel_show.tpl',common::getSmartyCacheHash('artikel_show_'.$get['id']));
+            $smarty->clearAllAssign();
         }
     } else {
-        $show = show(_no_entrys_yet, ["colspan" => "4"]);
+        $smarty->caching = false;
+        $smarty->assign('colspan',4);
+        $show = $smarty->fetch('string:'._no_entrys_yet);
+        $smarty->clearAllAssign();
     }
 
     $seiten = common::nav(common::cnt("{prefix_artikel}"),settings::get('m_artikel'),"?page".(isset($_GET['show']) ? $_GET['show'] : 0).common::orderby_nav());
-    $index = show($dir."/artikel", ["show" => $show,
-                                         "nav" => $seiten,
-                                         "order_autor" => common::orderby('autor'),
-                                         "order_datum" => common::orderby('datum'),
-                                         "order_titel" => common::orderby('titel'),
-                                         "order_kat" => common::orderby('kat')]);
+    $smarty->caching = false;
+    $smarty->assign('show',$show);
+    $smarty->assign('nav',$seiten);
+    $smarty->assign('idir','../inc/images');
+    $smarty->assign('order_autor',common::orderby('autor'));
+    $smarty->assign('order_datum',common::orderby('datum'));
+    $smarty->assign('order_titel',common::orderby('titel'));
+    $smarty->assign('order_kat',common::orderby('kat'));
+    $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/artikel.tpl');
+    $smarty->clearAllAssign();
+    unset($seiten,$show,$qry,$get,$getk,$titel,$class);
 }

@@ -97,8 +97,12 @@ switch ($do) {
             $show .= show($dir."/startpage_show", array("edit" => $edit, "name" => stringParser::decode($get['name']), "url" => stringParser::decode($get['url']), "class" => $class, "delete" => $delete));
         }
 
-        if(empty($show))
-            $show = show(_no_entrys_yet, array("colspan" => "4"));
+        if(empty($show)) {
+            $smarty->caching = false;
+            $smarty->assign('colspan',4);
+            $show = $smarty->fetch('string:'._no_entrys_yet);
+            $smarty->clearAllAssign();
+        }
 
         $show = show($dir."/startpage", array("show" => $show));
     break;

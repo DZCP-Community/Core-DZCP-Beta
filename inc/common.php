@@ -152,7 +152,7 @@ class common {
         //-> Language auslesen oder default setzen
         if(!is_api && !is_thumbgen) {
             $_SESSION['language'] = (cookie::get('language') != false ?
-                (file_exists(basePath.'/inc/lang/languages/'.cookie::get('language').'.php') ?
+                (file_exists(basePath.'/inc/lang/'.cookie::get('language').'.php') ?
                     cookie::get('language') :
                     settings::get('language')) :
                 settings::get('language'));
@@ -286,7 +286,7 @@ class common {
 //-> Sprache aendern
         if(!is_api) {
             if (isset($_GET['set_language']) && !empty($_GET['set_language'])) {
-                if (file_exists(basePath . "/inc/lang/languages/" . $_GET['set_language'] . ".php")) {
+                if (file_exists(basePath . "/inc/lang/" . $_GET['set_language'] . ".php")) {
                     $_SESSION['language'] = $_GET['set_language'];
                     cookie::put('language', $_GET['set_language']);
                     cookie::save();
@@ -2522,13 +2522,13 @@ class common {
      * @param string $lng
      */
     public static function lang(string $lng) {
-        if(!file_exists(basePath."/inc/lang/languages/".$lng.".php")) {
-            $files = self::get_files(basePath.'/inc/lang/languages/',false,true,['php']);
+        if(!file_exists(basePath."/inc/lang/".$lng.".php")) {
+            $files = self::get_files(basePath.'/inc/lang/',false,true,['php']);
             $lng = str_replace('.php','',$files[0]);
         }
 
         include(basePath."/inc/lang/global.php");
-        include(basePath."/inc/lang/languages/".$lng.".php");
+        include(basePath."/inc/lang/".$lng.".php");
     }
 
     /**
@@ -2628,7 +2628,7 @@ class common {
             //filter placeholders
             $dir = self::$designpath; //after template index autodetect!!!
             $blArr = ["[clanname]","[title]","[java_vars]","[template_switch]","[headtitle]","[login]",
-                "[index]","[rss]","[dir]","[where]","[lang]"];
+                "[index]","[dir]","[where]","[lang]"];
             $pholdervars = '';
             for($i=0;$i<=count($blArr)-1;$i++) {
                 if (preg_match("#" . $blArr[$i] . "#", $pholder)) {

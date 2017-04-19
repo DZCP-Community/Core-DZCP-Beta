@@ -15,6 +15,9 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
+define('_lang_de', 'German');
+define('_lang_uk', 'English');
+
 ## ADDED / REDEFINED FOR 1.7.0
 define('_years', 'Years');
 define('_year', 'Year');
@@ -1292,7 +1295,7 @@ define('_forum_top_posts' , 'Top 5 poster');
 define('_user_cant_delete_admin' , 'You can`t delete members or admins!');
 define('_no_entrys_yet' , '
 <tr>
-  <td class="contentMainFirst" colspan="[colspan]" align="center">No entry yetn!</td>
+  <td class="contentMainFirst" colspan="{$colspan}" align="center">No entry yetn!</td>
 </tr>');
 define('_nav_no_ftopics' , 'No entry yet!');
 define('_fopen' , 'The webhoster of this site does not allow the function fopen() which is needed!');

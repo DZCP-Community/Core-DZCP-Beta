@@ -16,41 +16,55 @@
  */
 
 if(defined('_News')) {
-    header("Content-type: text/html; charset=utf-8");
-    $klapp = "";
-    if($_POST['klapptitel']) {
-        $klapp = show(_news_klapplink, ["klapplink" => stringParser::decode($_POST['klapptitel']),
-                                             "which" => "collapse",
-                                             "id" => "_prev"]);
+    //-> Klapptext
+    $klapp = '';
+    if ($_POST['klapptitel']) {
+        $smarty->caching = false;
+        $smarty->assign('klapplink', $_POST['klapptitel']);
+        $smarty->assign('which', 'collapse');
+        $smarty->assign('id', '_prev');
+        $klapp = $smarty->fetch('file:[' . common::$tmpdir . ']' . $dir . '/news_klapplink.tpl');
+        $smarty->clearAllAssign();
     }
 
-    $links1 = ""; $rel = "";
+    $links1 = '';
     if(!empty($_POST['url1'])) {
-        $rel = _related_links;
-        $links1 = show(_news_link, ["link" => stringParser::decode($_POST['link1']),
-                                         "url" => common::links($_POST['url1'])]);
+        $smarty->caching = false;
+        $smarty->assign('link',$_POST['link1']);
+        $smarty->assign('url',common::links($_POST['url1']));
+        $smarty->assign('target',"_blank");
+        $links1 = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/news_link.tpl');
+        $smarty->clearAllAssign();
     }
 
-    $links2 = "";
+    $links2 = '';
     if(!empty($_POST['url2'])) {
-        $rel = _related_links;
-        $links2 = show(_news_link, ["link" => stringParser::decode($_POST['link2']),
-                                         "url" => common::links($_POST['url2'])]);
+        $smarty->caching = false;
+        $smarty->assign('link',$_POST['link2']);
+        $smarty->assign('url',common::links($_POST['url2']));
+        $smarty->assign('target',"_blank");
+        $links2 = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/news_link.tpl');
+        $smarty->clearAllAssign();
     }
 
-    $links3 = "";
+    $links3 = '';
     if(!empty($_POST['url3'])) {
-        $rel = _related_links;
-        $links3 = show(_news_link, ["link" => stringParser::decode($_POST['link3']),
-                                         "url" => common::links($_POST['url3'])]);
+        $smarty->caching = false;
+        $smarty->assign('link',$_POST['link3']);
+        $smarty->assign('url',common::links($_POST['url3']));
+        $smarty->assign('target',"_blank");
+        $links3 = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/news_link.tpl');
+        $smarty->clearAllAssign();
     }
 
     $links = '';
-    if(!empty($links1) || !empty($links2) || !empty($links3)) {
-        $links = show(_news_links, ["link1" => $links1,
-                                         "link2" => $links2,
-                                         "link3" => $links3,
-                                         "rel" => $rel]);
+    if (!empty($links1) || !empty($links2) || !empty($links3)) {
+        $smarty->caching = false;
+        $smarty->assign('link1',$links1);
+        $smarty->assign('link2',$links2);
+        $smarty->assign('link3',$links3);
+        $links = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/news_links.tpl');
+        $smarty->clearAllAssign();
     }
 
     $intern = ''; $sticky = '';
@@ -62,25 +76,38 @@ if(defined('_News')) {
         $sticky = _news_sticky;
     }
 
-    $newsimage = '../inc/images/newskat/'.stringParser::decode(common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [intval($_POST['kat'])],'katimg'));
-    $viewed = show(_news_viewed, ["viewed" => '0']);
-    $index = show($dir."/news_show_full", ["titel" => $_POST['titel'],
-                                           "kat" => $newsimage,
-                                           "id" => '_prev',
-                                           "comments" => _news_comments_prev,
-                                           "showmore" => "",
-                                           "dp" => "",
-                                           "notification_page" => "",
-                                           "dir" => $designpath,
-                                           "intern" => $intern,
-                                           "sticky" => $sticky,
-                                           "klapp" => $klapp,
-                                           "more" => bbcode::parse_html($_POST['morenews']),
-                                           "viewed" => $viewed,
-                                           "text" => bbcode::parse_html($_POST['newstext']),
-                                           "datum" => date("d.m.y H:i", time())._uhr,
-                                           "links" => $links,
-                                           "autor" => common::autor($_SESSION['id'])]);
+    //empty news kat image
+    foreach(["jpg", "gif", "png"] as $end) {
+        if (file_exists(basePath . "/inc/images/nopic." . $end)) {
+            $newsimage = '../inc/images/nopic.' . $end;
+            break;
+        }
+    }
+    
+    $katimg = common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [intval($_POST['kat'])],'katimg');
+    if(!empty($katimg) && common::$sql['default']->rowCount() && file_exists(basePath.'/inc/images/uploads/newskat/'.stringParser::decode($katimg))) {
+        $newsimage = '../inc/images/uploads/newskat/'.stringParser::decode($katimg);
+    }
+
+    //-> News Preview
+    $where = $where." - ".stringParser::decode($get_news['titel']);
+    $smarty->caching = false;
+    $smarty->assign('titel',stringParser::decode($get_news['titel']));
+    $smarty->assign('kat',$newsimage);
+    $smarty->assign('id',1);
+    $smarty->assign('comments',_news_comments_prev);
+    $smarty->assign('showmore','');
+    $smarty->assign('dp','compact');
+    $smarty->assign('notification_page','');
+    $smarty->assign('sticky',$sticky);
+    $smarty->assign('intern',$intern);
+    $smarty->assign('more',bbcode::parse_html($_POST['morenews']));
+    $smarty->assign('text',bbcode::parse_html($_POST['newstext']));
+    $smarty->assign('datum',date("j.m.y H:i", time()));
+    $smarty->assign('links',$links);
+    $smarty->assign('autor',common::autor());
+    $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/news_show_full.tpl');
+    $smarty->clearAllAssign();
 
     common::update_user_status_preview();
     header('Content-Type: text/html; charset=utf-8');

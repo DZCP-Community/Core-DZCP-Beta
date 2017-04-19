@@ -187,7 +187,10 @@ switch ($do) {
         }
 
         if(empty($show_pos)) {
-            $show_pos = show(_no_entrys_yet, array("colspan" => "3"));
+            $smarty->caching = false;
+            $smarty->assign('colspan',3);
+            $show_pos = $smarty->fetch('string:'._no_entrys_yet);
+            $smarty->clearAllAssign();
         }
 
         $show = show($dir."/positions", array("show" => $show_pos));

@@ -34,7 +34,11 @@ if(common::$sql['default']->rowCount()) {
     }
 }
 
-if(empty($show))
-    $show = _no_entrys_yet;
+if(empty($show)) {
+    $smarty->caching = false;
+    $smarty->assign('colspan',4);
+    $show = $smarty->fetch('string:'._no_entrys_yet);
+    $smarty->clearAllAssign();
+}
 
 $index = show($dir."/links", ["show" => $show]);

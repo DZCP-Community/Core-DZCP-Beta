@@ -43,7 +43,7 @@ if(defined('_News')) {
             $smarty->clearAllAssign();
 
             //Bild
-            $newsimage = '../inc/images/newskat/'.stringParser::decode(common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;",
+            $newsimage = '../inc/images/uploads/newskat/'.stringParser::decode(common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;",
                     [$get['kat']],'katimg'));
             foreach(["jpg", "gif", "png"] as $tmpendung) {
                 if(file_exists(basePath."/inc/images/uploads/news/".$get['id'].".".$tmpendung)) {
@@ -90,8 +90,19 @@ if(defined('_News')) {
             $smarty->clearAllAssign();
 
             //-> News-Kategorie Bild
-            $newsimage = '../inc/images/newskat/'.stringParser::decode(common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;",
-                    [$get['kat']],'katimg'));
+            foreach(["jpg", "gif", "png"] as $end) {
+                if (file_exists(basePath . "/inc/images/nopic." . $end)) {
+                    $newsimage = '../inc/images/uploads/nopic.' . $end;
+                    break;
+                }
+            }
+
+            $katimg = common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get['kat']],'katimg');
+            if(!empty($katimg) && common::$sql['default']->rowCount() && file_exists(basePath.'/inc/images/uploads/newskat/'.stringParser::decode($katimg))) {
+                $newsimage = '../inc/images/uploads/newskat/'.stringParser::decode($katimg);
+            }
+
+            //-> News Bild by ID
             foreach(["jpg", "gif", "png"] as $tmpendung) {
                 //-> News Bild by ID
                 if(file_exists(basePath."/inc/images/uploads/news/".$get['id'].".".$tmpendung)) {
@@ -107,11 +118,10 @@ if(defined('_News')) {
             $smarty->assign('id',$get['id']);
             $smarty->assign('comments',common::cnt('{prefix_newscomments}', " WHERE `news` = ".intval($get['id'])));
             $smarty->assign('showmore','');
-            $smarty->assign('dp','none');
             $smarty->assign('dir',common::$designpath);
             $smarty->assign('intern',boolval($get['intern']));
             $smarty->assign('sticky','');
-            $smarty->assign('more',bbcode::parse_html($get['klapptext']));
+            $smarty->assign('more',bbcode::parse_html($get['more']));
             $smarty->assign('viewed',$viewed);
             $smarty->assign('text',bbcode::parse_html($get['text']));
             $smarty->assign('datum',date("d.m.y H:i", $get['datum']));

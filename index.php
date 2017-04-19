@@ -24,15 +24,15 @@ ob_start();
      * @return string
      */
     function startpage() {
-        $startpageID = (self::$userid >= 1 ? self::data('startpage') : 0);
+        $startpageID = (common::$userid >= 1 ? common::data('startpage') : 0);
         if(!$startpageID) { return 'user/?action=userlobby'; }
-        $get = self::$sql['default']->fetch("SELECT `url`,`level` FROM `{prefix_startpage}` WHERE `id` = ? LIMIT 1", [$startpageID]);
-        if(!self::$sql['default']->rowCount()) {
-            self::$sql['default']->update("UPDATE `{prefix_users}` SET `startpage` = 0 WHERE `id` = ?;", [self::$userid]);
+        $get = common::$sql['default']->fetch("SELECT `url`,`level` FROM `{prefix_startpage}` WHERE `id` = ? LIMIT 1", [$startpageID]);
+        if(!common::$sql['default']->rowCount()) {
+            common::$sql['default']->update("UPDATE `{prefix_users}` SET `startpage` = 0 WHERE `id` = ?;", [common::$userid]);
             return 'user/?action=userlobby';
         }
 
-        $page = $get['level'] <= self::$chkMe ? stringParser::decode($get['url']) : 'user/?action=userlobby';
+        $page = $get['level'] <= common::$chkMe ? stringParser::decode($get['url']) : 'user/?action=userlobby';
         return (!empty($page) ? $page : 'news/');
     }
 

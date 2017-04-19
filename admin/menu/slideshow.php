@@ -95,7 +95,7 @@ switch ($do) {
                 $tmpname = $_FILES['bild']['tmp_name'];
                 $endung = explode(".", $_FILES['bild']['name']);
                 $endung = strtolower($endung[count($endung)-1]);
-                @copy($tmpname, basePath."/inc/images/slideshow/".common::$sql['default']->lastInsertId().".".strtolower($endung));
+                @copy($tmpname, basePath."/inc/images/uploads/slideshow/".common::$sql['default']->lastInsertId().".".strtolower($endung));
                 @unlink($tmpname);
             }
 
@@ -117,8 +117,8 @@ switch ($do) {
 
         $image = '';
         foreach(array("jpg", "gif", "png") as $endung) {
-            if(file_exists(basePath."/inc/images/slideshow/".$get['id'].".".$endung)) {
-                $image = "inc/images/slideshow/".$get['id'].".".$endung;
+            if(file_exists(basePath."/inc/images/uploads/slideshow/".$get['id'].".".$endung)) {
+                $image = "inc/images/uploads/slideshow/".$get['id'].".".$endung;
                 break;
             }
         }
@@ -150,8 +150,8 @@ switch ($do) {
 
             $image = '';
             foreach(array("jpg", "gif", "png") as $endung) {
-                if(file_exists(basePath."/inc/images/slideshow/".$_POST['id'].".".$endung)) {
-                    $image = "inc/images/slideshow/".$_POST['id'].".".$endung;
+                if(file_exists(basePath."/inc/images/uploads/slideshow/".$_POST['id'].".".$endung)) {
+                    $image = "inc/images/uploads/slideshow/".$_POST['id'].".".$endung;
                     break;
                 }
             }
@@ -189,18 +189,18 @@ switch ($do) {
                 WHERE `id` = ".intval($_POST['id']));
 
             if(isset($_FILES['bild']['tmp_name']) && !empty($_FILES['bild']['tmp_name'])) {
-                $files = common::get_files(basePath."/inc/images/slideshow/",false,true,array("jpg", "gif", "png"));
+                $files = common::get_files(basePath."/inc/images/uploads/slideshow/",false,true,array("jpg", "gif", "png"));
                 foreach ($files as $file) {
                     $file_exp_minimize = explode('_minimize_',$file);
                     $file_exp = explode('.',$file);
                     if($file_exp_minimize[0] == $_POST['id'] || $file_exp[0] == $_POST['id'])
-                        @unlink(basePath."/inc/images/slideshow/".$file);
+                        @unlink(basePath."/inc/images/uploads/slideshow/".$file);
                 }
 
                 $tmpname = $_FILES['bild']['tmp_name'];
                 $endung = explode(".", $_FILES['bild']['name']);
                 $endung = strtolower($endung[count($endung)-1]);
-                @copy($tmpname, basePath."/inc/images/slideshow/".common::$sql['default']->lastInsertId().".".strtolower($endung));
+                @copy($tmpname, basePath."/inc/images/uploads/slideshow/".common::$sql['default']->lastInsertId().".".strtolower($endung));
                 @unlink($tmpname);
             }
 
@@ -209,12 +209,12 @@ switch ($do) {
     break;
     case 'delete':
         common::$sql['default']->delete("DELETE FROM `{prefix_slideshow}` WHERE `id` = ".intval($_GET['id']));
-        $files = common::get_files(basePath."/inc/images/slideshow/",false,true,array("jpg", "gif", "png"));
+        $files = common::get_files(basePath."/inc/images/uploads/slideshow/",false,true,array("jpg", "gif", "png"));
         foreach ($files as $file) {
             $file_exp_minimize = explode('_minimize_',$file);
             $file_exp = explode('.',$file);
             if($file_exp_minimize[0] == $_GET['id'] || $file_exp[0] == $_GET['id'])
-                @unlink(basePath."/inc/images/slideshow/".$file);
+                @unlink(basePath."/inc/images/uploads/slideshow/".$file);
         }
 
         $show = common::info(_slider_admin_del_done, "?admin=slideshow");

@@ -15,6 +15,9 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
+define('_lang_de', 'Deutsch');
+define('_lang_uk', 'Englisch');
+
 ## ADDED / REDEFINED FOR 1.7.0
 define('_server_ip', 'Server-IP');
 define('_aktion', 'Aktion');
@@ -1257,7 +1260,7 @@ define('_forum_top_posts', 'Top 5 Poster');
 define('_user_cant_delete_admin', 'Du darfst keine Member oder Admins l&ouml;schen!');
 define('_no_entrys_yet', '
 <tr>
-  <td class="contentMainFirst" colspan="[colspan]" align="center">Bisher noch kein Eintrag vorhanden!</td>
+  <td class="contentMainFirst" colspan="{$colspan}" align="center">Bisher noch kein Eintrag vorhanden!</td>
 </tr>');
 define('_nav_no_ftopics', 'Noch kein Eintrag!');
 define('_target', 'Neues Fenster');

@@ -21,12 +21,20 @@
  **/
 function languages() {
     $lang="";
-    $files = common::get_files(basePath.'/inc/lang/languages/',false,true, ['php']);
-    for($i=0;$i<=count($files)-1;$i++) {
-        $file = str_replace('.php','',$files[$i]);
-        $upFile = strtoupper(substr($file,0,1)).substr($file,1);
-        if(file_exists('../inc/lang/flaggen/'.$file.'.gif'))
-            $lang .= '<a href="?set_language='.$file.'"><img src="../inc/lang/flaggen/'.$file.'.gif" alt="'.$upFile.'" title="'.$upFile.'" class="icon" /></a> ';
+    $files = common::get_files(basePath.'/inc/lang/',false,true, ['php']);
+    foreach ($files as $file) {
+        $file = str_replace('.php','',$file);
+        if($file == 'global') continue;
+        $image = '../inc/images/flaggen/nocountry.gif';
+        foreach(["jpg", "gif", "png"] as $endung) {
+            if(file_exists(basePath."/inc/images/flaggen/".$file.".".$endung)) {
+                $image = "../inc/images/flaggen/".$file.".".$endung;
+                break;
+            }
+        }
+
+        $text = defined('_lang_'.$file) ? constant('_lang_'.$file) : '';
+        $lang .= '<a href="?set_language='.$file.'"><img src="'.$image.'" alt="'.$text.'" title="'.$text.'" class="icon" /></a> ';
     }
 
     return $lang;

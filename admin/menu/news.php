@@ -22,15 +22,15 @@ switch($do) {
     case 'delete':
         $get = fetch("SELECT `id`,`katimg` FROM `{prefix_newskat}` WHERE `id` = ?;",array(intval($_GET['id'])));
         if(common::$sql['default']->rowCount()) {
-            if(file_exists(basePath."/inc/images/newskat/".stringParser::decode($get['katimg']))) {
-                unlink(basePath."/inc/images/newskat/".stringParser::decode($get['katimg']));
+            if(file_exists(basePath."/inc/images/uploads/newskat/".stringParser::decode($get['katimg']))) {
+                unlink(basePath."/inc/images/uploads/newskat/".stringParser::decode($get['katimg']));
             }
             common::$sql['default']->delete("DELETE FROM `{prefix_newskat}` WHERE `id` = ?;",array(intval($get['id'])));
             $show = common::info(_config_newskat_deleted, "?admin=news");
         }
     break;
     case 'add':
-        $files = common::get_files(basePath.'/inc/images/newskat/',false,true); $img = "";
+        $files = common::get_files(basePath.'/inc/images/uploads/newskat/',false,true); $img = "";
         for($i=0; $i<count($files); $i++) {
             $img .= show(_select_field, array("value" => $files[$i],
                                               "sel" => "",
@@ -56,7 +56,7 @@ switch($do) {
     break;
     case 'edit':
         $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_newskat}` WHERE `id` = ?;",array(intval($_GET['id'])));
-        $files = common::get_files(basePath.'/inc/images/newskat/',false,true); $img = '';
+        $files = common::get_files(basePath.'/inc/images/uploads/newskat/',false,true); $img = '';
         for($i=0; $i<count($files); $i++) {
             $sel = ($get['katimg'] == $files[$i] ? 'selected="selected"' : '');
             $img .= show(_select_field, array("value" => $files[$i],

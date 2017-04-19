@@ -284,7 +284,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                                                        "seiten" => $seiten,
                                                        "add" => $add]);
 
-            $artikelimage = '../inc/images/newskat/'.common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get_artikel['kat']],'katimg');
+            $artikelimage = '../inc/images/uploads/newskat/'.common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get_artikel['kat']],'katimg');
             foreach (["jpg", "gif", "png"] as $tmpendung) {
                 if (file_exists(basePath . "/inc/images/uploads/artikel/".$get_artikel['id'].".".$tmpendung)) {
                     $artikelimage = '../inc/images/uploads/artikel/'.$get_artikel['id'].'.'.$tmpendung;

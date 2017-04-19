@@ -43,7 +43,7 @@ if(defined('_Artikel')) {
                                             "rel" => $rel]);
     }
 
-    $artikelimage = '../inc/images/newskat/'.stringParser::decode($getkat['katimg']);
+    $artikelimage = '../inc/images/uploads/newskat/'.stringParser::decode($getkat['katimg']);
     foreach(["jpg", "gif", "png"] as $tmpendung) {
         if(file_exists(basePath."/inc/images/uploads/artikel/".$get['id'].".".$tmpendung)) {
             $artikelimage = '../inc/images/uploads/artikel/'.$get['id'].'.'.$tmpendung;
