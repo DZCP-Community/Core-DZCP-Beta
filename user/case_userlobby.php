@@ -313,21 +313,25 @@ if(defined('_UserMenu')) {
         }
 
         $erase = ($can_erase ? _user_new_erase : '');
-        $index = show($dir . "/userlobby", array("erase" => $erase,
-                                                 "myposts" => common::userstats("forumposts"),
-                                                 "mylogins" => common::userstats("logins"),
-                                                 "myhits" => common::userstats("hits"),
-                                                 "mymsg" => $mymsg,
-                                                 "mylevel" => $mylevel,
-                                                 "kal" => $nextkal,
-                                                 "art" => $artikel,
-                                                 "artc" => $artc,
-                                                 "ftopics" => $ftopics,
-                                                 "forum" => $forumposts,
-                                                 "votes" => $newv,
-                                                 "newsc" => $newsc,
-                                                 "user" => $user,
-                                                 "news" => $news));
+        
+        $smarty->caching = false;
+        $smarty->assign('erase',$erase);
+        $smarty->assign('myposts',common::userstats("forumposts"));
+        $smarty->assign('mylogins',common::userstats("logins"));
+        $smarty->assign('myhits',common::userstats("hits"));
+        $smarty->assign('mymsg',$mymsg);
+        $smarty->assign('mylevel',$mylevel);
+        $smarty->assign('kal',$nextkal);
+        $smarty->assign('art',$artikel);
+        $smarty->assign('artc',$artc);
+        $smarty->assign('ftopics',$ftopics);
+        $smarty->assign('forum',$forumposts);
+        $smarty->assign('votes',$newv);
+        $smarty->assign('newsc',$newsc);
+        $smarty->assign('user',$user);
+        $smarty->assign('news',$news);
+        $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userlobby.tpl');
+        $smarty->clearAllAssign();
     } else {
         $index = common::error(_error_have_to_be_logged, 1);
     }
