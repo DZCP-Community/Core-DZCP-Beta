@@ -13,6 +13,7 @@
     "ckeditor/ckeditor": "4.6.2",
     "phpmailer/phpmailer": "v5.2.23",
     "smarty/smarty": "v3.1.31",
-    "suin/php-rss-writer": "1.5.0"
+    "suin/php-rss-writer": "1.5.0",
+    "jaybizzle/crawler-detect": "v1.2.40"
   }
 }

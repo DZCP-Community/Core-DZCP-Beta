@@ -1694,7 +1694,7 @@ define('_no', 'Nein');
 define('_maybe', 'Vielleicht');
 define('_beschreibung', 'Beschreibung');
 define('_admin_user_get_identy', 'Du hast erfolgreich die Identit&auml;t von [nick] angenommen!');
-define('_comment_added', 'Dein Kommentar wurde erfolgreich hinzugef&uuml;gt!');
+define('_comment_added', 'Dein Kommentar wurde erfolgreich gespeichert!');
 define('_comment_deleted', 'Der Kommentar wurde erfolgreich gel&ouml;scht!');
 define('_stichwort', 'Stichwort');
 define('_eintragen_titel', 'Eintragen');

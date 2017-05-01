@@ -90,9 +90,8 @@ if(defined('_News')) {
     }
 
     //-> News Preview
-    $where = $where." - ".stringParser::decode($get_news['titel']);
     $smarty->caching = false;
-    $smarty->assign('titel',stringParser::decode($get_news['titel']));
+    $smarty->assign('titel',stringParser::decode($_POST['titel']));
     $smarty->assign('kat',$newsimage);
     $smarty->assign('id',1);
     $smarty->assign('comments',_news_comments_prev);

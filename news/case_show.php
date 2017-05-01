@@ -30,11 +30,11 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                         if (!common::$chkMe) {
                             $index = common::error(_error_have_to_be_logged, 1);
                         } else {
-                            if (!common::ipcheck("ncid(" . $_GET['id'] . ")", settings::get('f_newscom'))) {
+                            if (!common::ipcheck("ncid(" . $news_id . ")", settings::get('f_newscom'))) {
                                 if (empty($_POST['comment'])) {
                                     javascript::set('AnchorMove', 'comForm');
                                     if (empty($_POST['eintrag'])) {
-                                        notification::add_error(_empty_eintrag);
+                                        notification::add_error(_empty_eintrag,'news_tr');
                                     }
                                 } else {
                                     common::$sql['default']->insert("INSERT INTO `{prefix_newscomments}` SET `news` = ?,`datum` = ?,`nick` = ?,`email` = ?,`hp` = ?,`reg` = ?,`comment` = ?, `ip` = ?;",
@@ -42,35 +42,34 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                                         (isset($_POST['hp']) && !common::$userid ? common::links($_POST['hp']) : common::links(common::data('hp'))),
                                         intval(common::$userid),stringParser::encode($_POST['comment']),common::$userip]);
                                     common::setIpcheck("ncid(" . $news_id . ")");
-                                    notification::set_global(false);
                                     javascript::set('AnchorMove', 'notification-box');
                                     $_POST = []; //Clear Post
-                                    $notification_p = notification::add_success(_comment_added);
-                                    notification::set_global(true);
+                                    notification::add_success(_comment_added,'news');
                                 }
                             } else {
-                                notification::add_error(show(_error_flood_post, ["sek" => settings::get('f_newscom')]));
+                                $smarty->caching = false;
+                                $smarty->assign('sek',settings::get('f_newscom'));
+                                $error = $smarty->fetch('string:'._error_flood_post);
+                                $smarty->clearAllAssign();
+                                notification::add_error($error,'news');
+                                unset($error);
                             }
                         }
                     } else {
-                        notification::add_error(_id_dont_exist);
+                        notification::add_error(_id_dont_exist,'news');
                     }
                     break;
                 case 'delete':
                     javascript::set('AnchorMove', 'notification-box');
-                    notification::set_global(false);
                     $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_newscomments}` WHERE `id` = ?;", [($cid = intval($_GET['cid']))],'reg');
                     if (common::$userid >= 1 && ($reg == common::$userid || common::permission('news'))) {
                         common::$sql['default']->delete("DELETE FROM `{prefix_newscomments}` WHERE `id` = ?;", [$cid]);
-                        $notification_p = notification::add_success(_comment_deleted);
+                        notification::add_success(_comment_deleted,'news');
                     } else {
-                        $notification_p = notification::add_error(_error_wrong_permissions);
+                        notification::add_error(_error_wrong_permissions,'news');
                     }
-
-                    notification::set_global(true);
                     break;
                 case 'editcom':
-                    notification::set_global(false);
                     javascript::set('AnchorMove', 'notification-box');
                     $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_newscomments}` WHERE `id` = ?;", [($cid = intval($_GET['cid']))],'reg');
                     if (common::$sql['default']->rowCount() && !empty($_POST['comment'])) {
@@ -90,35 +89,31 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                                           stringParser::encode($editedby),$cid]);
 
                             $_POST = []; //Clear Post
-                            $notification_p = notification::add_success(_comment_edited);
+                            notification::add_success(_comment_edited,'news');
                         } else {
-                            $notification_p = notification::add_error(_error_edit_post);
+                            notification::add_error(_error_edit_post,'news');
                         }
                     } else {
-                        $notification_p = notification::add_error(_empty_eintrag);
+                        notification::add_error(_empty_eintrag,'news');
                     }
-
-                    notification::set_global(true);
                     break;
                 case 'edit':
-                    $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`comment`,`hp`,`email`,`nick` FROM `{prefix_newscomments}` WHERE `id` = ?;", [intval($_GET['cid'])]);
+                    $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`comment` FROM `{prefix_newscomments}` WHERE `id` = ?;", [intval($_GET['cid'])]);
                     if (common::$userid >= 1 && ($get['reg'] == common::$userid || common::permission('news'))) {
                         javascript::set('AnchorMove', 'comForm');
 
                         $smarty->caching = false;
                         $smarty->assign('nick',common::autor($get['reg']));
-                        $smarty->assign('action','?action=show&amp;do=editcom&amp;id=' . $get['id'] .'&amp;cid=' . intval($_GET['cid']));
-                        $smarty->assign('prevurl','../news/?action=compreview&do=edit&id=' . $get['id'] .'&cid=' . intval($_GET['cid']));
+                        $smarty->assign('action','?action=show&amp;do=editcom&amp;id=' . $news_id .'&amp;cid=' . intval($_GET['cid']));
+                        $smarty->assign('prevurl','../news/?action=compreview&do=edit&id=' . $news_id .'&cid=' . intval($_GET['cid']));
                         $smarty->assign('id',$get['id']);
                         $smarty->assign('posteintrag',stringParser::decode($get['comment']));
-                        $smarty->assign('notification',notification::get_tr());
+                        $smarty->assign('notification',notification::get('news',true));
                         $add = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/comments_edit.tpl');
                         $smarty->clearAllAssign();
                     } else {
                         javascript::set('AnchorMove', 'notification-box');
-                        notification::set_global(false);
-                        $notification_p = notification::add_error(_error_edit_post);
-                        notification::set_global(true);
+                        notification::add_error(_error_edit_post,'news');
                     }
 
                     break;
@@ -222,10 +217,17 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                     $smarty->assign('prevurl','../news/?action=compreview&id=' . (isset($_GET['id']) ? $_GET['id'] : '1'));
                     $smarty->assign('id',(isset($_GET['id']) ? $_GET['id'] : '1'));
                     $smarty->assign('posteintrag',(isset($_POST['comment']) ? $_POST['comment'] : ''));
-                    $smarty->assign('notification',notification::get_tr());
+                    $smarty->assign('notification',notification::get('news',true),true);
                     $add = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/comments_add.tpl');
                     $smarty->clearAllAssign();
                 }
+            }
+
+            if(empty($comments)) {
+                $smarty->caching = false;
+                $smarty->assign('colspan',1);
+                $comments = $smarty->fetch('string:'._no_entrys_yet);
+                $smarty->clearAllAssign();
             }
 
             $seiten = common::nav($entrys, settings::get('m_comments'), "?action=show&amp;id=" . $_GET['id'] . "");
@@ -292,7 +294,6 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
             $smarty->assign('kat',$newsimage);
             $smarty->assign('id',$get_news['id']);
             $smarty->assign('comments','');
-            $smarty->assign('notification_page',notification::get($notification_p));
             $smarty->assign('sticky','');
             $smarty->assign('intern',$intern);
             $smarty->assign('showmore',$showmore,true); //Comments

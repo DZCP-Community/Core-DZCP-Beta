@@ -16,7 +16,7 @@
  */
 
 if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
-    $artikel_id = intval($_GET['id']); $add = ''; $notification_p = '';
+    $artikel_id = intval($_GET['id']); $add = '';
     if (!common::$sql['default']->fetch("SELECT `public` FROM `{prefix_artikel}` WHERE `id` = ?;", [$artikel_id],'public') && !common::permission("artikel")) {
         $index = common::error(_error_wrong_permissions, 1);
     } else {
@@ -31,50 +31,27 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                             $index = common::error(_error_have_to_be_logged, 1);
                         } else {
                             if (!common::ipcheck("artid(" . $_GET['id'] . ")", settings::get('f_artikelcom'))) {
-                                if (common::$userid >= 1) {
-                                    $toCheck = empty($_POST['comment']);
-                                } else {
-                                    $toCheck = empty($_POST['nick']) || empty($_POST['email']) || empty($_POST['comment']) || !common::check_email($_POST['email']) || !common::$securimage->check($_POST['secure']);
-                                }
-
-                                if ($toCheck) {
+                                if (empty($_POST['comment'])) {
                                     javascript::set('AnchorMove', 'startpage');
-                                    if (common::$userid >= 1) {
-                                        if (empty($_POST['eintrag'])) {
-                                            notification::add_error(_empty_eintrag);
-                                        }
-
-                                        $form = show("page/editor_regged", ["nick" => common::autor(common::$userid)]);
-                                    } else {
-                                        if (empty($_POST['nick'])) {
-                                            notification::add_error(_empty_nick);
-                                        } else if (empty($_POST['email'])) {
-                                            notification::add_error(_empty_email);
-                                        } else if (!common::check_email($_POST['email'])) {
-                                            notification::add_error(_error_invalid_email);
-                                        } else if (empty($_POST['eintrag'])) {
-                                            notification::add_error(_empty_eintrag);
-                                        } else if (!common::$securimage->check($_POST['secure'])) {
-                                            notification::add_error(captcha_mathematic ? _error_invalid_regcode_mathematic : _error_invalid_regcode);
-                                        }
-
-                                        $form = show("page/editor_notregged", ["posthp" => (isset($_POST['hp']) ? $_POST['hp'] : ''),
-                                                                                    "postemail" => (isset($_POST['email']) ? $_POST['email'] : ''),
-                                                                                    "postnick" => (isset($_POST['nick']) ? $_POST['nick'] : '')]);
+                                    if (empty($_POST['eintrag'])) {
+                                        notification::add_error(_empty_eintrag,'artikel');
                                     }
                                 } else {
                                     common::$sql['default']->insert("INSERT INTO `{prefix_acomments}` SET `artikel` = ?,`datum` = ?,`nick` = ?,`email` = ?,`hp` = ?,`reg` = ?,`comment` = ?, `ip` = ?;",
                                     [$artikel_id,time(),(isset($_POST['nick']) && !common::$userid ? stringParser::encode($_POST['nick']) : common::data('nick')),(isset($_POST['email']) && !common::$userid ? stringParser::encode($_POST['email']) : common::data('email')),
                                     (isset($_POST['hp']) && !common::$userid ? stringParser::encode(common::links($_POST['hp'])) : stringParser::encode(common::links(stringParser::decode(common::data('hp'))))),intval(common::$userid),stringParser::encode($_POST['comment']),common::$userip]);
                                     common::setIpcheck("artid(" . $artikel_id . ")");
-                                    notification::set_global(false);
                                     javascript::set('AnchorMove', 'notification-box');
                                     $_POST = []; //Clear Post
-                                    $notification_p = notification::add_success(_comment_added);
-                                    notification::set_global(true);
+                                    notification::add_success(_comment_added);
                                 }
                             } else {
-                                notification::add_error(show(_error_flood_post, ["sek" => settings::get('f_newscom')]));
+                                $smarty->caching = false;
+                                $smarty->assign('sek',settings::get('f_newscom'));
+                                $error = $smarty->fetch('string:'._error_flood_post);
+                                $smarty->clearAllAssign();
+                                notification::add_error($error);
+                                unset($error);
                             }
                         }
                     } else {
@@ -83,19 +60,15 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                     break;
                 case 'delete':
                     javascript::set('AnchorMove', 'notification-box');
-                    notification::set_global(false);
                     $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_acomments}` WHERE `id` = ?;", [($cid = intval($_GET['cid']))],'reg');
                     if ($reg == common::$userid || common::permission('artikel')) {
                         common::$sql['default']->delete("DELETE FROM `{prefix_acomments}` WHERE `id` = ?;", [$cid]);
-                        $notification_p = notification::add_success(_comment_deleted);
+                        notification::add_success(_comment_deleted);
                     } else {
-                        $notification_p = notification::add_error(_error_wrong_permissions);
+                        notification::add_error(_error_wrong_permissions);
                     }
-
-                    notification::set_global(true);
                     break;
                 case 'editcom':
-                    notification::set_global(false);
                     javascript::set('AnchorMove', 'notification-box');
                     $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_acomments}` WHERE `id` = ?;", [($cid = intval($_GET['cid']))],'reg');
                     if (common::$sql['default']->rowCount() && !empty($_POST['comment'])) {
@@ -115,40 +88,32 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                                           stringParser::encode($editedby),$cid]);
 
                             $_POST = []; //Clear Post
-                            $notification_p = notification::add_success(_comment_edited);
+                            notification::add_success(_comment_edited);
                         } else {
-                            $notification_p = notification::add_error(_error_edit_post);
+                            notification::add_error(_error_edit_post,'artikel');
                         }
                     } else {
-                        $notification_p = notification::add_error(_empty_eintrag);
+                        notification::add_error(_empty_eintrag,'artikel');
                     }
-
-                    notification::set_global(true);
                     break;
                 case 'edit':
-                    $get = common::$sql['default']->fetch("SELECT `reg`,`comment`,`hp`,`email`,`nick` FROM `{prefix_newscomments}` WHERE `id` = ?;", [intval($_GET['cid'])]);
-                    if ($get['reg'] == common::$userid || common::permission('artikel')) {
+                    $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`comment` FROM `{prefix_acomments}` WHERE `id` = ?;", [intval($_GET['cid'])]);
+                    if (common::$userid >= 1 && ($get['reg'] == common::$userid || common::permission('artikel'))) {
                         javascript::set('AnchorMove', 'comForm');
-                        if ($get['reg'] != 0) {
-                            $form = show("page/editor_regged", ["nick" => common::autor($get['reg']), "von" => _autor]);
-                        } else {
-                            $form = show("page/editor_notregged", ["posthp" => stringParser::decode($get['hp']), "postemail" => stringParser::decode($get['email']), "postnick" => stringParser::decode($get['nick'])]);
-                        }
 
-                        $add = show("page/comments_add", ["titel" => _comments_edit,
-                                                               "form" => $form,
-                                                               "what" => _button_value_edit,
-                                                               "prevurl" => '../artikel/?action=compreview&do=edit&id=' . $_GET['id'] . '&cid=' . $_GET['cid'],
-                                                               "action" => '?action=show&amp;do=editcom&amp;id=' . $_GET['id'] . '&amp;cid=' . $_GET['cid'],
-                                                               "id" => (isset($_GET['id']) ? $_GET['id'] : '1'),
-                                                               "posteintrag" => stringParser::decode($get['comment'])]);
+                        $smarty->caching = false;
+                        $smarty->assign('nick',common::autor($get['reg']));
+                        $smarty->assign('action','?action=show&amp;do=editcom&amp;id=' . $artikel_id .'&amp;cid=' . intval($_GET['cid']));
+                        $smarty->assign('prevurl','../artikel/?action=compreview&do=edit&id=' . $artikel_id .'&cid=' . intval($_GET['cid']));
+                        $smarty->assign('id',$get['id']);
+                        $smarty->assign('posteintrag',stringParser::decode($get['comment']));
+                        $smarty->assign('notification',notification::get_tr());
+                        $add = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/comments_edit.tpl');
+                        $smarty->clearAllAssign();
                     } else {
                         javascript::set('AnchorMove', 'notification-box');
-                        notification::set_global(false);
-                        $notification_p = notification::add_error(_error_edit_post);
-                        notification::set_global(true);
+                        notification::add_error(_error_edit_post,'artikel');
                     }
-
                     break;
             }
 
@@ -159,59 +124,77 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
             if (common::count_clicks('artikel', $artikel_id)) {
                 common::$sql['default']->update("UPDATE `{prefix_artikel}` SET `viewed` = (viewed+1) WHERE `id` = ?;", [$artikel_id]);
             }
-            
-            $viewed = show(_news_viewed, ["viewed" => $get_artikel['viewed']]);
-            $links1 = ""; $rel = "";
-            if (!empty($get_artikel['url1'])) {
-                $rel = _related_links;
-                $links1 = show(_artikel_link, ["link" => stringParser::decode($get_artikel['link1']),
-                                                    "url" => $get_artikel['url1']]);
+
+            $links1 = '';
+            if(!empty($get_news['url1'])) {
+                $smarty->caching = false;
+                $smarty->assign('link',stringParser::decode($get_artikel['link1']));
+                $smarty->assign('url',utf8_decode($get_artikel['url1']));
+                $smarty->assign('target',"_blank");
+                $links1 = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/artikel_link.tpl');
+                $smarty->clearAllAssign();
             }
 
-            $links2 = "";
-            if (!empty($get_artikel['url2'])) {
-                $rel = _related_links;
-                $links2 = show(_artikel_link, ["link" => stringParser::decode($get_artikel['link2']),
-                                                    "url" => $get_artikel['url2']]);
+            $links2 = '';
+            if(!empty($get_news['url2'])) {
+                $smarty->caching = false;
+                $smarty->assign('link',stringParser::decode($get_artikel['link2']));
+                $smarty->assign('url',utf8_decode($get_artikel['url2']));
+                $smarty->assign('target',"_blank");
+                $links2 = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/artikel_link.tpl');
+                $smarty->clearAllAssign();
             }
 
-            $links3 = "";
-            if (!empty($get_artikel['url3'])) {
-                $rel = _related_links;
-                $links3 = show(_artikel_link, ["link" => stringParser::decode($get_artikel['link3']),
-                                                    "url" => $get_artikel['url3']]);
+            $links3 = '';
+            if(!empty($get_news['url3'])) {
+                $smarty->caching = false;
+                $smarty->assign('link',stringParser::decode($get_artikel['link3']));
+                $smarty->assign('url',utf8_decode($get_artikel['url3']));
+                $smarty->assign('target',"_blank");
+                $links3 = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/artikel_link.tpl');
+                $smarty->clearAllAssign();
             }
 
-            $links = "";
+            $links = '';
             if (!empty($links1) || !empty($links2) || !empty($links3)) {
-                $links = show(_artikel_links, ["link1" => $links1,
-                                                    "link2" => $links2,
-                                                    "link3" => $links3,
-                                                    "rel" => $rel]);
+                $smarty->caching = true;
+                $smarty->assign('link1',$links1);
+                $smarty->assign('link2',$links2);
+                $smarty->assign('link3',$links3);
+                $links = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/artikel_links.tpl',md5('artikel_links_'.$get_artikel['id']));
+                $smarty->clearAllAssign();
             }
 
             //Artikel Comments
             $qryc = common::$sql['default']->select("SELECT * FROM `{prefix_acomments}` WHERE `artikel` = ? "
-                                ."ORDER BY `datum` DESC LIMIT ".($page - 1)*settings::get('m_comments').",".settings::get('m_comments').";",
-                                [$artikel_id]);
+                ."ORDER BY `datum` DESC LIMIT ".($page - 1)*settings::get('m_comments').",".settings::get('m_comments').";",
+                [$artikel_id]);
 
             $entrys = common::cnt('{prefix_acomments}', " WHERE `artikel` = ".$artikel_id);
             $i = ($entrys - ($page - 1) * settings::get('m_comments')); $comments = '';
             foreach($qryc as $getc) {
                 $edit = ""; $delete = "";
-                if ((common::$chkMe >= 1 && $getc['reg'] == common::$userid) || common::permission("artikel")) {
-                    $edit = show("page/button_edit_single", ["id" => $get_artikel['id'],
-                                                                  "action" => "action=show&amp;do=edit&amp;cid=" . $getc['id'],
-                                                                  "title" => _button_title_edit]);
+                if ((common::$chkMe >= 1 && $getc['reg'] == common::$userid) || common::permission("news")) {
+                    $smarty->caching = true;
+                    $smarty->assign('action',"?action=show&amp;do=edit&amp;cid=" . $getc['id']."&amp;id=".$get_artikel['id']);
+                    $smarty->assign('title',_button_title_edit);
+                    $smarty->assign('idir','../inc/images');
+                    $edit = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/button_edit.tpl',
+                        common::getSmartyCacheHash('_button_edit_'.$get_artikel['id'].'_cid_'.$getc['id']));
+                    $smarty->clearAllAssign();
 
-                    $delete = show("page/button_delete_single", ["id" => $get_artikel['id'],
-                                                                      "action" => "action=show&amp;do=delete&amp;cid=" . $getc['id'],
-                                                                      "title" => _button_title_del,
-                                                                      "del" => _confirm_del_entry]);
+                    $smarty->caching = true;
+                    $smarty->assign('id',$get_artikel['id']);
+                    $smarty->assign('action',"?action=show&amp;do=delete&amp;cid=".$getc['id']."&amp;id=".$get_artikel['id']);
+                    $smarty->assign('title',_button_title_del);
+                    $smarty->assign('del',_confirm_del_entry);
+                    $smarty->assign('idir','../inc/images');
+                    $delete = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/button_delete.tpl',
+                        common::getSmartyCacheHash('_button_delete_'.$get_artikel['id'].'_cid_'.$getc['id']));
+                    $smarty->clearAllAssign();
                 }
 
-                $email = ""; $hp = "";
-                $avatar = "";
+                $email = ""; $hp = ""; $avatar = ""; $onoff = "";
                 if (!$getc['reg']) {
                     //-> Homepage Link
                     $hp = "";
@@ -236,53 +219,69 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                     $nick = common::autor($getc['reg']);
                 }
 
-                $titel = show(_eintrag_titel, ["postid" => $i,
-                                                    "datum" => date("d.m.Y", $getc['datum']),
-                                                    "zeit" => date("H:i", $getc['datum']) . _uhr,
-                                                    "edit" => $edit,
-                                                    "delete" => $delete]);
+                $smarty->caching = false;
+                $smarty->assign('postid',$i);
+                $smarty->assign('datum',date("d.m.Y", $getc['datum']));
+                $smarty->assign('zeit',date("H:i", $getc['datum']));
+                $smarty->assign('edit',$edit);
+                $smarty->assign('delete',$delete);
+                $titel = $smarty->fetch('string:'._eintrag_titel);
+                $smarty->clearAllAssign();
 
                 $posted_ip = (common::$chkMe == 4 || common::permission('ipban') ? $getc['ip'] : _logged);
-                $comments .= show("page/comments_show", ["titel" => $titel,
-                                                              "comment" => bbcode::parse_html($getc['comment']),
-                                                              "nick" => $nick,
-                                                              "hp" => $hp,
-                                                              "editby" => bbcode::parse_html($getc['editby']),
-                                                              "email" => $email,
-                                                              "avatar" => common::useravatar($getc['reg']),
-                                                              "onoff" => $onoff,
-                                                              "rank" => common::getrank($getc['reg']),
-                                                              "ip" => $posted_ip]);
+                $smarty->caching = true;
+                $smarty->assign('titel',$titel);
+                $smarty->assign('comment',bbcode::parse_html($getc['comment']));
+                $smarty->assign('nick',$nick);
+                $smarty->assign('hp',$hp);
+                $smarty->assign('editby',bbcode::parse_html($getc['editby']));
+                $smarty->assign('email',$email);
+                $smarty->assign('avatar',common::useravatar($getc['reg']));
+                $smarty->assign('onoff',$onoff);
+                $smarty->assign('rank',common::getrank($getc['reg']));
+                $smarty->assign('ip',$posted_ip);
+                $comments .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/comments_show.tpl',common::getSmartyCacheHash('artikel_comments_'.$getc['id']));
+                $smarty->clearAllAssign();
                 $i--;
             }
 
             if (settings::get("reg_artikel") && !common::$chkMe) {
                 $add = _error_unregistered_nc;
             } else {
-                if (empty($form)) {
-                    if (common::$userid >= 1) {
-                        $form = show("page/editor_regged", ["nick" => common::autor(common::$userid)]);
-                    } else {
-                        $form = show("page/editor_notregged", ["postnick" => '', "postemail" => '', "posthp" => '']);
-                    }
-                }
-
                 if (!common::ipcheck("artid(".$_GET['id'].")", settings::get('f_artikelcom')) && empty($add)) {
-                    $add = show("page/comments_add", ["titel" => _artikel_comments_write_head,
-                                                           "form" => $form,
-                                                           "what" => _button_value_add,
-                                                           "action" => '?action=show&amp;do=add&amp;id=' . (isset($_GET['id']) ? $_GET['id'] : '1'),
-                                                           "prevurl" => '../artikel/?action=compreview&id=' . (isset($_GET['id']) ? $_GET['id'] : '1'),
-                                                           "id" => (isset($_GET['id']) ? $_GET['id'] : '1'),
-                                                           "posteintrag" => (isset($_POST['comment']) ? $_POST['comment'] : '')]);
+                    $smarty->caching = false;
+                    $smarty->assign('nick',common::autor(common::$userid));
+                    $smarty->assign('action','../artikel/?action=show&amp;do=add&amp;id=' . (isset($_GET['id']) ? $_GET['id'] : '1'));
+                    $smarty->assign('prevurl','../artikel/?action=compreview&id=' . (isset($_GET['id']) ? $_GET['id'] : '1'));
+                    $smarty->assign('id',(isset($_GET['id']) ? $_GET['id'] : '1'));
+                    $smarty->assign('posteintrag',(isset($_POST['comment']) ? $_POST['comment'] : ''));
+                    $smarty->assign('notification',notification::get('artikel',true));
+                    $add = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/comments_add.tpl');
+                    $smarty->clearAllAssign();
+                } else {
+                    $smarty->caching = false;
+                    $smarty->assign('sek',settings::get('f_newscom'));
+                    $notification = $smarty->fetch('string:'._error_flood_post);
+                    $smarty->clearAllAssign();
+                    notification::add_error($notification);
+                    unset($notification);
                 }
             }
 
+            if(empty($comments)) {
+                $smarty->caching = false;
+                $smarty->assign('colspan',1);
+                $comments = $smarty->fetch('string:'._no_entrys_yet);
+                $smarty->clearAllAssign();
+            }
+
             $seiten = common::nav($entrys, settings::get('m_comments'), "?action=show&amp;id=" . $_GET['id'] . "");
-            $showmore = show($dir . "/comments", ["head" => _comments_head,
-                                                       "show" => $comments,
-                                                       "seiten" => $seiten,
-                                                       "add" => $add]);
+            $smarty->caching = false;
+            $smarty->assign('show',$comments);
+            $smarty->assign('seiten',$seiten);
+            $smarty->assign('add',$add,true);
+            $showmore = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/comments.tpl');
+            $smarty->clearAllAssign();
 
             $artikelimage = '../inc/images/uploads/newskat/'.common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get_artikel['kat']],'katimg');
             foreach (["jpg", "gif", "png"] as $tmpendung) {
@@ -292,19 +291,23 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                 }
             }
 
+            //-> Artikel [Caching]
             $where = $where." - ".stringParser::decode($get_artikel['titel']);
-            $index = show($dir."/show_more", ["titel" => stringParser::decode($get_artikel['titel']),
-                                                   "id" => $get_artikel['id'],
-                                                   "comments" => "",
-                                                   "display" => "inline",
-                                                   "notification_page" => notification::get($notification_p),
-                                                   "kat" => $artikelimage,
-                                                   "showmore" => $showmore,
-                                                   "viewed" => $viewed,
-                                                   "text" => bbcode::parse_html($get_artikel['text']),
-                                                   "datum" => date("j.m.y H:i", intval($get_artikel['datum']))._uhr,
-                                                   "links" => $links,
-                                                   "autor" => common::autor($get_artikel['autor'])]);
+            $smarty->caching = true;
+            $smarty->assign('titel',stringParser::decode($get_artikel['titel']));
+            $smarty->assign('kat',$artikelimage);
+            $smarty->assign('id',$get_artikel['id']);
+            $smarty->assign('comments','');
+            $smarty->assign('display','inline');
+            $smarty->assign('notification_page',notification::get());
+            $smarty->assign('showmore',$showmore,true); //Comments
+            $smarty->assign('viewed',$get_artikel['viewed']); //Comments
+            $smarty->assign('text',bbcode::parse_html($get_artikel['text']));
+            $smarty->assign('datum',date("j.m.y H:i", (empty($get_artikel['datum']) ? time() : $get_artikel['datum'])));
+            $smarty->assign('links',$links);
+            $smarty->assign('autor',common::autor($get_artikel['autor']));
+            $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/show_more.tpl',common::getSmartyCacheHash('artikel_full_'.$get_artikel['id']));
+            $smarty->clearAllAssign();
         }
     }
 }

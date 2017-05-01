@@ -22,7 +22,7 @@ function counter($js=false) {
         $counter = '<div style="width:100%;padding:10px 0;text-align:center"><img src="../inc/images/ajax_loading.gif" alt="" /></div>'.
                 "<script language=\"javascript\" type=\"text/javascript\">DZCP.initDynLoader('navCounter','counter','',true);</script>";
     } else {
-        if(!common::$isSpider) {
+        if(!common::$CrawlerDetect->isCrawler()) {
                 $get2day = common::$sql['default']->fetch("SELECT `visitors` FROM `{prefix_counter}` WHERE `today` = ?;", [date("j.n.Y")]);
                 if(common::$sql['default']->rowCount()) {
                     $v_today = $get2day['visitors'];

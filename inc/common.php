@@ -43,6 +43,8 @@ if(!is_api) {
 require_once(basePath.'/inc/settings.php');
 require_once(basePath.'/inc/notification.php');
 
+use Jaybizzle\CrawlerDetect\CrawlerDetect;
+
 //-> Global
 if(!is_api) {
     $action = isset($_GET['action']) ? secure_global_imput($_GET['action']) : (isset($_POST['action']) ? secure_global_imput($_POST['action']) : 'default');
@@ -50,7 +52,7 @@ if(!is_api) {
     $do = isset($_GET['do']) ? secure_global_imput($_GET['do']) : (isset($_POST['do']) ? secure_global_imput($_POST['do']) : '');
 } $index = ''; $show = ''; $color = 0;
 
-new common();
+new common(); //Main Construct
 
 require_once(basePath.'/inc/sfs.php');
 
@@ -59,7 +61,6 @@ class common {
     public static $database = NULL;
     public static $sql = [];
     public static $securimage = NULL;
-    public static $isSpider = false;
     public static $httphost = NULL;
     public static $userip = NULL;
     public static $userid = 0;
@@ -76,6 +77,7 @@ class common {
     public static $designpath = NULL;
     public static $tmpdir = NULL;
     public static $chkMe = 0;
+    public static $CrawlerDetect = NULL;
 
     //Private
     private static $menu_index = [];
@@ -122,6 +124,9 @@ class common {
             }
         }
 
+        //->Crawler Detect
+        self::$CrawlerDetect = new CrawlerDetect;
+
         //->Init-Database
         self::$gump = new GUMP();
 
@@ -159,9 +164,6 @@ class common {
         }
 
         if(!is_api && !is_thumbgen) {
-            //Check User is a Spider
-            self::$isSpider = self::isSpider();
-
             $subfolder = basename(dirname(dirname(self::GetServerVars('PHP_SELF')) . '../'));
             self::$httphost = self::GetServerVars('HTTP_HOST') . (empty($subfolder) ? '' : '/' . $subfolder);
             unset($subfolder);
@@ -202,7 +204,7 @@ class common {
         //Smarty Template-system
         self::$smarty = new Smarty;
         self::$smarty->force_compile = true;
-        self::$smarty->debugging = true;
+        self::$smarty->debugging = false;
         self::$smarty->caching = false;
         self::$smarty->cache_lifetime = 120;
         self::$smarty->allow_php_templates = true;
@@ -219,6 +221,8 @@ class common {
                 self::$smarty->addTemplateDir(basePath.'/inc/_templates_/'.strtolower($folder),strtolower($folder));
             }
         }
+
+        notification::$smarty = self::getSmarty(); //Use Smarty
 
         self::check_ip(); // IP Prufung * No IPV6 Support *
 
@@ -353,7 +357,7 @@ class common {
                 !self::validateIpV4Range(self::$userip, '[10].[0-255].[0-255].[0-255]') &&
                 !self::validateIpV4Range(self::$userip, '[172].[16-31].[0-255].[0-255]')) {
                 foreach ($get_sb_array as $get_sb) {
-                    if (!$get_sb['bot'] && !self::isSpider(stringParser::decode($get_sb['agent']))) {
+                    if (!$get_sb['bot'] && !self::$CrawlerDetect->isCrawler(stringParser::decode($get_sb['agent']))) {
                         if (!self::$sql['default']->rows("SELECT `id` FROM `{prefix_ipban}` WHERE `ip` = ? LIMIT 1;", [self::$userip])) {
                             $data_array = [];
                             $data_array['confidence'] = '';
@@ -1048,7 +1052,7 @@ class common {
     }
 
     public static function check_msg_emal() {
-        if(!is_ajax && !is_thumbgen && !is_api && !self::$isSpider && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;", [session_id()])) {
+        if(!is_ajax && !is_thumbgen && !is_api && !self::$CrawlerDetect->isCrawler() && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;", [session_id()])) {
             $qry = self::$sql['default']->select("SELECT s1.`an`,s1.`page`,s1.`titel`,s1.`sendmail`,s1.`id` AS `mid`, "
                 . "s2.`id`,s2.`nick`,s2.`email`,s2.`pnmail` FROM `{prefix_messages}` AS `s1` "
                 . "LEFT JOIN `{prefix_users}` AS `s2` ON s2.`id` = s1.`an` WHERE `page` = 0 AND `sendmail` = 0;");
@@ -1275,47 +1279,6 @@ class common {
         if($var=='HTTP_REFERER') { //Fix for empty HTTP_REFERER
             return self::GetServerVars('REQUEST_SCHEME').'://'.self::GetServerVars('HTTP_HOST').
             self::GetServerVars('DOCUMENT_URI');
-        }
-
-        return false;
-    }
-
-    /**
-     * Erkennt Spider und Crawler um sie von der Besucherstatistik auszuschliessen.
-     * @return boolean
-     */
-    public static function isSpider(bool $SetUserAgent=false) {
-        $bots_basic = ['bot', 'b o t', 'spider', 'spyder', 'crawl', 'slurp', 'robo', 'yahoo', 'ask', 'google', '80legs', 'acoon',
-            'altavista', 'al_viewer', 'appie', 'appengine-google', 'arachnoidea', 'archiver', 'asterias', 'ask jeeves', 'beholder',
-            'bildsauger', 'bingsearch', 'bingpreview', 'bumblebee', 'bramptonmoose', 'cherrypicker', 'crescent', 'coccoc', 'cosmos',
-            'docomo', 'drupact', 'emailsiphon', 'emailwolf', 'extractorpro', 'exalead ng', 'ezresult', 'feedfetcher', 'fido', 'fireball',
-            'flipboardproxy', 'gazz', 'getweb', 'gigabaz', 'gulliver', 'harvester', 'hcat', 'heritrix', 'hloader', 'hoge', 'httrack',
-            'incywincy', 'infoseek', 'infohelfer', 'inktomi', 'indy library', 'informant', 'internetami', 'internetseer', 'link', 'larbin',
-            'jakarta', 'mata hari', 'medicalmatrix', 'mercator', 'miixpc', 'moget', 'msnptc', 'muscatferret', 'netcraftsurveyagent',
-            'openxxx', 'picmole', 'piranha', 'pldi.net', 'p357x', 'quosa', 'rambler', 'rippers', 'rganalytics', 'scan', 'scooter', 'ScoutJet',
-            'siclab', 'siteexplorer', 'sly', 'searchme', 'spy', 'swisssearch', 'sqworm', 'trivial', 't-h-u-n-d-e-r-s-t-o-n-e', 'teoma',
-            'twiceler', 'ultraseek', 'validator', 'webbandit', 'webmastercoffee', 'webwhacker', 'wevika', 'wisewire', 'yandex', 'zyborg',
-            'Teoma', 'alexa', 'froogle', 'Gigabot', 'inktomi', 'looksmart', 'URL_Spider_SQL', 'Firefly', 'NationalDirectory', 'Ask Jeeves', 'TECNOSEEK',
-            'InfoSeek', 'WebFindBot', 'girafabot', 'crawler', 'www.galaxy.com', 'Googlebot', 'Googlebot/2.1', 'Google', 'Google Webmaster', 'Scooter',
-            'James Bond', 'Slurp', 'msnbot', 'appie', 'FAST', 'WebBug', 'Spade', 'ZyBorg', 'rabaz', 'Baiduspider', 'Feedfetcher-Google',
-            'TechnoratiSnoop', 'Rankivabot', 'Mediapartners-Google', 'Sogou web spider', 'WebAlta Crawler', 'MJ12bot',
-            'Yandex', 'YaDirectBot', 'StackRambler','DotBot','dotbot'];
-
-        $UserAgent = ($SetUserAgent ? $SetUserAgent : trim(self::GetServerVars('HTTP_USER_AGENT')));
-        foreach ($bots_basic as $bot) {
-            if(stristr($UserAgent, $bot) !== false || strpos($bot, $UserAgent)) {
-                return true;
-            }
-        }
-
-        //Old DZCP Spiders Text
-        if(file_exists(basePath.'/inc/_spiders.txt')) {
-            $ex = explode("\n", file_get_contents(basePath.'/inc/_spiders.txt'));
-            for($i=0;$i<=count($ex)-1;$i++) {
-                if(stristr($UserAgent, trim($ex[$i]))) {
-                    return true;
-                }
-            }
         }
 
         return false;
@@ -1843,7 +1806,7 @@ class common {
      * @return bool
      */
     public static function count_clicks(string $side_tag='',int $clickedID=0,bool $update=true) {
-        if(!self::$isSpider) {
+        if(!self::$CrawlerDetect->isCrawler()) {
             $qry = self::$sql['default']->select("SELECT `id`,`side` FROM `{prefix_clicks_ips}` WHERE `uid` = 0 AND `time` <= ?;", [time()]);
             if(self::$sql['default']->rowCount()) {
                 foreach($qry as $get) {
@@ -2190,7 +2153,7 @@ class common {
      * @return int
      */
     public static function online_reg(string $where='',bool $like=false) {
-        if(!self::$isSpider) {
+        if(!self::$CrawlerDetect->isCrawler()) {
             $whereami = (empty($where) ? '' :
                 ($like ? " AND `whereami` LIKE '%".$where."%'" :
                     " AND `whereami` = ".self::$sql['default']->quote($where)));
@@ -2269,7 +2232,7 @@ class common {
      * @param string $where
      */
     public static function update_online(string $where='') {
-        if(!self::$isSpider && !empty($where) && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;", [session_id()])) {
+        if(!self::$CrawlerDetect->isCrawler() && !empty($where) && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;", [session_id()])) {
             if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter_whoison}` WHERE `online` < ?;", [time()])) { //Cleanup
                 self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `online` < ?;", [time()]);
             }
@@ -2296,7 +2259,7 @@ class common {
      * @return int
      */
     public static function online_guests(string $where='',bool $like=false) {
-        if(!self::$isSpider) {
+        if(!self::$CrawlerDetect->isCrawler()) {
             $whereami = (empty($where) ? '' :
                 ($like ? " AND `whereami` LIKE '%".$where."%'" :
                     " AND `whereami` = ".self::$sql['default']->quote($where)));
@@ -2313,7 +2276,7 @@ class common {
         $datum = time();
         $get_agent = self::$sql['default']->fetch("SELECT `id`,`agent`,`bot` FROM `{prefix_iptodns}` WHERE `ip` = ?;", [stringParser::encode(self::$userip)]);
         if(self::$sql['default']->rowCount()) {
-            if(!$get_agent['bot'] && !self::isSpider(stringParser::decode($get_agent['agent']))) {
+            if(!$get_agent['bot'] && !self::$CrawlerDetect->isCrawler(stringParser::decode($get_agent['agent']))) {
                 if(self::$sql['default']->rows("SELECT id FROM `{prefix_counter_ips}` WHERE datum+? <= ? OR FROM_UNIXTIME(datum,'%d.%m.%Y') != ?;", [self::$reload,time(),date("d.m.Y")])) {
                     self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE datum+? <= ? OR FROM_UNIXTIME(datum,'%d.%m.%Y') != ?;", [self::$reload,time(),date("d.m.Y")]);
                 }
@@ -2582,7 +2545,7 @@ class common {
                 "title" => strip_tags(stringParser::decode($title)),
                 "login" => $login]);
         } else {
-            if(!self::$isSpider) {
+            if(!self::$CrawlerDetect->isCrawler()) {
                 self::updateCounter();
                 self::update_maxonline();
             }
