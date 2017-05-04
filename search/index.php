@@ -62,7 +62,7 @@ default:
                 WHERE sid = '".$get['id']."'
                 ORDER BY kattopic");
     foreach($qrys as $gets) {
-      $intF = common::$sql['default']->rows("SELECT * FROM `{prefix_f_access}`
+      $intF = common::$sql['default']->rows("SELECT * FROM `{prefix_forum_access}`
                   WHERE user = '".$_SESSION['id']."'
                   AND forum = '".$gets['id']."'");
       if($get['intern'] == 0 || (($get['intern'] == 1 && $intF) || common::$chkMe == 4))
@@ -196,7 +196,7 @@ default:
                  GROUP by s1.id");
 
        foreach($qry as $get) {
-          $intF = common::$sql['default']->rows("SELECT * FROM `{prefix_f_access}`
+          $intF = common::$sql['default']->rows("SELECT * FROM `{prefix_forum_access}`
                       WHERE user = '".$_SESSION['id']."'
                       AND forum = '".$get['subid']."'");
           if(($get['intern'] == 1 && !$intF && common::$chkMe != 4)) $entrys--;

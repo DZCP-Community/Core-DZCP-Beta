@@ -230,27 +230,6 @@ define('_txt_motm', 'Member of the Moment');
 define('_txt_top_dl', 'Top Downloads');
 define('_txt_uotm', 'User of the Moment');
 
-define('_config_slideshow', 'Slideshow');
-define('_perm_slideshow', 'Manage Slideshow Pics');
-define('_slider', 'Slideshow');
-define('_slider_admin_add', 'Add new Slideshowpicture');
-define('_slider_admin_add_done', 'Slideshowpicture successfully added');
-define('_slider_admin_del', 'Realy Delete this Slideshowpicture?');
-define('_slider_admin_del_done', 'Slideshowpicture successfully deleted');
-define('_slider_admin_edit', 'edit Slideshowpicture');
-define('_slider_admin_edit_done', 'Slideshowpicture successfully edited!');
-define('_slider_admin_error_empty_bezeichnung', 'you have to enter a title');
-define('_slider_admin_error_empty_url', 'you have to enter a link');
-define('_slider_admin_error_nopic', 'You have to upload a picture');
-define('_slider_bezeichnung', 'Title');
-define('_slider_new_window', 'new Window?');
-define('_slider_pic', 'Picture');
-define('_slider_desc', 'Description');
-define('_slider_position', 'Position');
-define('_slider_position_first', 'first');
-define('_slider_position_lazy', '<option value="lazy">- no change -</option>');
-define('_slider_url', 'URL');
-define('_slider_show_title', 'Show title');
 define('_forum_kat', 'Categorie');
 
 define('_artikel_userimage', 'Own Articlepicture');
@@ -469,8 +448,6 @@ define('_profile_add' , '<form action="" method="get" onsubmit="return(DZCP.subm
       <input id="contentSubmit" type="submit" class="submit" value="Insert profile field" />
     </form>');
 define('_config_c_floods_what' , 'Here you can adjust the time in secontds which a user have to wait<br />to write something new in this area');;
-## ADDED FOR 1.4.5
-define('_admin_smiley_exists' , 'There is already a smiley with this name!');
 ## ADDED FOR 1.4.3
 define('_download_last_date' , 'Last downloaded');
 ## EDITED FOR 1.4.1
@@ -492,7 +469,6 @@ define('_sponsoren' , 'Sponsors');
 define('_downloads' , 'Downloads');
 define('_nachrichten' , 'Messages');
 define('_edit_profile' , 'Edit profile');
-define('_user_new_newsc' , '&nbsp;&nbsp;<a href="../news/?action=show&amp;id=[id]#lastcomment"><span class="fontWichtig">[cnt]</span> [eintrag] in <span class="fontWichtig">[news]</span></a><br />');
 define('_config_c_lartikel' , 'Menu: Last article');
 define('_config_hover' , 'Mouseover informations');
 define('_config_seclogin' , 'Login securitycode');
@@ -1245,8 +1221,8 @@ define('_user_delete_verify' , '
   </td>
 </tr>');
 define('_user_deleted' , 'The user successfully was deleted!');
-define('_userlobby_kal_today' , 'Next event is <a href="../kalender/?action=show&time=[time]"><span class="fontWichtig">today - [event]</span></a>');
-define('_userlobby_kal_not_today' , 'Next event is at <a href="../kalender/?action=show&time=[time]"><span class="fontUnder">[date] - [event]</span></a>');
+define('_userlobby_kal_today' , 'Next event is');
+define('_userlobby_kal_not_today' , 'Next event is at');
 define('_profil_country' , 'Country');
 define('_profil_favos' , 'Favorites');
 define('_profil_drink' , 'Drink');

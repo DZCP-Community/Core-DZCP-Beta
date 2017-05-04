@@ -16,24 +16,25 @@
  */
 
 function top_dl() {
+    $smarty = common::getSmarty(); //Use Smarty
     $qry = common::$sql['default']->select("SELECT `id`,`kat`,`download`,`date`,`hits` "
                       . "FROM `{prefix_downloads}`".(common::permission('dlintern') ? "" : " WHERE `intern` = 0")." "
                       . "ORDER BY `hits` ".(!settings::get('m_topdl') ? "DESC LIMIT ".settings::get('m_topdl').";" : ";"));
     $top_dl = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qry as $get) {
-            $info = '';
-            if(settings::get('allowhover') == 1) {
-                $getkat = common::$sql['default']->fetch("SELECT `name` FROM `{prefix_download_kat}` WHERE `id` = ?;", [$get['kat']]);
-                $info = 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['download'])).'\', \''._datum.';'._dl_dlkat.';'._hits.'\', \''.date("d.m.Y H:i", $get['date'])._uhr.';'.common::jsconvert(stringParser::decode($getkat['name'])).';'.$get['hits'].'\')" onmouseout="DZCP.hideInfo()"';
-            }
-
-            $top_dl .= show("menu/top_dl", ["id" => $get['id'],
-                                                 "titel" => common::cut(stringParser::decode($get['download']),settings::get('l_topdl')),
-                                                 "info" => $info,
-                                                 "hits" => $get['hits']]);
+            $getkat = common::$sql['default']->fetch("SELECT `name` FROM `{prefix_download_kat}` WHERE `id` = ?;", [$get['kat']]);
+            $info = 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['download'])).'\', \''._datum.';'._dl_dlkat.';'._hits.'\', \''.date("d.m.Y H:i", $get['date'])._uhr.';'.
+                common::jsconvert(stringParser::decode($getkat['name'])).';'.$get['hits'].'\')" onmouseout="DZCP.hideInfo()"';
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('titel',common::cut(stringParser::decode($get['download']),settings::get('l_topdl')));
+            $smarty->assign('info',$info);
+            $smarty->assign('hits',$get['hits']);
+            $top_dl .= $smarty->fetch('file:['.common::$tmpdir.']menu/top_dl.tpl');
+            $smarty->clearAllAssign();
         }
     }
 
-    return empty($top_dl) ? '<center style="margin:2px 0">'._no_entrys.'</center>' : '<table class="navContent" cellspacing="0">'.$top_dl.'</table>';
+    return empty($top_dl) ? '<div style="margin:2px 0;text-align:center;">'._no_entrys.'</div>' : '<table class="navContent" cellspacing="0">'.$top_dl.'</table>';
 }

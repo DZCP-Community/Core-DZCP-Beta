@@ -4,9 +4,12 @@
             <title>[title]</title>
             <meta http-equiv="title" content="[title]" />
             <meta http-equiv="pragma" content="No-Cache" />
-            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+			<link rel="stylesheet/less" type="text/css" href="[dir]/_less/styles.less">
             <link rel="stylesheet" type="text/css" href="[dir]/_css/jquery-ui.css" media="screen" />
             <link rel="stylesheet" type="text/css" href="[dir]/_css/jquery-ui.theme.uncompressed.css" media="screen" />
+			<link rel="stylesheet" type="text/css" href="[dir]/_css/bootstrap.css" media="screen">
+			<link rel="stylesheet" type="text/css" href="[dir]/_css/bootstrap-theme.css" media="screen">
             <link rel="stylesheet" type="text/css" href="[dir]/_css/stylesheet.css" media="screen" />
             <link rel="stylesheet" type="text/css" href="[dir]/_css/paginator.css" media="screen" />
             <link rel="stylesheet" type="text/css" href="[dir]/_css/notification.css" media="screen" />
@@ -19,6 +22,8 @@
             <link rel="icon" href="[dir]/favicon.ico" />
             <link rel="home" href="/" title="Home" />
             <script language="javascript" type="text/javascript" src="[dir]/_js/jquery.js"></script>
+            <script language="javascript" type="text/javascript" src="[dir]/_js/bootstrap.js"></script>
+            <script language="javascript" type="text/javascript" src="[dir]/_js/jquery.less.js"></script>
 			<script language="javascript" type="text/javascript" src="[dir]/_js/jquery.tools.js"></script>
 			<script language="javascript" type="text/javascript" src="[dir]/_js/jquery-ui.js"></script>
             [java_vars]
@@ -82,9 +87,6 @@
 		        <div class="clearFix"></div>
 		      </div>
 		      <div class="index corner">
-		        <!-- Slideshow Plugin Start -->
-		        [slideshow]
-		        <!-- Slideshow Plugin Ende -->
 		        <!-- Wo bin ich & Suche Start -->
 		        <div id="brackets">
 		          [where]

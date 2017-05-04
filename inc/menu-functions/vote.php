@@ -53,5 +53,5 @@ function vote($ajax = false) {
         }
     }
 
-    return empty($vote) ? '<center style="margin:2px 0">'._vote_menu_no_vote.'</center>' : ($ajax ? $vote : '<div id="navVote">'.$vote.'</div>');
+    return empty($vote) ? '<div style="margin:2px 0;text-align:center;">'._vote_menu_no_vote.'</div>' : ($ajax ? $vote : '<div id="navVote">'.$vote.'</div>');
 }

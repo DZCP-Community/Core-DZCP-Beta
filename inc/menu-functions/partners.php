@@ -16,22 +16,29 @@
  */
 
 function partners() {
+    $smarty = common::getSmarty(); //Use Smarty
     $qry = common::$sql['default']->select("SELECT `textlink`,`link`,`banner` FROM `{prefix_partners}` ORDER BY `textlink` ASC;");
     $partners = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qry as $get) {
             if($get['textlink']) {
-                $partners .= show("menu/partners_textlink", ["link" => stringParser::decode($get['link']),
-                                                                  "name" => stringParser::decode($get['banner'])]);
+                $smarty->caching = false;
+                $smarty->assign('link',stringParser::decode($get['link']));
+                $smarty->assign('name',stringParser::decode($get['banner']));
+                $partners .= $smarty->fetch('file:['.common::$tmpdir.']menu/partners_textlink.tpl');
+                $smarty->clearAllAssign();
             } else {
-                $partners .= show("menu/partners", ["link" => stringParser::decode($get['link']),
-                                                         "title" => htmlspecialchars(str_replace('http://', '', stringParser::decode($get['link']))),
-                                                         "banner" => stringParser::decode($get['banner'])]);
+                $smarty->caching = false;
+                $smarty->assign('link',stringParser::decode($get['link']));
+                $smarty->assign('title',htmlspecialchars(str_replace('http://', '', stringParser::decode($get['link']))));
+                $smarty->assign('banner',stringParser::decode($get['banner']));
+                $partners .= $smarty->fetch('file:['.common::$tmpdir.']menu/partners.tpl');
+                $smarty->clearAllAssign();
             }
 
             $table = strstr($partners, '<tr>') ? true : false;
         }
     }
 
-    return empty($partners) ? '<center style="margin:2px 0">'._no_entrys.'</center>' : ($table ? '<table class="navContent" cellspacing="0">'.$partners.'</table>' : $partners);
+    return empty($partners) ? '<div style="margin:2px 0;text-align:center;">'._no_entrys.'</div>' : ($table ? '<table class="navContent" cellspacing="0">'.$partners.'</table>' : $partners);
 }

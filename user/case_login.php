@@ -18,7 +18,7 @@
 if(defined('_UserMenu')) {
     $where = _site_user_login;
     if($do == "yes") {
-        ## Pr�fe ob der Secure Code aktiviert ist und richtig eingegeben wurde ##
+        ## Prufe ob der Secure Code aktiviert ist und richtig eingegeben wurde ##
         switch (isset($_GET['from']) ? $_GET['from'] : 'default') {
             case 'menu': common::$securimage->namespace = 'menu_login'; break;
             default: common::$securimage->namespace = 'default'; break;
@@ -119,7 +119,10 @@ if(defined('_UserMenu')) {
         }
     } else {
         if (!common::$chkMe) {
-            $index = show($dir . "/login", array("secure" => (settings::get('securelogin') ? show($dir . "/secure") : '')));
+            $smarty->caching = false;
+            $smarty->assign('secure',(settings::get('securelogin') ? show($dir . "/secure") : ''));
+            $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/login.tpl');
+            $smarty->clearAllAssign();
         } else {
             $index = common::error(_error_user_already_in, 1);
         }

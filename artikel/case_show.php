@@ -179,7 +179,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                     $smarty->assign('action',"?action=show&amp;do=edit&amp;cid=" . $getc['id']."&amp;id=".$get_artikel['id']);
                     $smarty->assign('title',_button_title_edit);
                     $smarty->assign('idir','../inc/images');
-                    $edit = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/button_edit.tpl',
+                    $edit = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/buttons/button_edit.tpl',
                         common::getSmartyCacheHash('_button_edit_'.$get_artikel['id'].'_cid_'.$getc['id']));
                     $smarty->clearAllAssign();
 

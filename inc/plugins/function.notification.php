@@ -2,5 +2,8 @@
 //{notification index="global"}
 
 function smarty_function_notification($params, &$smarty) {
-    return notification::get($params['index']);
+    if(array_key_exists($params['index'],notification::$notification_index))
+        return notification::get($params['index']);
+
+    return "";
 }

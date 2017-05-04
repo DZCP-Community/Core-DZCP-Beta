@@ -328,14 +328,13 @@ class common {
         if(!is_api && session_id()) {
             $userdns = self::DNSToIp(self::$userip);
             if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `update` <= ? AND `sessid` = ?;", [time(),session_id()])) {
-                $bot = self::SearchBotDetect();
-                self::$sql['default']->update("UPDATE `{prefix_iptodns}` SET `time` = ?, `update` = ?, `ip` = ?, `agent` = ?, `dns` = ?, `bot` = ?, `bot_name` = ?, `bot_fullname` = ? WHERE `sessid` = ?;",
-                    [(time()+10*60),(time()+60),self::$userip,stringParser::encode(self::$UserAgent),stringParser::encode($userdns),($bot['bot'] ? 1 : 0),stringParser::encode($bot['name']),stringParser::encode($bot['fullname']),session_id()]);
-                unset($bot);
+                self::$sql['default']->update("UPDATE `{prefix_iptodns}` SET `time` = ?, `update` = ?, `ip` = ?, `agent` = ?, `dns` = ?, `bot` = ?, `bot_name` = ? WHERE `sessid` = ?;",
+                    [(time()+10*60),(time()+60),self::$userip,stringParser::encode(self::$UserAgent),stringParser::encode($userdns),(self::$CrawlerDetect->isCrawler() ? 1 : 0),
+                        stringParser::encode(self::$CrawlerDetect->getMatches()),session_id()]);
             } else if(!self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ?;", [session_id()])) {
-                $bot = self::SearchBotDetect();
-                self::$sql['default']->insert("INSERT INTO `{prefix_iptodns}` SET `sessid` = ?, `time` = ?, `ip` = ?, `agent` = ?, `dns` = ?, `bot` = ?, `bot_name` = ?, `bot_fullname` = ?;",
-                    [session_id(),(time()+10*60),self::$userip,stringParser::encode(self::$UserAgent),stringParser::encode($userdns),($bot['bot'] ? 1 : 0),stringParser::encode($bot['name']),stringParser::encode($bot['fullname'])]);
+                self::$sql['default']->insert("INSERT INTO `{prefix_iptodns}` SET `sessid` = ?, `time` = ?, `ip` = ?, `agent` = ?, `dns` = ?, `bot` = ?, `bot_name` = ?;",
+                    [session_id(),(time()+10*60),self::$userip,stringParser::encode(self::$UserAgent),stringParser::encode($userdns),
+                        (self::$CrawlerDetect->isCrawler() ? 1 : 0),stringParser::encode(self::$CrawlerDetect->getMatches())]);
                 unset($bot);
             }
 
@@ -566,9 +565,9 @@ class common {
         } else if(self::$chkMe == 4) {
             return true;
         } else {
-            $team = self::$sql['default']->rows("SELECT s1.`id` FROM `{prefix_f_access}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi` WHERE s2.`user` = ? AND s2.`posi` != 0 AND s1.`forum` = ?;",
+            $team = self::$sql['default']->rows("SELECT s1.`id` FROM `{prefix_forum_access}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi` WHERE s2.`user` = ? AND s2.`posi` != 0 AND s1.`forum` = ?;",
                 [intval(self::$userid),intval($id)]);
-            $user = self::$sql['default']->rows("SELECT `id` FROM `{prefix_f_access}` WHERE `user` = ? AND `forum` = ?;",
+            $user = self::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `user` = ? AND `forum` = ?;",
                 [intval(self::$userid),intval($id)]);
             return ($user || $team);
         }
@@ -993,13 +992,13 @@ class common {
      * @return bool
      */
     public static function ipcheck(string $what,int $time = 0) {
-        $get = self::$sql['default']->fetch("SELECT `time`,`what` FROM `{prefix_ipcheck}` WHERE `what` = ? AND `ip` = ? ORDER BY `time` DESC;", [$what,self::$userip]);
+        $get = self::$sql['default']->fetch("SELECT `time`,`what` FROM `{prefix_ip_action}` WHERE `what` = ? AND `ip` = ? ORDER BY `time` DESC;", [$what,self::$userip]);
         if(self::$sql['default']->rowCount()) {
             if (preg_match("#vid#", $get['what'])) {
                 return true;
             } else {
                 if($get['time'] + $time < time()) {
-                    self::$sql['default']->delete("DELETE FROM `{prefix_ipcheck}` WHERE `what` = ? AND `ip` = ? AND time+?<?;", [$what,self::$userip,$time,time()]);
+                    self::$sql['default']->delete("DELETE FROM `{prefix_ip_action}` WHERE `what` = ? AND `ip` = ? AND time+?<?;", [$what,self::$userip,$time,time()]);
                 }
 
                 return ($get['time'] + $time > time() ? true : false);
@@ -1477,44 +1476,6 @@ class common {
     }
 
     /**
-     * Erkennt bekannte Bots am User Agenten
-     */
-    public static function SearchBotDetect() {
-        $qry = self::$sql['default']->select("SELECT * FROM `{prefix_botlist}` WHERE `enabled` = 1;");
-        if(self::$sql['default']->rowCount()) {
-            foreach($qry as $botdata) {
-                switch ($botdata['type']) {
-                    case 1:
-                        if(preg_match(utf8_decode($botdata['regexpattern']), self::$UserAgent, $matches)) {
-                            return ['fullname' => utf8_decode($botdata['name'])." V".trim($matches[1]), 'name' =>utf8_decode($botdata['name']), 'bot' => true];
-                        }
-                        break;
-                    case 2:
-                        if(preg_match(utf8_decode($botdata['regexpattern']), self::$UserAgent, $matches)) {
-                            list($majorVer, $minorVer) = explode(".", $matches[1]);
-                            return ['fullname' => utf8_decode($botdata['name'])." V".trim($majorVer).'.'.trim($minorVer), 'name' =>utf8_decode($botdata['name']), 'bot' => true];
-                        }
-                        break;
-                    case 3:
-                        if(preg_match(utf8_decode($botdata['regexpattern']), self::$UserAgent, $matches)) {
-                            list($majorVer, $minorVer, $build) = explode(".", $matches[1]);
-                            return ['fullname' => utf8_decode($botdata['name'])." V".trim($majorVer).'.'.trim($minorVer).'.'.trim($build), 'name' =>utf8_decode($botdata['name']), 'bot' => true];
-                        }
-                        break;
-                    default:
-                        if(preg_match(utf8_decode($botdata['regexpattern']), self::$UserAgent)) {
-                            if(empty($botdata['name_extra'])) $botdata['name_extra'] = $botdata['name'];
-                            return ['fullname' => utf8_decode($botdata['name_extra']), 'name' => utf8_decode($botdata['name']), 'bot' => true];
-                        }
-                        break;
-                }
-            }
-        }
-
-        return ['fullname'=>'',"name"=>'',"bot"=>false];
-    }
-
-    /**
      * Pruft ob die IP gesperrt und gultig ist
      */
     public static function check_ip() {
@@ -1794,7 +1755,7 @@ class common {
      * @param bool $time
      */
     public static function setIpcheck(string $what = '',bool $time = true) {
-        self::$sql['default']->insert("INSERT INTO `{prefix_ipcheck}` SET `ip` = ?, `user_id` = ?, `what` = ?, `time` = ?, `created` = ?;",
+        self::$sql['default']->insert("INSERT INTO `{prefix_ip_action}` SET `ip` = ?, `user_id` = ?, `what` = ?, `time` = ?, `created` = ?;",
             [self::visitorIp(),intval(self::userid()),$what,($time ? time() : 0),time()]);
     }
 
@@ -1915,7 +1876,7 @@ class common {
                 if(self::$sql['default']->rowCount()) {
                     foreach($qry2 as $get2) {
                         $br = ($break % 2) ? '<br />' : ''; $break++;
-                        $chk = (self::$sql['default']->rows("SELECT `id` FROM `{prefix_f_access}` WHERE `".(empty($pos) ? 'user' : 'pos')."` = ? AND ".(empty($pos) ? 'user' : 'pos')." != 0 AND `forum` = ?;", [intval($checkID),$get2['id']]) ? ' checked="checked"' : '');
+                        $chk = (self::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `".(empty($pos) ? 'user' : 'pos')."` = ? AND ".(empty($pos) ? 'user' : 'pos')." != 0 AND `forum` = ?;", [intval($checkID),$get2['id']]) ? ' checked="checked"' : '');
                         $fkats .= '<input type="checkbox" class="checkbox" id="board_'.$get2['id'].'" name="board['.$get2['id'].']" value="'.$get2['id'].'"'.$chk.' /><label for="board_'.$get2['id'].'"> '.stringParser::decode($get2['kattopic']).'</label> '.$br;
                     }
                 }

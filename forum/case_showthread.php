@@ -290,7 +290,7 @@ if(defined('_Forum')) {
         if(preg_match("#".$_GET['hl']."#i",$nick)) $ftxt['class'] = 'class="highlightSearchTarget"';
       }
 
-      $abo = common::$sql['default']->rows("SELECT user FROM `{prefix_f_abo}`
+      $abo = common::$sql['default']->rows("SELECT user FROM `{prefix_forum_abo}`
                  WHERE user = '".common::$userid."'
                  AND fid = '".intval($_GET['id'])."'") ? 'checked="checked"' : '';
       if(!common::$chkMe) {

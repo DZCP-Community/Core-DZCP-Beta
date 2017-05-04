@@ -100,41 +100,62 @@ if(defined('_UserMenu')) {
 
         $edit = ""; $delete = ""; $full_delete = "";
         if(common::permission("editusers")) {
-            $edit = str_replace("&amp;id=","",show("page/button_edit", array("id" => "",
-                                                   "action" => "action=admin&amp;edit=".$get['id'],
-                                                   "title" => _button_title_edit)));
-            
-            $delete = show("page/button_delete", array("id" => $get['id'],
-                                                       "action" => "action=admin&amp;do=delete",
-                                                       "title" => _button_title_del.' ohne Forum Posts/Threads'));
+            //Bearbeiten link
+            $smarty->caching = false;
+            $smarty->assign('id',0);
+            $smarty->assign('action',"action=admin&amp;edit=".$get['id']);
+            $smarty->assign('title',_button_title_edit);
+            $edit = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_edit.tpl');
+            $smarty->clearAllAssign();
 
-            $full_delete = show("page/button_delete_full", array("id" => $get['id'],
-                                                            "action" => "action=admin&amp;do=full_delete",
-                                                            "title" => _button_title_del.' mit Forum Posts/Threads'));
+            //Loschen link ohne Forum Posts/Threads
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('action',"action=admin&amp;do=delete");
+            $smarty->assign('title',_button_title_del.' ohne Forum Posts/Threads');
+            $delete = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_delete.tpl');
+            $smarty->clearAllAssign();
+
+            //Loschen link mit Forum Posts/Threads
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('action',"action=admin&amp;do=full_delete");
+            $smarty->assign('title',_button_title_del.' mit Forum Posts/Threads');
+            $full_delete = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_delete_full.tpl');
+            $smarty->clearAllAssign();
         }
 
-        $userliste .= show($dir."/userliste_show", array("nick" => common::autor($get['id'],'','',10),
-                                                         "level" => common::getrank($get['id']),
-                                                         "status" => $status,
-                                                         "age" => common::getAge($get['bday']),
-                                                         "mf" => ($get['sex'] == 1 ? _maleicon : ($get['sex'] == 2 ? _femaleicon : '-')),
-                                                         "edit" => $edit,
-                                                         "delete" => $delete,
-                                                         "full_delete" => $full_delete,
-                                                         "class" => $class,
-                                                         "onoff" => common::onlinecheck($get['id']),
-                                                         "hp" => $hp));
+        //Show User
+        $smarty->caching = true;
+        $smarty->assign('nick',common::autor($get['id'],'','',10));
+        $smarty->assign('level',common::getrank($get['id']));
+        $smarty->assign('status',$status,true);
+        $smarty->assign('age',common::getAge($get['bday']));
+        $smarty->assign('mf',($get['sex'] == 1 ? _maleicon : ($get['sex'] == 2 ? _femaleicon : '-')));
+        $smarty->assign('edit',$edit);
+        $smarty->assign('delete',$delete);
+        $smarty->assign('full_delete',$full_delete);
+        $smarty->assign('class',$class);
+        $smarty->assign('onoff',common::onlinecheck($get['id']),true);
+        $smarty->assign('hp',$hp);
+        $userliste .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userliste/userliste_show.tpl',common::getSmartyCacheHash('userlist_id_'.$get['id']));
+        $smarty->clearAllAssign();
     }
     
     $userliste = (empty($userliste) ? show(_no_entrys_found, array("colspan" => "13")) : $userliste);
     $seiten = common::nav($entrys,settings::get('m_userlist'),"?action=userlist".(!empty($show_sql) ? "&show=".$show_sql : "").common::orderby_nav());
     $edel = common::permission("editusers") ? '<td class="contentMainTop" colspan="3">&nbsp;</td>' : "";
     $search = isset($_GET['search']) && !empty($_GET['search']) ? $_GET['search'] : _nick;
-    $index = show($dir."/userliste", array("cnt" => $entrys." "._user,
-                                           "edel" => $edel,
-                                           "search" => $search,
-                                           "nav" => $seiten,
-                                           "order_nick" => common::orderby('nick'),
-                                           "order_age" => common::orderby('bday'),
-                                           "show" => $userliste));
+
+    //Show Userlist
+    $smarty->caching = false;
+    $smarty->assign('cnt',$entrys." "._user);
+    $smarty->assign('edel',$edel);
+    $smarty->assign('search',$search);
+    $smarty->assign('nav',$seiten);
+    $smarty->assign('order_nick',common::orderby('nick'));
+    $smarty->assign('order_age',common::orderby('bday'));
+    $smarty->assign('show',$userliste);
+    $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userliste/userliste.tpl');
+    $smarty->clearAllAssign();
 }

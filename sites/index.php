@@ -73,7 +73,11 @@ default:
                 $inhalt = phpParser(stringParser::decode($get['text']),$get['php']);
             }
 
-            $index = show($dir."/sites", ["titel" => stringParser::decode($get['titel']), "inhalt" => $inhalt]);
+            $smarty->caching = false;
+            $smarty->assign('titel',stringParser::decode($get['titel']));
+            $smarty->assign('inhalt',$inhalt);
+            $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/sites.tpl');
+            $smarty->clearAllAssign();
         }
     } else {
         $index = common::error(_sites_not_available,1);
@@ -87,7 +91,11 @@ case 'preview';
         $inhalt = phpParser(stringParser::decode($_POST['inhalt']),(isset($_POST['php']) && common::permission('phpexecute')));
     }
 
-    $index = show($dir."/sites", ["titel" => stringParser::decode($_POST['titel']), "inhalt" => $inhalt]);
+    $smarty->caching = false;
+    $smarty->assign('titel',stringParser::decode($_POST['titel']));
+    $smarty->assign('inhalt',$inhalt);
+    $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/sites.tpl');
+    $smarty->clearAllAssign();
     exit(utf8_encode('<table class="mainContent" cellspacing="1"'.$index.'</table>'));
 break;
 endswitch;

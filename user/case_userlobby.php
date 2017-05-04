@@ -72,15 +72,19 @@ if(defined('_UserMenu')) {
                                 $wichtig = ($gettopic['sticky'] != 1 ? '' : '<span class="fontWichtig">' . _sticky . ':</span> ');
                                 $date = (date("d.m.") == date("d.m.", $gettopic['lp'])) ? '[' . date("H:i", $gettopic['lp']) . ']' : date("d.m.", $gettopic['lp']) . ' [' . date("H:i", $gettopic['lp']) . ']';
                                 $can_erase = true;
-                                $forumposts_show .= "&nbsp;&nbsp;" . $date . show(_user_new_forum, array("cnt" => $cnt,
-                                                    "tid" => $gettopic['id'],
-                                                    "thread" => stringParser::decode($gettopic['topic']),
-                                                    "intern" => $intern,
-                                                    "wichtig" => $wichtig,
-                                                    "post" => $post,
-                                                    "page" => $pagenr,
-                                                    "nthread" => $nthread,
-                                                    "lp" => ($lp + 1)));
+
+                                $smarty->caching = false;
+                                $smarty->assign('cnt',$cnt);
+                                $smarty->assign('tid',$gettopic['id']);
+                                $smarty->assign('thread',stringParser::decode($gettopic['topic']));
+                                $smarty->assign('intern',$intern);
+                                $smarty->assign('wichtig',$wichtig);
+                                $smarty->assign('post',$post);
+                                $smarty->assign('page',$pagenr);
+                                $smarty->assign('nthread',$nthread);
+                                $smarty->assign('lp',($lp + 1));
+                                $forumposts_show .= "&nbsp;&nbsp;" . $date . $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userlobby/userlobby_new_forum.tpl');
+                                $smarty->clearAllAssign();
                             }
                         }
                     }
@@ -108,7 +112,11 @@ if(defined('_UserMenu')) {
             }
 
             $can_erase = true;
-            $user = show(_user_new_users, array("cnt" => $cnt, "eintrag" => $eintrag));
+            $smarty->caching = false;
+            $smarty->assign('cnt',$cnt);
+            $smarty->assign('eintrag',$eintrag);
+            $user = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userlobby/userlobby_new_users.tpl');
+            $smarty->clearAllAssign();
         }
 
         /** Neue Private Nachrichten anzeigen */
@@ -118,12 +126,16 @@ if(defined('_UserMenu')) {
                                    . "ORDER BY `datum` DESC;",
                   array(common::$userid));
         $check = common::cnt("{prefix_messages}", " WHERE `an` = ? AND `readed` = 0 AND `see_u` = 0",'id',array(common::$userid));
-        if ($check == 1) {
-            $mymsg = show(_lobby_mymessage, array("cnt" => 1));
-        } else if ($check >= 1) {
-            $mymsg = show(_lobby_mymessages, array("cnt" => $check));
+        if ($check >= 1) {
+            $smarty->caching = false;
+            $smarty->assign('cnt',$check);
+            $mymsg = $smarty->fetch('string:'.($check == 1 ? _lobby_mymessage : _lobby_mymessages));
+            $smarty->clearAllAssign();
+
         } else {
-            $mymsg = show(_lobby_no_mymessages, array());
+            $smarty->caching = false;
+            $mymsg = $smarty->fetch('string:'._lobby_no_mymessages);
+            $smarty->clearAllAssign();
         }
 
         /** Neue News anzeigen */
@@ -137,10 +149,14 @@ if(defined('_UserMenu')) {
                 if (common::check_new($getnews['datum'])) {
                     $check = common::cnt("{prefix_news}", " WHERE `datum` > ?".(common::$chkMe >= 2 ? '' : ' AND `intern` = 0')." AND `public` = 1",'id',array($lastvisit));
                     $cnt = $check == "1" ? "1" : $check;
+
                     $can_erase = true;
-                    $news = show(_user_new_news, array("cnt" => $cnt, "eintrag" => _lobby_new_news));
+                    $smarty->caching = false;
+                    $smarty->assign('cnt',$cnt);
+                    $news = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userlobby/userlobby_new_news.tpl');
+                    $smarty->clearAllAssign();
                 }
-            }
+            } //end foreach
         }
 
          /** Neue News comments anzeigen */
@@ -164,18 +180,21 @@ if(defined('_UserMenu')) {
 
                     if ($check) {
                         $can_erase = true;
-                        $newsc .= show(_user_new_newsc, array("cnt" => $cnt,
-                                                              "id" => $getnewsc['news'],
-                                                              "news" => stringParser::decode($getcheckn['titel']),
-                                                              "eintrag" => $eintrag));
+                        $smarty->caching = false;
+                        $smarty->assign('cnt',$cnt);
+                        $smarty->assign('id',$getnewsc['news']);
+                        $smarty->assign('news',stringParser::decode($getcheckn['titel']));
+                        $smarty->assign('eintrag',$eintrag);
+                        $newsc .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userlobby/userlobby_new_newsc.tpl');
+                        $smarty->clearAllAssign();
                     }
                 }
-            }
+            } //end foreach
         }
 
         /** Neue Votes anzeigen */
         $getnewv = common::$sql['default']->fetch("SELECT `datum` FROM `{prefix_votes}` "
-                                    . "WHERE `forum` = 0 ".(common::permission("votes") ? '' : 'AND `intern` = 0 ').""
+                                    . "WHERE `forum` = 0 ".(common::permission("votes") ? '' : 'AND `intern` = 0 ')
                                     . "ORDER BY `datum` DESC;");
         $newv = '';
         if (!empty($getnewv) && common::check_new($getnewv['datum'])) {
@@ -189,7 +208,11 @@ if(defined('_UserMenu')) {
             }
 
             $can_erase = true;
-            $newv = show(_user_new_votes, array("cnt" => $cnt, "eintrag" => $eintrag));
+            $smarty->caching = false;
+            $smarty->assign('cnt',$cnt);
+            $smarty->assign('eintrag',$eintrag);
+            $newv = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userlobby/userlobby_new_votes.tpl');
+            $smarty->clearAllAssign();
         }
 
         /** Kalender Events anzeigen */
@@ -200,12 +223,18 @@ if(defined('_UserMenu')) {
         $nextkal = '';
         if (!empty($getkal) && common::check_new($getkal['datum'])) {
             if (date("d.m.Y", $getkal['datum']) == date("d.m.Y", time())) {
-                $nextkal = show(_userlobby_kal_today, array("time" => mktime(0, 0, 0, date("m", $getkal['datum']), date("d", $getkal['datum']), date("Y", $getkal['datum'])),
-                                                            "event" => $getkal['title']));
+                $smarty->caching = false;
+                $smarty->assign('time',mktime(0, 0, 0, date("m", $getkal['datum']), date("d", $getkal['datum']), date("Y", $getkal['datum'])));
+                $smarty->assign('event',stringParser::decode($getkal['title']));
+                $nextkal = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userlobby/userlobby_kal_today.tpl');
+                $smarty->clearAllAssign();
             } else {
-                $nextkal = show(_userlobby_kal_not_today, array("time" => mktime(0, 0, 0, date("m", $getkal['datum']), date("d", $getkal['datum']), date("Y", $getkal['datum'])),
-                                                                "date" => date("d.m.Y", $getkal['datum']),
-                                                                "event" => $getkal['title']));
+                $smarty->caching = false;
+                $smarty->assign('time',mktime(0, 0, 0, date("m", $getkal['datum']), date("d", $getkal['datum']), date("Y", $getkal['datum'])));
+                $smarty->assign('date',date("d.m.Y", $getkal['datum']));
+                $smarty->assign('event',stringParser::decode($getkal['title']));
+                $nextkal = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userlobby/userlobby_kal_not_today.tpl');
+                $smarty->clearAllAssign();
             }
         }
 
@@ -228,9 +257,13 @@ if(defined('_UserMenu')) {
                     }
 
                     $can_erase = true;
-                    $artikel = show(_user_new_art, array("cnt" => $cnt, "eintrag" => $eintrag));
+                    $smarty->caching = false;
+                    $smarty->assign('cnt',$cnt);
+                    $smarty->assign('eintrag',$eintrag);
+                    $artikel .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userlobby/userlobby_new_art.tpl');
+                    $smarty->clearAllAssign();
                 }
-            }
+            } //end foreach
         }
 
         /** Neue Artikel Comments anzeigen */
@@ -255,12 +288,14 @@ if(defined('_UserMenu')) {
                         $eintrag = _lobby_new_artc_2;
                     }
 
-                    $can_erase = true;
-                    $artc .= show(_user_new_artc, array("cnt" => $cnt,
-                                                        "id" => $getartc['artikel'],
-                                                        "eintrag" => $eintrag));
+                    $smarty->caching = false;
+                    $smarty->assign('cnt',$cnt);
+                    $smarty->assign('id',$getartc['artikel']);
+                    $smarty->assign('eintrag',$eintrag);
+                    $artc .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userlobby/userlobby_new_artc.tpl');
+                    $smarty->clearAllAssign();
                 }
-            }
+            } //end foreach
         }
 
         /** Neue Forum Topics anzeigen */
@@ -284,17 +319,21 @@ if(defined('_UserMenu')) {
                     $text = strip_tags(!empty($getp) ? stringParser::decode($getp['text']) : stringParser::decode($getft['t_text']));
                     $intern = $getft['intern'] != 1 ? "" : '<span class="fontWichtig">' . _internal . ':</span>';
                     $wichtig = $getft['sticky'] != 1 ? '' : '<span class="fontWichtig">' . _sticky . ':</span> ';
-                    $ftopics .= show($dir . "/userlobby_forum", array("id" => $getft['id'],
-                                                                      "pagenr" => $page,
-                                                                      "p" => ($lp + 1),
-                                                                      "intern" => $intern,
-                                                                      "wichtig" => $wichtig,
-                                                                      "lpost" => common::cut($text, 100),
-                                                                      "kat" => stringParser::decode($getft['kattopic']),
-                                                                      "titel" => stringParser::decode($getft['topic']),
-                                                                      "kid" => $getft['kid']));
+
+                    $smarty->caching = false;
+                    $smarty->assign('id',$getft['id']);
+                    $smarty->assign('pagenr',$page);
+                    $smarty->assign('p',($lp + 1));
+                    $smarty->assign('intern',$intern);
+                    $smarty->assign('wichtig',$wichtig);
+                    $smarty->assign('lpost',common::cut($text, 100));
+                    $smarty->assign('kat',stringParser::decode($getft['kattopic']));
+                    $smarty->assign('titel',stringParser::decode($getft['topic']));
+                    $smarty->assign('kid',$getft['kid']);
+                    $ftopics .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userlobby/userlobby_forum.tpl');
+                    $smarty->clearAllAssign();
                 }
-            }
+            } //end foreach
         }
 
         // Userlevel
@@ -330,7 +369,7 @@ if(defined('_UserMenu')) {
         $smarty->assign('newsc',$newsc);
         $smarty->assign('user',$user);
         $smarty->assign('news',$news);
-        $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userlobby.tpl');
+        $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userlobby/userlobby.tpl');
         $smarty->clearAllAssign();
     } else {
         $index = common::error(_error_have_to_be_logged, 1);

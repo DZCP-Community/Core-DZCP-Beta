@@ -312,20 +312,6 @@ background:none;
     color:#000
 }
 
-/* Slideshow Plugin */
-div#slideshow {width:777px; height:200px; position:relative; overflow:hidden; background:#000}
-div.images {width:777px; height:200px; position:absolute; z-index:1; cursor:pointer}
-div.slidetabs {position:absolute; top:5px; right:10px; z-index:2}
-div.images div.sliderinhalt {display:none}
-
-div.images div.slideroverlay {position:absolute; bottom:0px; left:0px; width:287px; background:url(../images/slideshow/textfield.png) repeat; padding:14px}
-div.slideroverlay h2 {color:#fff; font-size:12px}
-div.slideroverlay span {color:#c6c4c2}
-div.slidetabs a.slidertabs {background:url(../images/slideshow/slidetabs.png); width:17px; height:17px; display:block; cursor:pointer; float:left}
-div.slidetabs a.slidertabs:hover {background-position:0 17px}
-div.slidetabs a.slidertabs.current {background-position:0 17px; cursor:default}
-
-
 /* NEWS */
 /* Newsbild Positionierung */
 td.news img.newsImage {float:left;margin:0 15px 15px 0; width:236px; height:172px;}

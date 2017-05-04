@@ -26,7 +26,7 @@ function l_artikel() {
         foreach($qry as $get) {
             $getkat = common::$sql['default']->fetch("SELECT `kategorie` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get['kat']]);
             $text = strip_tags(stringParser::decode($get['text']));
-            $info = !settings::get('allowhover') == 1 ? '' : 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['titel'])).'\', \''._datum.';'.
+            $info = 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['titel'])).'\', \''._datum.';'.
                     _autor.';'._news_admin_kat.';'._comments_head.'\', \''.date("d.m.Y H:i", $get['datum'])._uhr.';'.
                 common::fabo_autor($get['autor']).';'.common::jsconvert(stringParser::decode($getkat['kategorie'])).';'.
                 common::cnt('{prefix_acomments}',"WHERE `artikel` = ?","id", [$get['id']]).'\')" onmouseout="DZCP.hideInfo()"';
@@ -39,5 +39,5 @@ function l_artikel() {
         }
     }
 
-    return empty($l_articles) ? '<center style="margin:2px 0">'._no_entrys.'</center>' : '<table class="navContent" cellspacing="0">'.$l_articles.'</table>';
+    return empty($l_articles) ? '<div style="margin:2px 0;text-align:center;">'._no_entrys.'</div>' : '<table class="navContent" cellspacing="0">'.$l_articles.'</table>';
 }

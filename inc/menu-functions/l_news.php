@@ -25,7 +25,7 @@ function l_news() {
     if(common::$sql['default']->rowCount()) {
         foreach($qry as $get) {
             $getkat = common::$sql['default']->fetch("SELECT `kategorie` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get['kat']]);
-            $info = !settings::get('allowhover') == 1 ? '' : 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['titel'])).'\', \''.
+            $info = 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['titel'])).'\', \''.
                   _datum.';'._autor.';'._news_admin_kat.';'._comments_head.'\', \''.date("d.m.Y H:i", $get['datum'])._uhr.';'.
                 common::fabo_autor($get['autor']).';'.common::jsconvert(stringParser::decode($getkat['kategorie'])).';'.
                 common::cnt('{prefix_newscomments}',"WHERE `news` = ?","id", [$get['id']]).'\')" onmouseout="DZCP.hideInfo()"';
@@ -37,5 +37,5 @@ function l_news() {
         }
     }
 
-    return empty($l_news) ? '<center style="margin:2px 0">'._no_entrys.'</center>' : '<table class="navContent" cellspacing="0">'.$l_news.'</table>';
+    return empty($l_news) ? '<div style="margin:2px 0;text-align:center;">'._no_entrys.'</div>' : '<table class="navContent" cellspacing="0">'.$l_news.'</table>';
 }

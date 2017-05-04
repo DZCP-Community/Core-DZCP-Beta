@@ -96,7 +96,14 @@ switch ($do) {
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             $edit = str_replace("&amp;id=","",show("page/button_edit_akl", ["id" => $get['id'], "action" => "../user/?action=admin&edit=", "title" => _button_title_edit]));
             $akl = show("page/button_akl", ["id" => $get['id'], "action" => "admin=activate_user&amp;do=activate&amp;id=", "title" => _button_title_akl]);
-            $delete = show("page/button_delete", ["id" => $get['id'], "action" => "admin=activate_user&amp;do=delete", "title" => _button_title_del]);
+
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('action',"admin=activate_user&amp;do=delete");
+            $smarty->assign('title',_button_title_del);
+            $delete = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_delete.tpl');
+            $smarty->clearAllAssign();
+
             $activate .= show($dir."/activate_user_show", ["nick" => common::autor($get['id'],'', 0, '',25),
                                                                 "akt" => $akl,
                                                                 "resend" => $resend,

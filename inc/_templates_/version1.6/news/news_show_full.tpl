@@ -32,6 +32,6 @@
 </tr>
 </table>
 <table class="mainContent" cellspacing="1">
-{notification index="news_tr"}
-{$showmore}
+  {notification index="news_tr"}
+  {$showmore}
 <!-- end news_show_full.tpl -->

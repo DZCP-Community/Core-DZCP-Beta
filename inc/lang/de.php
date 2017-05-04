@@ -207,27 +207,6 @@ define('_txt_motm', 'Member of the Moment');
 define('_txt_top_dl', 'Top Downloads');
 define('_txt_uotm', 'User of the Moment');
 
-define('_config_slideshow', 'Slideshow');
-define('_perm_slideshow', 'Slideshow-Bilder verwalten');
-define('_slider', 'Slideshow');
-define('_slider_admin_add', 'Neues Slideshowbild hinzuf&uuml;gen');
-define('_slider_admin_add_done', 'Das Slideshowbild wurde erfolgreich eingef&uuml;gt');
-define('_slider_admin_del', 'Soll das Slideshowbild wirklich gel&ouml;scht werden');
-define('_slider_admin_del_done', 'Das Slideshowbild wurde erfolgreich gel&ouml;scht');
-define('_slider_admin_edit', 'Slideshowbild editieren');
-define('_slider_admin_edit_done', 'Die &Auml;nderungen wurden erfolgreich &uuml;bernommen!');
-define('_slider_admin_error_empty_bezeichnung', 'Du musst eine Bezeichnung eingeben');
-define('_slider_admin_error_empty_url', 'Du musst einen Link hinterlegen');
-define('_slider_admin_error_nopic', 'Du musst ein Bild hochladen');
-define('_slider_bezeichnung', 'Bezeichnung');
-define('_slider_new_window', 'Neues Fenster?');
-define('_slider_pic', 'Bild');
-define('_slider_desc', 'Beschreibung');
-define('_slider_position', 'Position');
-define('_slider_position_first', 'als erstes');
-define('_slider_position_lazy', '<option value="lazy">- nicht &auml;ndern -</option>');
-define('_slider_url', 'URL');
-define('_slider_show_title', 'Title anzeigen');
 define('_forum_kat', 'Kategorie');
 
 define('_artikel_userimage', 'Eigenes Artikelbild');
@@ -440,15 +419,13 @@ define('_profile_add', '<form action="" method="get" onsubmit="return(DZCP.submi
     </form>');
 define('_admin_reg_info', 'Hier kannst du einstellen, ob sich jemand f&uuml;r einen der Bereiche registrieren muss um dort etwas tun zu k&ouml;nnen (Beitr&auml;ge schreiben, einen Download herunterladen, etc)');
 define('_config_c_floods_what', 'Hier kannst du die Zeit in Sekunden einstellen die ein User warten muss, bis er im jeweiligen Bereich was neues posten darf');
-## ADDED FOR 1.4.5
-define('_admin_smiley_exists', 'Es ist bereits ein Smiley mit diesem Namen vorhanden!');
 ## ADDED FOR 1.4.3
 define('_download_last_date', 'Zuletzt heruntergeladen');
 ## EDITED FOR 1.4.1
 define('_ulist_normal', 'Rang &amp; Level');
 ## ADDED FOR 1.4.1
-define('_lobby_mymessages', '<a href="../user/?action=msg">Du hast <span class="fontWichtig">[cnt]</span> neue Nachrichten!</a>');
-define('_lobby_mymessage', '<a href="../user/?action=msg">Du hast <span class="fontWichtig">[cnt]</span> neue Nachricht!</a>');
+define('_lobby_mymessages', '<a href="../user/?action=msg">Du hast <span class="fontWichtig">{$cnt}</span> neue Nachrichten!</a>');
+define('_lobby_mymessage', '<a href="../user/?action=msg">Du hast <span class="fontWichtig">{$cnt}</span> neue Nachricht!</a>');
 ## EDIT/ADDED FOR 1.4
 //Added
 define('_contact_pflichtfeld', '<span class="fontWichtig">*</span> = Pflichtfelder');
@@ -464,7 +441,6 @@ define('_sponsoren', 'Sponsoren');
 define('_downloads', 'Downloads');
 define('_nachrichten', 'Nachrichten');
 define('_edit_profile', 'Profil editieren');
-define('_user_new_newsc', '&nbsp;&nbsp;<a href="../news/?action=show&amp;id=[id]#lastcomment"><span class="fontWichtig">[cnt]</span> [eintrag] in <span class="fontWichtig">[news]</span></a><br />');
 define('_config_c_lartikel', 'Men&uuml;: Last Artikel');
 define('_config_hover', 'Mouseover Informationen');
 define('_config_seclogin', 'Login Sicherheitsabfrage');
@@ -1208,8 +1184,8 @@ define('_user_delete_verify', '
   </td>
 </tr>');
 define('_user_deleted', 'Der User wurde erfolgreich gel&ouml;scht!');
-define('_userlobby_kal_today', 'N&auml;chster Event ist <a href="../kalender/?action=show&time=[time]"><span class="fontWichtig">heute - [event]</span></a>');
-define('_userlobby_kal_not_today', 'N&auml;chstes Event ist am <a href="../kalender/?action=show&time=[time]"><span class="fontUnder">[date] - [event]</span></a>');
+define('_userlobby_kal_today', 'N&auml;chster Event ist');
+define('_userlobby_kal_not_today', 'N&auml;chstes Event ist am');
 define('_profil_country', 'Land');
 define('_profil_favos', 'Favoriten');
 define('_profil_drink', 'Drink');
@@ -1269,7 +1245,6 @@ define('_and', 'und');
 define('_lobby_artikelc', 'Artikelkommentare');
 define('_lobby_new_art_1', 'neuer Artikel');
 define('_lobby_new_art_2', 'neue Artikel');
-define('_user_new_art', '&nbsp;&nbsp;<a href="../artikel/"><span class="fontWichtig">[cnt]</span> [eintrag]</span><br />');
 define('_lobby_new_artc_1', 'neuer Artikelkommentar');
 define('_lobby_new_artc_2', 'neue Artikelkommentare');
 define('_page', '<span class="fontBold">[num]</span>  ');

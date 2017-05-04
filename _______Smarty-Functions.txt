@@ -7,8 +7,6 @@ $smarty = common::getSmarty();
 
 $smarty->caching = false;
 $smarty->assign('link1',$links1);
-$smarty->assign('link2',$links2);
-$smarty->assign('link3',$links3);
 $links = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/artikel_links.tpl');
 $smarty->clearAllAssign();
 

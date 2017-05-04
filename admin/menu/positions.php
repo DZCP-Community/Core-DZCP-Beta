@@ -81,18 +81,18 @@ switch ($do) {
             }
 
             // Cleanup Boardpermissions
-            $qry = common::$sql['default']->select('SELECT `id`,`forum` FROM `{prefix_f_access}` WHERE `pos` = ?;',array($id));
+            $qry = common::$sql['default']->select('SELECT `id`,`forum` FROM `{prefix_forum_access}` WHERE `pos` = ?;',array($id));
             foreach($qry as $get) {
                 if(!common::array_var_exists($get['forum'],$_POST['board'])) {
-                    common::$sql['default']->delete('DELETE FROM `{prefix_f_access}` WHERE `id` = ?;',array($get['id']));
+                    common::$sql['default']->delete('DELETE FROM `{prefix_forum_access}` WHERE `id` = ?;',array($get['id']));
                 }
             }
 
             //Add new Boardpermissions
             if(count($_POST['board']) >= 1) {
                 foreach($_POST['board'] AS $boardpem) { 
-                    if(!common::$sql['default']->rows("SELECT `id` FROM `{prefix_f_access}` WHERE `pos` = ? AND `forum` = ?;",array($id,$boardpem))) {
-                        common::$sql['default']->insert("INSERT INTO `{prefix_f_access}` SET `pos` = ?, `forum` = ?;",array($id,$boardpem));
+                    if(!common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `pos` = ? AND `forum` = ?;",array($id,$boardpem))) {
+                        common::$sql['default']->insert("INSERT INTO `{prefix_forum_access}` SET `pos` = ?, `forum` = ?;",array($id,$boardpem));
                     }
                 }
             }
@@ -158,8 +158,8 @@ switch ($do) {
             //Add new Boardpermissions
             if(count($_POST['board']) >= 1) {
                 foreach($_POST['board'] AS $boardpem) { 
-                    if(!common::$sql['default']->rows("SELECT `id` FROM `{prefix_f_access}` WHERE `pos` = ? AND `forum` = ?;",array($posID,$boardpem))) {
-                        common::$sql['default']->insert("INSERT INTO `{prefix_f_access}` SET `pos` = ?, `forum` = ?;",array($posID,$boardpem));
+                    if(!common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `pos` = ? AND `forum` = ?;",array($posID,$boardpem))) {
+                        common::$sql['default']->insert("INSERT INTO `{prefix_forum_access}` SET `pos` = ?, `forum` = ?;",array($posID,$boardpem));
                     }
                 }
             }

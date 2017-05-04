@@ -16,17 +16,24 @@
  */
 
 function sponsors() {
+    $smarty = common::getSmarty(); //Use Smarty
     $qry = common::$sql['default']->select("SELECT `id`,`xlink`,`xend`,`link` FROM `{prefix_sponsoren}` WHERE `box` = 1 ORDER BY `pos`;");
     $sponsors = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qry as $get) {
-            $banner = show(_sponsors_bannerlink, ["id" => $get['id'],
-                                                       "title" => htmlspecialchars(str_replace('http://', '', stringParser::decode($get['link']))),
-                                                       "banner" => (empty($get['xlink']) ? "../banner/sponsors/box_".$get['id'].".".$get['xend'] : stringParser::decode($get['xlink']))]);
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('title',htmlspecialchars(str_replace('http://', '', stringParser::decode($get['link']))));
+            $smarty->assign('banner',(empty($get['xlink']) ? "../banner/sponsors/box_".$get['id'].".".$get['xend'] : stringParser::decode($get['xlink'])));
+            $banner = $smarty->fetch('file:['.common::$tmpdir.']sponsors/sponsors_bannerlink.tpl');
+            $smarty->clearAllAssign();
 
-            $sponsors .= show("menu/sponsors", ["banner" => $banner]);
+            $smarty->caching = false;
+            $smarty->assign('banner',$banner);
+            $sponsors .= $smarty->fetch('file:['.common::$tmpdir.']menu/sponsors.tpl');
+            $smarty->clearAllAssign();
         }
     }
 
-    return empty($sponsors) ? '<center style="margin:2px 0">'._no_entrys.'</center>' : '<table class="navContent" cellspacing="0">'.$sponsors.'</table>';
+    return empty($sponsors) ? '<div style="margin:2px 0;text-align:center;">'._no_entrys.'</div>' : '<table class="navContent" cellspacing="0">'.$sponsors.'</table>';
 }

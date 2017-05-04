@@ -71,7 +71,7 @@ switch ($do) {
     case 'delete':
         common::$sql['default']->delete("DELETE FROM `{prefix_votes}` WHERE `id` = ?;",array(intval($_GET['id'])));
         common::$sql['default']->delete("DELETE FROM `{prefix_vote_results}` WHERE `vid` = ?;",array(intval($_GET['id'])));
-        common::$sql['default']->delete("DELETE FROM `{prefix_ipcheck}` WHERE `what` = ?;",array('vid_'.intval($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_ip_action}` WHERE `what` = ?;",array('vid_'.intval($_GET['id'])));
         $show = common::info(_vote_admin_delete_successful, "?admin=votes");
     break;
     case 'editvote':

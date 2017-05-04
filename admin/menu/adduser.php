@@ -77,7 +77,7 @@ if(isset($_POST['user'])) {
         // internal boardpermissions
         if(!empty($_POST['board'])) {
             foreach ($_POST['board'] AS $boardname) {
-                common::$sql['default']->insert("INSERT INTO `{prefix_f_access}` SET `user` = ?, `forum` = ?;", [$insert_id,$boardname]);
+                common::$sql['default']->insert("INSERT INTO `{prefix_forum_access}` SET `user` = ?, `forum` = ?;", [$insert_id,$boardname]);
             }
         }
 

@@ -55,7 +55,7 @@ if(defined('_Forum')) {
         }
 
         common::$sql['default']->delete("DELETE FROM `{prefix_forumposts}` WHERE sid = '" . $tmpSid . "'");
-        common::$sql['default']->delete("DELETE FROM {prefix_f_abo} WHERE fid = '".intval($_GET['id'])."'");
+        common::$sql['default']->delete("DELETE FROM {prefix_forum_abo} WHERE fid = '".intval($_GET['id'])."'");
         
         $index = common::info(_forum_admin_thread_deleted, "../forum/");
       } else {

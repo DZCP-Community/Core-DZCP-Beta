@@ -28,7 +28,7 @@ function ftopics() {
                 $lp = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id", [$get['id']]);
                 $pagenr = ceil($lp/settings::get('m_fposts'));
                 $page = !$pagenr ? 1 : $pagenr;
-                $info = !settings::get('allowhover') == 1 ? '' : 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['topic'])).'\', \''.
+                $info = 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['topic'])).'\', \''.
                         _forum_kat.';'._forum_posts.';'._forum_lpost.'\', \''.stringParser::decode($get['kattopic']).';'.++$lp.';'.
                         date("d.m.Y H:i", $get['lp'])._uhr.'\')" onmouseout="DZCP.hideInfo()"';
                 
@@ -43,5 +43,5 @@ function ftopics() {
         }
     }
 
-    return empty($ftopics) ? '<center style="margin:2px 0">'._no_entrys.'</center>' : '<table class="navContent" cellspacing="0">'.$ftopics.'</table>';
+    return empty($ftopics) ? '<div style="margin:2px 0;text-align:center;">'._no_entrys.'</div>' : '<table class="navContent" cellspacing="0">'.$ftopics.'</table>';
 }

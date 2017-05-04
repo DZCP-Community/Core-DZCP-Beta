@@ -141,7 +141,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                     $smarty->assign('action',"?action=show&amp;do=edit&amp;cid=" . $getc['id']."&amp;id=".$get_news['id']);
                     $smarty->assign('title',_button_title_edit);
                     $smarty->assign('idir','../inc/images');
-                    $edit = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/button_edit.tpl',
+                    $edit = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/buttons/button_edit.tpl',
                         common::getSmartyCacheHash('_button_edit_'.$get_news['id'].'_cid_'.$getc['id']));
                     $smarty->clearAllAssign();
 
@@ -267,7 +267,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                 $links3 = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/news_link.tpl');
                 $smarty->clearAllAssign();
             }
-
+            
             $links = '';
             if (!empty($links1) || !empty($links2) || !empty($links3)) {
                 $smarty->caching = true;
@@ -293,7 +293,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
             $smarty->assign('titel',stringParser::decode($get_news['titel']));
             $smarty->assign('kat',$newsimage);
             $smarty->assign('id',$get_news['id']);
-            $smarty->assign('comments','');
+            $smarty->assign('comments',common::cnt('{prefix_newscomments}', " WHERE `news` = ".$get_news['id']));
             $smarty->assign('sticky','');
             $smarty->assign('intern',$intern);
             $smarty->assign('showmore',$showmore,true); //Comments

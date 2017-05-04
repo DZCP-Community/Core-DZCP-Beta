@@ -128,7 +128,7 @@ if(defined('_Forum')) {
                        `edited` = '".stringParser::encode($editedby)."'
                    WHERE id = '".intval($_GET['id'])."'");
 
-      $checkabo = common::$sql['default']->select("SELECT s1.user,s1.fid,s2.nick,s2.id,s2.email FROM {prefix_f_abo} AS s1
+      $checkabo = common::$sql['default']->select("SELECT s1.user,s1.fid,s2.nick,s2.id,s2.email FROM {prefix_forum_abo} AS s1
                         LEFT JOIN `{prefix_users}` AS s2 ON s2.id = s1.user
                       WHERE s1.fid = '".$getp['sid']."'");
       foreach($checkabo as $getabo) {
@@ -739,7 +739,7 @@ if(defined('_Forum')) {
                                                 SET `forumposts` = forumposts+1
                                                 WHERE `user`       = '".common::$userid."'");
 
-                    $checkabo = common::$sql['default']->select("SELECT s1.user,s1.fid,s2.nick,s2.id,s2.email FROM {prefix_f_abo} AS s1
+                    $checkabo = common::$sql['default']->select("SELECT s1.user,s1.fid,s2.nick,s2.id,s2.email FROM {prefix_forum_abo} AS s1
                                     LEFT JOIN `{prefix_users}` AS s2 ON s2.id = s1.user
                                                     WHERE s1.fid = '".intval($_GET['id'])."'");
                     

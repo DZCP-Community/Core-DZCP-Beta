@@ -98,25 +98,6 @@ var DZCP = {
         // init colorpicker
         $("#colorpicker").colorpicker();
 
-        //init slidetabs
-        if(dzcp_config.slideshowInterval > 1) { //set slideshowInterval to 0 for disable
-            $(".slidetabs").tabs(".images > div", {
-                effect: 'fade',
-                rotate: true
-            }).slideshow({
-                autoplay: true,
-                interval: dzcp_config.slideshowInterval
-            });
-        } else {
-            $(".slidetabs").tabs(".images > div", {
-                effect: 'fade',
-                rotate: true
-            }).slideshow({
-                autoplay: false,
-                interval: 6000
-            });
-        }
-
         // init Auto-Refresh
         if(dzcp_config.autoRefresh) {
             DZCP.initAutoRefresh();

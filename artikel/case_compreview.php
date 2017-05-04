@@ -77,22 +77,28 @@ if(defined('_Artikel')) {
         $nick = common::cleanautor($get_userid);
     }
 
-    $titel = show(_eintrag_titel, ["postid" => $get_id,
-                                        "datum" => date("d.m.Y", $get_date),
-                                        "zeit" => date("H:i", $get_date)._uhr,
-                                        "edit" => '',
-                                        "delete" => '']);
+    $smarty->caching = false;
+    $smarty->assign('postid',$get_id);
+    $smarty->assign('datum',date("d.m.Y", $get_date));
+    $smarty->assign('zeit',date("H:i", $get_date));
+    $smarty->assign('edit','');
+    $smarty->assign('delete','');
+    $titel = $smarty->fetch('string:'._eintrag_titel);
+    $smarty->clearAllAssign();
 
-    $index = show("page/comments_show", ["titel" => $titel,
-                                              "comment" => bbcode::parse_html($_POST['comment']),
-                                              "nick" => $nick,
-                                              "editby" => bbcode::parse_html($editedby),
-                                              "email" => $email,
-                                              "hp" => $hp,
-                                              "avatar" => common::useravatar($get_userid),
-                                              "onoff" => $onoff,
-                                              "rank" => common::getrank($get_userid),
-                                              "ip" => common::$userip._only_for_admins]);
+    $smarty->caching = false;
+    $smarty->assign('titel',$titel);
+    $smarty->assign('comment',bbcode::parse_html($_POST['comment']));
+    $smarty->assign('nick',bbcode::parse_html($editedby));
+    $smarty->assign('editby',$email);
+    $smarty->assign('email',$hp);
+    $smarty->assign('hp',$hp);
+    $smarty->assign('avatar',common::useravatar($get_userid));
+    $smarty->assign('onoff',$onoff);
+    $smarty->assign('rank',common::getrank($get_userid));
+    $smarty->assign('ip',common::$userip._only_for_admins);
+    $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/comments_show.tpl');
+    $smarty->clearAllAssign();
 
     common::update_user_status_preview();
     header("Content-Type: text/html; charset=utf-8");

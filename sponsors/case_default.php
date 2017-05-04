@@ -25,23 +25,36 @@ foreach($qry as $get) {
                 break;
         }
 
-        $banner = show(_sponsors_bannerlink, ["id" => $get['id'],
-                                                   "title" => str_replace('http://', '', stringParser::decode($get['link'])),
-                                                   "banner" => "../banner/sponsors/site_".$get['id'].".".$end]);
+        $smarty->caching = false;
+        $smarty->assign('id',$get['id']);
+        $smarty->assign('title',str_replace('http://', '', stringParser::decode($get['link'])));
+        $smarty->assign('banner',"../banner/sponsors/site_".$get['id'].".".$end);
+        $banner = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/sponsors_bannerlink.tpl');
+        $smarty->clearAllAssign();
     } else {
-        $banner = show(_sponsors_bannerlink, ["id" => $get['id'],
-                                                   "title" => str_replace('http://', '', stringParser::decode($get['link'])),
-                                                   "banner" => $get['slink']]);
+        $smarty->caching = false;
+        $smarty->assign('id',$get['id']);
+        $smarty->assign('title',str_replace('http://', '', stringParser::decode($get['link'])));
+        $smarty->assign('banner',$get['slink']);
+        $banner = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/sponsors_bannerlink.tpl');
+        $smarty->clearAllAssign();
     }
 
     $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-    $show .= show($dir."/sponsors_show", ["class" => $class,
-                                               "beschreibung" => bbcode::parse_html($get['beschreibung']),
-                                               "hits" => $get['hits'],
-                                               "banner" => $banner]);
+    $smarty->caching = true;
+    $smarty->assign('class',$class);
+    $smarty->assign('beschreibung',bbcode::parse_html($get['beschreibung']));
+    $smarty->assign('hits',$get['hits'],true);
+    $smarty->assign('banner',$banner);
+    $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/sponsors_show.tpl');
+    $smarty->clearAllAssign();
 }
 
 if(empty($show))
     $show = '<tr><td colspan="2" class="contentMainSecond">'._no_entrys.'</td></tr>';
 
-$index = show($dir."/sponsors", ["show" => $show]);
+$smarty->caching = false;
+$smarty->assign('show',$show);
+$index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/sponsors.tpl');
+$smarty->clearAllAssign();
+unset($show);

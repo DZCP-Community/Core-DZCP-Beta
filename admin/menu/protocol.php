@@ -20,12 +20,12 @@ if(_adminMenu != 'true') exit;
 $where = $where.': '._protocol;
 switch ($do) {
     case 'deletesingle':
-        common::$sql['default']->delete("DELETE FROM `{prefix_ipcheck}` WHERE `id` = ?;",array(intval($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_ip_action}` WHERE `id` = ?;",array(intval($_GET['id'])));
         header("Location: ".common::GetServerVars('HTTP_REFERER'));
     break;
     default:
         if(isset($_POST['run']) == 'delete') {
-            common::$sql['default']->delete("DELETE FROM `{prefix_ipcheck}` WHERE `time` != 0;");
+            common::$sql['default']->delete("DELETE FROM `{prefix_ip_action}` WHERE `time` != 0;");
             notification::add_success(_protocol_deleted);
         }
         
@@ -39,15 +39,19 @@ switch ($do) {
             $swhat = _info_ip;
         }
 
-        $entrys = common::cnt('{prefix_ipcheck}', $search, 'id', $params); $maxprot = 30;
-        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_ipcheck}` ".$search." ORDER BY `id` DESC LIMIT ".($page - 1)*$maxprot.",".$maxprot.";",$params);
+        $entrys = common::cnt('{prefix_ip_action}', $search, 'id', $params); $maxprot = 30;
+        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_ip_action}` ".$search." ORDER BY `id` DESC LIMIT ".($page - 1)*$maxprot.",".$maxprot.";",$params);
         foreach($qry as $get) {
               $action = "";
               $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
               $date = date("d.m.y H:i", $get['time'])._uhr;
-              $delete = show("page/button_delete", array("id" => $get['id'],
-                                                         "action" => "admin=protocol&amp;do=deletesingle",
-                                                         "title" => _button_title_del));
+
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('action',"admin=protocol&amp;do=deletesingle");
+            $smarty->assign('title',_button_title_del);
+            $delete = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_delete.tpl');
+            $smarty->clearAllAssign();
 
             if(preg_match("#\(#",$get['what'])) {
                 $a = preg_replace("#^(.*?)\((.*?)\)#is","$1",$get['what']);

@@ -53,8 +53,6 @@ define('_profil_custom_url', '
   <td class="contentMainTop" width="20%"><span class="fontBold">[name]:</span></td>
   <td class="contentMainFirst" align="center"><a href="[value]" target="_blank" class="icon" />[value]</a></td>
 </tr>');
-define('_sponsors_textlink', '<a href="../sponsors/?action=link&amp;id=[id]" target="_blank">[name]</a>');
-define('_sponsors_bannerlink', '<a href="../sponsors/?action=link&amp;id=[id]" target="_blank" title="[title]"><img src="[banner]" alt="" /></a>');
 define('_next_event_link', '[datum] - <a class="navLastReg" href="../kalender/?action=show&amp;time=[timestamp]">[event]</a>');
 define('_user_link_blank', '[nick]');
 define('_dropdown_date2', '<select id="tag" name="tag" class="dropdown">[tag]</select> <select id="monat" name="monat" class="dropdown">[monat]</select> <select id="jahr" name="jahr" class="dropdown">[jahr]</select>');
@@ -195,14 +193,9 @@ define('_msg_out_title', '<a href="?action=msg&amp;do=showsended&amp;id=[id]">[t
 define('_to_buddys', '<option value="[id]" [selected="selected"]>[nick]</option>');
 define('_to_users', '<option value="[id]" [selected="selected"]>[nick]</option>');
 define('_to_squads', '<option value="[id]" [sel]>-> [name]</option>');
-define('_user_new_forum', '&nbsp;&nbsp;<a href="../forum/?action=showthread&amp;id=[tid]&amp;page=[page]#p[lp]">[intern][wichtig]<span class="fontWichtig">[cnt]</span> [post] [nthread] <span class="fontWichtig">[thread]</span></a><br />');
-define('_user_new_users', '&nbsp;&nbsp;<a href="?action=userlist&amp;show=newreg"><span class="fontWichtig">[cnt]</span> [eintrag]</a><br />');
-define('_user_new_news', '&nbsp;&nbsp;<a href="../news/"><span class="fontWichtig">[cnt]</span> [eintrag]</a><br />');
 define('_user_new_msg', '&nbsp;&nbsp;<a href="?action=msg"><span class="fontWichtig">[cnt]</span> [eintrag]</a><br />');
-define('_user_new_votes', '&nbsp;&nbsp;<a href="../votes/"><span class="fontWichtig">[cnt]</span> [eintrag]</a><br />');
 define('_select_field', '<option value="[value]" [sel]> [what]</option>');
 ## Unzugeordnet ##
-define('_user_new_artc', '&nbsp;&nbsp;<a href="../artikel/?action=show&amp;id=[id]#lastcomment"><span class="fontWichtig">[cnt]</span> [eintrag]</a><br />');
 define('_artike_sites', '<a href="?action=show&amp;id=[id]&part=[part]">[num]</a> ');
 ## Sonstiges ##
 define('_klapptext_show', '<a href="javascript:DZCP.toggle(\'[id]\')"><img id="img[id]" src="../inc/images/collapse.gif" alt="" class="icon" /></a>');
