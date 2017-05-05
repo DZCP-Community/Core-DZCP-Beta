@@ -66,10 +66,7 @@ if(defined('_Forum')) {
 
         if($getp['reg'] == common::$userid || common::permission("forum"))
         {
-          $edit = show("page/button_edit_single", array("id" => $getp['id'],
-                                                       "action" => "action=post&amp;do=edit",
-                                                       "title" => _button_title_edit));
-
+          $edit = common::getButtonEditSingle($getp['id'],"action=post&amp;do=edit");
           $delete = show("page/button_delete_single", array("id" => $getp['id'],
                                                            "action" => "action=post&amp;do=delete",
                                                            "title" => _button_title_del,
@@ -190,11 +187,9 @@ if(defined('_Forum')) {
       if(common::data("signatur",$get['t_reg'])) $sig = _sig.bbcode::parse_html(common::data("signatur",$get['t_reg']));
       else $sig = "";
 
-      $editt = '';
+        $editt = '';
       if($get['t_reg'] == common::$userid || common::permission("forum"))
-        $editt = show("page/button_edit_single", array("id" => $get['id'],
-                                                      "action" => "action=thread&amp;do=edit",
-                                                      "title" => _button_title_edit));
+        $editt = common::getButtonEditSingle($get['id'],"action=thread&amp;do=edit");
 
       $admin = '';
       if(common::permission("forum"))

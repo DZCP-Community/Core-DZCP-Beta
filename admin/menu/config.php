@@ -51,13 +51,11 @@ if($_POST) {
     if(settings::changed(($key='l_lnews'),($var=intval($_POST['l_lnews'])))) settings::set($key,$var);
     if(settings::changed(($key='l_lartikel'),($var=intval($_POST['l_lartikel'])))) settings::set($key,$var);
     if(settings::changed(($key='direct_refresh'),($var=intval($_POST['direct_refresh'])))) settings::set($key,$var);
-    if(settings::changed(($key='cache_engine'),($var=stringParser::encode($_POST['cache_engine'])))) settings::set($key,$var);
     if(settings::changed(($key='news_feed'),($var=intval($_POST['feed'])))) settings::set($key,$var);
     if(settings::changed(($key='clanname'),($var=stringParser::encode($_POST['clanname'])))) settings::set($key,$var);
     if(settings::changed(($key='default_pwd_encoder'),($var=stringParser::encode($_POST['pwd_encoder'])))) settings::set($key,$var);
     if(settings::changed(($key='pagetitel'),($var=stringParser::encode($_POST['pagetitel'])))) settings::set($key,$var);
     if(settings::changed(($key='badwords'),($var=stringParser::encode($_POST['badwords'])))) settings::set($key,$var);
-    if(settings::changed(($key='language'),($var=stringParser::encode($_POST['language'])))) settings::set($key,$var);
     if(settings::changed(($key='regcode'),($var=intval($_POST['regcode'])))) settings::set($key,$var);
     if(settings::changed(($key='forum_vote'),($var=intval($_POST['forum_vote'])))) settings::set($key,$var);
     if(settings::changed(($key='reg_forum'),($var=intval($_POST['reg_forum'])))) settings::set($key,$var);
@@ -91,9 +89,9 @@ if($_POST) {
     if(settings::changed(($key='smtp_username'),($var=stringParser::encode($_POST['smtp_username'])))) settings::set($key,$var);
     if(settings::changed(($key='smtp_tls_ssl'),($var=intval($_POST['smtp_tls_ssl'])))) settings::set($key,$var);
     if(settings::changed(($key='sendmail_path'),($var=stringParser::encode($_POST['sendmail_path'])))) settings::set($key,$var);
-    if(settings::changed(($key='memcache_host'),($var=stringParser::encode($_POST['memcache_host'])))) settings::set($key,$var);
-    if(settings::changed(($key='memcache_port'),($var=intval($_POST['memcache_port'])))) settings::set($key,$var);
     if(settings::changed(($key='urls_linked'),($var=stringParser::encode($_POST['urls_linked'])))) settings::set($key,$var);
+    if(settings::changed(($key='eml_lpwd_key'),($var=stringParser::encode($_POST['eml_lpwd'])))) settings::set($key,$var);
+    if(settings::changed(($key='eml_lpwd_key_subj'),($var=stringParser::encode($_POST['eml_lpwd_subj'])))) settings::set($key,$var);
     if(settings::changed(($key='use_akl'),($var=intval($_POST['akl'])))) settings::set($key,$var);
     settings::load(true);
     notification::add_success(_config_set);
@@ -150,6 +148,8 @@ $show = show($dir."/form_config", array( "main_info"             => _main_info,
                                          "c_eml_fabo_pedit"      => stringParser::decode(settings::get('eml_fabo_pedit')),
                                          "c_eml_fabo_nposr"      => stringParser::decode(settings::get('eml_fabo_npost')),
                                          "c_eml_akl_register"    => stringParser::decode(settings::get('eml_akl_register')),
+                                         "c_eml_lpwd_subj"       => stringParser::decode(settings::get('eml_lpwd_key_subj')),
+                                         "c_eml_lpwd"            => stringParser::decode(settings::get('eml_lpwd_key')),
                                          "memcache_host"         => stringParser::decode(settings::get('memcache_host')),
                                          "memcache_port"         => intval(settings::get('memcache_port')),
                                          "tmplsel"               => $tmplsel,

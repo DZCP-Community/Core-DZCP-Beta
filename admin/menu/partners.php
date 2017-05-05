@@ -86,9 +86,7 @@ $where = $where.': '._partners_head;
       } else {
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_partners}` ORDER BY id;");
         foreach ($qry as $get) {
-          $edit = show("page/button_edit_single", array("id" => $get['id'],
-                                                        "action" => "admin=partners&amp;do=edit",
-                                                        "title" => _button_title_edit));
+          $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
           $delete = show("page/button_delete_single", array("id" => $get['id'],
                                                             "action" => "admin=partners&amp;do=delete",
                                                             "title" => _button_title_del,

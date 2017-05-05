@@ -18,6 +18,9 @@
 define('_lang_de', 'Deutsch');
 define('_lang_uk', 'Englisch');
 
+define('_admin_lpwd_subj', 'Betreff: Passwort zur&uuml;cksetzen');
+define('_admin_lpwd', 'Passwort zur&uuml;cksetzen template');
+
 ## ADDED / REDEFINED FOR 1.7.0
 define('_server_ip', 'Server-IP');
 define('_aktion', 'Aktion');
@@ -33,8 +36,8 @@ define('_reg_akl_sended', 'Dein Aktivierungslink wurde an "[email]" versandt, sc
 define('_reg_akl_email_nf', 'Es existiert kein Account mit dieser E-Mail Addresse');
 define('_reg_akl_locked', 'Der Account ist gesperrt und kann nicht mehr aktiviert werden');
 define('_reg_akl_activated', 'Dein Account ist bereits aktiviert');
-define('_info_reg_valid_akl', 'Du hast dich erfolgreich registriert!<br /><br />Bitte aktiviere deinen Account &uuml;ber die Aktivierungs-eMail, die wir dir an deine E-Mail Adresse gesendet haben.<br /><br />Deine Zugangsdaten wurden dir an deine E-Mail Adresse "[email]" versandt.');
-define('_info_reg_valid_akl_ad', 'Du hast dich erfolgreich registriert!<br /><br />Deinen Account wird nach einer Pr&uuml;fung durch die Administratoren dieser Seite aktiviert.<br /><br />Deine Zugangsdaten wurden dir an deine E-Mail Adresse "[email]" versandt.');
+define('_info_reg_valid_akl', 'Du hast dich erfolgreich registriert!<br /><br />Bitte aktiviere deinen Account &uuml;ber die Aktivierungs-eMail, die wir dir an deine E-Mail Adresse gesendet haben.<br /><br />Deine Zugangsdaten wurden dir an deine E-Mail Adresse "{$email}" versandt.');
+define('_info_reg_valid_akl_ad', 'Du hast dich erfolgreich registriert!<br /><br />Deinen Account wird nach einer Pr&uuml;fung durch die Administratoren dieser Seite aktiviert.<br /><br />Deine Zugangsdaten wurden dir an deine E-Mail Adresse "{$email}" versandt.');
 define('_button_value_activate', 'Aktivieren');
 define('_activate_code', 'Aktivierungscode');
 define('_activate_head', 'Account aktivieren');
@@ -576,7 +579,7 @@ define('_smileys_info', 'Du kannst alle neuen Smileys auch per FTP in den Ordner
 define('_pos_empty_kat', 'Du musst eine Rangbezeichnung angeben!');
 define('_forum_lastpost', '<a href="?action=showthread&amp;id=[tid]&amp;page=[page]#p[id]"><img src="../inc/images/forum_lpost.gif" alt="" title="Zum letzten Eintrag" class="icon" /></a>');
 define('_forum_addpost', '<a href="?action=post&amp;do=add&amp;kid=[kid]&amp;id=[id]"><img src="../inc/images/forum_reply.gif" alt="" title="Neuer Eintrag" class="icon" /></a>');
-define('_pn_write', '<a href="../user/?action=msg&amp;do=pn&amp;id=[id]"><img src="../inc/images/pn.gif" alt="" title="[nick] eine Nachricht schreiben" class="icon" /></a>');
+define('_pn_write', 'eine Nachricht schreiben');
 //--------------------------------------------\\
 define('_error_invalid_regcode', 'Der eingegebene Sicherheitsscode stimmt nicht mit der in der Grafik angezeigten Zeichenfolge &uuml;berein!');
 define('_error_invalid_regcode_mathematic', 'Das Rechenergebnis vom Sicherheitscode ist nicht richtig!');
@@ -1006,7 +1009,7 @@ define('_member_squad_head', 'Teams');
 define('_member_squad_no_entrys', '<tr><td align="center"><span class="fontBold">Keine eingetragenen Member</span></td></tr>');
 define('_member_squad_weare', 'Wir sind insgesamt <span class="fontBold">[cm] Member</span> und besitzen <span class="fontBold">[cs] Team(s)</span>');
 ## User ##
-define('_profil_head', '<span class="fontBold">Userprofil von [nick]</span> [[profilhits] mal angesehen]');
+define('_profil_head', '<span class="fontBold">Userprofil von {$nick}</span> [{$profilhits} mal angesehen]');
 define('_user_noposi', '<option value="lazy" class="dropdownKat">keine Position</option>');
 define('_login_head', 'Login');
 define('_new_pwd', 'neues Passwort');
@@ -1082,6 +1085,7 @@ define('_profil_edit_profil_link', '<a href="?action=editprofile">Profil editier
 define('_profil_avatar', 'Avatar');
 define('_lostpwd_failed', 'Loginname und E-Mailadresse stimmen nicht &uuml;berein!');
 define('_lostpwd_valid', 'Es wurde soeben ein neues Passwort generiert und an deine Emailadresse gesendet!');
+define('_lostpwd_valid_sended', 'Dir wurde eine E-Mail mit dem &Auml;nderungslink gesendet!');
 define('_error_user_already_in', 'Du bist bereits eingeloggt!');
 define('_user_is_banned', 'Dein Account wurde vom Admin dieser Seite gesperrt und ist ab jetzt nicht mehr nutzbar!<br />Informiere dich bei einem authorisiertem Mitglied &uuml;ber den genauen Sachverhalt.');
 define('_msghead', 'Nachrichtencenter von [nick]');

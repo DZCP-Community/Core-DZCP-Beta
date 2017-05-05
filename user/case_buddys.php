@@ -87,7 +87,13 @@ if(defined('_UserMenu')) {
                 $qry = common::$sql['default']->select("SELECT `buddy` FROM `{prefix_userbuddys}` WHERE `user` = ?;",array(common::$userid));
                 $too = ""; $buddys = ""; $usersNL=array();
                 foreach($qry as $get) {
-                    $pn = show(_pn_write, array("id" => $get['buddy'], "nick" =>stringParser::decode(common::data("nick",$get['buddy']))));
+                    //Private Massage
+                    $smarty->caching = false;
+                    $smarty->assign('id',$get['buddy']);
+                    $smarty->assign('nick',stringParser::decode(common::data("nick",$get['buddy'])));
+                    $pn = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/msg/msg_pn_write.tpl');
+                    $smarty->clearAllAssign();
+
                     $delete = show(_buddys_delete, array("id" => $get['buddy']));
                     $too = common::$sql['default']->rows("SELECT `id` FROM `{prefix_userbuddys}` where `user` = ? AND `buddy` = ?;",array($get['buddy'],common::$userid)) ? _buddys_yesicon : _buddys_noicon;
                     $usersNL[$get['buddy']] = true;

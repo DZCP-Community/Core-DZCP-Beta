@@ -215,10 +215,7 @@ switch ($do) {
                                                                 "subtopic" => stringParser::decode($getk['subtopic']),
                                                                 "id" => $getk['id']));
 
-                    $edit = show("page/button_edit_single", array("id" => $getk['id'],
-                                                                  "action" => "admin=forum&amp;do=editsubkat",
-                                                                  "title" => _button_title_edit));
-
+                    $edit = common::getButtonEditSingle($getk['id'],"admin=".$admin."&amp;do=editsubkat");
                     $delete = show("page/button_delete_single", array("id" => $getk['id'],
                                                                       "action" => "admin=forum&amp;do=deletesubkat",
                                                                       "title" => _button_title_del,
@@ -248,10 +245,7 @@ switch ($do) {
                 $kat = show(_config_forum_kats_titel, array("kat" => stringParser::decode($get['name']),
                                                             "id" => $get['id']));
 
-                $edit = show("page/button_edit_single", array("id" => $get['id'],
-                                                              "action" => "admin=".$_GET['admin']."&amp;do=edit",
-                                                              "title" => _button_title_edit));
-
+                $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
                 $delete = show("page/button_delete_single", array("id" => $get['id'],
                                                                   "action" => "admin=".$_GET['admin']."&amp;do=delete",
                                                                   "title" => _button_title_del,

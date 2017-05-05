@@ -1,0 +1,1 @@
+<a href="?{$action}{if $id >= 1}&amp;id={$id}{/if}"><img src="../inc/images/edit.png" title="{$title}" alt="{$title}" class="icon" /></a>

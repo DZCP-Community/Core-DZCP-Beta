@@ -1,6 +1,6 @@
   <tr>
     <td>
-      <form name="contentLogin" action="../user/?action=login&amp;do=yes" method="post" onsubmit="return(DZCP.submitButton())">
+      <form name="contentLogin" action="../?action=login&amp;do=yes" method="post" onsubmit="return(DZCP.submitButton())">
         <table class="mainContent" cellspacing="1">
           <tr>
             <td class="contentHead" colspan="2" align="center"><span class="fontBold">{lang msgID="login_head"}</span></td>
@@ -20,7 +20,7 @@
               onfocus="this.className='inputField_en';"
               onblur="this.className='inputField_dis';" required><br /><br />
               <input class="checkbox" type="checkbox" name="permanent" value="1"> {lang msgID="login_permanent"}<br />
-              <a href="../user/?action=lostpwd">{lang msgID="login_lostpwd"}?</a>
+              <a href="../?action=lostpwd">{lang msgID="login_lostpwd"}?</a>
             </td>
           </tr>
           {$secure}

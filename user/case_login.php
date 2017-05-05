@@ -119,9 +119,17 @@ if(defined('_UserMenu')) {
         }
     } else {
         if (!common::$chkMe) {
+            //Sicherheitsscode
+            $secure='';
+            if(settings::get('securelogin')) {
+                $smarty->caching = false;
+                $secure = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/access/secure.tpl');
+            }
+
+            //Index
             $smarty->caching = false;
-            $smarty->assign('secure',(settings::get('securelogin') ? show($dir . "/secure") : ''));
-            $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/login.tpl');
+            $smarty->assign('secure',$secure);
+            $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/access/login.tpl');
             $smarty->clearAllAssign();
         } else {
             $index = common::error(_error_user_already_in, 1);

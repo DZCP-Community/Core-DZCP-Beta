@@ -110,9 +110,7 @@ switch ($do) {
     default:
         $qry = common::$sql['default']->select("SELECT `id`,`download` FROM `{prefix_downloads}` ORDER BY id");
         foreach($qry as $get) {
-            $edit = show("page/button_edit_single", array("id" => $get['id'],
-                                                          "action" => "admin=dladmin&amp;do=edit",
-                                                          "title" => _button_title_edit));
+            $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
           
             $delete = show("page/button_delete_single", array("id" => $get['id'],
                                                               "action" => "admin=dladmin&amp;do=delete",

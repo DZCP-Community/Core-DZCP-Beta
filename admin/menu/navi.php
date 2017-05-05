@@ -263,9 +263,7 @@ if(_adminMenu != 'true') exit;
             $type = _navi_space;
           } else {
             $type = stringParser::decode($get['name']);
-            $edit = show("page/button_edit_single", array("id" => $get['id'],
-                                                          "action" => "admin=navi&amp;do=edit",
-                                                          "title" => _button_title_edit));
+            $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
             $delete = show("page/button_delete_single", array("id" => $get['id'],
                                                               "action" => "admin=navi&amp;do=delete",
                                                               "title" => _button_title_del,
@@ -307,9 +305,7 @@ if(_adminMenu != 'true') exit;
             $edit = '';
             $delete = '';
           } else {
-            $edit = show("page/button_edit_single", array("id" => $get['id'],
-                                                          "action" => "admin=navi&amp;do=editkat",
-                                                          "title" => _button_title_edit));
+            $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=editkat");
             $delete = show("page/button_delete_single", array("id" => $get['id'],
                                                               "action" => "admin=navi&amp;do=deletekat",
                                                               "title" => _button_title_del,

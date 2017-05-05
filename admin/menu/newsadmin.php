@@ -383,10 +383,7 @@ switch ($do) {
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_news}` ".common::orderby_sql(array("titel","datum","autor"), 'ORDER BY `public` ASC, `datum` DESC')."
                    LIMIT ".($page - 1)*settings::get('m_adminnews').",".settings::get('m_adminnews')."");
         foreach($qry as $get) {
-            $edit = show("page/button_edit_single", array("id" => $get['id'],
-                                                          "action" => "admin=newsadmin&amp;do=edit",
-                                                          "title" => _button_title_edit));
-
+            $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
             $delete = show("page/button_delete_single", array("id" => $get['id'],
                                                               "action" => "admin=newsadmin&amp;do=delete",
                                                               "title" => _button_title_del,

@@ -19,7 +19,7 @@
 class notification {
     static public $notification_index = array('global' => array());
     static private $notification_success = false;
-    static public $smarty = NULL;
+    static private $smarty = NULL;
 
     public static function add_error($msg = '', $index='global', $link = false, $time = 3) {
         self::$notification_success = false;
@@ -45,7 +45,7 @@ class notification {
 
     public static function get($index='global',$tr=false) {
         $notification = '';
-        self::$smarty->debugging = true;
+        self::$smarty = common::getSmarty();
         self::$smarty->caching = false;
         if(array_key_exists(strval($index),self::$notification_index) &&
             count(self::$notification_index[$index]) >= 1) {
@@ -59,7 +59,6 @@ class notification {
                     self::$smarty->assign($key,$var);
                 }
                 $notification .= self::$smarty->fetch('file:['.common::$tmpdir.']page/notification_box.tpl');
-                self::$smarty->clearAllAssign();
                 unset(self::$notification_index[$index][$id]);
             }
         }

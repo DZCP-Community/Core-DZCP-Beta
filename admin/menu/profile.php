@@ -91,10 +91,7 @@ switch ($do) {
                 : '<a href="?admin=profile&amp;do=shown&amp;id='.$get['id'].'"><img src="../inc/images/no.gif" alt="" title="'._public.'" /></a>';
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $edit = show("page/button_edit_single", array("id" => $get['id'],
-                                                          "action" => "admin=profile&amp;do=edit",
-                                                          "title" => _button_title_edit));
-
+            $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
             $delete = show("page/button_delete_single", array("id" => $get['id'],
                                                               "action" => "admin=profile&amp;do=delete",
                                                               "title" => _button_title_del,

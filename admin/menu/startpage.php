@@ -91,7 +91,7 @@ switch ($do) {
     default:
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_startpage}`;"); $color = 0; $show = '';
         foreach($qry as $get) {
-            $edit = show("page/button_edit_single", array("id" => $get['id'], "action" => "admin=startpage&amp;do=edit", "title" => _button_title_edit));
+            $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
             $delete = show("page/button_delete_single", array("id" => $get['id'], "action" => "admin=startpage&amp;do=delete", "title" => _button_title_del, "del" => _confirm_del_entry));
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             $show .= show($dir."/startpage_show", array("edit" => $edit, "name" => stringParser::decode($get['name']), "url" => stringParser::decode($get['url']), "class" => $class, "delete" => $delete));

@@ -170,10 +170,7 @@ switch ($do) {
     default:
         $qry = common::$sql['default']->select("SELECT `id`,`position` FROM `{prefix_positions}` ORDER BY `pid` DESC;"); $show_pos = '';
         foreach($qry as $get) {
-            $edit = show("page/button_edit_single", array("id" => $get['id'],
-                                                          "action" => "admin=positions&amp;do=edit",
-                                                          "title" => _button_title_edit));
-
+            $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
             $delete = show("page/button_delete_single", array("id" => $get['id'],
                                                               "action" => "admin=positions&amp;do=delete",
                                                               "title" => _button_title_del,

@@ -103,9 +103,7 @@ define('_newicon', '<img src="../inc/images/forum_newpost.gif" alt="" class="ico
 define('_notnewicon', '<img src="../inc/images/notnew.gif" alt="" class="icon" />');
 define('_deleteicon_blank', '<img alt="" src="../inc/images/delete.png" class="icon" />');
 define('_buddys_delete', '<a href="?action=buddys&amp;do=delete&amp;id=[id]"><img src="../inc/images/delete.png" alt="" class="icon" /></a>');
-define('_addbuddyicon_blank', '<img alt="" src="../inc/images/add.gif" class="icon" />');
 define('_editicon_blank', '<img alt="" src="../inc/images/edit.png" class="icon" />');
-define('_addbuddyicon', '<a href="../user/?action=buddys&amp;do=addbuddy&amp;id=[id]"><img alt="" src="../inc/images/add.gif" class="icon" /></a>');
 define('_gameicon', '<img alt="" src="../inc/images/gameicons/custom/[icon]" class="icon" />');
 define('_admin_default_edit', '<a href="?action=admin&amp;edit=[id]"><img src="../inc/images/edit.png" alt="" title="Edit" class="icon" /></a>');
 define('_admin_ck_edit', '<a href="?action=admin&amp;do=paycheck&amp;id=[id]"><img src="../inc/images/edit.png" alt="" title="Edit" class="icon" /></a>');
@@ -115,10 +113,8 @@ define('_forum_delete', '<a href="?action=post&amp;do=delete&amp;id=[id]"><img a
 define('_newsc_delete', '<a href="?action=show&amp;id=[id]&amp;do=delete&cid=[cid]"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
 ## News ##
 define('_news_kat', '<img src="../inc/images/uploads/newskat/[img]" alt="" />');
-define('_artikel_links', '<span class="fontItalic">[rel]</span><br />[link1] [link2] [link3]');
 define('_news_show_link', '<a href="../news/?action=show&amp;id=[id]">[titel]</a>');
 define('_news_stats', 'Insgesamt <span class="fontBold">[news] News</span> mit <span class="fontBold">[comments] [com]</span>');
-define('_news_com', '#');
 ## Artikel ##
 define('_artikel_link', '<span class="fontBold">&raquo;</span> <a href="[url]" target="_blank">[link]</a> ');
 ## Forum ##

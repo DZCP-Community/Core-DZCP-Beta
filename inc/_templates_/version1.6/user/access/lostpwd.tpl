@@ -1,12 +1,13 @@
 <tr>
-  <td class="contentHead" colspan="2" align="center"><span class="fontBold">[lang_lostpwd_head]</span></td>
+  <td class="contentHead" colspan="2" align="center"><span class="fontBold">{lang msgID="lostpwd_head"}</span></td>
 </tr>
+{$notification_page}
 <tr>
 <td>
 <form name="lostpwd" action="?action=lostpwd&amp;do=sended" method="post" onsubmit="return(DZCP.submitButton())">
 <table class="hperc" cellspacing="1">
 <tr>
-  <td class="contentMainTop" width="25%"><span class="fontBold">[lang_loginname]:</span></td>
+  <td class="contentMainTop" width="25%"><span class="fontBold">{lang msgID="loginname"}:</span></td>
   <td class="contentMainFirst" align="center">
     <input type="text" name="user" class="inputField_dis"
     onfocus="this.className='inputField_en';"
@@ -14,22 +15,21 @@
   </td>
 </tr>
 <tr>
-  <td class="contentMainTop" width="25%"><span class="fontBold">[lang_email]:</span></td>
+  <td class="contentMainTop" width="25%"><span class="fontBold">{lang msgID="email"}:</span></td>
   <td class="contentMainFirst" align="center">
     <input type="text" name="email" class="inputField_dis"
     onfocus="this.className='inputField_en';"
     onblur="this.className='inputField_dis';" />
   </td>
 </tr>
-<logged_out>
 <tr>
-    <td class="contentMainTop" style="vertical-align:middle"><span class="fontBold">[lang_register_confirm]: </span><span class="fontRed">*</span></td>
+    <td class="contentMainTop" style="vertical-align:middle"><span class="fontBold">{lang msgID="register_confirm"}: </span><span class="fontRed">*</span></td>
     <td class="contentMainFirst" align="center">
         <table class="corner" style="width:204px;border: 1px solid #d4d4d4;">
             <tbody>
                 <tr>
-                    <td colspan="2" style="width:195"><img class="corner" onmouseover="DZCP.showInfo('[lang_capcha_sound_info]')" onmouseout="DZCP.hideInfo()" onClick="DZCP.EvalSound('../inc/ajax.php?i=securimage_audio')" src="../inc/images/ajax_loading.gif" alt="CAPTCHA Image" name="siimage_lostpwd" hspace="0" vspace="0" id="siimage_lostpwd" style="border: 1px solid #d4d4d4; margin-right: 1px" />
-                        <script language="javascript" type="text/javascript">DZCP.initDynCaptcha('siimage_lostpwd',0,0,0,'',0,'[sid]');</script></td>
+                    <td colspan="2" style="width:195"><img class="corner" onmouseover="DZCP.showInfo('{lang msgID="capcha_sound_info"}')" onmouseout="DZCP.hideInfo()" onClick="DZCP.EvalSound('../inc/ajax.php?i=securimage_audio')" src="../inc/images/ajax_loading.gif" alt="CAPTCHA Image" name="siimage_lostpwd" hspace="0" vspace="0" id="siimage_lostpwd" style="border: 1px solid #d4d4d4; margin-right: 1px" />
+                        <script language="javascript" type="text/javascript">DZCP.initDynCaptcha('siimage_lostpwd',0,0,0,'',0,'{sid}');</script></td>
                     </td>
                 </tr>
                 <tr>
@@ -40,9 +40,8 @@
         </table>
     </td>
 </tr>
-</logged_out>
 <tr>
-  <td class="contentBottom" colspan="2"><input id="contentSubmit" type="submit" value="[lang_button_value_send]" class="submit" /></td>
+  <td class="contentBottom" colspan="2"><input id="contentSubmit" type="submit" value="{lang msgID="button_value_send"}" class="submit" /></td>
 </tr>
 </table>
 </form>

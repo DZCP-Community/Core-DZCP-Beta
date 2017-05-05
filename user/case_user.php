@@ -33,11 +33,18 @@ if(defined('_UserMenu')) {
             $sex = $get['sex'] == 1 ? _male : ($get['sex'] == 2 ? _female : '-');
             $hp = empty($get['hp']) ? "-" : "<a href=\"" . $get['hp'] . "\" target=\"_blank\">" . $get['hp'] . "</a>";
             $email = empty($get['email']) ? "-" : common::CryptMailto(stringParser::decode($get['email']), _user_mailto_texttop);
-            $pn = show(_pn_write, array("id" => $_GET['id'], "nick" => $get['nick']));
-            $bday = (!$get['bday'] || empty($get['bday'])) ? "-" : date('d.m.Y', $get['bday']);
 
+            //Private Massage
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('nick',stringParser::decode($get['nick']));
+            $pn = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/msg/msg_pn_write.tpl');
+            $smarty->clearAllAssign();
+
+            //Status
             $status = ($get['status'] == 1 || ($get['level'] != 1 && isset($_GET['sq']))) ? _aktiv_icon : _inaktiv_icon;
-            $clan = "";
+
+            //Level & Group
             if ($get['level'] != 1 || isset($_GET['sq'])) {
                 $sq = common::$sql['default']->select("SELECT * FROM `{prefix_userposis}` WHERE `user` = ?;",array($get['id']));
                 $cnt = common::cnt('{prefix_userposis}', " WHERE `user` = ?",'id',array($get['id'])); $i = 1;
@@ -62,47 +69,63 @@ if(defined('_UserMenu')) {
                 $pos = (empty($pos) ? '-' : $pos);
             }
 
-            $buddyadd = show(_addbuddyicon, array("id" => $_GET['id']));
+            // Add-Userbuddy
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $buddyadd = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_buddy_add.tpl');
+            $smarty->clearAllAssign();
 
             $edituser = "";
             if (common::permission("editusers")) {
-                $edituser = str_replace("&amp;id=", "", show("page/button_edit_single", array("id" => "",
-                                                                                              "action" => "action=admin&amp;edit=" . $_GET['id'],
-                                                                                              "title" => _button_title_edit)));
+                $edituser = common::getButtonEditSingle(0,"action=admin&amp;edit=".$get['id']);
             }
 
             $rlname = $get['rlname'] ? stringParser::decode($get['rlname']) : "-";
             $city = stringParser::decode($get['city']);
             $beschreibung = bbcode::parse_html($get['beschreibung']);
-            $show = show($dir."/profil_show", array("country" => self::flag($get['country']),
-                                                    "city" => (empty($city) ? '-' : $city),
-                                                    "logins" => common::userstats("logins", $_GET['id']),
-                                                    "hits" => common::userstats("hits", $_GET['id']),
-                                                    "msgs" => common::userstats("writtenmsg", $_GET['id']),
-                                                    "forenposts" => common::userstats("forumposts", $_GET['id']),
-                                                    "votes" => common::userstats("votes", $_GET['id']),
-                                                    "regdatum" => date("d.m.Y H:i", $get['regdatum']) . _uhr,
-                                                    "lastvisit" => date("d.m.Y H:i", common::userstats("lastvisit", $_GET['id'])) . _uhr,
-                                                    "hp" => $hp,
-                                                    "buddyadd" => $buddyadd,
-                                                    "nick" => common::autor($get['id']),
-                                                    "rlname" => $rlname,
-                                                    "bday" => $bday,
-                                                    "age" => common::getAge($get['bday']),
-                                                    "sex" => $sex,
-                                                    "email" => $email,
-                                                    "pn" => $pn,
-                                                    "edituser" => $edituser,
-                                                    "onoff" => common::onlinecheck($get['id']),
-                                                    "picture" => common::userpic($get['id']),
-                                                    "position" => common::getrank($get['id']),
-                                                    "status" => $status,
-                                                    "ich" => (empty($beschreibung) ? '-' : $beschreibung)));
 
-            $profil_head = show(_profil_head, array("profilhits" => common::userstats("profilhits", $_GET['id'])));
-            $index = show($dir . "/profil", array("profilhead" => $profil_head,
-                                                  "show" => $show,
-                                                  "nick" => common::autor($_GET['id'])));
+            //User Profil
+            $smarty->caching = false;
+            $smarty->assign('country',common::flag($get['country']));
+            $smarty->assign('city',(empty($city) ? '-' : $city));
+            $smarty->assign('logins',common::userstats("logins", $get['id']));
+            $smarty->assign('hits',common::userstats("hits", $get['id']));
+            $smarty->assign('msgs',common::userstats("writtenmsg", $get['id']));
+            $smarty->assign('forenposts',common::userstats("forumposts", $get['id']));
+            $smarty->assign('votes',common::userstats("votes", $get['id']));
+            $smarty->assign('regdatum',date("d.m.Y H:i", $get['regdatum']) . _uhr);
+            $smarty->assign('lastvisit',date("d.m.Y H:i", common::userstats("lastvisit", $get['id'])) . _uhr);
+            $smarty->assign('hp',$hp);
+            $smarty->assign('buddyadd',$buddyadd);
+            $smarty->assign('nick',common::autor($get['id']));
+            $smarty->assign('rlname',$rlname);
+            $smarty->assign('age',common::getAge($get['bday']));
+            $smarty->assign('sex',$sex);
+            $smarty->assign('email',$email);
+            $smarty->assign('pn',$pn);
+            $smarty->assign('edituser',$edituser);
+            $smarty->assign('onoff',common::onlinecheck($get['id']));
+            $smarty->assign('picture',common::userpic($get['id']));
+            $smarty->assign('position',common::getrank($get['id']));
+            $smarty->assign('status',$status);
+            $smarty->assign('ich',(empty($beschreibung) ? '-' : $beschreibung));
+            $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/profil/profil_show.tpl');
+            $smarty->clearAllAssign();
+            unset($city,$hp,$buddyadd,$rlname,$sex,$email,$pn,$edituser,$status,$beschreibung);
+
+            //Profil Header
+            $smarty->caching = false;
+            $smarty->assign('profilhits',common::userstats("profilhits", $get['id']));
+            $smarty->assign('nick',common::autor($get['id']));
+            $profil_head = $smarty->fetch('string:'._profil_head);
+            $smarty->clearAllAssign();
+
+            //Index
+            $smarty->caching = false;
+            $smarty->assign('profilhead',$profil_head);
+            $smarty->assign('show',$show);
+            $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/profil/profil.tpl');
+            $smarty->clearAllAssign(); unset($profil_head,$show,$get);
         }
     }
 }

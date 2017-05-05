@@ -18,6 +18,9 @@
 define('_lang_de', 'German');
 define('_lang_uk', 'English');
 
+define('_admin_lpwd_subj', 'Betreff: Passwort zur&uuml;cksetzen');
+define('_admin_lpwd', 'Passwort zur&uuml;cksetzen template');
+
 ## ADDED / REDEFINED FOR 1.7.0
 define('_years', 'Years');
 define('_year', 'Year');
@@ -48,8 +51,9 @@ define('_reg_akl_sended', 'Dein Aktivierungslink wurde an "[email]" versandt, sc
 define('_reg_akl_email_nf', 'Es existiert kein Account mit dieser E-Mail Addresse!');
 define('_reg_akl_locked', 'Der Account ist gesperrt und kann nicht mehr aktiviert werden!');
 define('_reg_akl_activated', 'Dein Account ist bereits aktiviert');
-define('_info_reg_valid_akl', 'Du hast dich erfolgreich registriert!<br /><br />Bitte aktiviere deinen Account &uuml;ber die Aktivierungs-eMail, die wir dir an deine E-Mail Adresse gesendet haben.<br /><br />Deine Zugangsdaten wurden dir an deine E-Mail Adresse "[email]" versandt.');
-define('_info_reg_valid_akl_ad', 'Du hast dich erfolgreich registriert!<br /><br />Deinen Account wird nach einer Pr&uuml;fung durch die Administratoren dieser Seite aktiviert.<br /><br />Deine Zugangsdaten wurden dir an deine E-Mail Adresse "[email]" versandt.');
+define('_lostpwd_valid_sended', 'Dir wurde eine E-Mail mit dem &Auml;nderungslink gesendet!');
+define('_info_reg_valid_akl', 'Du hast dich erfolgreich registriert!<br /><br />Bitte aktiviere deinen Account &uuml;ber die Aktivierungs-eMail, die wir dir an deine E-Mail Adresse gesendet haben.<br /><br />Deine Zugangsdaten wurden dir an deine E-Mail Adresse "{$email}" versandt.');
+define('_info_reg_valid_akl_ad', 'Du hast dich erfolgreich registriert!<br /><br />Deinen Account wird nach einer Pr&uuml;fung durch die Administratoren dieser Seite aktiviert.<br /><br />Deine Zugangsdaten wurden dir an deine E-Mail Adresse "{$email}" versandt.');
 define('_button_value_activate', 'Aktivieren');
 define('_activate_code', 'Aktivierungscode');
 define('_activate_head', 'Account aktivieren');
@@ -602,7 +606,7 @@ define('_smileys_info' , 'You can also upload the smilies via FTP into the folde
 define('_pos_empty_kat' , 'You have to indicate a position!');
 define('_forum_lastpost' , '<a href="?action=showthread&amp;id=[tid]&amp;page=[page]#p[id]"><img src="../inc/images/forum_lpost.gif" alt="" title="Go to the last entry" class="icon" /></a>');
 define('_forum_addpost' , '<a href="?action=post&amp;do=add&amp;kid=[kid]&amp;id=[id]"><img src="../inc/images/forum_reply.gif" alt="" title="New entry" class="icon" /></a>');
-define('_pn_write' , '<a href="../user/?action=msg&amp;do=pn&amp;id=[id]"><img src="../inc/images/pn.gif" alt="" title="Write [nick] a new message" class="icon" /></a>');
+define('_pn_write' , '{$nick} a new message');
 //--------------------------------------------\\
 define('_error_invalid_regcode' , 'The entered safety code does not agree with the character sequence indicated in the diagram!');
 define('_error_invalid_regcode_mathematic', 'Your calculation result from security code is not correct!');
@@ -1044,7 +1048,7 @@ Somebody filled out the contact form!<br /><br />
 <span class="fontBold">Email:</span> [email]<br /><br />
 <span class="fontUnder"><span class="fontBold">Message:</span></span><br />[text]');
 ## User ##
-define('_profil_head' , '<span class="fontBold">Userprofile from [nick]</span> [[profilhits] times viewed]');
+define('_profil_head' , '<span class="fontBold">Userprofile from {$nick}</span> [{$profilhits} times viewed]');
 define('_login_head' , 'Login');
 define('_new_pwd' , 'new password');
 define('_register_head' , 'Registration');

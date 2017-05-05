@@ -222,8 +222,6 @@ class common {
             }
         }
 
-        notification::$smarty = self::getSmarty(); //Use Smarty
-
         self::check_ip(); // IP Prufung * No IPV6 Support *
 
         //-> Auslesen der Cookies und automatisch anmelden
@@ -765,16 +763,16 @@ class common {
      * Einzelne Userstatistiken ermitteln
      * @param string $what
      * @param int $tid
-     * @return string
+     * @return int
      */
     public static function userstats(string $what='id',int $tid=0) {
+        /*
+        TODO: Use PHPFastCache - Cache in Memory
+        TODO: Check is key exists or return 0
+        TODO: Check has user a userstats row? (Create a new stat row)
+        */
         if (!$tid) { $tid = self::$userid; }
-        if(!dbc_index::issetIndex('userstats_'.$tid)) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_userstats}` WHERE `user` = ?;", [intval($tid)]);
-            dbc_index::setIndex('userstats_'.$tid, $get);
-        }
-
-        return stripslashes(dbc_index::getIndexKey('userstats_'.$tid, $what));
+        return self::$sql['default']->fetch("SELECT `".$what."` FROM `{prefix_userstats}` WHERE `user` = ?;", [intval($tid)], $what);
     }
 
     /**
@@ -787,15 +785,28 @@ class common {
      */
     public static function sendMail(string $mailto,string $subject,string $content) {
             $mail = new PHPMailer;
+            $mail->CharSet = 'utf-8';
             switch (settings::get('mail_extension')) {
                 case 'smtp':
                     $mail->isSMTP();
                     $mail->Host = stringParser::decode(settings::get('smtp_hostname'));
                     $mail->Port = intval(settings::get('smtp_port'));
                     switch (settings::get('smtp_tls_ssl')) {
-                        case 1: $mail->SMTPSecure = 'tls'; break;
-                        case 2: $mail->SMTPSecure = 'ssl'; break;
-                        default: $mail->SMTPSecure = ''; break;
+                        case 1:
+                            if($mail->Port == 25)
+                                $mail->Port = 465;
+
+                            $mail->SMTPSecure = 'tls';
+                            break;
+                        case 2:
+                            if($mail->Port == 25)
+                                $mail->Port = 465;
+
+                            $mail->SMTPSecure = 'ssl';
+                            break;
+                        default:
+                            $mail->SMTPSecure = '';
+                            break;
                     }
                     $mail->SMTPAuth = (empty(settings::get('smtp_username')) && empty(settings::get('smtp_password')) ? false : true);
                     $mail->Username = stringParser::decode(settings::get('smtp_username'));
@@ -902,6 +913,7 @@ class common {
      * @return mixed|string
      */
     public static function userpic(int $userid,int $width=170,int $height=210) {
+        /* TODO: Use PHPFastCache */
         foreach(["jpg", "gif", "png"] as $endung) {
             if (file_exists(basePath . "/inc/images/uploads/userpics/" . $userid . "." . $endung)) {
                 $pic = show(_userpic_link, ["id" => $userid, "endung" => $endung, "width" => $width, "height" => $height]);
@@ -1066,6 +1078,26 @@ class common {
                 }
             }
         }
+    }
+
+    /**
+     * Gibt einen Edit button aus ( button_edit_single.tpl )
+     * @param int $id
+     * @param string $action
+     * @param string $title
+     * @return string
+     */
+    public static function getButtonEditSingle(int $id=0,string $action='',string $title=_button_title_edit)
+    {
+        $smarty = self::getSmarty(); //Use Smarty
+        $smarty->caching = true;
+        $smarty->assign('id', $id);
+        $smarty->assign('action', $action);
+        $smarty->assign('title', $title);
+        $edit = $smarty->fetch('file:[' . common::$tmpdir . ']page/buttons/button_edit_single.tpl',
+            self::getSmartyCacheHash('button_'.$id.'_'.$action));
+        $smarty->clearAllAssign();
+        return $edit;
     }
 
     /**
@@ -2150,8 +2182,8 @@ class common {
      * @param int $timeout
      * @return mixed|string|void
      */
-    public static function info(string $msg,string $url="",int $timeout = 5) {
-        if (settings::get('direct_refresh')) {
+    public static function info(string $msg,string $url="",int $timeout = 5,bool $direct_refresh = true) {
+        if (settings::get('direct_refresh') && $direct_refresh) {
             return header('Location: ' . str_replace('&amp;', '&', $url));
         }
 

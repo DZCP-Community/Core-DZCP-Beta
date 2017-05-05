@@ -35,9 +35,10 @@ $amenu = [];
 if (!isset($_SESSION['id']) || empty($_SESSION['id']) || !common::admin_perms($_SESSION['id'])) {
     $index = common::error(_error_wrong_permissions, 1);
 } else {
+    $admin = '';
     if (isset($_GET['admin']) && file_exists(basePath . '/admin/menu/' . secure_global_imput($_GET['admin']).'.php') &&
             file_exists(basePath . '/admin/menu/'.secure_global_imput($_GET['admin']).'.xml')) {
-        $permission = false;
+        $permission = false; $admin = $_GET['admin'];
         define('_adminMenu', true);
         $xml = simplexml_load_file(basePath . '/admin/menu/'.secure_global_imput($_GET['admin']).'.xml');
         $rights = (string) $xml->Rights;
