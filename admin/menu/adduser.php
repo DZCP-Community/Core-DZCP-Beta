@@ -143,9 +143,9 @@ if(isset($_POST['user'])) {
 }
 
 if(empty($show)) {
-    $dropdown_age = show(_dropdown_date, ["day" => common::dropdown("day",0,1),
-                                               "month" => common::dropdown("month",0,1),
-                                               "year" => common::dropdown("year",0,1)]);
+    $dropdown_age = common::dropdown_date(common::dropdown("day",0,1),
+        common::dropdown("month",0,1),
+        common::dropdown("year",0,1));
 
     $qrygroups = common::$sql['default']->select("SELECT `id`,`name` FROM `{prefix_groups}` ORDER BY `id`;"); $egroups = "";
     foreach($qrygroups as $getgroups) {

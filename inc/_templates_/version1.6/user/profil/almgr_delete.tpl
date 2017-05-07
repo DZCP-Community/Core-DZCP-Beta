@@ -1,0 +1,1 @@
+<a href="?action=editprofile&amp;show=almgr&amp;do=almgr_delete&amp;id={$id}"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>

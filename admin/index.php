@@ -30,6 +30,7 @@ $settingsmenu = null;
 $contentmenu = null;
 $addonsmenu = null;
 $amenu = [];
+$smarty = common::getSmarty(); //Use Smarty
 
 ## SECTIONS ##
 if (!isset($_SESSION['id']) || empty($_SESSION['id']) || !common::admin_perms($_SESSION['id'])) {

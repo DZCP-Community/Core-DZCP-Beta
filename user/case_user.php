@@ -41,9 +41,6 @@ if(defined('_UserMenu')) {
             $pn = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/msg/msg_pn_write.tpl');
             $smarty->clearAllAssign();
 
-            //Status
-            $status = ($get['status'] == 1 || ($get['level'] != 1 && isset($_GET['sq']))) ? _aktiv_icon : _inaktiv_icon;
-
             //Level & Group
             if ($get['level'] != 1 || isset($_GET['sq'])) {
                 $sq = common::$sql['default']->select("SELECT * FROM `{prefix_userposis}` WHERE `user` = ?;",array($get['id']));
@@ -107,7 +104,6 @@ if(defined('_UserMenu')) {
             $smarty->assign('onoff',common::onlinecheck($get['id']));
             $smarty->assign('picture',common::userpic($get['id']));
             $smarty->assign('position',common::getrank($get['id']));
-            $smarty->assign('status',$status);
             $smarty->assign('ich',(empty($beschreibung) ? '-' : $beschreibung));
             $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/profil/profil_show.tpl');
             $smarty->clearAllAssign();
@@ -123,6 +119,7 @@ if(defined('_UserMenu')) {
             //Index
             $smarty->caching = false;
             $smarty->assign('profilhead',$profil_head);
+            $smarty->assign('notification_page','');
             $smarty->assign('show',$show);
             $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/profil/profil.tpl');
             $smarty->clearAllAssign(); unset($profil_head,$show,$get);

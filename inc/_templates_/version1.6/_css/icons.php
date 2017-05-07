@@ -29,16 +29,5 @@ ob_start();
     echo " content: url(\"../../../images/flaggen/".$flags[$i]."\");";
     echo "}";
   }
-//Gameicons
-  $games = getIcons('../../../images/gameicons/custom/');
-  for($i=0; $i<count($games); $i++)
-  {
-    if(preg_match("=\.gif|.jpg=Uis",$games[$i]))
-    {
-      echo "option[value=".preg_replace("#\.#","\.",$games[$i])."]:before {";
-      echo "  content: url(\"../../../images/gameicons/custom/".$games[$i]."\");";
-      echo "}";
-    }
-  }
 ob_end_flush();
 ?>

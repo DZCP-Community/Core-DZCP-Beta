@@ -585,7 +585,6 @@ CREATE TABLE `dzcp_permissions` (
   `editkalender` int(1) NOT NULL DEFAULT '0',
   `news` int(1) NOT NULL DEFAULT '0',
   `partners` int(1) NOT NULL DEFAULT '0',
-  `profile` int(1) NOT NULL DEFAULT '0',
   `protocol` int(1) NOT NULL DEFAULT '0',
   `forum` int(1) NOT NULL DEFAULT '0',
   `forumkats` int(1) NOT NULL DEFAULT '0',
@@ -598,8 +597,6 @@ CREATE TABLE `dzcp_permissions` (
   `impressum` int(1) NOT NULL DEFAULT '0',
   `artikel` int(1) NOT NULL DEFAULT '0',
   `editor` int(1) NOT NULL DEFAULT '0',
-  `slideshow` int(1) NOT NULL DEFAULT '0',
-  `smileys` int(1) NOT NULL DEFAULT '0',
   `dlintern` int(1) NOT NULL DEFAULT '0',
   `ipban` int(1) NOT NULL DEFAULT '0',
   `startpage` int(1) NOT NULL DEFAULT '0',
@@ -635,36 +632,6 @@ INSERT INTO dzcp_positions VALUES (null, '24', 'Translator', '0', '#953734');
 INSERT INTO dzcp_positions VALUES (null, '1', 'VIP', '0', '#548dd4');
 INSERT INTO dzcp_positions VALUES (null, '27', 'Moderator', '0', '#ffc000');
 INSERT INTO dzcp_positions VALUES (null, '0', 'Lizenzinhaber', '0', '#000000');
-
--- ----------------------------
--- Table structure for `dzcp_profile`
--- ----------------------------
-DROP TABLE IF EXISTS `dzcp_profile`;
-CREATE TABLE `dzcp_profile` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `kid` int(11) NOT NULL DEFAULT '0',
-  `name` varchar(200) CHARACTER SET utf8 NOT NULL DEFAULT '',
-  `feldname` varchar(30) CHARACTER SET utf8 NOT NULL DEFAULT '',
-  `type` int(5) NOT NULL DEFAULT '1',
-  `shown` int(5) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`),
-  KEY `kid` (`kid`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Records of dzcp_profile
--- ----------------------------
-INSERT INTO dzcp_profile VALUES (null, '5', '_system_', 'os', '1', '1');
-INSERT INTO dzcp_profile VALUES (null, '5', '_board_', 'board', '1', '1');
-INSERT INTO dzcp_profile VALUES (null, '5', '_cpu_', 'cpu', '1', '1');
-INSERT INTO dzcp_profile VALUES (null, '5', '_ram_', 'ram', '1', '1');
-INSERT INTO dzcp_profile VALUES (null, '5', '_graka_', 'graka', '1', '1');
-INSERT INTO dzcp_profile VALUES (null, '5', '_hdd_', 'hdd', '1', '1');
-INSERT INTO dzcp_profile VALUES (null, '5', '_monitor_', 'monitor', '1', '1');
-INSERT INTO dzcp_profile VALUES (null, '5', '_maus_', 'maus', '1', '1');
-INSERT INTO dzcp_profile VALUES (null, '5', '_mauspad_', 'mauspad', '1', '1');
-INSERT INTO dzcp_profile VALUES (null, '5', '_headset_', 'headset', '1', '1');
-INSERT INTO dzcp_profile VALUES (null, '5', '_inet_', 'inet', '1', '1');
 
 -- ----------------------------
 -- Table structure for `dzcp_sessions`

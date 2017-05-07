@@ -1,3 +1,4 @@
+{$notification_page}
 <tr>
   <td class="contentHead" align="center">{$profilhead}</td>
 </tr>

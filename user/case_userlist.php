@@ -20,7 +20,7 @@ if(defined('_UserMenu')) {
     $entrys = common::cnt('{prefix_users}'," WHERE level != 0");
     $show_sql = isset($_GET['show']) ? $_GET['show'] : '';
     $limit_sql = ($page - 1)*settings::get('m_userlist').",".settings::get('m_userlist');
-    $select_sql = "`id`,`nick`,`level`,`email`,`hp`,`bday`,`sex`,`status`,`position`,`regdatum`";
+    $select_sql = "`id`,`nick`,`level`,`email`,`hp`,`bday`,`sex`,`position`,`regdatum`";
     
     switch (isset($_GET['show']) ? $_GET['show'] : '') {
         case 'search':
@@ -93,11 +93,7 @@ if(defined('_UserMenu')) {
     $userliste = '';
     foreach($qry as $get) {
         $hp = empty($get['hp']) ? "-" : show(_hpicon, array("hp" => $get['hp']));
-        $getstatus = $get['status'] ? _aktiv_icon : _inaktiv_icon;
         common::$sql['default']->fetch("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = 1;");
-        $status = common::data("level",$get['id']) > 1 && common::$sql['default']->rowCount() ? $getstatus : "-";
-        $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-
         $edit = ""; $delete = ""; $full_delete = "";
         if(common::permission("editusers")) {
             //Bearbeiten link
@@ -129,17 +125,16 @@ if(defined('_UserMenu')) {
         $smarty->caching = true;
         $smarty->assign('nick',common::autor($get['id'],'','',10));
         $smarty->assign('level',common::getrank($get['id']));
-        $smarty->assign('status',$status,true);
         $smarty->assign('age',common::getAge($get['bday']));
         $smarty->assign('mf',($get['sex'] == 1 ? _maleicon : ($get['sex'] == 2 ? _femaleicon : '-')));
         $smarty->assign('edit',$edit);
         $smarty->assign('delete',$delete);
         $smarty->assign('full_delete',$full_delete);
-        $smarty->assign('class',$class);
+        $smarty->assign('color',$color);
         $smarty->assign('onoff',common::onlinecheck($get['id']),true);
         $smarty->assign('hp',$hp);
         $userliste .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userliste/userliste_show.tpl',common::getSmartyCacheHash('userlist_id_'.$get['id']));
-        $smarty->clearAllAssign();
+        $smarty->clearAllAssign(); $color++;
     }
     
     $userliste = (empty($userliste) ? show(_no_entrys_found, array("colspan" => "13")) : $userliste);

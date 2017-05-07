@@ -66,31 +66,31 @@ switch ($do) {
                 elseif($a == 'vid')
                     $action = 'voted <b>poll</b> with <b>ID '.$wid.'</b>';
                 elseif($a == 'mgbid')
-                    $action = common::autor($wid).' got a userbook entry';
+                    $action = common::autor((int)$wid).' got a userbook entry';
                 elseif($a == 'createuser') {
                     $ids = explode("_", $wid);
-                    $action = '<b style="color:red">ADMIN:</b> '.common::autor($ids[0]).' <b>added</b> user '.common::autor($ids[1]);
+                    $action = '<b style="color:red">ADMIN:</b> '.common::autor((int)$ids[0]).' <b>added</b> user '.common::autor((int)$ids[1]);
                 } elseif($a == 'upduser') {
                     $ids = explode("_", $wid);
-                    $action = '<b style="color:red">ADMIN:</b> '.common::autor($ids[0]).' <b>edited</b> user '.common::autor($ids[1]);
+                    $action = '<b style="color:red">ADMIN:</b> '.common::autor((int)$ids[0]).' <b>edited</b> user '.common::autor((int)$ids[1]);
                 } elseif($a == 'deluser') {
                     $ids = explode("_", $wid);
-                    $action = '<b style="color:red">ADMIN:</b> '.common::autor($ids[0]).' <b>deleted</b> user';
+                    $action = '<b style="color:red">ADMIN:</b> '.common::autor((int)$ids[0]).' <b>deleted</b> user';
                 } elseif($a == 'ident') {
                     $ids = explode("_", $wid);
-                    $action = '<b style="color:red">ADMIN:</b> '.common::autor($ids[0]).' took <b>identity</b> from user '.common::autor($ids[1]);
+                    $action = '<b style="color:red">ADMIN:</b> '.common::autor((int)$ids[0]).' took <b>identity</b> from user '.common::autor((int)$ids[1]);
                 } elseif($a == 'logout')
-                    $action = common::autor($wid).' <b>logged out</b>';
+                    $action = common::autor((int)$wid).' <b>logged out</b>';
                 elseif($a == 'login')
-                    $action = common::autor($wid).' <b>logged in</b>';
+                    $action = common::autor((int)$wid).' <b>logged in</b>';
                 elseif($a == 'trypwd')
-                    $action = 'failed to <b>reset password</b> from '.common::autor($wid);
+                    $action = 'failed to <b>reset password</b> from '.common::autor((int)$wid);
                 elseif($a == 'pwd')
-                    $action = '<b>reseted password</b> from '.common::autor($wid);
+                    $action = '<b>reseted password</b> from '.common::autor((int)$wid);
                 elseif($a == 'reg')
-                    $action = common::autor($wid).' <b>signed up</b>';
+                    $action = common::autor((int)$wid).' <b>signed up</b>';
                 elseif($a == 'trylogin')
-                    $action = 'failed to <b>login</b> in '.common::autor($wid).'`s account';
+                    $action = 'failed to <b>login</b> in '.common::autor((int)$wid).'`s account';
                 else 
                     $action = '<b style="color:red">undefined:</b> <b>'.$a.'</b>';
             } else {

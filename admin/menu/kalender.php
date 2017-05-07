@@ -34,13 +34,12 @@ switch ($do) {
                 $show = common::info(_kalender_successful_added,"?admin=kalender");
             }
         } else {
-            $dropdown_date = show(_dropdown_date, array("day" => common::dropdown("day",date("d",time())),
-                                                        "month" => common::dropdown("month",date("m",time())),
-                                                        "year" => common::dropdown("year",date("Y",time()))));
+            $dropdown_date = common::dropdown_date(common::dropdown("day",date("d",time())),
+                common::dropdown("month",date("m",time())),
+                common::dropdown("year",date("Y",time())));
 
-            $dropdown_time = show(_dropdown_time, array("hour" => common::dropdown("hour",date("H",time())),
-                                                        "minute" => common::dropdown("minute",date("i",time())),
-                                                        "uhr" => _uhr));
+            $dropdown_time = common::dropdown_date(common::dropdown("hour",date("H",time())),
+                common::dropdown("minute",date("i",time())));
 
             $show = show($dir."/form_kalender", array("dropdown_time" => $dropdown_time,
                                                       "dropdown_date" => $dropdown_date,
@@ -53,14 +52,14 @@ switch ($do) {
     break;
     case 'edit':
         $get = common::$sql['default']->fetch("SELECT `datum`,`title`,`event` FROM `{prefix_events}` WHERE `id` = ?;",array(intval($_GET['id'])));
-        $dropdown_date = show(_dropdown_date, array("day" => common::dropdown("day",date("d",$get['datum'])),
-                                                    "month" => common::dropdown("month",date("m",$get['datum'])),
-                                                    "year" => common::dropdown("year",date("Y",$get['datum']))));
 
-        $dropdown_time = show(_dropdown_time, array("hour" => common::dropdown("hour",date("H",$get['datum'])),
-                                                    "minute" => common::dropdown("minute",date("i",$get['datum'])),
-                                                    "uhr" => _uhr));
-      
+        $dropdown_date = common::dropdown_date(common::dropdown("day",date("d",$get['datum'])),
+            common::dropdown("month",date("m",$get['datum'])),
+            common::dropdown("year",date("Y",$get['datum'])));
+
+        $dropdown_time = common::dropdown_time(common::dropdown("hour",date("H",$get['datum'])),
+            common::dropdown("minute",date("i",$get['datum'])));
+
         $show = show($dir."/form_kalender", array("dropdown_time" => $dropdown_time,
                                                   "dropdown_date" => $dropdown_date,
                                                   "what" => _button_value_edit,

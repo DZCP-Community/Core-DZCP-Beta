@@ -25,8 +25,9 @@ if(defined('_UserMenu')) {
             $qrypos = common::$sql['default']->select("SELECT `id`,`position` FROM `{prefix_positions}` ORDER BY `pid`;");
             $posi = "";
             foreach($qrypos as $getpos) {
-                $sel = common::$sql['default']->rows("SELECT `id` FROM `{prefix_userposis}` WHERE `posi` = ? AND `group` = ? AND `user` = ?;",array($getpos['id'],$getsq['id'],intval($_GET['edit']))) ? 'selected="selected"' : '';
-                $posi .= show(_select_field_posis, array("value" => $getpos['id'], "sel" => $sel, "what" => stringParser::decode($getpos['position'])));
+                $sel = common::$sql['default']->rows("SELECT `id` FROM `{prefix_userposis}` WHERE `posi` = ? AND `group` = ? AND `user` = ?;",
+                    array($getpos['id'],$getsq['id'],intval($_GET['edit']))) ? true : false;
+                $posi .= common::select_field($getpos['id'],$sel,stringParser::decode($getpos['position']));
             }
 
             $check = common::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;", array(intval($_GET['edit']),$getsq['id'])) ? 'checked="checked"' : '';
@@ -34,12 +35,16 @@ if(defined('_UserMenu')) {
                                                        "check" => $check,
                                                        "eposi" => $posi,
                                                        "squad" => stringParser::decode($getsq['name'])));
-        }
+        } unset($posi,$check,$getsq,$qrySquads);
 
-        $index = show($dir . "/admin_self", array("showpos" => common::getrank($_GET['edit']), "esquad" => $esquads, "eposi" => $posi));
+        $smarty->caching = false;
+        $smarty->assign('esquad',$esquads);
+        $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin/admin_self.tpl');
+        $smarty->clearAllAssign();
     } elseif (isset($_GET['edit']) && (common::data("level", intval($_GET['edit'])) == 4 || common::rootAdmin(intval($_GET['edit']))) && !common::rootAdmin(common::$userid)) {
         $index = common::error(_error_edit_admin, 1);
     } else {
+        //Edit a User
         if ($do == "identy") {
             if((common::data("level", intval($_GET['id'])) == 4 && !common::rootAdmin(intval($_GET['id'])) && !common::rootAdmin(common::$userid))) {
                 $index = common::error(_identy_admin, 1);
@@ -214,11 +219,12 @@ if(defined('_UserMenu')) {
                 }
             }
         } else {
+            //Show edit user
             $get = common::$sql['default']->fetch("SELECT `id`,`user`,`nick`,`pwd`,`email`,`level`,`position`,`listck` "
                                     . "FROM `{prefix_users}` "
                                     . "WHERE `id` = ?;",array(intval($_GET['edit'])));
             if (common::$sql['default']->rowCount()) {
-                $where = _user_profile_of . 'autor_'.intval($_GET['edit']);
+                $where = _user_profile_of . common::autor(((int)$_GET['edit']));
                 $qrysq = common::$sql['default']->select("SELECT `id`,`name` FROM `{prefix_groups}` ORDER BY `id`;");
                 $esquads = '';
                 foreach($qrysq as $getsq) {
@@ -227,8 +233,7 @@ if(defined('_UserMenu')) {
                     foreach($qrypos as $getpos) {
                         $check = common::$sql['default']->rows("SELECT `id` FROM `{prefix_userposis}` WHERE `posi` = ? AND `group` = ? AND `user` = ?;",
                         array($getpos['id'],$getsq['id'],intval($_GET['edit'])));
-                        $sel = $check ? 'selected="selected"' : '';
-                        $posi .= show(_select_field_posis, array("value" => $getpos['id'], "sel" => $sel, "what" => stringParser::decode($getpos['position'])));
+                        $posi .= common::select_field($getpos['id'],$check,stringParser::decode($getpos['position']));
                     }
 
                     $checksquser = common::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",
@@ -241,7 +246,9 @@ if(defined('_UserMenu')) {
                 }
 
                 $get_identy = show(_admin_user_get_identitat, array("id" => intval($_GET['edit'])));
-                $editpwd = show($dir . "/admin_editpwd", array("epwd" => ""));
+
+                $smarty->caching = false;
+                $editpwd = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin/admin_editpwd.tpl');
 
                 $selu = $get['level'] == 1 ? 'selected="selected"' : '';
                 $sela = $get['level'] == 4 ? 'selected="selected"' : '';
@@ -253,21 +260,23 @@ if(defined('_UserMenu')) {
                                                               "selt" => $selt));
                 }
 
-                $index = show($dir . "/admin", array("enick" => stringParser::decode($get['nick']),
-                                                     "user" => intval($_GET['edit']),
-                                                     "eemail" => stringParser::decode($get['email']),
-                                                     "eloginname" => $get['user'],
-                                                     "esquad" => $esquads,
-                                                     "editpwd" => $editpwd,
-                                                     "eposi" => $posi,
-                                                     "getpermissions" => common::getPermissions(intval($_GET['edit'])),
-                                                     "getboardpermissions" => common::getBoardPermissions(intval($_GET['edit'])),
-                                                     "forenrechte" => _config_positions_boardrights,
-                                                     "showpos" => common::getrank($_GET['edit']),
-                                                     "listck" => (empty($get['listck']) ? '' : ' checked="checked"'),
-                                                     "alvl" => $get['level'],
-                                                     "elevel" => $elevel,
-                                                     "get" => $get_identy));
+                $smarty->caching = false;
+                $smarty->assign('enick',stringParser::decode($get['nick']));
+                $smarty->assign('user',((int)$_GET['edit']));
+                $smarty->assign('email',stringParser::decode($get['email']));
+                $smarty->assign('loginname',stringParser::decode($get['user']));
+                $smarty->assign('squad',$esquads);
+                $smarty->assign('editpwd',$editpwd);
+                $smarty->assign('eposi',$posi);
+                $smarty->assign('getpermissions',common::getPermissions(((int)$_GET['edit'])));
+                $smarty->assign('getboardpermissions',common::getBoardPermissions(((int)$_GET['edit'])));
+                $smarty->assign('showpos',common::getrank(((int)$_GET['edit'])));
+                $smarty->assign('listck',(empty($get['listck']) ? '' : ' checked="checked"'));
+                $smarty->assign('alvl',$get['level']);
+                $smarty->assign('elevel',$elevel);
+                $smarty->assign('get',$get_identy);
+                $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin/admin.tpl');
+                $smarty->clearAllAssign();
             } else
                 $index = common::error(_user_dont_exist, 1);
         }

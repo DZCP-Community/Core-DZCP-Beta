@@ -94,28 +94,56 @@ if(defined('_UserMenu')) {
                     $pn = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/msg/msg_pn_write.tpl');
                     $smarty->clearAllAssign();
 
-                    $delete = show(_buddys_delete, array("id" => $get['buddy']));
-                    $too = common::$sql['default']->rows("SELECT `id` FROM `{prefix_userbuddys}` where `user` = ? AND `buddy` = ?;",array($get['buddy'],common::$userid)) ? _buddys_yesicon : _buddys_noicon;
+                    $smarty->caching = false;
+                    $smarty->assign('id',$get['buddy']);
+                    $delete = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/buddys/buddys_delete.tpl');
+                    $smarty->clearAllAssign();
+
+                    $too = common::$sql['default']->rows("SELECT `id` FROM `{prefix_userbuddys}` where `user` = ? AND `buddy` = ?;",
+                        array($get['buddy'],common::$userid)) ? _buddys_yesicon : _buddys_noicon;
                     $usersNL[$get['buddy']] = true;
-                    $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-                    $buddys .= show($dir."/buddys_show", array("nick" => common::autor($get['buddy']),
-                                                               "onoff" => common::onlinecheck($get['buddy']),
-                                                               "pn" => $pn,
-                                                               "class" => $class,
-                                                               "too" => $too,
-                                                               "delete" => $delete));
+
+                    $smarty->caching = false;
+                    $smarty->assign('nick',common::autor($get['buddy']));
+                    $smarty->assign('onoff',common::onlinecheck($get['buddy']));
+                    $smarty->assign('pn',$pn);
+                    $smarty->assign('color',$color);
+                    $smarty->assign('too',$too);
+                    $smarty->assign('delete',$delete);
+                    $buddys .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/buddys/buddys_show.tpl');
+                    $smarty->clearAllAssign(); $color++;
                 }
 
-                $buddys = (empty($buddys) ? show(_no_entrys_found, array("colspan" => "5")) : $buddys); $users = "";
+                if (empty($buddys)) {
+                    $smarty->caching = false;
+                    $smarty->assign('colspan',5);
+                    $buddys = $smarty->fetch('string:'._no_entrys_yet);
+                    $smarty->clearAllAssign();
+                }
+
                 $qry = common::$sql['default']->select("SELECT `id`,`nick` FROM `{prefix_users}` WHERE `level` != 0 ORDER BY `nick`;");
+                $users = '';
                 foreach($qry as $get) {
                     if(!array_key_exists($get['id'], $usersNL) && $get['id'] != common::$userid) {
-                        $users .= show(_to_users, array("id" => $get['id'], "nick" =>stringParser::decode(common::data("nick",$get['id']))));
+                        $smarty->caching = false;
+                        $smarty->assign('id',$get['id']);
+                        $smarty->assign('selected','');
+                        $smarty->assign('nick',stringParser::decode(common::data("nick",$get['id'])));
+                        $users .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/msg/msg_option_users.tpl');
+                        $smarty->clearAllAssign();
                     }
                 }
 
-                $add = show($dir."/buddys_add", array("users" => $users));
-                $index = show($dir."/buddys", array("show" => $buddys, "add" => $add));
+                $smarty->caching = false;
+                $smarty->assign('users',$users);
+                $add = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/buddys/buddys_add.tpl');
+                $smarty->clearAllAssign();
+
+                $smarty->caching = false;
+                $smarty->assign('show',$buddys);
+                $smarty->assign('add',$add);
+                $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/buddys/buddys.tpl');
+                $smarty->clearAllAssign();
             break;
         }
     }

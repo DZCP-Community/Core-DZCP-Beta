@@ -21,62 +21,6 @@ if(defined('_UserMenu')) {
         $index = common::error(_error_have_to_be_logged, 1);
     } else {
             switch ($do) {
-                case 'edit':
-                    $check_user = false; $check_nick = false; $check_email = false;
-                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE (`user`= ? OR `nick`= ? OR `email`= ?) AND `id` != ?;",
-                            array(stringParser::encode($_POST['user']),stringParser::encode($_POST['nick']),stringParser::encode($_POST['email']),common::$userid))) {
-                        $check_user  = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `user` = ? AND `id` != ?;", array(stringParser::encode($_POST['user']),  common::$userid));
-                        $check_nick  = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `nick` = ? AND `id` != ?;", array(stringParser::encode($_POST['nick']),  common::$userid));
-                        $check_email = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `email`= ? AND `id` != ?;", array(stringParser::encode($_POST['email']), common::$userid));
-                    }
-
-                    if(!isset($_POST['user']) || empty($_POST['user'])) {
-                        $index = common::error(_empty_user, 1);
-                    } elseif (!isset($_POST['nick']) || empty($_POST['nick'])) {
-                        $index = common::error(_empty_nick, 1);
-                    } elseif (!isset($_POST['email']) || empty($_POST['email'])) {
-                        $index = common::error(_empty_email, 1);
-                    } elseif (!isset($_POST['email']) || !common::check_email($_POST['email'])) {
-                        $index = common::error(_error_invalid_email, 1);
-                    } elseif ($check_user) {
-                        $index = common::error(_error_user_exists, 1);
-                    } elseif ($check_nick) {
-                        $index = common::error(_error_nick_exists, 1);
-                    } elseif ($check_email) {
-                        $index = common::error(_error_email_exists, 1);
-                    } else {
-                        $newpwd = "";
-                        if (isset($_POST['pwd']) && !empty($_POST['pwd'])) {
-                            if(common::pwd_encoder($_POST['pwd']) == common::pwd_encoder($_POST['cpwd'])) {
-                                $_SESSION['pwd'] = common::pwd_encoder($_POST['pwd']);
-                                $newpwd = "`pwd` = '".stringParser::encode($_SESSION['pwd'])."',";
-                                $newpwd .= "`pwd_encoder` = ".settings::get('default_pwd_encoder').",";
-                            } else {
-                                $index = common::error(_error_passwords_dont_match, 1);
-                            }
-                        }
-                        
-                        $bday = ($_POST['t'] && $_POST['m'] && $_POST['j'] ? common::cal($_POST['t']) . "." . common::cal($_POST['m']) . "." . $_POST['j'] : 0);
-                        $qrycustom = common::$sql['default']->select("SELECT `feldname`,`type` FROM `{prefix_profile}`"); $customfields = '';
-                        foreach($qrycustom as $getcustom) {
-                            $customfields .= " `".$getcustom['feldname']."` = '".($getcustom['type'] == 2 ? common::links($_POST[$getcustom['feldname']]) : stringParser::encode($_POST[$getcustom['feldname']]))."', ";
-                        }
-                        
-                        if(empty($index)) {
-                            $index = common::info(_info_edit_profile_done, "?action=user&amp;id=" . common::$userid . "");
-                            common::$sql['default']->update("UPDATE `{prefix_users}` SET " . $newpwd . " " . $customfields . " `country` = ?,`user` = ?, `nick` = ?, `rlname` = ?, `sex` = ?,`status` = ?, "
-                                . "`bday` = ?, `email` = ?, `nletter` = ?, `pnmail` = ?, `city` = ?, `hp` = ?,"
-                                . "`signatur` = ?,`beschreibung` = ?, `startpage` = ?, `profile_access` = ?"
-                                . " WHERE id = ?;", array(stringParser::encode($_POST['land']), stringParser::encode($_POST['user']), stringParser::encode($_POST['nick']), stringParser::encode($_POST['rlname']), intval($_POST['sex']), intval($_POST['status']),
-                                (!$bday ? 0 : strtotime($bday)), stringParser::encode($_POST['email']), intval($_POST['nletter']), intval($_POST['pnmail']), stringParser::encode($_POST['city']),
-                                stringParser::encode(common::links($_POST['hp'])),stringParser::encode($_POST['sig']), stringParser::encode($_POST['ich']),
-                                intval($_POST['startpage']), intval($_POST['visibility_profile']), common::$userid));
-
-                            $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", array(intval(common::$userid)));
-                            dbc_index::setIndex('user_' . $get['id'], $get); //Update Cache
-                        }
-                    }
-                break;
                 case 'delete':
                     if(!common::rootAdmin(common::$userid)) {
                         $getdel = common::$sql['default']->fetch("SELECT `id`,`nick`,`email`,`hp` FROM `{prefix_users}` WHERE `id` = ?;",array(common::$userid));
@@ -130,11 +74,65 @@ if(defined('_UserMenu')) {
                             }
 
                             common::dzcp_session_destroy();
-                            $index = common::info(_info_account_deletet, '../news/');
+                            $index = common::info(_info_account_deletet, '../news/', 5, false);
                         }
                     }
                 break;
                 default:
+                    if(isset($_POST) && !isset($_GET['show']) && array_key_exists('user',$_POST)) {
+                        $check_user = false; $check_nick = false; $check_email = false;
+                        if (common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE (`user`= ? OR `nick`= ? OR `email`= ?) AND `id` != ?;",
+                            array(stringParser::encode($_POST['user']), stringParser::encode($_POST['nick']), stringParser::encode($_POST['email']), common::$userid))
+                        ) {
+                            $check_user = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `user` = ? AND `id` != ?;",
+                                array(stringParser::encode($_POST['user']), common::$userid));
+                            $check_nick = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `nick` = ? AND `id` != ?;",
+                                array(stringParser::encode($_POST['nick']), common::$userid));
+                            $check_email = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `email`= ? AND `id` != ?;",
+                                array(stringParser::encode($_POST['email']), common::$userid));
+                        }
+
+                        if (!isset($_POST['user']) || empty($_POST['user'])) {
+                            notification::add_error(_empty_user);
+                        } elseif (!isset($_POST['nick']) || empty($_POST['nick'])) {
+                            notification::add_error(_empty_user);
+                        } elseif (!isset($_POST['email']) || empty($_POST['email'])) {
+                            notification::add_error(_empty_email);
+                        } elseif (!isset($_POST['email']) || !common::check_email($_POST['email'])) {
+                            notification::add_error(_empty_user);
+                        } elseif ($check_user) {
+                            notification::add_error(_error_user_exists);
+                        } elseif ($check_nick) {
+                            notification::add_error(_error_nick_exists);
+                        } elseif ($check_email) {
+                            notification::add_error(_error_email_exists);
+                        } else {
+                            $newpwd = "";
+                            if (isset($_POST['pwd']) && !empty($_POST['pwd'])) {
+                                if (common::pwd_encoder($_POST['pwd']) == common::pwd_encoder($_POST['cpwd'])) {
+                                    $_SESSION['pwd'] = common::pwd_encoder($_POST['pwd']);
+                                    $newpwd = "`pwd` = '" . stringParser::encode($_SESSION['pwd']) . "',";
+                                    $newpwd .= "`pwd_encoder` = " . settings::get('default_pwd_encoder') . ",";
+                                } else {
+                                    notification::add_error(_error_passwords_dont_match);
+                                }
+                            }
+
+                            $bday = ($_POST['t'] && $_POST['m'] && $_POST['j'] ? common::cal($_POST['t']) . "." . common::cal($_POST['m']) . "." . $_POST['j'] : 0);
+                            common::$sql['default']->update("UPDATE `{prefix_users}` SET " . $newpwd . " `country` = ?,`user` = ?, `nick` = ?, `rlname` = ?, `sex` = ?, "
+                                    . "`bday` = ?, `email` = ?, `nletter` = ?, `pnmail` = ?, `city` = ?, `hp` = ?,"
+                                    . "`signatur` = ?,`beschreibung` = ?, `startpage` = ?, `profile_access` = ?"
+                                    . " WHERE id = ?;", array(stringParser::encode($_POST['land']), stringParser::encode($_POST['user']),
+                                    stringParser::encode($_POST['nick']), stringParser::encode($_POST['rlname']),
+                                    intval($_POST['sex']),
+                                    (!$bday ? 0 : strtotime($bday)), stringParser::encode($_POST['email']), intval($_POST['nletter']), intval($_POST['pnmail']), stringParser::encode($_POST['city']),
+                                    stringParser::encode(common::links($_POST['hp'])), stringParser::encode($_POST['sig']), stringParser::encode($_POST['ich']),
+                                    intval($_POST['startpage']), intval($_POST['visibility_profile']), common::$userid));
+
+                            notification::add_success(_info_edit_profile_done);
+                        }
+                    }
+
                     $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;",array(common::$userid));
                     switch(isset($_GET['show']) ? $_GET['show'] : '') {
                         case 'almgr':
@@ -173,7 +171,7 @@ if(defined('_UserMenu')) {
                                     cookie::put('id', $get['id']);
                                     cookie::put('pkey', $permanent_key);
                                     cookie::save(); unset($permanent_key);
-                                    $index = common::info(_info_almgr_self_added, '../user/?action=editprofile&show=almgr');
+                                    notification::add_success(_info_almgr_self_added);
                                 break;
                                 case 'self_remove':
                                     if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `host` = ? AND `ssid` = ?;", array(gethostbyaddr(common::$userip), session_id()))) {
@@ -181,7 +179,7 @@ if(defined('_UserMenu')) {
                                         cookie::delete('pkey');
                                         cookie::delete('id');
                                         cookie::save();
-                                        $index = common::info(_info_almgr_self_deletet, '../user/?action=editprofile&show=almgr');
+                                        notification::add_success(_info_almgr_self_deletet);
                                     }
                                 break;
                                 case 'almgr_delete':
@@ -190,83 +188,119 @@ if(defined('_UserMenu')) {
                                         cookie::delete('pkey');
                                         cookie::delete('id');
                                         cookie::save();
-                                        $index = common::info(_info_almgr_deletet, '../user/?action=editprofile&show=almgr');
+                                        notification::add_success(_info_almgr_deletet);
                                     }
                                 break;
                                 case 'almgr_edit':
                                     $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_autologin}` WHERE `id` = ?;", array(intval($_GET['id'])));
                                     if(common::$sql['default']->rowCount()) {
-                                        $show = show($dir . "/edit_almgr_from", array("name" => stringParser::decode($get['name']),
-                                                                                      "id" => stringParser::decode($get['id']),
-                                                                                      "host" => stringParser::decode($get['host']),
-                                                                                      "ip" => stringParser::decode($get['ip']),
-                                                                                      "ssid" => stringParser::decode($get['ssid']),
-                                                                                      "pkey" => stringParser::decode($get['pkey'])));
+                                        $smarty->caching = false;
+                                        $smarty->assign('name',stringParser::decode($get['name']));
+                                        $smarty->assign('id',stringParser::decode($get['id']));
+                                        $smarty->assign('host',stringParser::decode($get['host']));
+                                        $smarty->assign('ip',stringParser::decode($get['ip']));
+                                        $smarty->assign('ssid',stringParser::decode($get['ssid']));
+                                        $smarty->assign('pkey',stringParser::decode($get['pkey']));
+                                        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/profil/edit_almgr_from.tpl');
+                                        $smarty->clearAllAssign();
                                     }
                                 break;
                                 case 'almgr_edit_save':
                                     if(common::$sql['default']->rows("SELECT id FROM `{prefix_autologin}` WHERE `id` = ?;", array(intval($_GET['id'])))) {
-                                        common::$sql['default']->update("UPDATE `{prefix_autologin}` SET `name` = ? WHERE `id` = ?;", array(stringParser::encode($_POST['name']), intval($_GET['id'])));
-                                        $index = common::info(_almgr_editd, '../user/?action=editprofile&show=almgr');
+                                        common::$sql['default']->update("UPDATE `{prefix_autologin}` SET `name` = ? WHERE `id` = ?;",
+                                            array(stringParser::encode($_POST['name']), intval($_GET['id'])));
+                                        notification::add_success(_almgr_editd);
                                     }
                                 break;
                             }
                             
                             if(empty($index)) {
-                                $qry = common::$sql['default']->select("SELECT * FROM `{prefix_autologin}` WHERE `uid` = ?;",array(common::$userid)); $almgr = ""; $color = 0;
+                                $qry = common::$sql['default']->select("SELECT * FROM `{prefix_autologin}` WHERE `uid` = ?;",
+                                    array(common::$userid)); $almgr = ""; $color = 0;
                                 if(common::$sql['default']->rowCount()) {
                                     foreach($qry as $get) {
-                                        $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-                                        $almgr .= show($dir . "/edit_almgr_show", array("delete" => show(_almgr_deleteicon, array("id" => $get['id'])),
-                                                                                        "edit" => show(_almgr_editicon, array("id" => $get['id'])),                                            
-                                                                                        "class" => $class,
-                                                                                        "name" => stringParser::decode($get['name']),
-                                                                                        "host" => stringParser::decode($get['host']),
-                                                                                        "ip" => $get['ip'],
-                                                                                        "create" => date('d.m.Y',$get['date']),
-                                                                                        "lused" => !$get['update'] ? '-' : date('d.m.Y',$get['update']),
-                                                                                        "expires" => date('d.m.Y',((!$get['update'] ? time() : $get['update'])+$get['expires']))));
+                                        //delete button
+                                        $smarty->caching = false;
+                                        $smarty->assign('id',$get['id']);
+                                        $delete = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/profil/almgr_delete.tpl');
+                                        $smarty->clearAllAssign();
+
+                                        //edit button
+                                        $smarty->caching = false;
+                                        $smarty->assign('id',$get['id']);
+                                        $edit = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/profil/almgr_edit.tpl');
+                                        $smarty->clearAllAssign();
+
+                                        //show list
+                                        $smarty->caching = false;
+                                        $smarty->assign('delete',$delete);
+                                        $smarty->assign('edit',$edit);
+                                        $smarty->assign('color',$color);
+                                        $smarty->assign('name',stringParser::decode($get['name']));
+                                        $smarty->assign('host',stringParser::decode($get['host']));
+                                        $smarty->assign('ip',$get['ip']);
+                                        $smarty->assign('create',date('d.m.Y',$get['date']));
+                                        $smarty->assign('lused',!$get['update'] ? '-' : date('d.m.Y',$get['update']));
+                                        $smarty->assign('expires',date('d.m.Y',((!$get['update'] ? time() : $get['update'])+$get['expires'])));
+                                        $almgr .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/profil/edit_almgr_show.tpl');
+                                        $smarty->clearAllAssign();
+                                        $color++;
                                     }
                                 }
 
                                 //Empty
-                                if(empty($almgr))
-                                    $almgr = '<tr><td colspan="6" class="contentMainSecond">'._no_entrys.'</td></tr>';
+                                if(empty($almgr)) {
+                                    $smarty->caching = false;
+                                    $smarty->assign('colspan',6);
+                                    $almgr = $smarty->fetch('string:'._no_entrys_yet);
+                                    $smarty->clearAllAssign();
+                                }
 
-                                if(empty($show))
-                                    $show = show($dir . "/edit_almgr", array("del" => _deleteicon_blank,"edit" => _editicon_blank,"showalmgr" => $almgr));
+                                if(empty($show)) {
+                                    $smarty->caching = false;
+                                    $smarty->assign('showalmgr',$almgr);
+                                    $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/profil/edit_almgr.tpl');
+                                    $smarty->clearAllAssign();
+                                }
                             }
                         break;
                         default:
                             $sex = ($get['sex'] == 1 ? _pedit_male : ($get['sex'] == 2 ? _pedit_female : _pedit_sex_ka));
-                            $status = ($get['status'] ? _pedit_aktiv : _pedit_inaktiv);
-
                             $levels = array(0,1,2,3); $perm_profile = "";
                             foreach ($levels as &$level) {
-                                $selected = ($level == $get['profile_access'] ? ' selected="selected"' : '');
+                                $selected = ($level == $get['profile_access']);
                                 switch ($level) {
-                                    case 0: $perm_profile .= '<option'.$selected.' value="'.$level.'">'._pedit_perm_public.'</option>'; break;
-                                    case 1: $perm_profile .= '<option'.$selected.' value="'.$level.'">'._pedit_perm_user.'</option>'; break;
-                                    case 2: $perm_profile .= '<option'.$selected.' value="'.$level.'">'._pedit_perm_member.'</option>'; break;
-                                    case 3: $perm_profile .= '<option'.$selected.' value="'.$level.'">'._pedit_perm_admin.'</option>'; break;
+                                    case 0:
+                                        $perm_profile .= common::select_field($level,$selected,_pedit_perm_public);
+                                        break;
+                                    case 1:
+                                        $perm_profile .= common::select_field($level,$selected,_pedit_perm_user);
+                                        break;
+                                    case 2:
+                                        $perm_profile .= common::select_field($level,$selected,_pedit_perm_member);
+                                        break;
+                                    case 3:
+                                        $perm_profile .= common::select_field($level,$selected,_pedit_perm_admin);
+                                        break;
                                 }
                             }
                             
                             // Startpage
                             $sql_startpage = common::$sql['default']->select("SELECT `name`,`id` FROM `{prefix_startpage}`;");
-                            $startpage = '<option value="0">'._userlobby.'</option>';
+                            $startpage = common::select_field(0,false,_userlobby);
                             if(common::$sql['default']->rowCount()) {
                                 foreach($sql_startpage as $get_startpage) {
-                                    $startpage .= show(_select_field,array('value' => $get_startpage['id'], 'sel' => ($get_startpage['id'] == $get['startpage'] ? 'selected="selected"' : ''), 'what' => $get_startpage['name'])); }
+                                    $startpage .= common::select_field($get_startpage['id'],($get_startpage['id'] == $get['startpage']),stringParser::decode($get_startpage['name']));
+                                }
                             }
 
                             $bdayday = 0; $bdaymonth = 0; $bdayyear = 0;
                             if (!empty($get['bday']) && $get['bday'])
                                 list($bdayday, $bdaymonth, $bdayyear) = explode('.', date('d.m.Y', $get['bday']));
 
-                            $dropdown_age = show(_dropdown_date, array("day" => common::dropdown("day", $bdayday, 1),
-                                                                       "month" => common::dropdown("month", $bdaymonth, 1),
-                                                                       "year" => common::dropdown("year", $bdayyear, 1)));
+                            $dropdown_age = common::dropdown_date(common::dropdown("day", $bdayday, 1),
+                                common::dropdown("month", $bdaymonth, 1),
+                                common::dropdown("year", $bdayyear, 1));
 
                             $pnl = ($get['nletter'] ? 'checked="checked"' : '');
                             $pnm = ($get['pnmail'] ? 'checked="checked"' : '');
@@ -281,47 +315,59 @@ if(defined('_UserMenu')) {
 
                             if (common::rootAdmin(common::$userid))
                                 $delete = _profil_del_admin;
-                            else
-                                $delete = show("page/button_delete_account", array("id" => $get['id'],
-                                                                                   "action" => "action=editprofile&amp;do=delete",
-                                                                                   "value" => _button_title_del_account,
-                                                                                   "del" => _confirm_del_account));
+                            else {
+                                $smarty->caching = false;
+                                $smarty->assign('id',$get['id']);
+                                $delete = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/profil/delete_account.tpl');
+                                $smarty->clearAllAssign();
+                            }
 
-                            $show = show($dir . "/edit_profil", array("country" => common::show_countrys($get['country']),
-                                                                      "city" => stringParser::decode($get['city']),
-                                                                      "pnl" => $pnl,
-                                                                      "pnm" => $pnm,
-                                                                      "pwd" => "",
-                                                                      "dropdown_age" => $dropdown_age,
-                                                                      "ava" => $avatar,
-                                                                      "hp" => stringParser::decode($get['hp']),
-                                                                      "nick" => stringParser::decode($get['nick']),
-                                                                      "name" => stringParser::decode($get['user']),
-                                                                      "rlname" => stringParser::decode($get['rlname']),
-                                                                      "bdayday" => $bdayday,
-                                                                      "bdaymonth" => $bdaymonth,
-                                                                      "bdayyear" => $bdayyear,
-                                                                      "sex" => $sex,
-                                                                      "email" => stringParser::decode($get['email']),
-                                                                      "visibility_profile" => $perm_profile,
-                                                                      "sig" => stringParser::decode($get['signatur']),
-                                                                      "pic" => $pic,
-                                                                      "deleteava" => $deleteava,
-                                                                      "deletepic" => $deletepic,
-                                                                      "startpage" => $startpage,
-                                                                      "position" => common::getrank($get['id']),
-                                                                      "status" => $status,
-                                                                      "custom_about" => getcustom(1),
-                                                                      "custom_contact" => getcustom(3),
-                                                                      "custom_favos" => getcustom(4),
-                                                                      "custom_hardware" => getcustom(5),
-                                                                      "ich" => stringParser::decode($get['beschreibung']),
-                                                                      "delete" => $delete));
+                            $smarty->caching = false;
+                            $smarty->assign('country',common::show_countrys($get['country']));
+                            $smarty->assign('city',stringParser::decode($get['city']));
+                            $smarty->assign('pnl',$pnl);
+                            $smarty->assign('pnm',$pnm);
+                            $smarty->assign('pwd','');
+                            $smarty->assign('dropdown_age',$dropdown_age);
+                            $smarty->assign('ava',$avatar);
+                            $smarty->assign('hp',stringParser::decode($get['hp']));
+                            $smarty->assign('nick',stringParser::decode($get['nick']));
+                            $smarty->assign('name',stringParser::decode($get['user']));
+                            $smarty->assign('rlname',stringParser::decode($get['rlname']));
+                            $smarty->assign('bdayday',$bdayday);
+                            $smarty->assign('bdaymonth',$bdaymonth);
+                            $smarty->assign('bdayyear',$bdayyear);
+                            $smarty->assign('sex',$sex);
+                            $smarty->assign('email',stringParser::decode($get['email']));
+                            $smarty->assign('visibility_profile',$perm_profile);
+                            $smarty->assign('sig',stringParser::decode($get['signatur']));
+                            $smarty->assign('pic',$pic);
+                            $smarty->assign('deleteava',$deleteava);
+                            $smarty->assign('deletepic',$deletepic);
+                            $smarty->assign('startpage',$startpage);
+                            $smarty->assign('position',common::getrank($get['id']));
+                            $smarty->assign('ich',stringParser::decode($get['beschreibung']));
+                            $smarty->assign('delete',$delete);
+                            $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/profil/edit_profil.tpl');
+                            $smarty->clearAllAssign();
                         break;
                     }
 
-                    if(empty($index))
-                        $index = show($dir . "/edit", array("show" => $show),array("nick" => common::autor($get['id'])));
+                    if(empty($index)) {
+                        //profil head
+                        $smarty->caching = false;
+                        $smarty->assign('nick',common::autor($get['id']));
+                        $profil_edit_head = $smarty->fetch('string:'._profil_edit_head);
+                        $smarty->clearAllAssign();
+
+                        //index
+                        $smarty->caching = false;
+                        $smarty->assign('show',$show);
+                        $smarty->assign('notification_page',notification::get());
+                        $smarty->assign('profil_edit_head',$profil_edit_head);
+                        $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/profil/edit.tpl');
+                        $smarty->clearAllAssign();
+                    }
                 break;
             }
         }

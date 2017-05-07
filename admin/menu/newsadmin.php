@@ -101,13 +101,12 @@ switch ($do) {
                                               "what" => stringParser::decode($getk['kategorie'])));
         }
 
-        $dropdown_date = show(_dropdown_date, array("day" => common::dropdown("day",isset($_POST['t']) ? intval($_POST['t']) : date("d")),
-                                                    "month" => common::dropdown("month",isset($_POST['m']) ? intval($_POST['m']) : date("m")),
-                                                    "year" => common::dropdown("year",isset($_POST['j']) ? intval($_POST['j']) : date("Y"))));
+        $dropdown_date = common::dropdown_date(common::dropdown("day",isset($_POST['t']) ? intval($_POST['t']) : date("d")),
+            common::dropdown("month",isset($_POST['m']) ? intval($_POST['m']) : date("m")),
+            common::dropdown("year",isset($_POST['j']) ? intval($_POST['j']) : date("Y")));
 
-        $dropdown_time = show(_dropdown_time, array("hour" => common::dropdown("hour",isset($_POST['h']) ? intval($_POST['h']) : date("H")),
-                                                    "minute" => common::dropdown("minute",isset($_POST['min']) ? intval($_POST['min']) : date("i")),
-                                                    "uhr" => _uhr));
+        $dropdown_time = common::dropdown_time(common::dropdown("hour",isset($_POST['h']) ? intval($_POST['h']) : date("H")),
+            common::dropdown("minute",isset($_POST['min']) ? intval($_POST['min']) : date("i")));
 
         $timeshift_date = show(_dropdown_date_ts, array("nr" => "ts",
                                                         "day" => common::dropdown("day",isset($_POST['t_ts']) ? intval($_POST['t_ts']) : date("d")),
@@ -268,13 +267,12 @@ switch ($do) {
         $dropdown_date = show(_dropdown_date, array("day" => common::dropdown("day",date("d")), "month" => common::dropdown("month",date("m")), "year" => common::dropdown("year",date("Y"))));
         $dropdown_time = show(_dropdown_time, array("hour" => common::dropdown("hour",date("H")), "minute" => common::dropdown("minute",date("i")), "uhr" => _uhr));
         if($get['sticky']) {
-            $dropdown_date = show(_dropdown_date, array("day" => common::dropdown("day",date("d",$get['sticky'])),
-                                                        "month" => common::dropdown("month",date("m",$get['sticky'])),
-                                                        "year" => common::dropdown("year",date("Y",$get['sticky']))));
+            $dropdown_date = common::dropdown_date(common::dropdown("day",date("d",$get['sticky'])),
+                common::dropdown("month",date("m",$get['sticky'])),
+                common::dropdown("year",date("Y",$get['sticky'])));
 
-            $dropdown_time = show(_dropdown_time, array("hour" => common::dropdown("hour",date("H",$get['sticky'])),
-                                                        "minute" => common::dropdown("minute",date("i",$get['sticky'])),
-                                                        "uhr" => _uhr));
+            $dropdown_time = common::dropdown_time(common::dropdown("hour",date("H",$get['sticky'])),
+                common::dropdown("minute",date("i",$get['sticky'])));
         }
 
         $timeshift_date = show(_dropdown_date_ts, array("nr" => "ts", "day" => common::dropdown("day",date("d")), "month" => common::dropdown("month",date("m")), "year" => common::dropdown("year",date("Y"))));

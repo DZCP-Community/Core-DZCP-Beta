@@ -465,6 +465,7 @@ class common {
      * @return mixed|string
      */
     public static function autorcolerd(int $uid=0, $class="", $cut="") {
+        /* TODO: Replace dbc_index */
         if(!dbc_index::issetIndex('user_'.intval($uid))) {
             $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($uid)]);
             if(self::$sql['default']->rowCount()) {
@@ -478,12 +479,18 @@ class common {
             return self::autor($uid,$class,'','',$cut);
         }
 
-        $nickname = (!empty($cut)) ? self::cut(stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick')), $cut) :stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick'));
-        return show(_user_link_colerd, ["id" => $uid,
-            "country" => self::flag(dbc_index::getIndexKey('user_'.intval($uid), 'country')),
-            "class" => $class,
-            "color" => stringParser::decode($get['color']),
-            "nick" => $nickname]);
+        $nickname = (!empty($cut)) ? self::cut(stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick')), $cut) : stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick'));
+
+        $smarty = self::getSmarty();
+        $smarty->caching = false;
+        $smarty->assign('id',$uid);
+        $smarty->assign('country',self::data('country',$uid));
+        $smarty->assign('class',$class);
+        $smarty->assign('color',stringParser::decode($get['color']));
+        $smarty->assign('nick',$nickname);
+        $autor = $smarty->fetch('file:['.common::$tmpdir.']user/user_link_colerd.tpl');
+        $smarty->clearAllAssign();
+        return $autor;
     }
 
     /**
@@ -494,6 +501,7 @@ class common {
      * @return mixed|string
      */
     public static function cleanautor(int $uid=0, $class="", $nick="", $email="") {
+        /* TODO: Replace dbc_index */
         if(!dbc_index::issetIndex('user_'.intval($uid))) {
             $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($uid)]);
             if(self::$sql['default']->rowCount()) {
@@ -512,6 +520,7 @@ class common {
      * @return string
      */
     public static function rawautor(int $uid=0) {
+        /* TODO: Replace dbc_index */
         if(!dbc_index::issetIndex('user_'.intval($uid))) {
             $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($uid)]);
             if(self::$sql['default']->rowCount()) {
@@ -532,6 +541,7 @@ class common {
      * @return mixed|string
      */
     public static function fabo_autor(int $uid,string $tpl=_user_link_fabo) {
+        /* TODO: Replace dbc_index */
         if(!dbc_index::issetIndex('user_'.intval($uid))) {
             $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($uid)]);
             if(self::$sql['default']->rowCount()) {
@@ -955,6 +965,38 @@ class common {
         }
 
         return $pic;
+    }
+
+    /**
+     * @param string $day
+     * @param string $month
+     * @param string $year
+     * @return string
+     */
+    public static function dropdown_date(string $day, string $month, string $year) {
+        $smarty = self::getSmarty();
+        $smarty->caching = false;
+        $smarty->assign('day',$day);
+        $smarty->assign('month',$month);
+        $smarty->assign('year',$year);
+        $dropdown_date = $smarty->fetch('file:['.common::$tmpdir.']page/dropdown_date.tpl');
+        $smarty->clearAllAssign();
+        return $dropdown_date;
+    }
+
+    /**
+     * @param string $hour
+     * @param string $minute
+     * @return string
+     */
+    public static function dropdown_time(string $hour, string $minute) {
+        $smarty = self::getSmarty();
+        $smarty->caching = false;
+        $smarty->assign('hour',$hour);
+        $smarty->assign('minute',$minute);
+        $dropdown_time = $smarty->fetch('file:['.common::$tmpdir.']page/dropdown_time.tpl');
+        $smarty->clearAllAssign();
+        return $dropdown_time;
     }
 
     /**
@@ -2337,6 +2379,25 @@ class common {
     }
 
     /**
+     * Generiert die Select-Felder für ein Dropdown Menu
+     * @param string $value
+     * @param bool $is_selected
+     * @param string $what
+     * @return string
+     */
+    public static function select_field(string $value,bool $is_selected=false,string $what) {
+        $sel = ($is_selected ? ' selected="selected"' : '');
+        $smarty = self::getSmarty();
+        $smarty->caching = false;
+        $smarty->assign('value',$value);
+        $smarty->assign('sel',$sel);
+        $smarty->assign('what',$what);
+        $select_field = $smarty->fetch('file:['.common::$tmpdir.']page/select_field.tpl');
+        $smarty->clearAllAssign();
+        return $select_field;
+    }
+
+    /**
      * @param string $sort
      * @return string
      */
@@ -2592,9 +2653,15 @@ class common {
 
             //init templateswitch
             $tmpldir=""; $tmps = self::get_files(basePath.'/inc/_templates_/',true);
+            $smarty = self::getSmarty();
             foreach ($tmps as $tmp) {
                 $selt = (self::$tmpdir == $tmp ? 'selected="selected"' : '');
-                $tmpldir .= show(_select_field, ["value" => "?tmpl_set=".$tmp,  "what" => $tmp,  "sel" => $selt]);
+                $smarty->caching = false;
+                $smarty->assign('value',"?tmpl_set=".$tmp);
+                $smarty->assign('sel',$selt);
+                $smarty->assign('what',$tmp);
+                $tmpldir .= $smarty->fetch('file:['.common::$tmpdir.']page/select_field.tpl');
+                $smarty->clearAllAssign();
             }
 
             //misc vars

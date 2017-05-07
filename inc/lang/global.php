@@ -19,14 +19,9 @@
 define('_user_mailto_texttop', '<img src=\\"../inc/images/mailto.gif\\" align=\\"texttop\\"> <a href=\\"mailto:"+d+"\\" target=\\"_blank\\">"+d+"</a>');
 define('_ipban_menu_icon_enable', '<a href="[action]" title="[lang_ipban_disable]" rel="[info]" class="confirm"><img src="../inc/images/admin_lock_closed.jpg" alt="" class="icon" /></a>');
 define('_ipban_menu_icon_disable', '<a href="[action]" title="[lang_ipban_enable]" rel="[info]" class="confirm"><img src="../inc/images/admin_lock_open.jpg" alt="" class="icon" /></a>');
-define('_almgr_deleteicon', '<a href="?action=editprofile&amp;show=almgr&amp;do=almgr_delete&amp;id=[id]"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
-define('_almgr_editicon', '<a href="?action=editprofile&amp;show=almgr&amp;do=almgr_edit&amp;id=[id]"><img alt="" src="../inc/images/edit.png" title="Edit" class="icon" /></a>');
 define('_elevel_startpage_select', '<option value="1" [selu]>[lang_status_user]</option><option value="2" [selt]>[lang_status_trial]</option><option value="3" [selm]>[lang_status_member]</option><option value="4" [sela]>[lang_status_admin]</option>');
-define('_user_link_colerd', '[country] <a class="[class]" href="../user/?action=user&amp;id=[id]"><font color="[color]">[nick]</font></a>');
-
 //Forum
 define("_forum_team_groups", '[<a style="color:[color]" href="#">[group]</a>] ');
-
 ## ADDED / REDEFINED FOR 1.5.2
 define('_dropdown_date_ts', '<select id="t_[nr]" name="t_[nr]" class="dropdown">[day]</select> <select id="m_[nr]" name="m_[nr]" class="dropdown">[month]</select> <select id="j_[nr]" name="j_[nr]" class="dropdown">[year]</select>');
 define('_dropdown_time_ts', '<select id="h_[nr]" name="h_[nr]" class="dropdown">[hour]</select> <select id="min_[nr]" name="min_[nr]" class="dropdown">[minute]</select>[uhr]');
@@ -39,23 +34,7 @@ define('_elevel_perm_select', '
 <option value="banned">[lang_admin_level_banned]</option>
 <option value="1" [selu]>[lang_status_user]</option>');
 ## ADDED / REDEFINED FOR 1.5
-define('_profil_edit_custom', '
-<tr>
-  <td class="contentMainTop" width="30%"><span class="fontBold">[name]</span></td>
-  <td class="contentMainFirst" align="center">
-    <input type="text" name="[feldname]" value="[value]" class="inputField_dis_profil"
-    onfocus="this.className=\'inputField_en_profil\';"
-    onblur="this.className=\'inputField_dis_profil\';" />
-  </td>
-</tr>');
-define('_profil_custom_url', '
-<tr>
-  <td class="contentMainTop" width="20%"><span class="fontBold">[name]:</span></td>
-  <td class="contentMainFirst" align="center"><a href="[value]" target="_blank" class="icon" />[value]</a></td>
-</tr>');
 define('_next_event_link', '[datum] - <a class="navLastReg" href="../kalender/?action=show&amp;time=[timestamp]">[event]</a>');
-define('_user_link_blank', '[nick]');
-define('_dropdown_date2', '<select id="tag" name="tag" class="dropdown">[tag]</select> <select id="monat" name="monat" class="dropdown">[monat]</select> <select id="jahr" name="jahr" class="dropdown">[jahr]</select>');
 //Added for DZCP 1.4
 define('_buddys_yesicon', '<img src="../inc/images/buddys_yes.gif" alt="" class="icon" />');
 define('_buddys_noicon', '<img src="../inc/images/buddys_no.gif" alt="" class="icon" />');
@@ -65,13 +44,9 @@ define('_emailicon_forum', '<a href=\\"mailto:"+d+"\\"><img src=\\"../inc/images
 define('_forum_pn_preview', '<img src="../inc/images/forum_pn.gif" alt="" class="icon" style="cursor:pointer" />');
 define('_forum_zitat_preview', '<img src="../inc/images/zitat.gif" alt="" class="icon" style="cursor:pointer" />');
 define('_user_link_preview', '[country] <a class="[class]" href="javascript:void(0)">[nick]</a>');
-define('_userpic_link_raw', '<img src=../inc/images/uploads/userpics/[id].[endung] width=[width] height=[height] alt= />');
-define('_no_userpic_raw', '<img src=../inc/images/nopic.gif width=[width] height=[height] alt= />');
 //Edited for DZCP 1.4
 define('_downloads_link', '<a href="?action=download&amp;id=[id]" style="display:block" title="[titel]"><img src="../inc/images/download.gif" alt="" class="icon" /> [download]</a>');
 define('_forum_thread_search_link', '[sticky] <a href="../forum/?action=showthread&amp;id=[id]&amp;hl=[hl]">[topic]</a> [closed]');
-define('_dropdown_time', '<select id="h" name="h" class="dropdown">[hour]</select> <select id="min" name="min" class="dropdown">[minute]</select>[uhr]');
-define('_no_userpic_small_link', '<a href="../user/?action=user&amp;id=[id]"><img src="../inc/images/nopic.gif" width="60" height="80" alt="" /></a>');
 ////////////////////
 ## Allgemein ##
 define('_user_link', '[country] <a class="[class]" href="../user/?action=user&amp;id=[id][get]">[nick]</a>');
@@ -102,20 +77,14 @@ define('_noicon', '<img src="../inc/images/no.gif" alt="" class="icon" />');
 define('_newicon', '<img src="../inc/images/forum_newpost.gif" alt="" class="icon" />');
 define('_notnewicon', '<img src="../inc/images/notnew.gif" alt="" class="icon" />');
 define('_deleteicon_blank', '<img alt="" src="../inc/images/delete.png" class="icon" />');
-define('_buddys_delete', '<a href="?action=buddys&amp;do=delete&amp;id=[id]"><img src="../inc/images/delete.png" alt="" class="icon" /></a>');
 define('_editicon_blank', '<img alt="" src="../inc/images/edit.png" class="icon" />');
-define('_gameicon', '<img alt="" src="../inc/images/gameicons/custom/[icon]" class="icon" />');
 define('_admin_default_edit', '<a href="?action=admin&amp;edit=[id]"><img src="../inc/images/edit.png" alt="" title="Edit" class="icon" /></a>');
 define('_admin_ck_edit', '<a href="?action=admin&amp;do=paycheck&amp;id=[id]"><img src="../inc/images/edit.png" alt="" title="Edit" class="icon" /></a>');
 define('_msg_delete_sended', '<a href="?action=msg&amp;do=deletesended&amp;id=[id]"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
 define('_forum_delete', '<a href="?action=post&amp;do=delete&amp;id=[id]"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
 define('_newsc_delete', '<a href="?action=show&amp;id=[id]&amp;do=delete&cid=[cid]"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
 ## News ##
-define('_news_kat', '<img src="../inc/images/uploads/newskat/[img]" alt="" />');
 define('_news_show_link', '<a href="../news/?action=show&amp;id=[id]">[titel]</a>');
-define('_news_stats', 'Insgesamt <span class="fontBold">[news] News</span> mit <span class="fontBold">[comments] [com]</span>');
-## Artikel ##
-define('_artikel_link', '<span class="fontBold">&raquo;</span> <a href="[url]" target="_blank">[link]</a> ');
 ## Forum ##
 define('_forum_dowhat_add_thread', 'addthread&amp;kid=[kid]');
 define('_forum_add_lastpost', '?action=showthread&amp;id=[tid]&amp;page=[page]#p[id]');
@@ -126,8 +95,6 @@ define('_forum_dowhat_edit_post', 'editpost&amp;id=[id]');
 define('_forum_select_field_kat', '<option value="[value]" class="dropdownKat">[what]</option> [skat]');
 define('_forum_select_field_skat', '<option value="[value]">-> [what]</option>');
 define('_forum_select_field_search', '<option value="[value]" [sel]>-> [what]</option>');
-## DropDownmenu-Datum/Zeit ##
-define('_dropdown_date', '<select id="t" name="t" class="dropdown">[day]</select> <select id="m" name="m" class="dropdown">[month]</select> <select id="j" name="j" class="dropdown">[year]</select>');
 ## Umfragen ##
 define('_votes_titel', '<a href="javascript:DZCP.toggle(\'[vid]\')"><img src="../inc/images/[icon].gif" alt="" id="img[vid]" class="icon" />[intern][titel]</a>');
 define('_votes_balken', '<img src="../inc/images/vote.gif" width="[width]%" height="4" alt="[width]%" />');
@@ -140,8 +107,6 @@ define('_links_bannerlink', '<center><a href="?action=link&amp;id=[id]" target="
 define('_member_squad_squadlink', '<a href="javascript:DZCP.toggle(\'[id]\')">[squad]</a>');
 define('_userpic_small_link', '<a href="../user/?action=user&amp;id=[id]"><img src="../inc/images/uploads/userpics/[id].[endung]" width="60" height="80" alt="" /></a>');
 define('_no_userpic_small', '<img src="../inc/images/nopic.gif" width="60" height="80" alt="" />');
-## Kontaktformulare ##
-define('_contact_hp', '<a href="[hp]" target="_blank">[hp]</a>');
 ## Admin ##
 define('_artikel_edit_link', 'editartikel&amp;id=[id]');
 define('_config_delete', '<a href="?admin=[what]&amp;do=delete&amp;id=[id]"><img src="../inc/images/delete.png" alt="" class="icon" /></a>');
@@ -165,7 +130,6 @@ define('_checkfield_squads', '
     </select>
   </td>
 </tr>');
-define('_select_field_posis', '<option value="[value]" [sel]>[what]</option>');
 ## Userprofile ##
 define('_profil_custom', '
 <tr>
@@ -186,10 +150,3 @@ define('_profil_head_cont', '
 define('_to_buddys', '<option value="[id]" [selected="selected"]>[nick]</option>');
 define('_to_squads', '<option value="[id]" [sel]>-> [name]</option>');
 define('_user_new_msg', '&nbsp;&nbsp;<a href="?action=msg"><span class="fontWichtig">[cnt]</span> [eintrag]</a><br />');
-define('_select_field', '<option value="[value]" [sel]> [what]</option>');
-## Unzugeordnet ##
-define('_artike_sites', '<a href="?action=show&amp;id=[id]&part=[part]">[num]</a> ');
-## Sonstiges ##
-define('_klapptext_show', '<a href="javascript:DZCP.toggle(\'[id]\')"><img id="img[id]" src="../inc/images/collapse.gif" alt="" class="icon" /></a>');
-define('_klapptext_dont_show', '<a href="javascript:DZCP.toggle(\'[id]\')"><img id="img[id]" src="../inc/images/expand.gif" alt="" class="icon" /></a>');
-define('_klapptext_show_link', '<a href="javascript:DZCP.toggle(\'[id]\')"><img id="img[id]" src="../inc/images/expand.gif" alt="" class="icon" />[link]</a>');

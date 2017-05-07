@@ -100,15 +100,14 @@ if($_POST) {
 $files = common::get_files(basePath.'/inc/lang/languages/',false,true,array('php')); $lang = '';
 foreach($files as $file) {
     $lng = preg_replace("#.php#", "",$file);
-    $sel = (stringParser::decode(settings::get('language')) == $lng ? 'selected="selected"' : '');
-    $lang .= show(_select_field, array("value" => $lng, "what" => $lng, "sel" => $sel));
+    $lang .= common::select_field($lng,(stringParser::decode(settings::get('language')) == $lng),$lng);
+
 }
 unset($files,$file,$lng,$sel);
 
 $tmps = common::get_files(basePath.'/inc/_templates_/',true); $tmplsel = '';
 foreach($tmps as $tmp) {
-    $selt = (stringParser::decode(settings::get('tmpdir')) == $tmp ? 'selected="selected"' : '');
-    $tmplsel .= show(_select_field, array("value" => $tmp, "what" => $tmp, "sel" => $selt));
+    $tmplsel .= common::select_field($tmp,(stringParser::decode(settings::get('tmpdir')) == $tmp),$tmp);
 }
 unset($tmps,$tmp,$selt);
 
