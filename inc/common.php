@@ -56,6 +56,9 @@ new common(); //Main Construct
 
 require_once(basePath.'/inc/sfs.php');
 
+/**
+ * Class common
+ */
 class common {
     //Public
     public static $database = NULL;
@@ -578,6 +581,7 @@ class common {
      * @return string
      */
     public static function data(string $what='id',int $tid=0) {
+        /* TODO: Cacheing & Indexing a User */
         if (!$tid) { $tid = self::$userid; }
         if(!dbc_index::issetIndex('user_'.$tid)) {
             $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($tid)]);
@@ -614,7 +618,13 @@ class common {
      * @return mixed|string
      */
     public static function error(string $error,int $back=1) {
-        return show("errors/error", ["error" => $error, "back" => $back, "fehler" => _error, "backtopage" => _error_back]);
+        $smarty = self::getSmarty();
+        $smarty->caching = false;
+        $smarty->assign('error',$error);
+        $smarty->assign('back',$back);
+        $error = $smarty->fetch('file:['.common::$tmpdir.']errors/error.tpl');
+        $smarty->clearAllAssign();
+        return $error;
     }
 
     /**
@@ -834,8 +844,8 @@ class common {
      * @param array $array
      * @param array $array_lang_constant
      * @param array $array_block
-     * @param bool $addon
      * @return mixed|string
+     * @internal param bool $addon
      */
     public static function show_runner(string $tpl="", string $dir="", array $array= [], array $array_lang_constant= [], array $array_block= []) {
         if(!empty($tpl) && $tpl != null) {
@@ -995,7 +1005,7 @@ class common {
      */
     public static function show(string $tpl="", array $array= [], array $array_lang_constant= [], array $array_block= []) {
         return self::show_runner($tpl,"inc/_templates_/".self::$tmpdir."/",$array,$array_lang_constant,$array_block);
-    }
+    }/** @noinspection PhpDocSignatureInspection */
 
     /**
      * Checkt versch. Dinge anhand der Hostmaske eines Users
@@ -1317,8 +1327,15 @@ class common {
 
     /**
      * Funktion um Dateien aus einem Verzeichnis auszulesen
+     * @param string|null $dir
+     * @param bool $only_dir
+     * @param bool $only_files
+     * @param array $file_ext
+     * @param bool $preg_match
+     * @param array $blacklist
+     * @param bool $blacklist_word
      * @return array
-     **/
+     */
     public static function get_files(string $dir=null, bool $only_dir=false, bool $only_files=false, array $file_ext= [], bool $preg_match=false, array $blacklist= [], bool $blacklist_word=false) {
         $files = [];
         if(!file_exists($dir) && !is_dir($dir)) return $files;
@@ -1408,9 +1425,9 @@ class common {
 
     /**
      * Pruft eine IP gegen eine IP-Range
-     * @param ipv4 $ip
-     * @param ipv4 range $range
-     * @return boolean
+     * @param ipv4|string $ip
+     * @param string $range $range
+     * @return bool
      */
     public static function validateIpV4Range(string $ip,string $range) {
         if (!is_array($range)) {
@@ -1481,6 +1498,10 @@ class common {
         return $SetIP;
     }
 
+    /**
+     * @param $var
+     * @return bool|string
+     */
     public static function detectIP($var) {
         if(!empty($var) && ($REMOTE_ADDR = self::GetServerVars($var)) && !empty($REMOTE_ADDR)) {
             $REMOTE_ADDR = trim($REMOTE_ADDR);
@@ -1645,8 +1666,12 @@ class common {
 
     /**
      * Funktion um eine Datei im Web auf Existenz zu prufen und abzurufen
+     * @param string $url
+     * @param bool $post
+     * @param bool $nogzip
+     * @param int $timeout
      * @return String
-     **/
+     */
     public static function get_external_contents(string $url,bool $post=false,bool $nogzip=false,int $timeout=file_get_contents_timeout) {
         if((!(ini_get('allow_url_fopen') == 1) && !use_curl || (use_curl && !extension_loaded('curl'))))
             return false;
@@ -1755,6 +1780,7 @@ class common {
      * Verschlusselt eine E-Mail Adresse per Javascript
      * @param string $email
      * @param string $template
+     * @param array $custom
      * @return string
      */
     public static function CryptMailto(string $email='',string $template=_emailicon,array $custom= []) {
@@ -2012,10 +2038,12 @@ class common {
     public static function check_msg() {
         if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_messages}` WHERE `an` = ? AND `page` = 0;", [intval($_SESSION['id'])])) {
             self::$sql['default']->update("UPDATE `{prefix_messages}` SET `page` = 1 WHERE `an` = ?;", [intval($_SESSION['id'])]);
-            return show("user/new_msg", ["new" => _site_msg_new]);
+            $smarty = self::getSmarty();
+            $smarty->caching = false;
+            return $smarty->fetch('file:['.common::$tmpdir.']user/msg/new_msg.tpl');
         }
 
-        return false;
+        return '';
     }
 
     /**
@@ -2041,6 +2069,10 @@ class common {
         return '<img src="../inc/images/flaggen/nocountry.gif" alt="" class="icon" />';
     }
 
+    /**
+     * @param $code
+     * @return string
+     */
     public static function rawflag($code) {
         if (empty($code)) {
             return '<img src=../inc/images/flaggen/nocountry.gif alt= class=icon />';
@@ -2180,6 +2212,7 @@ class common {
      * @param string $msg
      * @param string $url
      * @param int $timeout
+     * @param bool $direct_refresh
      * @return mixed|string|void
      */
     public static function info(string $msg,string $url="",int $timeout = 5,bool $direct_refresh = true) {
@@ -2200,14 +2233,17 @@ class common {
         if (!array_key_exists('path', $u)) {
             $u['path'] = '';
         }
-        return show("errors/info", ["msg" => $msg,
-            "url" => $u['path'],
-            "rawurl" => html_entity_decode($url),
-            "parts" => $parts,
-            "timeout" => $timeout,
-            "info" => _info,
-            "weiter" => _weiter,
-            "backtopage" => _error_fwd]);
+
+        $smarty = self::getSmarty();
+        $smarty->caching = false;
+        $smarty->assign('msg',$msg);
+        $smarty->assign('url',$u['path']);
+        $smarty->assign('rawurl',html_entity_decode($url));
+        $smarty->assign('parts',$parts);
+        $smarty->assign('timeout',$timeout);
+        $info = $smarty->fetch('file:['.common::$tmpdir.']errors/info.tpl');
+        $smarty->clearAllAssign();
+        return $info;
     }
 
     /**
@@ -2619,6 +2655,7 @@ class common {
 
             $pholdervars = explode("^",$pholdervars);
             foreach ($pholdervars as $pholdervar) {
+                /** @noinspection PhpVariableVariableInspection */
                 $arr[$pholdervar] = $$pholdervar;
             }
 
@@ -2639,6 +2676,13 @@ class common {
 //###########################
 //OLD CODE
 //###########################
+/**
+ * @param string $tpl
+ * @param array $array
+ * @param array $array_lang_constant
+ * @param array $array_block
+ * @return mixed|string
+ */
 function show(string $tpl="", array $array= [], array $array_lang_constant= [], array $array_block= []) {
     return common::show($tpl,$array,$array_lang_constant,$array_block);
 }

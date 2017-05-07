@@ -7,8 +7,16 @@
 //api.php?input={"event":"news","count":4,"type":"xml"}
 
 if(!DZCPApi) die();
+
+/**
+ * Class dzcp_news
+ */
 class dzcp_news extends dzcp_event
 {
+    /**
+     * dzcp_news constructor.
+     * @param bool $api
+     */
     function __construct($api=true){
         if($api)
             parent::__construct();

@@ -107,7 +107,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                         $smarty->assign('prevurl','../artikel/?action=compreview&do=edit&id=' . $artikel_id .'&cid=' . intval($_GET['cid']));
                         $smarty->assign('id',$get['id']);
                         $smarty->assign('posteintrag',stringParser::decode($get['comment']));
-                        $smarty->assign('notification',notification::get_tr());
+                        $smarty->assign('notification',notification::get('global',true));
                         $add = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/comments_edit.tpl');
                         $smarty->clearAllAssign();
                     } else {

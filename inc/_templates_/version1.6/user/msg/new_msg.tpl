@@ -4,7 +4,7 @@
       <td><span class="fontUnder">Info:</span></td>
     </tr>
     <tr>
-      <td align="center">[new]</td>
+      <td align="center">{lang msgID="site_msg_new"}</td>
     </tr>
     <tr>
       <td>&nbsp;</td>

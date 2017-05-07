@@ -15,9 +15,36 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
+## Allgemein ##
+define('_button_title_del', 'L&ouml;schen');
+define('_button_title_edit', 'Editieren');
+define('_button_title_zitat', 'Diesen Beitrag zitieren');
+define('_button_title_comment', 'Diesen Beitrag kommentieren');
+define('_button_title_menu', 'ins Menu eintragen');
+define('_button_value_add', 'Eintragen');
+define('_button_value_addto', 'Hinzuf&uuml;gen');
+define('_button_value_edit', 'Editieren');
+define('_button_value_search', 'Suchen');
+define('_button_value_search1', 'Suche starten');
+define('_button_value_vote', 'Abstimmen');
+define('_button_value_do_show', 'Nicht anzeigen');
+define('_button_value_show', 'Anzeigen');
+define('_button_value_send', 'Abschicken');
+define('_button_value_reg', 'Registrieren');
+define('_button_value_msg', 'Nachricht senden');
+define('_button_value_nletter', 'Newsletter abschicken');
+define('_button_value_config', 'Konfiguration abspeichern');
+define('_button_value_clear', 'Datenbank bereinigen');
+define('_button_value_save', 'Speichern');
+define('_button_value_upload', 'Hochladen');
+define('_editor_from', 'Von');
+define('intern', '<span class="fontWichtig">Intern</span>');
+define('_comments_head', 'Kommentare');
+define('_click_close', 'schlie&szlig;en');
 define('_lang_de', 'Deutsch');
 define('_lang_uk', 'Englisch');
 
+## Lost Password ##
 define('_admin_lpwd_subj', 'Betreff: Passwort zur&uuml;cksetzen');
 define('_admin_lpwd', 'Passwort zur&uuml;cksetzen template');
 
@@ -240,8 +267,6 @@ define('_perm_positions', 'User R&auml;nge verwalten');
 define('_perm_partners', 'Partner verwalten');
 define('_perm_profile', 'Profilfelder verwalten');
 
-define('_dzcp_vcheck', 'Der DZCP Versions Checker informiert dich &uuml;ber neue DZCP Updates und zeigt dir, ob deine Version aktuell ist.<br><br><span class=fontBold>Beschreibung:</span><br><font color=#17D427>Gr&uuml;n:</font>Up to Date!<br><font color=#FFFF00>Gelb:</font> Keine Verbindung zu Server<br><font color=#FF0000>Rot:</font> Es ist ein neues Update verf&uuml;gbar!');
-
 ## ADDED / REDEFINED FOR 1.5 Final
 define('_id_dont_exist', 'Die von dir angegebene ID existiert nicht!');
 
@@ -267,15 +292,16 @@ define('_admin_sqauds_roster', 'Team-Roster');
 define('_admin_squads_nav_info', 'Hiermit wird ein Direktlink in die Navigation gesetzt, welcher zur Vollansicht des Teams f&uuml;hrt.');
 define('_admin_squads_teams', 'Team-Show');
 define('_admin_squads_no_navi', 'Nicht einf&uuml;gen');
-define('_config_cache_info', 'Hier k&ouml;nenn die Intervalle festgelegt werden, in der der Teamspeak- oder Gameserver neu abgefragt werden. Darunter werden die Daten aus dem Cache gelesen.');
 define('_config_direct_refresh', 'Direkte Weiterleitung');
 define('_config_direct_refresh_info', 'Wenn aktiviert, wird nach einer Aktion (z.B. Eintr&auml;ge in Forum, News, etc) direkt weitergeleitet, anstatt eine Infonachricht auszugeben.');
 define('_eintrag_titel_forum', '<a href="[url]" title="Diesen Beitrag anzeigen"><span class="fontBold">#[postid]</span></a> am [datum] um [zeit]  [edit] [delete]');
 define('_eintrag_titel', '<span class="fontBold">#{$postid}</span> am {$datum} um {$zeit}{lang msgID="uhr"} {$edit} {$delete}');
+
 ## ADDED / REDEFINED FOR 1.5.1
 define('_config_double_post', 'Forum Doppelpost');
 define('_config_fotum_vote', 'Forum-Vote');
 define('_config_fotum_vote_info', '<center>Zeigt die Forum-Votes auch unter Umfragen an.</center>');
+
 ## ADDED / REDEFINED FOR 1.5
 define('_search_sites', 'Unterseiten');
 define('_search_results', 'Suchergebnisse');
@@ -336,40 +362,6 @@ define('_non_public', 'nicht ver&ouml;ffentlichen');
 define('_no_public', '<b>unver&ouml;ffentlicht</b>');
 define('_no_events', 'keine Events geplant');
 define('_config_c_events', 'Men&uuml;: Events');
-define('_news_send', 'News einsenden');
-define('_news_send_source', 'Quelle');
-define('_news_send_titel', 'Newsvorschlag von [nick]');
-define('_news_send_note', 'Mitteilung o. Hinweis f&uuml;r die Redaktion');
-define('_news_send_done', 'Vielen Dank! Die News wurde erfolgreich an die Redaktion weitergeleitet');
-define('_news_send_description', 'Liebe Besucher,<br /><br />mit dem folgenden Formular ist es m&ouml;glich im Netz gefundene, oder selbst erstellte News an uns zu senden. Der von Dir ausgef&uuml;llte Formularinhalt wird dann mittels eines Verteilers an unsere Redakteure weitergeleitet. Bitte bedenke, dass wir jede Einsendung aufbereiten und evtl. genauere Details recherchieren m&uuml;ssen, um die gewohnte Qualit?t unserer News beizubehalten. Dies f?llt uns nat&uuml;rlich leichter, wenn Deine Einsendung bereits viele Einzelheiten aufweist und selbst formulierte Texte beinhaltet. Meldungen die lediglich 1:1 von anderen Seiten kopiert wurden, erschweren unsere Arbeit und verhindern nicht selten eine Ver&ouml;ffentlichung der Einsendung auf unserer Hauptseite.<br /><br />Nat&uuml;rlich sind wir &uuml;ber jede von Dir eingesendete News dankbar und freuen uns &uuml;ber das Engagement unserer Besucher.<br /><br />Vielen Dank im Voraus.<br /><br />Dein Redaktions-Team');
-define('_contact_text_sendnews', '
-[nick] hat uns ein Newsvorschlag eingesendet!<p>&nbsp;</p><p>&nbsp;</p>
-<span class="fontBold">Nick:</span> [nick]<p>&nbsp;</p>
-<span class="fontBold">Email:</span> [email]<p>&nbsp;</p>
-<span class="fontBold">Quelle:</span> [hp]<p>&nbsp;</p><p>&nbsp;</p>
-<span class="fontBold">Titel:</span> [titel]<p>&nbsp;</p><p>&nbsp;</p>
-<span class="fontUnder"><span class="fontBold">News:</span></span><p>&nbsp;</p>[text]<p>&nbsp;</p><p>&nbsp;</p>
-<span class="fontUnder"><span class="fontBold">Mitteilung oder Hinweis:</span></span><p>&nbsp;</p>[info]');
-
-define('_msg_sendnews_user', '
-<tr>
-  <td align="center" class="contentMainTop"><span class="fontBold">Damit die anderen Redakteure wissen, dass du diese News ver&ouml;ffentlichen wirst,<br />klicke bitte auf den nachfolgenden Button. Danke</span></td>
-</tr>
-<tr>
-  <td align="center" class="contentMainTop">
-    <form action="" method="get" onsubmit="sendMe()">
-      <input type="hidden" name="action" value="msg" />
-      <input type="hidden" name="do" value="sendnewsdone" />
-      <input type="hidden" name="id" value="[id]" />
-      <input id="contentSubmit" type="submit" class="submit" value="Best&auml;tigen" />
-    </form>
-  </td>
-</tr>');
-define('_msg_sendnews_done', '
-<tr>
-  <td align="center" class="contentMainTop"><span class="fontRed">Diese News wird/wurde bereits von [user] bearbeitet!!!</span></td>
-</tr>');
-define('_send_news_done', 'Vielen Dank f&uuml;r das Best&auml;tigen und das einstellen des Newsvoschlags!');
 define('_msg_all_leader', "alle Leader & Co-Leader");
 define('_msg_leader', "Squad-Leader");
 define('_pos_nletter', 'Diese Position in Newsletter an Squadleader und Co-Leader mit einbeziehen');
@@ -407,13 +399,7 @@ define('_config_forum_subkats_add', '
       <input id="contentSubmit" type="submit" class="submit" value="Neue Unterkategorie hinzuf&uuml;gen" />
     </form>
 ');
-define('_msg_answer', '
-    <form action="" method="get" onsubmit="DZCP.submitButton()">
-      <input type="hidden" name="action" value="msg" />
-      <input type="hidden" name="do" value="answer" />
-      <input type="hidden" name="id" value="[id]" />
-      <input id="contentSubmit" type="submit" class="submit" value="Antworten" />
-    </form>');
+define('_msg_answer', 'Antworten');
 define('_user_new_erase', '<form method="post" action="?action=userlobby"><input type="hidden" name="erase" value="1" /><input id="contentSubmit" type="submit" name="submit" class="submit" value="tempor&auml;re Neuerungen l&ouml;schen" /></form>');
 define('_profile_add', '<form action="" method="get" onsubmit="return(DZCP.submitButton())">
       <input type="hidden" name="admin" value="profile" />
@@ -422,13 +408,17 @@ define('_profile_add', '<form action="" method="get" onsubmit="return(DZCP.submi
     </form>');
 define('_admin_reg_info', 'Hier kannst du einstellen, ob sich jemand f&uuml;r einen der Bereiche registrieren muss um dort etwas tun zu k&ouml;nnen (Beitr&auml;ge schreiben, einen Download herunterladen, etc)');
 define('_config_c_floods_what', 'Hier kannst du die Zeit in Sekunden einstellen die ein User warten muss, bis er im jeweiligen Bereich was neues posten darf');
+
 ## ADDED FOR 1.4.3
 define('_download_last_date', 'Zuletzt heruntergeladen');
+
 ## EDITED FOR 1.4.1
 define('_ulist_normal', 'Rang &amp; Level');
+
 ## ADDED FOR 1.4.1
 define('_lobby_mymessages', '<a href="../user/?action=msg">Du hast <span class="fontWichtig">{$cnt}</span> neue Nachrichten!</a>');
 define('_lobby_mymessage', '<a href="../user/?action=msg">Du hast <span class="fontWichtig">{$cnt}</span> neue Nachricht!</a>');
+
 ## EDIT/ADDED FOR 1.4
 //Added
 define('_contact_pflichtfeld', '<span class="fontWichtig">*</span> = Pflichtfelder');
@@ -587,44 +577,22 @@ define('_welcome_guest', ' <img src="../inc/images/flaggen/nocountry.gif" alt=""
 define('_online_head', 'User online');
 define('_online_whereami', 'Bereich');
 define('_back', '<a href="javascript: history.go(-1)" class="files">zur&uuml;ck</a>');
+
 ## EDITED/ADDED FOR v 1.3.3
 define('_level_info', 'Beim vergeben des Levels "Admin" kann das Level nur noch &uuml;ber den Root Admin (derjenige, der das Clanportal installiert hat) ge&auml;ndert werden!<br />Ferner hat der Besitzer diesen Levels <span class="fontUnder">uneingeschr&auml;nkten</span> Zugriff auf alle Bereiche!');
+
 ## EDITED FOR v 1.3.1
 define('_related_links','related Links:');
 define('_profil_email2', 'E-mail #2');
 define('_profil_email3', 'E-mail #3');
-## Allgemein ##
-define('_button_title_del', 'L&ouml;schen');
-define('_button_title_edit', 'Editieren');
-define('_button_title_zitat', 'Diesen Beitrag zitieren');
-define('_button_title_comment', 'Diesen Beitrag kommentieren');
-define('_button_title_menu', 'ins Menu eintragen');
-define('_button_value_add', 'Eintragen');
-define('_button_value_addto', 'Hinzuf&uuml;gen');
-define('_button_value_edit', 'Editieren');
-define('_button_value_search', 'Suchen');
-define('_button_value_search1', 'Suche starten');
-define('_button_value_vote', 'Abstimmen');
-define('_button_value_do_show', 'Nicht anzeigen');
-define('_button_value_show', 'Anzeigen');
-define('_button_value_send', 'Abschicken');
-define('_button_value_reg', 'Registrieren');
-define('_button_value_msg', 'Nachricht senden');
-define('_button_value_nletter', 'Newsletter abschicken');
-define('_button_value_config', 'Konfiguration abspeichern');
-define('_button_value_clear', 'Datenbank bereinigen');
-define('_button_value_save', 'Speichern');
-define('_button_value_upload', 'Hochladen');
-define('_editor_from', 'Von');
-define('intern', '<span class="fontWichtig">Intern</span>');
-define('_comments_head', 'Kommentare');
-define('_click_close', 'schlie&szlig;en');
+
 ## Begruessungen ##
 define('_welcome_18', 'Guten Abend,');
 define('_welcome_13', 'Guten Tag,');
 define('_welcome_11', 'Mahlzeit,');
 define('_welcome_5', 'Guten Morgen,');
 define('_welcome_0', 'Gute Nacht,');
+
 ## Monate ##
 define('_jan', 'Januar');
 define('_feb', 'Februar');
@@ -1088,14 +1056,14 @@ define('_lostpwd_valid', 'Es wurde soeben ein neues Passwort generiert und an de
 define('_lostpwd_valid_sended', 'Dir wurde eine E-Mail mit dem &Auml;nderungslink gesendet!');
 define('_error_user_already_in', 'Du bist bereits eingeloggt!');
 define('_user_is_banned', 'Dein Account wurde vom Admin dieser Seite gesperrt und ist ab jetzt nicht mehr nutzbar!<br />Informiere dich bei einem authorisiertem Mitglied &uuml;ber den genauen Sachverhalt.');
-define('_msghead', 'Nachrichtencenter von [nick]');
+define('_msghead', 'Nachrichtencenter von {$nick}');
 define('_posteingang', 'Posteingang');
 define('_postausgang', 'Postausgang');
 define('_msg_title', 'Nachricht');
 define('_msg_absender', 'Absender');
 define('_msg_empfaenger', 'Empf&auml;nger');
-define('_msg_answer_msg', 'Nachricht von [nick]');
-define('_msg_sended_msg', 'Nachricht an [nick]');
+define('_msg_answer_msg', 'Nachricht von {$nick}');
+define('_msg_sended_msg', 'Nachricht an {$nick}');
 define('_msg_answer_done', 'Die Nachricht wurde erfolgreich versendet!');
 define('_msg_titel', 'Neue Nachricht schreiben');
 define('_msg_titel_answer', 'Antworten');
@@ -1105,7 +1073,7 @@ define('_msg_to_just_1', 'Du kannst nur einen Empf&auml;nger angeben!');
 define('_msg_not_to_me', 'Du kannst keine Nachricht an dich selber schreiben!');
 define('_legende_readed', 'Nachricht wurde vom Empf&auml;nger gelesen?');
 define('_legende_msg', 'Neue Nachricht');
-define('_msg_from_nick', 'Nachricht von [nick]');
+define('_msg_from_nick', 'Nachricht von  {$nick}');
 define('_msg_global_reg', 'alle registrierten User');
 define('_msg_global_squad', 'einzelne Teams:');
 define('_msg_bot', '<span class="fontBold">MsgBot</span>');

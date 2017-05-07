@@ -43,20 +43,16 @@ if(defined('_News')) {
             $titel = str_replace('&raquo;', '', strip_tags($smarty->fetch('file:[' . common::$tmpdir . ']' . $dir . '/news_link.tpl'), '<a><div>'));
             $smarty->clearAllAssign();
 
-            //Set Second or First class (style)
-            $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst";
-            $color++;
-
             //-> Gen List
             $smarty->caching = true;
             $smarty->assign('autor', common::autor($get['autor']));
             $smarty->assign('date', date("d.m.y", $get['datum']));
             $smarty->assign('titel', $titel);
-            $smarty->assign('class', $class);
+            $smarty->assign('color',$color);
             $smarty->assign('kat', stringParser::decode($getk['kategorie']));
             $smarty->assign('comments', common::cnt('{prefix_newscomments}', " WHERE `news` = " . $get['id']));
             $show .= $smarty->fetch('file:[' . common::$tmpdir . ']' . $dir . '/archiv_show.tpl', common::getSmartyCacheHash('news_archiv_show_' . $get['id']));
-            $smarty->clearAllAssign();
+            $smarty->clearAllAssign(); $color++;
         }
     } else {
         $smarty->caching = false;

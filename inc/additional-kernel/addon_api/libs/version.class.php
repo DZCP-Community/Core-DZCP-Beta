@@ -7,12 +7,22 @@
 //api.php?input={"event":"version","dzcp":"1.6","edition":"stable","type":"xml"}
 
 if(!DZCPApi) die();
+
+/**
+ * Class dzcp_version
+ * @property array cache_hash
+ */
 class dzcp_version extends dzcp_event
 {
     private $version = NULL;
     private $dev_version = NULL;
     private $edition = NULL;
+    private $cache_hash;
 
+    /**
+     * dzcp_version constructor.
+     * @param bool $api
+     */
     function __construct($api=true){
         if($api)
             parent::__construct();
@@ -22,24 +32,31 @@ class dzcp_version extends dzcp_event
         $this->edition = 'stable';
     }
 
+    /** @noinspection PhpInconsistentReturnPointsInspection */
     function getDevVersion() {
         $get = common::$sql['default']->fetch("SELECT `version`,`release` FROM `{prefix_addon_version}` WHERE `static_version` = ? AND `edition` = ?;",
             [$this->dev_version, 'dev']);
         if (common::$sql['default']->rowCount()) {
             return ['version' => stringParser::decode($get['version']),'release' => stringParser::decode($get['release'])];
         }
+
+        return ['version' => '0.0','release' => '000000'];
     }
 
+    /**
+     * @return array
+     */
     function getLiveVersion() {
         $get = common::$sql['default']->fetch("SELECT `version`,`release` FROM `{prefix_addon_version}` WHERE `static_version` = ? AND `edition` = ?;",
             [$this->version, 'stable']);
         if (common::$sql['default']->rowCount()) {
             return ['version' => stringParser::decode($get['version']),'release' => stringParser::decode($get['release'])];
         }
+
+        return ['version' => '0.0','release' => '00000'];
     }
 
     function getVersion() {
-        global $sql;
         if(GUMP::is_valid($this->json_array, ['dzcp' => 'required']) === true) {
             if(count(($exp=explode('.',$this->json_array['dzcp']))) >= 4) {
                 $this->json_array['dzcp'] = $exp[0].'.'.$exp[1];
@@ -121,7 +138,12 @@ class dzcp_version extends dzcp_event
         }
     }
 
-    private function updateGithub($version='1.7',$edition='stable') {
+    /**
+     * @param string $version
+     * @param string $edition
+     * @return array|bool
+     */
+    private function updateGithub($version='1.7', $edition='stable') {
         if($version == '1.6') {
             switch ($edition) {
                 case 'dev':
@@ -155,6 +177,11 @@ class dzcp_version extends dzcp_event
     }
 
     //Old Versions <= 1.5.x
+
+    /**
+     * @param string $version
+     * @return bool|int
+     */
     private function writeOldVersionsFile($version='1.6.0.1') {
         if(file_exists(basePath.'/version.txt'))
             unlink(basePath.'/version.txt');
@@ -162,10 +189,16 @@ class dzcp_version extends dzcp_event
         return file_put_contents(basePath.'/version.txt',$version);
     }
 
+    /**
+     * @param $key
+     */
     private function addCacheHashKey($key) {
         $this->cache_hash[] = $key;
     }
 
+    /**
+     * @return string
+     */
     private function getCacheHash() {
         $hash = 'dzcp_version';
         foreach ($this->cache_hash as $key) {

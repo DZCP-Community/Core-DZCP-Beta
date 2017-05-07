@@ -19,17 +19,24 @@ ob_start();
     define('is_api', true);
     define('basePath', dirname(__FILE__));
     include(basePath."/inc/common.php");
-    $event = new dzcp_event();
-    switch ($event->getEvent()) {
-        case 'version':
-            $version = new dzcp_version();
-            $version->getContentType();
-            $version->getVersion();
-            break;
-        case 'news':
-			$news = new dzcp_news();
-			$news->getContentType();
-			$news->getNews();
-            break;
-	}
+    if(isset($_GET['conjob'])) {
+        //Run by ZendServer @ 30 Min
+        $conjob = new conjob();
+        $conjob->run();
+        echo $conjob->getOutput();
+    } else {
+        $event = new dzcp_event();
+        switch ($event->getEvent()) {
+            case 'version':
+                $version = new dzcp_version();
+                $version->getContentType();
+                $version->getVersion();
+                break;
+            case 'news':
+                $news = new dzcp_news();
+                $news->getContentType();
+                $news->getNews();
+                break;
+        }
+    }
 ob_end_flush();

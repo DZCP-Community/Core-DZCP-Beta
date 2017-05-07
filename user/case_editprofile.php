@@ -165,8 +165,9 @@ if(defined('_UserMenu')) {
                                                                . "`date` = ?,"
                                                                . "`update` = 0,"
                                                                . "`expires` = ?;",
-                                        array($get['id'],session_id(),$permanent_key,common::$userip,time(),autologin_expire,
-                                            common::cut(gethostbyaddr(common::$userip),20), gethostbyaddr(common::$userip)));
+                                        array($get['id'],session_id(),$permanent_key,common::$userip,
+                                            common::cut(gethostbyaddr(common::$userip),20), gethostbyaddr(common::$userip),
+                                            $time=time(),autologin_expire));
                                     }
                                     
                                     cookie::put('id', $get['id']);

@@ -26,18 +26,16 @@ if(defined('_Artikel')) {
             $getk = common::$sql['default']->fetch("SELECT `kategorie` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get['kat']]);
             $titel = '<a style="display:block" href="?action=show&amp;id='.$get['id'].'">'.stringParser::decode($get['titel']).'</a>';
 
-            $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-
             //-> Gen List
             $smarty->caching = true;
             $smarty->assign('autor',common::autor($get['autor']));
             $smarty->assign('date',date("d.m.y", $get['datum']));
             $smarty->assign('titel',$titel);
-            $smarty->assign('class',$class);
+            $smarty->assign('color',$color);
             $smarty->assign('kat',stringParser::decode($getk['kategorie']));
             $smarty->assign('comments',common::cnt('{prefix_newscomments}'," WHERE `news` = ".$get['id']));
             $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/artikel_show.tpl',common::getSmartyCacheHash('artikel_show_'.$get['id']));
-            $smarty->clearAllAssign();
+            $smarty->clearAllAssign(); $color++;
         }
     } else {
         $smarty->caching = false;

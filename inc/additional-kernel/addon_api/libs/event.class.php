@@ -13,6 +13,9 @@ class dzcp_event
     public $contenttype = NULL;
     private $get = NULL;
 
+    /**
+     * dzcp_event constructor.
+     */
     function __construct()
     {
         $this->get = $_GET;
@@ -41,6 +44,9 @@ class dzcp_event
         }
     }
 
+    /**
+     * @return null|string
+     */
     function getEvent() {
         return $this->event;
     }
@@ -53,10 +59,13 @@ class dzcp_event
         switch ($this->contenttype) {
             case 'xml':
                 header('Content-Type: application/xml');
+                break;
             case 'jsonp':
                 header('Content-Type: application/javascript');
+                break;
             default:
                 header('Content-Type: application/json');
+                break;
         }
     }
 }

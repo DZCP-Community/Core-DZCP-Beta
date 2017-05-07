@@ -1,9 +1,9 @@
 <!-- start archiv_show.tpl -->
 <tr>
-  <td class="{$class}">{$date}</td>
-  <td class="{$class}">{$titel}</td>
-  <td class="{$class}">{$kat}</td>
-  <td class="{$class}">{$autor}</td>
-  <td class="{$class}" align="center">{$comments}</td>
+  <td class="{if $color % 2}contentMainSecond{else}contentMainFirst{/if}">{$date}</td>
+  <td class="{if $color % 2}contentMainSecond{else}contentMainFirst{/if}">{$titel}</td>
+  <td class="{if $color % 2}contentMainSecond{else}contentMainFirst{/if}">{$kat}</td>
+  <td class="{if $color % 2}contentMainSecond{else}contentMainFirst{/if}">{$autor}</td>
+  <td class="{if $color % 2}contentMainSecond{else}contentMainFirst{/if}" align="center">{$comments}</td>
 </tr>
 <!-- end archiv_show.tpl -->

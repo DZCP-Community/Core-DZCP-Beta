@@ -108,7 +108,6 @@ define('_gameicon', '<img alt="" src="../inc/images/gameicons/custom/[icon]" cla
 define('_admin_default_edit', '<a href="?action=admin&amp;edit=[id]"><img src="../inc/images/edit.png" alt="" title="Edit" class="icon" /></a>');
 define('_admin_ck_edit', '<a href="?action=admin&amp;do=paycheck&amp;id=[id]"><img src="../inc/images/edit.png" alt="" title="Edit" class="icon" /></a>');
 define('_msg_delete_sended', '<a href="?action=msg&amp;do=deletesended&amp;id=[id]"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
-define('_delete', '<a href="?action=msg&amp;do=deletethis&amp;id=[id]"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
 define('_forum_delete', '<a href="?action=post&amp;do=delete&amp;id=[id]"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
 define('_newsc_delete', '<a href="?action=show&amp;id=[id]&amp;do=delete&cid=[cid]"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
 ## News ##
@@ -184,10 +183,7 @@ define('_profil_head_cont', '
   <td class="contentMainTop" colspan="4" align="center"><span class="fontBold">[what]</span></td>
 </tr>');
 ## User ##
-define('_msg_in_title', '<a href="?action=msg&amp;do=show&amp;id=[id]">[titel]</a>');
-define('_msg_out_title', '<a href="?action=msg&amp;do=showsended&amp;id=[id]">[titel]</a>');
 define('_to_buddys', '<option value="[id]" [selected="selected"]>[nick]</option>');
-define('_to_users', '<option value="[id]" [selected="selected"]>[nick]</option>');
 define('_to_squads', '<option value="[id]" [sel]>-> [name]</option>');
 define('_user_new_msg', '&nbsp;&nbsp;<a href="?action=msg"><span class="fontWichtig">[cnt]</span> [eintrag]</a><br />');
 define('_select_field', '<option value="[value]" [sel]> [what]</option>');
