@@ -15,9 +15,36 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
+## Allgemein ##
+define('_button_title_del' , 'Delete');
+define('_button_title_edit' , 'Edit');
+define('_button_title_zitat' , 'Quote this entry');
+define('_button_title_comment' , 'Commentate this entry');
+define('_button_title_menu' , 'Set to menu');
+define('_button_value_add' , 'Insert');
+define('_button_value_addto' , 'Insert');
+define('_button_value_edit' , 'Edit');
+define('_button_value_search' , 'Search');
+define('_button_value_search1' , 'Start search');
+define('_button_value_upload' , 'Upload');
+define('_button_value_vote' , 'Vote');
+define('_button_value_show' , 'Show');
+define('_button_value_do_show', 'don`t Show');
+define('_button_value_send' , 'Send');
+define('_button_value_reg' , 'Register');
+define('_button_value_msg' , 'Send message');
+define('_button_value_nletter' , 'Send newsletter');
+define('_button_value_config' , 'Store configuration');
+define('_button_value_clear' , 'Clear database');
+define('_button_value_save' , 'Save');
+define('_editor_from' , 'From');
+define('intern' , '<span class="fontWichtig">Internal</span>');
+define('_comments_head' , 'Comments');
+define('_click_close' , 'close');
 define('_lang_de', 'German');
 define('_lang_uk', 'English');
 
+## Lost Password ##
 define('_admin_lpwd_subj', 'Betreff: Passwort zur&uuml;cksetzen');
 define('_admin_lpwd', 'Passwort zur&uuml;cksetzen template');
 
@@ -264,8 +291,6 @@ define('_perm_positions', 'manage user ranks');
 define('_perm_partners', 'manage partner');
 define('_perm_profile', 'manage profile fields');
 
-define('_dzcp_vcheck', 'The DZCP Version Checker will inform you about new DZCP updates and shows you whether your version is up to date.<br><br><span class=fontBold>Description:</span><br><font color=#17D427>Green:</font>Up to Date!<br><font color=#FFFF00>Yellow:</font> Could not connect to Server</br><font color=#FF0000>Red:</font>A new update available!');
-
 ## ADDED / REDEFINED FOR 1.5 Final
 define('_id_dont_exist', 'The requested ID does not exist!');
 
@@ -296,10 +321,12 @@ define('_config_direct_refresh' , 'Direct Forward');
 define('_config_direct_refresh_info' , 'If activated, the site will be forwarded directly, instead of showing the status information.');
 define('_eintrag_titel_forum' , '<a href="[url]" title="Show this post"><span class="fontBold">#[postid]</span></a> at [datum] on [zeit]  [edit] [delete]');
 define('_eintrag_titel' , '<span class="fontBold">#{$postid}</span> at {$datum} on {$zeit}{lang msgID="uhr"} {$edit} {$delete}');
+
 ## ADDED / REDEFINED FOR 1.5.1
 define('_config_double_post' , 'Forum double post');
 define('_config_fotum_vote' , 'Forum-Vote');
 define('_config_fotum_vote_info' , '<center>Here you can specify whether a Forum-Vote also Vote to be displayed.</center>');
+
 ## ADDED / REDEFINED FOR 1.5
 define('_search_sites' , 'Sites');
 define('_search_results' , 'Search Results');
@@ -364,41 +391,6 @@ define('_non_public' , 'non Public');
 define('_no_public' , '<b>unpublished</b>');
 define('_no_events' , '<center>no events available</center>');
 define('_config_c_events' , 'Menu: Events');
-define('_news_send' , 'Send News');
-define('_news_send_source' , 'Source');
-define('_news_send_titel' , 'News proposal of [nick]');
-define('_news_send_note' , 'Communication or notice to the editor');
-define('_news_send_done' , 'Thank you very much! The news has been successfully forwarded to the editor');
-define('_news_send_description' , 'Dear visitor,<br /><br />with the following form, it is possible to send us. The completed form from you will be forwarded to our editors. Please remember that we prepare every submission, and possible more precise details must investigate to ensure the quality of our usual news maintain. This is obviously easier if you are already sending a lot of details and that even includes texts formulated. 1:1 messages only from other pages are copied, make our work and often prevent a publication of returning to our main page.<br /><br />Naturally, we are informed of any news submitted by you grateful and happy about the commitment of our visitors. Thanks in advance.<br /><br />Your Editorial Team');
-define('_contact_text_sendnews' , '
-[nick] has given us a proposal submitted News!<p>&nbsp;</p><p>&nbsp;</p>
-<span class="fontBold">Nick:</span> [nick]<p>&nbsp;</p>
-<span class="fontBold">Email:</span> [email]<p>&nbsp;</p>
-<span class="fontBold">Source:</span> [hp]<p>&nbsp;</p><p>&nbsp;</p>
-<span class="fontBold">Title:</span> [titel]<p>&nbsp;</p><p>&nbsp;</p>
-<span class="fontUnder"><span class="fontBold">News:</span></span><p>&nbsp;</p>[text]<p>&nbsp;</p><p>&nbsp;</p>
-<span class="fontUnder"><span class="fontBold">Communication or notic:</span></span><p>&nbsp;</p>[info]');
-
-define('_msg_sendnews_user' , '
-<tr>
-  <td align="center" class="contentMainTop"><span class="fontBold">In order for the other editors know that you will publish this news, <br /> please click on the following button. Thanks</span></td>
-</tr>
-<tr>
-  <td align="center" class="contentMainTop">
-    <form action="" method="get" onsubmit="sendMe()">
-      <input type="hidden" name="action" value="msg" />
-      <input type="hidden" name="do" value="sendnewsdone" />
-      <input type="hidden" name="id" value="[id]" />
-      <input id="contentSubmit" type="submit" class="submit" value="Submit" />
-    </form>
-  </td>
-</tr>');
-define('_msg_sendnews_done' , '
-<tr>
-  <td align="center" class="contentMainTop"><span class="fontRed">
-This news is / was made from the [user] edited!!!</span></td>
-</tr>');
-define('_send_news_done' , 'Thank you for your news!');
 define('_msg_all_leader' , "all Leader & Co-Leader");
 define('_msg_leader' , "Squad-Leader");
 define('_pos_nletter' , 'Include this position in newsletter to Leader and Co-Leader');
@@ -437,13 +429,7 @@ define('_config_forum_subkats_add' , '
       <input id="contentSubmit" type="submit" class="submit" value="Insert sub-category" />
     </form>
 ');
-define('_msg_answer' , '
-    <form action="" method="get" onsubmit="DZCP.submitButton()">
-      <input type="hidden" name="action" value="msg" />
-      <input type="hidden" name="do" value="answer" />
-      <input type="hidden" name="id" value="[id]" />
-      <input id="contentSubmit" type="submit" class="submit" value="Answer" />
-    </form>');
+define('_msg_answer' , 'Answer');
 define('_user_new_erase' , '<form method="post" action="?action=userlobby"><input type="hidden" name="erase" value="1" /><input id="contentSubmit" type="submit" name="submit" class="submit" value="Mark all as readed" /></form>');
 define('_target' , 'New window');
 define('_profile_add' , '<form action="" method="get" onsubmit="return(DZCP.submitButton())">
@@ -451,16 +437,19 @@ define('_profile_add' , '<form action="" method="get" onsubmit="return(DZCP.subm
       <input type="hidden" name="do" value="add" />
       <input id="contentSubmit" type="submit" class="submit" value="Insert profile field" />
     </form>');
-define('_config_c_floods_what' , 'Here you can adjust the time in secontds which a user have to wait<br />to write something new in this area');;
+define('_config_c_floods_what' , 'Here you can adjust the time in secontds which a user have to wait<br />to write something new in this area');
+
 ## ADDED FOR 1.4.3
 define('_download_last_date' , 'Last downloaded');
+
 ## EDITED FOR 1.4.1
 define('_ulist_normal' , 'Rank &amp; Level');
+
 ## ADDED FOR 1.4.1
 define('_lobby_mymessages' , '<a href="../user/?action=msg">You have <span class="fontWichtig">[cnt]</span> new messages!</a>');
 define('_lobby_mymessage' , '<a href="../user/?action=msg">You have <span class="fontWichtig">1</span> new message!</a>');
+
 ## EDIT/ADDED FOR 1.4
-//Added
 define('_protocol_action' , 'Action');
 define('_protocol' , 'Admin protocol');
 define('_button_title_del_protocol' , 'Completely delete the protocol!');
@@ -631,42 +620,19 @@ Each clanwar admin received this message!<br /><br />
 <span class="fontBold">Comment:</span></span><br />[text]');
 ## EDITED/ADDED FOR v 1.3.3
 define('_level_info' , 'By set the level "admin", the level can be unset by root admin only! (the one who installed the clanportal)!<br />Furthermore the owner this level has <span class="fontUnder">unrestricted</span> access to all administrative areas!');
+
 ## EDITED FOR v 1.3.1
 define('_related_links','related Links:');
 define('_profil_email2' , 'E-mail #2');
 define('_profil_email3' , 'E-mail #3');
-## Allgemein ##
-define('_button_title_del' , 'Delete');
-define('_button_title_edit' , 'Edit');
-define('_button_title_zitat' , 'Quote this entry');
-define('_button_title_comment' , 'Commentate this entry');
-define('_button_title_menu' , 'Set to menu');
-define('_button_value_add' , 'Insert');
-define('_button_value_addto' , 'Insert');
-define('_button_value_edit' , 'Edit');
-define('_button_value_search' , 'Search');
-define('_button_value_search1' , 'Start search');
-define('_button_value_upload' , 'Upload');
-define('_button_value_vote' , 'Vote');
-define('_button_value_show' , 'Show');
-define('_button_value_do_show', 'don`t Show');
-define('_button_value_send' , 'Send');
-define('_button_value_reg' , 'Register');
-define('_button_value_msg' , 'Send message');
-define('_button_value_nletter' , 'Send newsletter');
-define('_button_value_config' , 'Store configuration');
-define('_button_value_clear' , 'Clear database');
-define('_button_value_save' , 'Save');
-define('_editor_from' , 'From');
-define('intern' , '<span class="fontWichtig">Internal</span>');
-define('_comments_head' , 'Comments');
-define('_click_close' , 'close');
+
 ## Begruessungen ##
 define('_welcome_18' , 'Good evening,');
 define('_welcome_13' , 'Good day,');
 define('_welcome_11' , 'Good lunch,');
 define('_welcome_5' , 'Good morning,');
 define('_welcome_0' , 'Good night,');
+
 ## Monate ##
 define('_jan' , 'January');
 define('_feb' , 'February');
@@ -680,6 +646,7 @@ define('_sep' , 'September');
 define('_okt' , 'October');
 define('_nov' , 'November');
 define('_dez' , 'Dezember');
+
 ## Laenderliste ##
 define('_country_list' , '
 <option value="al"> Albania</option>
@@ -850,6 +817,7 @@ define('_country_list' , '
 <option value="yu"> Yugoslavia</option>
 <option value="ye"> Yemen</option>
 <option value="zm"> Zambia</option>');
+
 ## Globale Userraenge ##
 define('_status_banned' , 'banned');
 define('_status_unregged' , 'unregistered');
@@ -857,29 +825,15 @@ define('_status_user' , 'User');
 define('_status_trial' , 'Trial');
 define('_status_member' , 'Member');
 define('_status_admin' , 'Admin');
+
 ## Userliste ##
 define('_acc_banned' , 'Banned');
 define('_ulist_acc_banned' , 'Banned accounts');
+
 ## Navigation: Kalender ##
 define('_kal_birthday' , 'Birthday from ');
 define('_kal_event' , 'Event: ');
-## LinkUs ##
-//-> Allgemein
-define('_linkus_head' , 'Linkus');
-//-> Admin
-define('_linkus_admin_head' , 'Insert linkus');
-define('_linkus_link' , 'Target link');
-define('_linkus_bsp_target' , 'http://www.domain.tld');
-define('_linkus_bsp_bannerurl' , 'http://www.domain.tld/banner.jpg');
-define('_linkus_bsp_desc' , 'Description');
-define('_linkus_beschreibung' , 'Title');
-define('_linkus_text' , 'Banner link');
-define('_linkus_empty_beschreibung' , 'You have to indicate a title tag!');
-define('_linkus_empty_link' , 'You have to indivate an link url!');
-define('_linkus_added' , 'The linkus was successfully registered!');
-define('_linkus_edited' , 'The linkus was successfully edited!');
-define('_linkus_deleted' , 'The linkus was successfully deleted!');
-define('_linkus' , 'Linkus');
+
 ## News ##
 define('_news_kommentar' , 'Comment');
 define('_news_kommentare' , 'Comments');
@@ -888,8 +842,10 @@ define('_news_comments_write_head' , 'Write new comment');
 define('_news_archiv_sort' , 'Sort by');
 define('_news_archiv_head' , 'News archive');
 define('_news_kat_choose' , 'Choose category');
+
 ## Artikel ##
 define('_artikel_comments_write_head' , 'Write new comment');
+
 ## Forum ##
 define('_forum_head' , 'Board');
 define('_forum_topic' , 'Topic');
@@ -941,6 +897,7 @@ define('_forum_search_kat_all' , 'all Categories');
 define('_forum_search_results' , 'Search results');
 define('_forum_online_head' , 'Browsing the board');
 define('_forum_nobody_is_online' , 'Right now no user is browsing the board!');
+
 ## Kalender ##
 //-> Allgemein
 define('_kalender_head' , 'Calendar');
@@ -953,9 +910,11 @@ define('_donnerstag' , 'Thursday');
 define('_freitag' , 'Friday');
 define('_samstag' , 'Saturday');
 define('_sonntag' , 'Sunday');
+
 //-> Events
 define('_kalender_events_head' , 'Events at [datum]');
 define('_kalender_uhrzeit' , 'Time');
+
 //-> Admin
 define('_kalender_admin_head_add' , 'Insert event');
 define('_kalender_admin_head_edit' , 'Edit event');
@@ -966,6 +925,7 @@ define('_kalender_error_no_event' , 'You have to describe this event!');
 define('_kalender_successful_added' , 'The event was successfully registered!');
 define('_kalender_successful_edited' , 'The event was successfully edited!');
 define('_kalender_deleted' , 'The event was successfully deleted!');
+
 ## Umfragen ##
 define('_error_vote_closed' , 'This vote is closed!');
 define('_votes_admin_closed' , 'Close vote');
@@ -990,6 +950,7 @@ define('_votes_admin_edit_head' , 'Edit vote');
 define('_vote_admin_successful_edited' , 'The vote was successfully edited!');
 define('_vote_admin_successful_menu1' , 'The menu was successfully unset from the menu!');
 define('_error_voted_again' , 'You already participated in this vote!');
+
 ## Links/Sponsoren ##
 define('_links_head' , 'Links');
 define('_links_admin_head' , 'Insert link');
@@ -1006,6 +967,7 @@ define('_link_added' , 'The link was successfully registered!');
 define('_link_edited' , 'The link was successfully edited!');
 define('_link_deleted' , 'The link was successfully deleted!');
 define('_sponsor_head' , 'Sponsors');
+
 ## Downloads ##
 define('_downloads_head' , 'Downloads');
 define('_downloads_download' , 'Download');
@@ -1033,6 +995,7 @@ define('_dl_traffic' , 'Caused traffic');
 define('_dl_loaded' , 'Downloaded');
 define('_dl_date' , 'Upload date');
 define('_dl_wait' , 'Download of file: ');
+
 ## Teams ##
 define('_member_squad_head' , 'Teams');
 define('_member_squad_no_entrys' , '<tr><td align="center"><span class="fontBold">No registered members</span></td></tr>');
@@ -1125,14 +1088,14 @@ define('_lostpwd_failed' , 'Loginname and email address does not match!');
 define('_lostpwd_valid' , 'A new password was generated and sent to you by e-mail!');
 define('_error_user_already_in' , 'You are logged in already!');
 define('_user_is_banned' , 'Your account is banned by a site admin.');
-define('_msghead' , 'Messagecenter from [nick]');
+define('_msghead' , 'Messagecenter from {$nick}');
 define('_posteingang' , 'Inbox');
 define('_postausgang' , 'Outbox');
 define('_msg_title' , 'Message');
 define('_msg_absender' , 'From');
 define('_msg_empfaenger' , 'To');
-define('_msg_answer_msg' , 'Message from [nick]');
-define('_msg_sended_msg' , 'Message to [nick]');
+define('_msg_answer_msg' , 'Message from {$nick}');
+define('_msg_sended_msg' , 'Message to {$nick}');
 define('_msg_answer_done' , 'The message was successfuly sent!');
 define('_msg_titel' , 'Write new message');
 define('_msg_titel_answer' , 'Answer');
@@ -1142,7 +1105,7 @@ define('_msg_to_just_1' , 'You can indicate just one receiver!');
 define('_msg_not_to_me' , 'You can`t write yourself!');
 define('_legende_readed' , 'Message was read by receiver?');
 define('_legende_msg' , 'New message');
-define('_msg_from_nick' , 'Message from [nick]');
+define('_msg_from_nick' , 'Message from {$nick}');
 define('_msg_global_reg' , 'all registered user');
 define('_msg_global_squad' , 'following team:');
 define('_msg_bot' , '<span class="fontBold">MsgBot</span>');
@@ -1268,6 +1231,7 @@ define('_upload_userpic_info' , ' Only jpg, gif or png files with a maximum file
 define('_upload_ava_head' , 'Useravatar');
 define('_upload_userava_info' , 'Only jpg, gif or png files with a maximum filesize of [userpicsize]KB!<br />The recommended dimension is 100px * 100px ');
 define('_upload_newskats_head' , 'Category pictures');
+
 ## Unzugeordnet ##
 define('_config_maxwidth' , 'Resize pictures automatically');
 define('_config_maxwidth_info' , 'Here you can adjust at which width a picture will be resized!');
@@ -1316,6 +1280,7 @@ define('_error_no_access' , 'You don`t have the rights to enter this area!');
 define('_artikel_show_link' , '<a href="../artikel/?action=show&amp;id=[id]">[titel]</a>');
 define('_ulist_bday' , 'Birthday');
 define('_ulist_last_login' , 'Last login');
+
 ## Impressum ##
 define('_impressum_head' , 'Imprint');
 define('_impressum_autor' , 'Author of the site');
@@ -1353,6 +1318,7 @@ The use of published postal addresses, telephone or fax numbers and email addres
 <br />
 This disclaimer is to be regarded as part of the internet publication which you were referred from. If sections or individual terms of this statement are not legal or correct, the content or validity of the other parts remain uninfluenced by this fact.
 </blockquote>');
+
 ## Admin ##
 define('_config_head' , 'Administrative area');
 define('_config_empty_katname' , 'You have to indicate a category description!');
@@ -1733,5 +1699,3 @@ define('_error_unregistered_nc' , '
 define('_upload_partners_head' , 'Partnerbuttons');
 define('_upload_partners_info' , 'Only jpg, gif or png files. Recommended dimensions: 88px * 31px');
 define('_select_field_ranking_add' , '<option value="[value]" [sel]>[what]</option>');
-define('_user_list_ck' , 'List in clan cash?');
-define('_fightus_squad' , 'Wanted team');
