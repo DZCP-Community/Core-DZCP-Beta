@@ -3,14 +3,14 @@
 $smarty = common::getSmarty();
 
 
-//TPL von Datei
+//TPL von Datei                                               ( $show = show($dir."/register", ["groups" => $egroups,)
 
 $smarty->caching = false;
 $smarty->assign('link1',$links1);
 $links = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/artikel_links.tpl');
 $smarty->clearAllAssign();
 
-//TPL von String
+//TPL von String                                       ( $egroups .= show(_checkfield_squads, ["id" => $getgroups['id'])
 
 $smarty->caching = false;
 $smarty->assign('hp','http://12345.de');
@@ -18,7 +18,7 @@ $hp = $smarty->fetch('string:'._hpicon_forum);
 $smarty->clearAllAssign();
 
 
-//HTML und Platzhalter
+//HTML und Platzhalter                                    (.html Dateien in .tpl Dateien umbenennen + PH bearbeiten)
 [hp] => {$hp}
 
 //Sprache und Texte
