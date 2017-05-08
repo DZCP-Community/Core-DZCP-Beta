@@ -20,7 +20,7 @@
 function smarty_function_lang($params, &$smarty) {
     $params['msgID']='_'.$params['msgID'];
     if(!defined($params['msgID'])) {
-        return 'MsgID: "'.$params['msgID'].'"" is not exists!';
+        return 'MsgID: "'.$params['msgID'].'"" does not exist!';
     }
 
     return constant($params['msgID']);

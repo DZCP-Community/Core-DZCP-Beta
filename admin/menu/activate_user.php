@@ -58,13 +58,23 @@ switch ($do) {
             common::$sql['default']->update("UPDATE `{prefix_users}` SET `actkey` = ? WHERE `id` = ?;", [($guid=common::GenGuid()),$get['id']]);
             $akl_link = 'http://'.common::$httphost.'/user/?action=akl&do=activate&key='.$guid;
             $akl_link_page = 'http://'.common::$httphost.'/user/?action=akl&do=activate';
-            $message = show(common::bbcode_email(settings::get('eml_akl_register')), 
-                        ["nick" => stringParser::decode($get['user']),
-                              "link_page" => '<a href="'.$akl_link_page.'" target="_blank">'.$akl_link_page.'</a>', 
-                              "guid" => $guid, 
-                              "link" => '<a href="'.$akl_link.'" target="_blank">Link</a>']);
+
+            $smarty->caching = false;
+            $smarty->assign('nick',stringParser::decode($get['user']));
+            $smarty->assign('link_page','<a href="'.$akl_link_page.'" target="_blank">'.$akl_link_page.'</a>');
+            $smarty->assign('guid',$guid);
+            $smarty->assign('link','<a href="'.$akl_link.'" target="_blank">Link</a>');
+            $message = $smarty->fetch('string:'.common::bbcode_email(settings::get('eml_akl_register')));
+            $smarty->clearAllAssign();
+
+            $smarty->caching = false;
+            $smarty->assign('email',$get['email']);
+            $resend = $smarty->fetch('string:'._admin_akl_resend);
+            $smarty->clearAllAssign();
+
             common::sendMail(stringParser::decode($get['email']), stringParser::decode(settings::get('eml_akl_register_subj')), $message);
-            $show = common::info(show(_admin_akl_resend, ['email' => $get['email']]), "?admin=activate_user", 4);
+
+            $show = common::info($resend, "?admin=activate_user", 4);
         }
     break;
     case 'send-all':
@@ -76,26 +86,46 @@ switch ($do) {
                 common::$sql['default']->update("UPDATE `{prefix_users}` SET `actkey` = '".($guid=common::GenGuid())."' WHERE `id` = ?;", [$get['id']]);
                 $akl_link = 'http://'.common::$httphost.'/user/?action=akl&do=activate&key='.$guid;
                 $akl_link_page = 'http://'.common::$httphost.'/user/?action=akl&do=activate';
-                $message = show(common::bbcode_email(settings::get('eml_akl_register')), 
-                            ["nick" => stringParser::decode($get['user']),
-                                  "link_page" => '<a href="'.$akl_link_page.'" target="_blank">'.$akl_link_page.'</a>', 
-                                  "guid" => $guid, 
-                                  "link" => '<a href="'.$akl_link.'" target="_blank">Link</a>']);
+
+                $smarty->caching = false;
+                $smarty->assign('nick',stringParser::decode($get['user']));
+                $smarty->assign('link_page','<a href="'.$akl_link_page.'" target="_blank">'.$akl_link_page.'</a>');
+                $smarty->assign('guid',$guid);
+                $smarty->assign('link','<a href="'.$akl_link.'" target="_blank">Link</a>');
+                $message = $smarty->fetch('string:'.common::bbcode_email(settings::get('eml_akl_register')));
+                $smarty->clearAllAssign();
+
                 common::sendMail(stringParser::decode($get['email']), stringParser::decode(settings::get('eml_akl_register_subj')), $message);
                 $emails .= (!$i ? $get['email'] : ', '.$get['email']); $i++;
             }
 
-            $show = common::info(show(_admin_akl_resend, ['email' => $emails]), "?admin=activate_user", 8);
+            $smarty->caching = false;
+            $smarty->assign('email',$emails);
+            $resend = $smarty->fetch('string:'._admin_akl_resend);
+            $smarty->clearAllAssign();
+
+            $show = common::info($resend, "?admin=activate_user", 8);
         }
     break;
     default:
         $qry = common::$sql['default']->select("SELECT `id`,`bday` FROM `{prefix_users}` WHERE `level` = 0 AND `actkey` IS NOT NULL ORDER BY nick;");
         $activate = ''; $color = 1;
         foreach($qry as $get) {
-            $resend = show(_emailicon_non_mailto, ["email" => '?admin=activate_user&amp;do=resend&amp;id='.$get['id']]);
+
+            $smarty->caching = false;
+            $smarty->assign('email','?admin=activate_user&amp;do=resend&amp;id='.$get['id']);
+            $resend = $smarty->fetch('string:'._emailicon_non_mailto);
+            $smarty->clearAllAssign();
+
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             $edit = str_replace("&amp;id=","",show("page/button_edit_akl", ["id" => $get['id'], "action" => "../user/?action=admin&edit=", "title" => _button_title_edit]));
-            $akl = show("page/button_akl", ["id" => $get['id'], "action" => "admin=activate_user&amp;do=activate&amp;id=", "title" => _button_title_akl]);
+
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('action',"admin=activate_user&amp;do=activate&amp;id=");
+            $smarty->assign('title',_button_title_akl);
+            $akl = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_akl.tpl');
+            $smarty->clearAllAssign();
 
             $smarty->caching = false;
             $smarty->assign('id',$get['id']);
@@ -104,22 +134,29 @@ switch ($do) {
             $delete = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_delete.tpl');
             $smarty->clearAllAssign();
 
-            $activate .= show($dir."/activate_user_show", ["nick" => common::autor($get['id'],'', 0, '',25),
-                                                                "akt" => $akl,
-                                                                "resend" => $resend,
-                                                                "age" => common::getAge($get['bday']),
-                                                                "sended" => common::userstats('akl',$get['id']),
-                                                                "edit" => $edit,
-                                                                "delete" => $delete,
-                                                                "class" => $class,
-                                                                "id" => $get['id'],
-                                                                "onoff" => common::onlinecheck($get['id'])]);
+            $smarty->caching = false;
+            $smarty->assign('nick',common::autor($get['id'],'', 0, '',25));
+            $smarty->assign('akt',$akl);
+            $smarty->assign('resend',$resend);
+            $smarty->assign('age',common::getAge($get['bday']));
+            $smarty->assign('sended',common::userstats('akl',$get['id']));
+            $smarty->assign('edit',$edit);
+            $smarty->assign('delete',$delete);
+            $smarty->assign('class',$class);
+            $smarty->assign('id', $get['id']);
+            $smarty->assign('onoff',common::onlinecheck($get['id']));
+            $activate .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/activate_user_show.tpl');
+            $smarty->clearAllAssign();
         }
 
         if(empty($activate)) {
             $activate = '<tr><td colspan="9" class="contentMainSecond">'._no_entrys.'</td></tr>';
         }
 
-        $show = show($dir."/activate_user", ["value" => _button_value_search, "show" => $activate]);
+        $smarty->caching = false;
+        $smarty->assign('value',_button_value_search);
+        $smarty->assign('show',$activate);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/activate_user.tpl');
+        $smarty->clearAllAssign();
     break;
 }

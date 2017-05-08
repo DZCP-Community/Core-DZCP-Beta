@@ -73,7 +73,7 @@ define('_admin_akl_sended', 'gesendet');
 define('_admin_akl_activated', 'Aktivierungen');
 define('_actived', 'User Account wurde aktiviert');
 define('_button_title_akl', 'Account aktivieren');
-define('_admin_akl_resend', 'Aktivierungslink wurde an "[email]" versandt.');
+define('_admin_akl_resend', 'Aktivierungslink wurde an "{$email}" versandt.');
 define('_akl', 'Aktivierungsmails');
 define('_akl_info', 'Sollen Aktivierungsmails bei Neuregistrierungen verwendet werden');
 define('_akl_send', 'Aktivierungsmail senden');
