@@ -139,11 +139,8 @@ define("_notification_custom", 'Benutzerdefiniert');
 define("_color", 'Farbe');
 define("_description", 'Bezeichnung');
 define("_replies", 'Antworten');
-define('_no_news_yet', '<tr>
-  <td class="contentMainFirst" colspan="[colspan]" align="center">Keine neuen News vorhanden</td>
-</tr>');
 define('_no_entrys_found', '<tr>
-  <td class="contentMainFirst" colspan="[colspan]" align="center">Keine Eintr&auml;ge gefunden</td>
+  <td class="contentMainFirst" colspan="{$colspan}" align="center">Keine Eintr&auml;ge gefunden</td>
 </tr>');
 define('_admin_news_readed', 'Gelesen');
 define('_admin_news_refresh', 'Aktualisieren');
@@ -1082,9 +1079,9 @@ define('_add_buddy_successful', 'Der User wurde erfolgreich als Buddy geadded!')
 define('_buddys_legende_addedtoo', 'Der User hat dich auch geadded');
 define('_buddys_legende_dontaddedtoo', 'Der User hat dich nicht geadded');
 define('_buddys_delete_successful', 'Der User wurde erfolgreich als Buddy gel&ouml;scht!');
-define('_buddy_added_msg', 'Der User <span class="fontBold">[user]</span> hat dich soeben als Buddy geadded!');
+define('_buddy_added_msg', 'Der User <span class="fontBold">{$user}</span> hat dich soeben als Buddy geadded!');
 define('_buddy_title', 'Buddies');
-define('_buddy_del_msg', 'Der User <span class="fontBold">[user]</span> hat dich soeben als Buddy gel&ouml;scht!');
+define('_buddy_del_msg', 'Der User <span class="fontBold">{$user}</span> hat dich soeben als Buddy gel&ouml;scht!');
 define('_ulist_lastreg', 'neuste User');
 define('_ulist_online', 'Onlinestatus');
 define('_ulist_age', 'Alter');
@@ -1109,7 +1106,7 @@ define('_error_edit_myself', 'Du kannst dich nicht selber editieren!');
 define('_error_edit_admin', 'Du darfst keine Admins editieren!');
 define('_admin_level_banned', 'Account sperren');
 define('_admin_user_identitat', 'Identit&auml;t');
-define('_admin_user_get_identitat', '<a href="?action=admin&amp;do=identy&amp;id=[id]">annehmen</a>');
+define('_admin_user_get_identitat', '<a href="?action=admin&amp;do=identy&amp;id={$id}">annehmen</a>');
 define('_identy_admin', 'Du kannst nicht die Identit&auml;t von einem Admin annehmen!');
 define('_admin_squad_del', '<option value="delsq">- User aus dem Team l&ouml;schen -</option>');
 define('_admin_squad_nosquad', '<option class="dropdownKat" value="lazy">- User ist in keinem Team -</option>');
@@ -1144,9 +1141,9 @@ define('_user_delete_verify', '
 </tr>
 <tr>
   <td class="contentMainFirst" align="center">
-    Bist du dir sicher das du den User [user] l&ouml;schen willst?<br />
+    Bist du dir sicher das du den User {$user} l&ouml;schen willst?<br />
     <span class="fontUnder">Alle</span> Aktivit&auml;ten dieses Users auf dieser Seite werden damit gel&ouml;scht!<br /><br />
-    <a href="?action=admin&amp;do=delete&verify=yes&amp;id=[id]">Ja, l&ouml;schen!</a>
+    <a href="?action=admin&amp;do=delete&verify=yes&amp;id={$id}">Ja, l&ouml;schen!</a>
   </td>
 </tr>');
 define('_user_deleted', 'Der User wurde erfolgreich gel&ouml;scht!');
@@ -1621,7 +1618,7 @@ define('_yes', 'Ja');
 define('_no', 'Nein');
 define('_maybe', 'Vielleicht');
 define('_beschreibung', 'Beschreibung');
-define('_admin_user_get_identy', 'Du hast erfolgreich die Identit&auml;t von [nick] angenommen!');
+define('_admin_user_get_identy', 'Du hast erfolgreich die Identit&auml;t von {$nick} angenommen!');
 define('_comment_added', 'Dein Kommentar wurde erfolgreich gespeichert!');
 define('_comment_deleted', 'Der Kommentar wurde erfolgreich gel&ouml;scht!');
 define('_stichwort', 'Stichwort');

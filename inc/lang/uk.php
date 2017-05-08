@@ -154,9 +154,6 @@ define("_notification_custom", 'Custom');
 define("_color", 'Color');
 define("_description", 'Description');
 define("_replies", 'Replies');
-define('_no_news_yet', '<tr>
-  <td class="contentMainFirst" colspan="[colspan]" align="center">No new news available</td>
-</tr>');
 define('_no_entrys_found', '<tr>
   <td class="contentMainFirst" colspan="[colspan]" align="center">No entrys found</td>
 </tr>');
@@ -1114,9 +1111,9 @@ define('_add_buddy_successful' , 'The user was successfully added as buddy!');
 define('_buddys_legende_addedtoo' , 'The user aded you as buddy, too');
 define('_buddys_legende_dontaddedtoo' , 'The user didn`t added you as buddy, too');
 define('_buddys_delete_successful' , 'The user was successfully deleted as buddy!');
-define('_buddy_added_msg' , 'The user <span class="fontBold">[user]</span> added you to his buddies!');
+define('_buddy_added_msg' , 'The user <span class="fontBold">{$user}</span> added you to his buddies!');
 define('_buddy_title' , 'Buddies');
-define('_buddy_del_msg' , 'The user <span class="fontBold">[user]</span> deleted you from his buddies!');
+define('_buddy_del_msg' , 'The user <span class="fontBold">{$user}</span> deleted you from his buddies!');
 define('_ulist_lastreg' , 'newest user');
 define('_ulist_online' , 'Onlinestatus');
 define('_ulist_age' , 'Age');
@@ -1141,7 +1138,7 @@ define('_error_edit_myself' , 'You can`t edit yourself!');
 define('_error_edit_admin' , 'You are not allowed to edit admins!');
 define('_admin_level_banned' , 'Ban account');
 define('_admin_user_identitat' , 'Identity');
-define('_admin_user_get_identitat' , '<a href="?action=admin&amp;do=identy&amp;id=[id]">take identity</a>');
+define('_admin_user_get_identitat' , '<a href="?action=admin&amp;do=identy&amp;id={$id}">take identity</a>');
 define('_identy_admin' , 'You can`t take the identity from an admin!');
 define('_admin_squad_del' , '<option value="delsq">- delete user out of this team -</option>');
 define('_admin_squad_nosquad' , '<option class="dropdownKat" value="lazy">- user isn`t in a team -</option>');
@@ -1176,9 +1173,9 @@ define('_user_delete_verify' , '
 </tr>
 <tr>
   <td class="contentMainFirst" align="center">
-    Are you sure to delete the user [user]?<br />
+    Are you sure to delete the user {$user}?<br />
     <span class="fontUnder">Every</span> activities from this user will be deleted, too!<br /><br />
-    <a href="?action=admin&amp;do=delete&verify=yes&amp;id=[id]">Yes, delete [user]!</a>
+    <a href="?action=admin&amp;do=delete&verify=yes&amp;id={$id}">Yes, delete {$user}!</a>
   </td>
 </tr>');
 define('_user_deleted' , 'The user successfully was deleted!');
@@ -1646,7 +1643,7 @@ define('_yes' , 'Yes');
 define('_no' , 'No');
 define('_maybe' , 'Maybe');
 define('_beschreibung' , 'Description');
-define('_admin_user_get_identy' , 'You was successfully took the identity of [nick]!');
+define('_admin_user_get_identy' , 'You was successfully took the identity of {$nick}!');
 define('_comment_added' , 'The comment was successfully registered!');
 define('_comment_deleted' , 'The comment was successfullydeleted!');
 define('_stichwort' , 'Keyword');

@@ -25,14 +25,6 @@ define("_forum_team_groups", '[<a style="color:[color]" href="#">[group]</a>] ')
 ## ADDED / REDEFINED FOR 1.5.2
 define('_dropdown_date_ts', '<select id="t_[nr]" name="t_[nr]" class="dropdown">[day]</select> <select id="m_[nr]" name="m_[nr]" class="dropdown">[month]</select> <select id="j_[nr]" name="j_[nr]" class="dropdown">[year]</select>');
 define('_dropdown_time_ts', '<select id="h_[nr]" name="h_[nr]" class="dropdown">[hour]</select> <select id="min_[nr]" name="min_[nr]" class="dropdown">[minute]</select>[uhr]');
-## ADDED / REDEFINED FOR 1.5.1
-define('_elevel_admin_select', '
-<option value="banned">[lang_admin_level_banned]</option>
-<option value="1" [selu]>[lang_status_user]</option>
-<option value="4" [sela]>[lang_status_admin]</option>');
-define('_elevel_perm_select', '
-<option value="banned">[lang_admin_level_banned]</option>
-<option value="1" [selu]>[lang_status_user]</option>');
 ## ADDED / REDEFINED FOR 1.5
 define('_next_event_link', '[datum] - <a class="navLastReg" href="../kalender/?action=show&amp;time=[timestamp]">[event]</a>');
 //Added for DZCP 1.4
@@ -120,16 +112,6 @@ define('_icon_edit_news', '<a href="?admin=newsadmin&amp;do=edit&amp;id=[id]"><i
 define('_icon_delete_news', '<a href="?admin=newsadmin&amp;do=delete&amp;id=[id]"><img alt="" src="../inc/images/delete.png" class="icon" /></a>');
 define('_icon_edit_squads', '<a href="?admin=squads&amp;do=edit&amp;id=[id]"><img alt="" src="../inc/images/edit.png" class="icon" /></a>');
 define('_icon_delete_squads', '<a href="?admin=squads&amp;do=delete&amp;id=[id]"><img alt="" src="../inc/images/delete.png" class="icon" /></a>');
-define('_checkfield_squads', '
-<tr>
-  <td><input class="checkbox" type="checkbox" id="squad_[id]" name="squad[id]" value="[id]" [check] /><label for="squad_[id]"> [squad]</label></td>
-  <td align="center">
-    <select name="sqpos[id]" class="dropdown">
-      [lang_user_noposi]
-      [eposi]
-    </select>
-  </td>
-</tr>');
 ## Userprofile ##
 define('_profil_custom', '
 <tr>

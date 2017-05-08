@@ -28,17 +28,6 @@ define('_UserMenu', true);
 $smarty = common::getSmarty(); //Use Smarty
 
 /**
- * Funktion fuer die Sprachdefinierung der Profilfelder
- * @param $name
- * @return mixed
- */
-function pfields_name($name) {
-    $pattern = array("=_city_=Uis");
-    $replacement = array(_profil_city);
-    return preg_replace($pattern, $replacement, $name);
-}
-
-/**
  * Prueft ob ein User schon in der Buddyliste vorhanden ist
  * @param $buddy
  * @return bool

@@ -25,16 +25,21 @@ if(defined('_UserMenu')) {
             $qrypos = common::$sql['default']->select("SELECT `id`,`position` FROM `{prefix_positions}` ORDER BY `pid`;");
             $posi = "";
             foreach($qrypos as $getpos) {
-                $sel = common::$sql['default']->rows("SELECT `id` FROM `{prefix_userposis}` WHERE `posi` = ? AND `group` = ? AND `user` = ?;",
-                    array($getpos['id'],$getsq['id'],intval($_GET['edit']))) ? true : false;
-                $posi .= common::select_field($getpos['id'],$sel,stringParser::decode($getpos['position']));
+                $check = common::$sql['default']->rows("SELECT `id` FROM `{prefix_userposis}` WHERE `posi` = ? AND `group` = ? AND `user` = ?;",
+                    array($getpos['id'],$getsq['id'],intval($_GET['edit'])));
+                $posi .= common::select_field($getpos['id'],$check,stringParser::decode($getpos['position']));
             }
 
-            $check = common::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;", array(intval($_GET['edit']),$getsq['id'])) ? 'checked="checked"' : '';
-            $esquads .= show(_checkfield_squads, array("id" => $getsq['id'],
-                                                       "check" => $check,
-                                                       "eposi" => $posi,
-                                                       "squad" => stringParser::decode($getsq['name'])));
+            $check = common::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",
+                array(intval($_GET['edit']),$getsq['id'])) ? 'checked="checked"' : '';
+
+            $smarty->caching = false;
+            $smarty->assign('id',$getsq['id']);
+            $smarty->assign('check',$check);
+            $smarty->assign('eposi',$posi);
+            $smarty->assign('squad',stringParser::decode($getsq['name']));
+            $esquads .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin/admin_checkfield_squads.tpl');
+            $smarty->clearAllAssign();
         } unset($posi,$check,$getsq,$qrySquads);
 
         $smarty->caching = false;
@@ -49,7 +54,11 @@ if(defined('_UserMenu')) {
             if((common::data("level", intval($_GET['id'])) == 4 && !common::rootAdmin(intval($_GET['id'])) && !common::rootAdmin(common::$userid))) {
                 $index = common::error(_identy_admin, 1);
             } else {
-                $msg = show(_admin_user_get_identy, array("nick" => common::autor($_GET['id'])));
+                $smarty->caching = false;
+                $smarty->assign('nick',common::autor($_GET['id']));
+                $msg = $smarty->fetch('string:'._admin_user_get_identy);
+                $smarty->clearAllAssign();
+
                 common::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 0, `sessid` = '' WHERE id = ?;",array(common::$userid)); //Logout
                 session_regenerate_id();
 
@@ -61,7 +70,7 @@ if(defined('_UserMenu')) {
                 array(session_id(),common::$userip,intval($_GET['id'])));
                 common::setIpcheck("ident(" . common::$userid . "_" . intval($_GET['id']) . ")");
 
-                $index = common::info($msg, "?action=user&amp;id=" . $_GET['id'] . "");
+                $index = common::info($msg, "?action=user&amp;id=" . $_GET['id'] . "", 5, false);
             }
         } else if ($do == "update") {
             if ($_POST && isset($_GET['user'])) {
@@ -169,7 +178,6 @@ if(defined('_UserMenu')) {
 
             $index = common::info(_admin_user_edited, "?action=user&amp;id=" . common::$userid . "");
         } elseif ($do == "delete") {
-            $index = show(_user_delete_verify, array("user" => common::autor(intval($_GET['id'])), "id" => $_GET['id']));
             $delUID = intval($_GET['id']);
             if ($_GET['verify'] == "yes") {
                 if (common::data("level", intval($_GET['id'])) == 4 || common::data("level", intval($_GET['id'])) == 3 || common::rootAdmin($delUID))
@@ -189,13 +197,18 @@ if(defined('_UserMenu')) {
                         common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;",array($delUID));
                         common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;",array($delUID));
                         common::$sql['default']->delete("DELETE FROM `{prefix_clicks_ips}` WHERE `uid` = ?;",array($delUID));
-                        $index = common::info(_user_deleted, "?action=userlist");
+                        $index = common::info(_user_deleted, "?action=userlist", 5, false);
                     }
                 }
             }
+
+            $smarty->caching = false;
+            $smarty->assign('id',$delUID);
+            $smarty->assign('user',common::autor($delUID));
+            $index = $smarty->fetch('string:'._user_delete_verify);
+            $smarty->clearAllAssign();
         } elseif ($do == "full_delete") {
-            $index = show(_user_delete_verify, array("user" => common::autor(intval($_GET['id'])), "id" => $_GET['id']));
-            $delUID = intval($_GET['id']);
+            $delUID = ((int)$_GET['id']);
             if ($_GET['verify'] == "yes") {
                 if (common::data("level", intval($_GET['id'])) == 4 || common::data("level", intval($_GET['id'])) == 3 || common::rootAdmin($delUID))
                     $index = common::error(_user_cant_delete_admin, 2);
@@ -214,10 +227,16 @@ if(defined('_UserMenu')) {
                         common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;",array($delUID));
                         common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;",array($delUID));
                         common::$sql['default']->delete("DELETE FROM `{prefix_clicks_ips}` WHERE `uid` = ?;",array($delUID));
-                        $index = common::info(_user_deleted, "?action=userlist");
+                        $index = common::info(_user_deleted, "?action=userlist", 5 ,false);
                     }
                 }
             }
+
+            $smarty->caching = false;
+            $smarty->assign('id',$delUID);
+            $smarty->assign('user',common::autor($delUID));
+            $index = $smarty->fetch('string:'._user_delete_verify);
+            $smarty->clearAllAssign();
         } else {
             //Show edit user
             $get = common::$sql['default']->fetch("SELECT `id`,`user`,`nick`,`pwd`,`email`,`level`,`position`,`listck` "
@@ -239,25 +258,31 @@ if(defined('_UserMenu')) {
                     $checksquser = common::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",
                     array(intval($_GET['edit']),$getsq['id']));
                     $check = $checksquser ? 'checked="checked"' : '';
-                    $esquads .= show(_checkfield_squads, array("id" => $getsq['id'],
-                                                               "check" => $check,
-                                                               "eposi" => $posi,
-                                                               "squad" => stringParser::decode($getsq['name'])));
+
+                    $smarty->caching = false;
+                    $smarty->assign('id',$getsq['id']);
+                    $smarty->assign('check',$check);
+                    $smarty->assign('eposi',$posi);
+                    $smarty->assign('squad',stringParser::decode($getsq['name']));
+                    $esquads .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin/admin_checkfield_squads.tpl');
+                    $smarty->clearAllAssign();
                 }
 
-                $get_identy = show(_admin_user_get_identitat, array("id" => intval($_GET['edit'])));
+                $smarty->caching = false;
+                $smarty->assign('id',((int)$_GET['edit']));
+                $get_identy = $smarty->fetch('string:'._admin_user_get_identitat);
+                $smarty->clearAllAssign();
 
                 $smarty->caching = false;
                 $editpwd = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin/admin_editpwd.tpl');
 
-                $selu = $get['level'] == 1 ? 'selected="selected"' : '';
-                $sela = $get['level'] == 4 ? 'selected="selected"' : '';
-                if (common::$chkMe == 4) {
-                    $elevel = show(_elevel_admin_select, array("selu" => $selu,
-                                                               "sela" => $sela));
-                } elseif (common::permission("editusers")) {
-                    $elevel = show(_elevel_perm_select, array("selu" => $selu,
-                                                              "selt" => $selt));
+                //User Levels
+                $levels = ['banned' => _admin_level_banned, 1 => _status_user, 4 => _status_admin];
+                foreach ($levels as $id => $text) {
+                    if(common::$chkMe != 4 && $id == 4)
+                        continue;
+
+                    $elevel .= common::select_field($id,($get['level'] == $id),$text);
                 }
 
                 $smarty->caching = false;

@@ -31,7 +31,12 @@ if(defined('_UserMenu')) {
                 } else {
                     common::$sql['default']->insert("INSERT INTO `{prefix_userbuddys}` SET `user` = ?, `buddy` = ?;",
                     array(intval(common::$userid),intval($_POST['users'])));
-                    $msg = show(_buddy_added_msg, array("user" => common::autor(common::$userid)));
+
+                    $smarty->caching = false;
+                    $smarty->assign('user',common::autor(common::$userid));
+                    $msg = $smarty->fetch('string:'._buddy_added_msg);
+                    $smarty->clearAllAssign();
+
                     $title = _buddy_title;
                     common::$sql['default']->insert("INSERT INTO `{prefix_messages}` SET "
                                . "`datum` = ".time().", "
@@ -54,7 +59,11 @@ if(defined('_UserMenu')) {
                 } else {
                     common::$sql['default']->insert("INSERT INTO `{prefix_userbuddys}` SET `user` = ?, `buddy` = ?;",array(intval(common::$userid),intval($user)));
 
-                    $msg = show(_buddy_added_msg, array("user" => addslashes(common::autor(common::$userid))));
+                    $smarty->caching = false;
+                    $smarty->assign('user',common::autor(common::$userid));
+                    $msg = $smarty->fetch('string:'._buddy_added_msg);
+                    $smarty->clearAllAssign();
+
                     $title = _buddy_title;
                     common::$sql['default']->insert("INSERT INTO `{prefix_messages}` SET "
                                . "`datum` = ".time().", "
@@ -71,7 +80,11 @@ if(defined('_UserMenu')) {
                     common::$sql['default']->delete("DELETE FROM `{prefix_userbuddys}` "
                                . "WHERE `buddy` = ? AND `user` = ?;",array(intval($_GET['id']),common::$userid));
 
-                    $msg = show(_buddy_del_msg, array("user" => addslashes(common::autor(common::$userid))));
+                    $smarty->caching = false;
+                    $smarty->assign('user',addslashes(common::autor(common::$userid)));
+                    $msg = $smarty->fetch('string:'._buddy_del_msg);
+                    $smarty->clearAllAssign();
+
                     $title = _buddy_title;
                     common::$sql['default']->insert("INSERT INTO `{prefix_messages}` SET "
                                . "`datum` = ".time().", "

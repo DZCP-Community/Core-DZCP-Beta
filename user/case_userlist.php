@@ -136,8 +136,14 @@ if(defined('_UserMenu')) {
         $userliste .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/userliste/userliste_show.tpl',common::getSmartyCacheHash('userlist_id_'.$get['id']));
         $smarty->clearAllAssign(); $color++;
     }
-    
-    $userliste = (empty($userliste) ? show(_no_entrys_found, array("colspan" => "13")) : $userliste);
+
+    if(empty($userliste)) {
+        $smarty->caching = false;
+        $smarty->assign('colspan', 13);
+        $userliste = $smarty->fetch('string:' . _no_entrys_found);
+        $smarty->clearAllAssign();
+    }
+
     $seiten = common::nav($entrys,settings::get('m_userlist'),"?action=userlist".(!empty($show_sql) ? "&show=".$show_sql : "").common::orderby_nav());
     $edel = common::permission("editusers") ? '<td class="contentMainTop" colspan="3">&nbsp;</td>' : "";
     $search = isset($_GET['search']) && !empty($_GET['search']) ? $_GET['search'] : _nick;
