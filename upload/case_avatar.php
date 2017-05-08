@@ -52,11 +52,18 @@ if(defined('_Upload')) {
                 $index = common::info(_delete_pic_successful, "../user/?action=editprofile");
             break;
             default:
-                $infos = show(_upload_userava_info, ["userpicsize" => settings::get('upicsize')]);
-                $index = show($dir."/upload", ["uploadhead" => _upload_ava_head,
-                                                    "name" => "file",
-                                                    "action" => "?action=avatar&amp;do=upload",
-                                                    "infos" => $infos]);
+                $smarty->caching = false;
+                $smarty->assign('userpicsize',settings::get('upicsize'));
+                $infos = $smarty->fetch('string:'._upload_userava_info);
+                $smarty->clearAllAssign();
+
+                $smarty->caching = false;
+                $smarty->assign('uploadhead',_upload_ava_head);
+                $smarty->assign('name','file');
+                $smarty->assign('action','?action=avatar&amp;do=upload');
+                $smarty->assign('infos',$infos);
+                $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/upload.tpl');
+                $smarty->clearAllAssign();
             break;
         }
     }
