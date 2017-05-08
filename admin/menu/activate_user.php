@@ -22,7 +22,6 @@ switch ($do) {
     case 'activate':
         common::$sql['default']->update("UPDATE `{prefix_users}` SET `level` = 1, `status` = 1, `actkey` = '' WHERE `id` = ?;", [intval($_GET['id'])]);
         $show = common::info(_actived, "?admin=activate_user", 2);
-
     break;
     case 'delete':
         if(($id = isset($_GET['id']) ? $_GET['id'] : false) != false) {
