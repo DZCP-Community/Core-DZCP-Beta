@@ -22,25 +22,34 @@ switch($do) {
     case 'add':
         $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_newskat}`;"); $kat = '';
         foreach($qryk as $getk) {
-            $kat .= show(_select_field, array("value" => $getk['id'],"sel" => "","what" => stringParser::decode($getk['kategorie'])));
+            $smarty->caching = false;
+            $smarty->assign('value',$getk['id']);
+            $smarty->assign('sel','');
+            $smarty->assign('what',stringParser::decode($getk['kategorie']));
+            $kat = $smarty->fetch('string:'._select_field);
+            $smarty->clearAllAssign();
         }
 
-        $show = show($dir."/artikel_form", array("head" => _artikel_add,
-                                                 "autor" => common::autor(common::$userid),
-                                                 "kat" => $kat,
-                                                 "do" => "insert",
-                                                 "error" => "",
-                                                 "titel" => "",
-                                                 "artikeltext" => "",
-                                                 "link1" => "",
-                                                 "link2" => "",
-                                                 "link3" => "",
-                                                 "url1" => "",
-                                                 "url2" => "",
-                                                 "url3" => "",
-                                                 "button" => _button_value_add,
-                                                 "n_artikelpic" => '',
-                                                 "delartikelpic" => ''));
+
+        $smarty->caching = false;
+        $smarty->assign('head',_artikel_add);
+        $smarty->assign('autor',common::autor(common::$userid));
+        $smarty->assign('kat',$kat);
+        $smarty->assign('do',insert);
+        $smarty->assign('error','');
+        $smarty->assign('titel','');
+        $smarty->assign('artikeltext','');
+        $smarty->assign('link1','');
+        $smarty->assign('link2','');
+        $smarty->assign('link3','');
+        $smarty->assign('url1','');
+        $smarty->assign('url2','');
+        $smarty->assign('url3','');
+        $smarty->assign('button',_button_value_add);
+        $smarty->assign('n_artikelpic','');
+        $smarty->assign('delartikelpic','');
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/artikel_form.tpl');
+        $smarty->clearAllAssign();
     break;
     case 'insert':
         if(empty($_POST['titel']) || empty($_POST['artikel'])) {
@@ -51,9 +60,12 @@ switch($do) {
             $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_newskat}`;"); $kat = '';
             foreach($getk as $getk) {
                 $sel = ($_POST['kat'] == $getk['id'] ? 'selected="selected"' : '');
-                $kat .= show(_select_field, array("value" => $getk['id'],
-                                                  "sel" => $sel,
-                                                  "what" => stringParser::decode($getk['kategorie'])));
+                $smarty->caching = false;
+                $smarty->assign('value',$getk['id']);
+                $smarty->assign('sel',$sel);
+                $smarty->assign('what',stringParser::decode($getk['kategorie']));
+                $kat .= $smarty->fetch('string:'._select_field);
+                $smarty->clearAllAssign();
             }
 
             $error = show("errors/errortable", array("error" => $error));

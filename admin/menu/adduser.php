@@ -151,16 +151,28 @@ if(empty($show)) {
     foreach($qrygroups as $getgroups) {
         $qrypos = common::$sql['default']->select("SELECT `id`,`position` FROM `{prefix_positions}` ORDER BY `pid`;"); $posi = "";
         foreach($qrypos as $getpos) {
-            $posi .= show(_select_field_posis, ["value" => $getpos['id'], "sel" => "", "what" => stringParser::decode($getpos['position'])]);
+            $smarty->caching = false;
+            $smarty->assign('value',$getpos['id']);
+            $smarty->assign('sel','');
+            $smarty->assign('what',stringParser::decode($getpos['position');
+            $posi .= $smarty->fetch('string:'._select_field_posis);
+            $smarty->clearAllAssign();
         }
-
-        $egroups .= show(_checkfield_squads, ["id" => $getgroups['id'], "check" => "","eposi" => $posi,"squad" => stringParser::decode($getgroups['name'])]);
+        $smarty->caching = false;
+        $smarty->assign('id',$getgroups['id']);
+        $smarty->assign('check','');
+        $smarty->assign('eposi',$posi);
+        $smarty->assign('squad',stringParser::decode($getgroups['name']);
+        $egroups .= $smarty->fetch('string:'._checkfield_squads);
+        $smarty->clearAllAssign();
     }
-
-    $show = show($dir."/register", ["groups" => $egroups,
-                                         "getpermissions" => common::getPermissions(),
-                                         "getboardpermissions" => common::getBoardPermissions(),
-                                         "dropdown_age" => $dropdown_age,
-                                         "country" => common::show_countrys(),
-                                         "alvl" => ""]);
+    $smarty->caching = false;
+    $smarty->assign('groups',$egroups);
+    $smarty->assign('getpermissions',common::getPermissions());
+    $smarty->assign('getboardpermissions',common::getBoardPermissions());
+    $smarty->assign('dropdown_age',$dropdown_age);
+    $smarty->assign('country',common::show_countrys());
+    $smarty->assign('alvl','');
+    $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/register.tpl');
+    $smarty->clearAllAssign();
 }
