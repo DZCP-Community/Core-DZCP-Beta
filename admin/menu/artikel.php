@@ -67,24 +67,31 @@ switch($do) {
                 $kat .= $smarty->fetch('string:'._select_field);
                 $smarty->clearAllAssign();
             }
+            $smarty->caching = false;
+            $smarty->assign('error',$error);
+            $error = $smarty->fetch('file:['.common::$tmpdir.']errors/errortable.tpl');
+            $smarty->clearAllAssign();
 
-            $error = show("errors/errortable", array("error" => $error));
-            $show = show($dir."/artikel_form", array("head" => _artikel_add,
-                                                     "autor" => common::autor(common::$userid),
-                                                     "kat" => $kat,
-                                                     "do" => "insert",
-                                                     "titel" => stringParser::decode($_POST['titel']),
-                                                     "artikeltext" => stringParser::decode($_POST['artikel']),
-                                                     "link1" => stringParser::decode($_POST['link1']),
-                                                     "link2" => stringParser::decode($_POST['link2']),
-                                                     "link3" => stringParser::decode($_POST['link3']),
-                                                     "url1" => $_POST['url1'],
-                                                     "url2" => $_POST['url2'],
-                                                     "url3" => $_POST['url3'],
-                                                     "button" => _button_value_add,
-                                                     "error" => $error,
-                                                     "n_artikelpic" => '',
-                                                     "delartikelpic" => ''));
+
+            $smarty->caching = false;
+            $smarty->assign('head',_artikel_add);
+            $smarty->assign('autor',common::autor(common::$userid));
+            $smarty->assign('kat',$kat);
+            $smarty->assign('do',"insert");
+            $smarty->assign('titel',stringParser::decode($_POST['titel']));
+            $smarty->assign('artikeltext',stringParser::decode($_POST['artikel']));
+            $smarty->assign('link1',stringParser::decode($_POST['link1']));
+            $smarty->assign('link2',stringParser::decode($_POST['link2']));
+            $smarty->assign('link3',stringParser::decode($_POST['link3']));
+            $smarty->assign('url1',$_POST['url1']);
+            $smarty->assign('url2',$_POST['url2']);
+            $smarty->assign('url3',$_POST['url3']);
+            $smarty->assign('button',_button_value_add);
+            $smarty->assign('error',$error);
+            $smarty->assign('n_artikelpic','');
+            $smarty->assign('delartikelpic','');
+            $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/artikel_form.tpl');
+            $smarty->clearAllAssign();
         } else {
             if(isset($_POST)) {
                 common::$sql['default']->insert("INSERT INTO `{prefix_artikel}` SET `autor` = ?, `kat` = ?, `titel` = ?, `text` = ?, "
@@ -108,7 +115,13 @@ switch($do) {
         $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_newskat}`;"); $kat = '';
         foreach($qryk as $getk) {
             $sel = ($get['kat'] == $getk['id'] ? 'selected="selected"' : '');
-            $kat .= show(_select_field, array("value" => $getk['id'], "sel" => $sel, "what" => stringParser::decode($getk['kategorie'])));
+
+            $smarty->caching = false;
+            $smarty->assign('value',$getk['id']);
+            $smarty->assign('sel',$sel);
+            $smarty->assign('what',stringParser::decode($getk['kategorie']));
+            $kat .= $smarty->fetch('string:'._select_field);
+            $smarty->clearAllAssign();
         }
 
         $artikelimage = ""; $delartikelpic = "";
@@ -118,32 +131,38 @@ switch($do) {
                 $delartikelpic = '<a href="?admin=artikel&do=delartikelpic&id='.$_GET['id'].'">'._artikelpic_del.'</a><br /><br />';
             }
         }
+        $smarty->caching = false;
+        $smarty->assign('id', $_GET['id']);
+        $do = $smarty->fetch('string:'._artikel_edit_link);
+        $smarty->clearAllAssign();
 
-        $do = show(_artikel_edit_link, array("id" => $_GET['id']));
-        $show = show($dir."/artikel_form", array("head" => _artikel_edit,
-                                                 "nautor" => _autor,
-                                                 "autor" => common::autor(common::$userid),
-                                                 "nkat" => _news_admin_kat,
-                                                 "preview" => _preview,
-                                                 "kat" => $kat,
-                                                 "do" => $do,
-                                                 "ntitel" => _titel,
-                                                 "titel" => stringParser::decode($get['titel']),
-                                                 "artikeltext" => stringParser::decode($get['text']),
-                                                 "link1" => stringParser::decode($get['link1']),
-                                                 "link2" => stringParser::decode($get['link2']),
-                                                 "link3" => stringParser::decode($get['link3']),
-                                                 "url1" => stringParser::decode($get['url1']),
-                                                 "url2" => stringParser::decode($get['url2']),
-                                                 "url3" => stringParser::decode($get['url3']),
-                                                 "ntext" => _eintrag,
-                                                 "error" => "",
-                                                 "button" => _button_value_edit,
-                                                 "linkname" => _linkname,
-                                                 "aimage" => _artikel_userimage,
-                                                 "n_artikelpic" => $artikelimage,
-                                                 "delartikelpic" => $delartikelpic,
-                                                 "nurl" => _url));
+        $smarty->caching = false;
+        $smarty->assign('head',_artikel_edit);
+        $smarty->assign('nautor',_autor);
+        $smarty->assign('autor',common::autor(common::$userid));
+        $smarty->assign('nkat',_news_admin_kat);
+        $smarty->assign('preview',_preview);
+        $smarty->assign('kat',$kat);
+        $smarty->assign('do',$do);
+        $smarty->assign('ntitel',_titel);
+        $smarty->assign('titel',stringParser::decode($get['titel']));
+        $smarty->assign('artikeltext',stringParser::decode($get['text']));
+        $smarty->assign('link1',stringParser::decode($get['link1']));
+        $smarty->assign('link2',stringParser::decode($get['link2']));
+        $smarty->assign('link3',stringParser::decode($get['link3']));
+        $smarty->assign('url1',stringParser::decode($get['url1']));
+        $smarty->assign('url2',stringParser::decode($get['url2']));
+        $smarty->assign('url3',stringParser::decode($get['url3']));
+        $smarty->assign('ntext',_eintrag);
+        $smarty->assign('error','');
+        $smarty->assign('button',_button_value_edit);
+        $smarty->assign('linkname',_linkname);
+        $smarty->assign('aimage',_artikel_userimage);
+        $smarty->assign('n_artikelpic',$artikelimage);
+        $smarty->assign('delartikelpic',$delartikelpic);
+        $smarty->assign('nurl',_url);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/artikel_form.tpl');
+        $smarty->clearAllAssign();
     break;
     case 'editartikel':
         if(isset($_POST)) {
@@ -237,26 +256,38 @@ switch($do) {
         foreach($qry as $get) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
 
-            $delete = show("page/button_delete_single", array("id" => $get['id'],
-                                                              "action" => "admin=artikel&amp;do=delete",
-                                                              "title" => _button_title_del,
-                                                              "del" => _confirm_del_artikel));
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('action',"admin=artikel&amp;do=delete");
+            $smarty->assign('title',_button_title_del);
+            $smarty->assign('del',_confirm_del_artikel);
+            $delete = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_delete_single.tpl');
+            $smarty->clearAllAssign();
 
-            $titel = show(_artikel_show_link, array("titel" => common::cut(stringParser::decode($get['titel']),settings::get('l_newsadmin')), "id" => $get['id']));
+            $smarty->caching = false;
+            $smarty->assign('titel',common::cut(stringParser::decode($get['titel']),settings::get('l_newsadmin')));
+            $smarty->assign('id',$get['id']);
+            $titel = $smarty->fetch('string:'._artikel_show_link);
+            $smarty->clearAllAssign();
+
             $public = ($get['public'] ? '<a href="?admin=artikel&amp;do=public&amp;id='.$get['id'].'&amp;what=unset"><img src="../inc/images/public.gif" alt="" title="'._non_public.'" /></a>'
                     : '<a href="?admin=artikel&amp;do=public&amp;id='.$get['id'].'&amp;what=set"><img src="../inc/images/nonpublic.gif" alt="" title="'._public.'" /></a>');
 
             $datum = empty($get['datum']) ? _no_public : date("d.m.y H:i", $get['datum'])._uhr;
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $show .= show($dir."/admin_show", array("date" => $datum,
-                                                    "titel" => $titel,
-                                                    "class" => $class,
-                                                    "autor" => common::autor($get['autor']),
-                                                    "intnews" => "",
-                                                    "sticky" => "",
-                                                    "public" => $public,
-                                                    "edit" => $edit,
-                                                    "delete" => $delete));
+
+            $smarty->caching = false;
+            $smarty->assign('date',$datum);
+            $smarty->assign('titel',$titel);
+            $smarty->assign('class',$class);
+            $smarty->assign('autor',common::autor($get['autor']));
+            $smarty->assign('intnews','');
+            $smarty->assign('sticky','');
+            $smarty->assign('public',$public);
+            $smarty->assign('edit',$edit);
+            $smarty->assign('delete',$delete);
+            $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin_show.tpl');
+            $smarty->clearAllAssign();
         }
 
         if(empty($show))
@@ -264,13 +295,20 @@ switch($do) {
 
         $entrys = common::cnt('{prefix_artikel}');
         $nav = common::nav($entrys,settings::get('m_adminnews'),"?admin=artikel".(isset($_GET['show']) ? $_GET['show'] : '').common::orderby_nav());
-        $show = show($dir."/admin_news", array("head" => _artikel,
-                                               "nav" => $nav,
-                                               "order_autor" => common::orderby('autor'),
-                                               "order_date" => common::orderby('datum'),
-                                               "order_titel" => common::orderby('titel'),
-                                               "show" => $show,
-                                               "val" => "artikel",
-                                               "add" => _artikel_add));
+        $smarty->caching = false;
+        $smarty->assign('head',_artikel);
+        $smarty->assign('nav',$nav);
+        $smarty->assign('order_autor',common::orderby('autor'));
+        $smarty->assign('order_date',common::orderby('datum'));
+        $smarty->assign('order_titel',common::orderby('titel'));
+        $smarty->assign('show',$show);
+        $smarty->assign('val',"artikel");
+        $smarty->assign('add',_artikel_add);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin_news.tpl');
+        $smarty->clearAllAssign();
+
+
+
+
     break;
 }

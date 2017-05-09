@@ -124,92 +124,97 @@ $smtp_secure_options = show('<option '.(!settings::get('smtp_tls_ssl') ? 'select
 . '<option '.(settings::get('smtp_tls_ssl') == 1 ? 'selected="selected"' : '').' value="1">TLS</option>'
 . '<option '.(settings::get('smtp_tls_ssl') == 2 ? 'selected="selected"' : '').' value="2">SSL</option>');
 
-$show = show($dir."/form_config", array( "main_info"             => _main_info,
-                                         "badword_info"          => _admin_config_badword_info,
-                                         "eml_info"              => _admin_eml_info,
-                                         "reg_info"              => _admin_reg_info,
-                                         "c_limits_what"         => _config_c_limits_what,
-                                         "c_floods_what"         => _config_c_floods_what,
-                                         "c_length_what"         => _config_c_length_what,
-                                         "c_eml_reg_subj"        => stringParser::decode(settings::get('eml_reg_subj')),
-                                         "c_eml_pwd_subj"        => stringParser::decode(settings::get('eml_pwd_subj')),
-                                         "c_eml_nletter_subj"    => stringParser::decode(settings::get('eml_nletter_subj')),
-                                         "c_eml_pn_subj"         => stringParser::decode(settings::get('eml_pn_subj')),
-                                         "c_eml_fabo_npost_subj" => stringParser::decode(settings::get('eml_fabo_npost_subj')),
-                                         "c_eml_fabo_tedit_subj" => stringParser::decode(settings::get('eml_fabo_tedit_subj')),
-                                         "c_eml_fabo_pedit_subj" => stringParser::decode(settings::get('eml_fabo_pedit_subj')),
-                                         "c_eml_akl_regist_subj" => stringParser::decode(settings::get('eml_akl_register_subj')),
-                                         "c_eml_reg"             => stringParser::decode(settings::get('eml_reg')),
-                                         "c_eml_pwd"             => stringParser::decode(settings::get('eml_pwd')),
-                                         "c_eml_nletter"         => stringParser::decode(settings::get('eml_nletter')),
-                                         "c_eml_pn"              => stringParser::decode(settings::get('eml_pn')),
-                                         "c_eml_fabo_tedit"      => stringParser::decode(settings::get('eml_fabo_tedit')),
-                                         "c_eml_fabo_pedit"      => stringParser::decode(settings::get('eml_fabo_pedit')),
-                                         "c_eml_fabo_nposr"      => stringParser::decode(settings::get('eml_fabo_npost')),
-                                         "c_eml_akl_register"    => stringParser::decode(settings::get('eml_akl_register')),
-                                         "c_eml_lpwd_subj"       => stringParser::decode(settings::get('eml_lpwd_key_subj')),
-                                         "c_eml_lpwd"            => stringParser::decode(settings::get('eml_lpwd_key')),
-                                         "memcache_host"         => stringParser::decode(settings::get('memcache_host')),
-                                         "memcache_port"         => intval(settings::get('memcache_port')),
-                                         "tmplsel"               => $tmplsel,
-                                         "maxwidth"              => intval(settings::get('maxwidth')),
-                                         "mailfrom"              => stringParser::decode(settings::get('mailfrom')),
-                                         "l_lreg"                => intval(settings::get('l_lreg')),
-                                         "m_lreg"                => intval(settings::get('m_lreg')),
-                                         "badwords"              => stringParser::decode(settings::get('badwords')),
-                                         "regcode"               => intval(settings::get('regcode')),
-                                         "m_lnews"               => intval(settings::get('m_lnews')),
-                                         "m_lartikel"            => intval(settings::get('m_lartikel')),
-                                         "m_ftopics"             => intval(settings::get('m_ftopics')),
-                                         "m_events"              => intval(settings::get('m_events')),
-                                         "m_topdl"               => intval(settings::get('m_topdl')),
-                                         "m_userlist"            => intval(settings::get('m_userlist')),
-                                         "m_adminnews"           => intval(settings::get('m_adminnews')),
-                                         "m_comments"            => intval(settings::get('m_comments')),
-                                         "m_archivnews"          => intval(settings::get('m_archivnews')),
-                                         "m_fthreads"            => intval(settings::get('m_fthreads')),
-                                         "m_fposts"              => intval(settings::get('m_fposts')),
-                                         "m_news"                => intval(settings::get('m_news')),
-                                         "m_upicsize"            => intval(settings::get('upicsize')),
-                                         "f_forum"               => intval(settings::get('f_forum')),
-                                         "f_newscom"             => intval(settings::get('f_newscom')),
-                                         "m_artikel"             => intval(settings::get('m_artikel')),
-                                         "m_adminartikel"        => intval(settings::get('m_adminartikel')),
-                                         "c_wmodus"              => intval(settings::get('wmodus')),
-                                         "l_newsadmin"           => intval(settings::get('l_newsadmin')),
-                                         "l_newsarchiv"          => intval(settings::get('l_newsarchiv')),
-                                         "l_forumtopic"          => intval(settings::get('l_forumtopic')),
-                                         "l_forumsubtopic"       => intval(settings::get('l_forumsubtopic')),
-                                         "l_topdl"               => intval(settings::get('l_topdl')),
-                                         "l_ftopics"             => intval(settings::get('l_ftopics')),
-                                         "l_lnews"               => intval(settings::get('l_lnews')),
-                                         "l_lartikel"            => intval(settings::get('l_lartikel')),
-                                         "f_artikelcom"          => intval(settings::get('f_artikelcom')),
-                                         "clanname"              => stringParser::decode(settings::get('clanname')),
-                                         "pagetitel"             => stringParser::decode(settings::get('pagetitel')),
-                                         "smtp_host"             => stringParser::decode(settings::get('smtp_hostname')),
-                                         "smtp_username"         => stringParser::decode(settings::get('smtp_username')),
-                                         "smtp_pass"             => session::decode(settings::get('smtp_password')),
-                                         "smtp_port"             => intval(settings::get('smtp_port')),
-                                         "sendmail_path"         => stringParser::decode(settings::get('sendmail_path')),
-                                         "smtp_tls_ssl"          => $smtp_secure_options,
-                                         "lang"                  => $lang,
-                                         "mail_ext_select"       => $mail_options,
-                                         "sel_akl"               => (settings::get('use_akl') == 1 ? 'selected="selected"' : ''),
-                                         "sel_akl_ad"            => (settings::get('use_akl') == 2 ? 'selected="selected"' : ''),
-                                         "selyes"                => (settings::get('regcode') ? 'selected="selected"' : ''),
-                                         "selno"                 => (!settings::get('regcode') ? 'selected="selected"' : ''),
-                                         "selwm"                 => (settings::get('wmodus') ? 'selected="selected"' : ''),
-                                         "sel_fv"                => (settings::get('forum_vote') ? 'selected="selected"' : ''),
-                                         "sel_sl"                => (settings::get('securelogin') ? 'selected="selected"' : ''),
-                                         "sel_dp"                => (settings::get('double_post') ? 'selected="selected"' : ''),
-                                         "selr_nc"               => (settings::get('reg_newscomments') ? 'selected="selected"' : ''),
-                                         "selr_forum"            => (settings::get('reg_forum') ? 'selected="selected"' : ''),
-                                         "selr_dl"               => (settings::get('reg_dl') ? 'selected="selected"' : ''),
-                                         "selr_artikel"          => (settings::get('reg_artikel') ? 'selected="selected"' : ''),
-                                         "sel_url"               => (settings::get('urls_linked') ? 'selected="selected"' : ''),
-                                         "selfeed"               => (settings::get('news_feed') ? 'selected="selected"' : ''),
-                                         "sel_refresh"           => (settings::get('direct_refresh') ? ' selected="selected"' : ''),
-                                         "pwde_options"          => $pwde_options));
+
+$smarty->caching = false;
+$smarty->assign('main_info',_main_info);
+$smarty->assign('badword_info',_admin_config_badword_info);
+$smarty->assign('eml_info',_admin_eml_info);
+$smarty->assign('reg_info',_admin_reg_info);
+$smarty->assign('c_limits_what',_config_c_limits_what);
+$smarty->assign('c_floods_what',_config_c_floods_what);
+$smarty->assign('c_length_what',_config_c_length_what);
+$smarty->assign('c_eml_reg_subj',stringParser::decode(settings::get('eml_reg_subj')));
+$smarty->assign('c_eml_pwd_subj',stringParser::decode(settings::get('eml_pwd_subj')));
+$smarty->assign('c_eml_nletter_subj',stringParser::decode(settings::get('eml_nletter_subj')));
+$smarty->assign('c_eml_pn_subj',stringParser::decode(settings::get('eml_pn_subj')));
+$smarty->assign('c_eml_fabo_npost_subj',stringParser::decode(settings::get('eml_fabo_npost_subj')));
+$smarty->assign('c_eml_fabo_tedit_subj',stringParser::decode(settings::get('eml_fabo_tedit_subj')));
+$smarty->assign('c_eml_fabo_pedit_subj',stringParser::decode(settings::get('eml_fabo_pedit_subj')));
+$smarty->assign('c_eml_akl_regist_subj',stringParser::decode(settings::get('eml_akl_regist_subj')));
+$smarty->assign('c_eml_reg',stringParser::decode(settings::get('eml_reg')));
+$smarty->assign('c_eml_pwd',stringParser::decode(settings::get('eml_pwd')));
+$smarty->assign('c_eml_nletter',stringParser::decode(settings::get('eml_nletter')));
+$smarty->assign('c_eml_pn',stringParser::decode(settings::get('eml_pn')));
+$smarty->assign('c_eml_fabo_tedit',stringParser::decode(settings::get('eml_fabo_tedit')));
+$smarty->assign('c_eml_fabo_pedit',stringParser::decode(settings::get('eml_fabo_pedit')));
+$smarty->assign('c_eml_fabo_nposr',stringParser::decode(settings::get('eml_fabo_nposr')));
+$smarty->assign('c_eml_akl_register',stringParser::decode(settings::get('eml_akl_register')));
+$smarty->assign('c_eml_lpwd_subj',stringParser::decode(settings::get('eml_lpwd_subj')));
+$smarty->assign('c_eml_lpwd',stringParser::decode(settings::get('eml_lpwd')));
+$smarty->assign('memcache_host',stringParser::decode(settings::get('memcache_host')));
+$smarty->assign('memcache_port',intval(settings::get('memcache_port')));
+$smarty->assign('tmplsel',$tmplsel);
+$smarty->assign('maxwidth',intval(settings::get('maxwidth')));
+$smarty->assign('mailfrom',stringParser::decode(settings::get('mailfrom')));
+$smarty->assign('l_lreg',intval(settings::get('l_lreg')));
+$smarty->assign('m_lreg',intval(settings::get('m_lreg')));
+$smarty->assign('badwords',stringParser::decode(settings::get('badwords')));
+$smarty->assign('regcode',intval(settings::get('regcode')));
+$smarty->assign('m_lnews',intval(settings::get('m_lnews')));
+$smarty->assign('m_lartikel',intval(settings::get('m_lartikel')));
+$smarty->assign('m_ftopics',intval(settings::get('m_ftopics')));
+$smarty->assign('m_events',intval(settings::get('m_events')));
+$smarty->assign('m_topdl',intval(settings::get('m_topdl')));
+$smarty->assign('m_userlist',intval(settings::get('m_userlist')));
+$smarty->assign('m_adminnews',intval(settings::get('m_adminnews')));
+$smarty->assign('m_comments',intval(settings::get('m_comments')));
+$smarty->assign('m_archivnews',intval(settings::get('m_archivnews')));
+$smarty->assign('m_fthreads',intval(settings::get('m_fthreads')));
+$smarty->assign('m_fposts',intval(settings::get('m_fposts')));
+$smarty->assign('m_news',intval(settings::get('m_news')));
+$smarty->assign('m_upicsize',intval(settings::get('upicsize')));
+$smarty->assign('f_forum',intval(settings::get('f_forum')));
+$smarty->assign('f_newscom',intval(settings::get('f_newscom')));
+$smarty->assign('m_artikel',intval(settings::get('m_artikel')));
+$smarty->assign('m_adminartikel',intval(settings::get('m_adminartikel')));
+$smarty->assign('c_wmodus',intval(settings::get('wmodus')));
+$smarty->assign('l_newsadmin',intval(settings::get('l_newsadmin')));
+$smarty->assign('l_newsarchiv',intval(settings::get('l_newsarchiv')));
+$smarty->assign('l_forumtopic',intval(settings::get('l_forumtopic')));
+$smarty->assign('l_forumsubtopic',intval(settings::get('l_forumsubtopic')));
+$smarty->assign('l_topdl',intval(settings::get('l_topdl')));
+$smarty->assign('l_ftopics',intval(settings::get('l_ftopics')));
+$smarty->assign('l_lnews',intval(settings::get('l_lnews')));
+$smarty->assign('l_lartikel',intval(settings::get('l_lartikel')));
+$smarty->assign('f_artikelcom',intval(settings::get('f_artikelcom')));
+$smarty->assign('clanname',stringParser::decode(settings::get('clanname')));
+$smarty->assign('pagetitel',stringParser::decode(settings::get('pagetitel')));
+$smarty->assign('smtp_host',stringParser::decode(settings::get('smtp_hostname')));
+$smarty->assign('smtp_username',stringParser::decode(settings::get('smtp_username')));
+$smarty->assign('smtp_pass',session::decode(settings::get('smtp_password')));
+$smarty->assign('smtp_port',intval(settings::get('smtp_port')));
+$smarty->assign('sendmail_path',stringParser::decode(settings::get('sendmail_path')));
+$smarty->assign('smtp_tls_ssl',$smtp_secure_options);
+$smarty->assign('lang',$lang);
+$smarty->assign('mail_ext_select',$mail_options);
+$smarty->assign('sel_akl',(settings::get('use_akl') == 1 ? 'selected="selected"' : ''));
+$smarty->assign('sel_akl_ad',(settings::get('use_akl') == 2 ? 'selected="selected"' : ''));
+$smarty->assign('selyes',(settings::get('regcode') ? 'selected="selected"' : ''));
+$smarty->assign('selno',(!settings::get('regcode') ? 'selected="selected"' : ''));
+$smarty->assign('selwm',(settings::get('wmodus') ? 'selected="selected"' : ''));
+$smarty->assign('sel_fv',(settings::get('forum_vote') ? 'selected="selected"' : ''));
+$smarty->assign('sel_sl',(settings::get('securelogin') ? 'selected="selected"' : ''));
+$smarty->assign('sel_dp',(settings::get('double_post') ? 'selected="selected"' : ''));
+$smarty->assign('selr_nc',(settings::get('reg_newscomments') ? 'selected="selected"' : ''));
+$smarty->assign('selr_forum',(settings::get('reg_forum') ? 'selected="selected"' : ''));
+$smarty->assign('selr_dl',(settings::get('reg_dl') ? 'selected="selected"' : ''));
+$smarty->assign('selr_artikel',(settings::get('reg_artikel') ? 'selected="selected"' : ''));
+$smarty->assign('sel_url',(settings::get('urls_linked') ? 'selected="selected"' : ''));
+$smarty->assign('selfeed',(settings::get('news_feed') ? 'selected="selected"' : ''));
+$smarty->assign('sel_refresh',(settings::get('direct_refresh') ? 'selected="selected"' : ''));
+$smarty->assign('pwde_options',$pwde_options);
+$show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_config.tpl');
+$smarty->clearAllAssign();
+
 
 $show = show($dir."/form", array("head" => _config_global_head, "what" => "config", "value" => _button_value_config, "show" => $show));

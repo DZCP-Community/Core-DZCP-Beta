@@ -1012,7 +1012,7 @@ span.navCwLost,span.CwLost {
 /*---------------------------------------------
 Attributes of the errortable
 -----------------------------------------------
-errors/errortable.html
+errors/errortable.tpl
 ---------------------------------------------*/
 td.error {
   text-align: center;

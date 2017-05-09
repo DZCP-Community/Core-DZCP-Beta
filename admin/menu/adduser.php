@@ -154,7 +154,7 @@ if(empty($show)) {
             $smarty->caching = false;
             $smarty->assign('value',$getpos['id']);
             $smarty->assign('sel','');
-            $smarty->assign('what',stringParser::decode($getpos['position');
+            $smarty->assign('what',stringParser::decode($getpos['position']));
             $posi .= $smarty->fetch('string:'._select_field_posis);
             $smarty->clearAllAssign();
         }
@@ -162,7 +162,7 @@ if(empty($show)) {
         $smarty->assign('id',$getgroups['id']);
         $smarty->assign('check','');
         $smarty->assign('eposi',$posi);
-        $smarty->assign('squad',stringParser::decode($getgroups['name']);
+        $smarty->assign('squad',stringParser::decode($getgroups['name']));
         $egroups .= $smarty->fetch('string:'._checkfield_squads);
         $smarty->clearAllAssign();
     }
