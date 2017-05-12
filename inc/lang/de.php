@@ -1186,10 +1186,10 @@ define('_upload_button', 'Hochladen');
 define('_upload_over_limit', 'Du darfst nicht mehr Bilder hochladen! L&ouml;sche alte Bilder um neue hochladen zu d&uuml;rfen!');
 define('_upload_file_exists', 'Die angegebene Datei existiert bereits! Benenne die Datei um oder w&auml;hle eine andere Datei aus!');
 define('_upload_head', 'Userbild uploaden');
-define('_upload_userpic_info', 'Nur jpg, gif oder png Dateien mit einer maximalen Gr&ouml;&szlig;e von [userpicsize]KB!<br />Die empfohlene Gr&ouml;&szlig;e ist 170px * 210px ');
+define('_upload_userpic_info', 'Nur jpg, gif oder png Dateien mit einer maximalen Gr&ouml;&szlig;e von {$userpicsize}KB!<br />Die empfohlene Gr&ouml;&szlig;e ist 170px * 210px ');
 define('_upload_icons_head', 'GameIcons');
 define('_upload_ava_head', 'Useravatar');
-define('_upload_userava_info', 'Nur jpg, gif oder png Dateien mit einer maximalen Gr&ouml;&szlig;e von [userpicsize]KB!<br />Die empfohlene Gr&ouml;&szlig;e ist 100px * 100px ');
+define('_upload_userava_info', 'Nur jpg, gif oder png Dateien mit einer maximalen Gr&ouml;&szlig;e von {$userpicsize}KB!<br />Die empfohlene Gr&ouml;&szlig;e ist 100px * 100px ');
 define('_upload_newskats_head', 'Kategoriebilder');
 ## Unzugeordnet ##
 define('_forum_no_last_post', 'Der letzte Post kann leider nicht angezeigt werden!');

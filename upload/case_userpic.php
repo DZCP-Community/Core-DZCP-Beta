@@ -34,8 +34,12 @@ if(defined('_Upload')) {
                             $file_info[0],$file_info[1],$file_info[2]);
 
                         if(!array_key_exists($file_info['mime'], config::$extensions)) {
-                           $error = show(_upload_usergallery_info, ['userpicsize' => settings::get('upicsize')]);
-                           $index = common::error($error, 1);
+                            $smarty->caching = false;
+                            $smarty->assign('userpicsize',settings::get('upicsize'));
+                            $error = $smarty->fetch('string:'._upload_userpic_info);
+                            $smarty->clearAllAssign();
+
+                            $index = common::error($error, 1);
                         } else {
                             if($_FILES['file']['size'] > (settings::get('upicsize')*1000)) {
                                 $index = common::error(_upload_wrong_size, 1);
@@ -48,7 +52,7 @@ if(defined('_Upload')) {
                                 if(!move_uploaded_file($tmpname, basePath."/inc/images/uploads/userpics/".common::$userid.".".config::$extensions[$file_info['mime']])) {
                                     $index = common::error(_upload_error, 1);
                                 } else {
-                                    $index = common::info(_info_upload_success, "../user/?action=editprofile");
+                                    $index = common::info(_info_upload_success, "../user/?action=editprofile", 5,false);
                                 }
                             }
                         }
@@ -64,11 +68,18 @@ if(defined('_Upload')) {
                 $index = common::info(_delete_pic_successful, "../user/?action=editprofile");
             break;
             default:
-                $infos = show(_upload_userpic_info, ["userpicsize" => settings::get('upicsize')]);
-                $index = show($dir."/upload", ["uploadhead" => _upload_head,
-                                                    "name" => "file",
-                                                    "action" => "?action=userpic&amp;do=upload",
-                                                    "infos" => $infos]);
+                $smarty->caching = false;
+                $smarty->assign('userpicsize',settings::get('upicsize'));
+                $infos = $smarty->fetch('string:'._upload_userpic_info);
+                $smarty->clearAllAssign();
+
+                $smarty->caching = false;
+                $smarty->assign('uploadhead',_upload_head);
+                $smarty->assign('name',"file");
+                $smarty->assign('action',"?action=userpic&amp;do=upload");
+                $smarty->assign('infos',$infos);
+                $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/upload.tpl');
+                $smarty->clearAllAssign();
             break;
         }
     }

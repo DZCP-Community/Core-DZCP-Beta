@@ -14,6 +14,7 @@
     "phpmailer/phpmailer": "v5.2.23",
     "smarty/smarty": "v3.1.31",
     "suin/php-rss-writer": "1.5.0",
-    "jaybizzle/crawler-detect": "v1.2.40"
+    "jaybizzle/crawler-detect": "v1.2.40",
+    "oyejorge/less.php": "v1.7.0.14"
   }
 }

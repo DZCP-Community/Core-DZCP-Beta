@@ -17,37 +17,47 @@
 
 if(defined('_Upload')) {
     if(common::permission('news') || common::permission('artikel')) {
-        if(isset($_GET['edit']))
-            $action = "?action=newskats&amp;do=upload&edit=".$_GET['edit']."";
-        else
-            $action = "?action=newskats&amp;do=upload";
+        switch ($do) {
+            case 'upload':
+                $tmpname = $_FILES['file']['tmp_name'];
+                $name = $_FILES['file']['name'];
+                $type = $_FILES['file']['type'];
+                $size = $_FILES['file']['size'];
 
-        $infos = show(_upload_usergallery_info, ["userpicsize" => settings::get('upicsize')]);
-        $index = show($dir."/upload", ["uploadhead" => _upload_newskats_head,
-                                            "name" => "file",
-                                            "action" => $action,
-                                            "infos" => "-"]);
-
-        if($do == "upload") {
-            $tmpname = $_FILES['file']['tmp_name'];
-            $name = $_FILES['file']['name'];
-            $type = $_FILES['file']['type'];
-            $size = $_FILES['file']['size'];
-
-            if(!$tmpname)
-                $index = common::error(_upload_no_data, 1);
-            else if($size > settings::get('upicsize')."000")
-                $index = common::error(_upload_wrong_size, 1);
-            else {
-                if(move_uploaded_file($tmpname, basePath."/inc/images/uploads/newskat/".$_FILES['file']['name'])) {
-                    if(isset($_GET['edit']))
-                        $index = common::info(_info_upload_success, "../admin/?admin=news&amp;do=edit&amp;id=".$_GET['edit']."");
+                if(!$tmpname)
+                    $index = common::error(_upload_no_data, 1);
+                else if($size > settings::get('upicsize')."000")
+                    $index = common::error(_upload_wrong_size, 1);
+                else {
+                    if(move_uploaded_file($tmpname, basePath."/inc/images/uploads/newskat/".$_FILES['file']['name'])) {
+                        if(isset($_GET['edit']))
+                            $index = common::info(_info_upload_success, "../admin/?admin=news&amp;do=edit&amp;id=".$_GET['edit']."");
+                        else
+                            $index = common::info(_info_upload_success, "../admin/?admin=news&amp;do=add");
+                    }
                     else
-                        $index = common::info(_info_upload_success, "../admin/?admin=news&amp;do=add");
+                        $index = common::error(_upload_error, 1);
                 }
+            break;
+            default:
+                if(isset($_GET['edit']))
+                    $action = "?action=newskats&amp;do=upload&edit=".$_GET['edit']."";
                 else
-                    $index = common::error(_upload_error, 1);
-            }
+                    $action = "?action=newskats&amp;do=upload";
+
+                $smarty->caching = false;
+                $smarty->assign('userpicsize', settings::get('upicsize'));
+                $infos = $smarty->fetch('string:' . _upload_usergallery_info);
+                $smarty->clearAllAssign();
+
+                $smarty->caching = false;
+                $smarty->assign('uploadhead', _upload_newskats_head);
+                $smarty->assign('name', 'file');
+                $smarty->assign('action', $action);
+                $smarty->assign('infos', $infos);
+                $index = $smarty->fetch('file:[' . common::$tmpdir . ']' . $dir . '/upload.tpl');
+                $smarty->clearAllAssign();
+            break;
         }
     }
 }

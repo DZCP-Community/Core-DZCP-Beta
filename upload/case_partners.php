@@ -17,11 +17,6 @@
 
 if(defined('_Upload')) {
     if(common::permission('partners')) {
-        $infos = show(_upload_partners_info, ["userpicsize" => settings::get('upicsize')]);
-        $index = show($dir."/upload", ["uploadhead" => _upload_partners_head,
-                                            "name" => "file",
-                                            "action" => "?action=partners&amp;do=upload",
-                                            "infos" => $infos]);
         if($do == "upload") {
             $tmpname = $_FILES['file']['tmp_name'];
             $name = $_FILES['file']['name'];
@@ -36,6 +31,21 @@ if(defined('_Upload')) {
                 else
                     $index = common::error(_upload_error, 1);
             }
+        }
+
+        if(empty($index)) {
+            $smarty->caching = false;
+            $smarty->assign('userpicsize', settings::get('upicsize'));
+            $infos = $smarty->fetch('string:' . _upload_partners_info);
+            $smarty->clearAllAssign();
+
+            $smarty->caching = false;
+            $smarty->assign('uploadhead', _upload_partners_head);
+            $smarty->assign('name', 'file');
+            $smarty->assign('action', '?action=partners&amp;do=upload');
+            $smarty->assign('infos', $infos);
+            $index = $smarty->fetch('file:[' . common::$tmpdir . ']' . $dir . '/upload.tpl');
+            $smarty->clearAllAssign();
         }
     }
 }

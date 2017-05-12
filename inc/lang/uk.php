@@ -1218,9 +1218,9 @@ define('_upload_button' , 'upLoad');
 define('_upload_over_limit' , 'You are not allowed to upload more pictuires! Delete present pictures to upload a new one!');
 define('_upload_file_exists' , 'The uploaded file already exists! Rename the file and upload again or upload another file!');
 define('_upload_head' , 'Upload userpic');
-define('_upload_userpic_info' , ' Only jpg, gif or png files with a maximum filesize of [userpicsize]KB!<br />The recommended dimension is 170px * 210px ');
+define('_upload_userpic_info' , ' Only jpg, gif or png files with a maximum filesize of {$userpicsize}KB!<br />The recommended dimension is 170px * 210px ');
 define('_upload_ava_head' , 'Useravatar');
-define('_upload_userava_info' , 'Only jpg, gif or png files with a maximum filesize of [userpicsize]KB!<br />The recommended dimension is 100px * 100px ');
+define('_upload_userava_info' , 'Only jpg, gif or png files with a maximum filesize of {$userpicsize}KB!<br />The recommended dimension is 100px * 100px ');
 define('_upload_newskats_head' , 'Category pictures');
 
 ## Unzugeordnet ##
