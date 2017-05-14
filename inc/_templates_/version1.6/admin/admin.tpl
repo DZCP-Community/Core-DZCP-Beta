@@ -4,7 +4,7 @@
   <td>
     <table class="hperc" cellspacing="0">
       <tr>
-        <td class="adminBarOuter contentHead" style="width:100%;padding:4px;text-align:left;">[version]</td>
+        <td class="adminBarOuter contentHead" style="width:100%;padding:4px;text-align:left;">{$version}</td>
       </tr>
     </table>
   </td>
@@ -12,26 +12,26 @@
 <tr>
   <td>
     <div style="position:relative">
-      <script language="javascript" type="text/javascript" src="[dir]/_js/admin.js"></script>
+      <script language="javascript" type="text/javascript" src="../inc/_js/admin.js"></script>
       <script language="javascript" type="text/javascript">
       var ITEMS = [
       [radmin1]
-        ['[rootadmin]',null,null,
+        ['{$rootadmin}',null,null,
           [rootmenu]
         ],
       [radmin2]
       [adminc1]
-        ['[einst]',null,null,
+        ['{$einst}',null,null,
           [settingsmenu]
         ],
       [adminc2]
       [cdminc1]
-        ['[content]',null,null,
+        ['{$content}',null,null,
           [contentmenu]
         ],
       [cdminc2]
       [addons1]
-        ['[addons]',null,null,
+        ['{$addons}',null,null,
           [addonsmenu]
         ]
       [addons2]
@@ -48,11 +48,11 @@
     <div id="admContent" style="padding-top:20px;padding-bottom:20px">
     <table class="hperc" cellspacing="0" >
         <tr style="height: 0%">
-            <td>[notification]</td>
+            <td>{$notification}</td>
         </tr>
     </table>    
       <table class="mainContent" cellspacing="1">
-        [show]
+        {$show}
       </table>
     </div>
   </td>

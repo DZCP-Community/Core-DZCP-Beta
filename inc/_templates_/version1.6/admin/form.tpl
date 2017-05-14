@@ -3,11 +3,11 @@
     <form name="admin" action="?admin=[what]&amp;do=update" method="post" onsubmit="return(DZCP.submitButton())"> 
     <table class="hperc" cellspacing="1">
       <tr>
-        <td class="contentHead" colspan="2"><span class="fontBold">[head]</span></td>
+        <td class="contentHead" colspan="2"><span class="fontBold">{$head}</span></td>
       </tr>
-      [show]
+       {$show}
       <tr>
-        <td class="contentBottom" colspan="2"><input id="contentSubmit" type="submit" value="[value]" class="submit" /></td>
+        <td class="contentBottom" colspan="2"><input id="contentSubmit" type="submit" value="{$value}" class="submit" /></td>
       </tr>
     </table>
     </form>
