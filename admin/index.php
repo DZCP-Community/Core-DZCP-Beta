@@ -131,6 +131,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['id']) || !common::admin_perms($_
                                          "content" => _content,
                                          "addons" => _addons,
                                          "rootadmin" => _rootadmin,
+                                         "notification" => notification::get(),
                                          "rootmenu" => $rootmenu,
                                          "settingsmenu" => $settingsmenu,
                                          "contentmenu" => $contentmenu,
