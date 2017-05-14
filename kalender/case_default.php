@@ -19,21 +19,20 @@ if (!defined('_Kalender')) exit();
 
 $monat = date("m");
 if(isset($_POST['monat'])) 
-    $monat = intval($_POST['monat']);
+    $monat = (int)($_POST['monat']);
 else if(isset($_GET['m']))  
-    $monat = intval($_GET['m']);
+    $monat = (int)($_GET['m']);
 
 $monat = str_pad($monat, 2 ,'0', STR_PAD_LEFT);
 
 $jahr = date("Y");
 if(isset($_POST['jahr'])) 
-    $jahr = intval($_POST['jahr']);
+    $jahr = (int)($_POST['jahr']);
 else if(isset($_GET['y'])) 
-    $jahr = intval($_GET['y']);
+    $jahr = (int)($_GET['y']);
 
 $month = '';
 for($i = 1; $i <= 12; $i++) {
-    $sel = $monat == $i ? 'selected="selected"' : '';
     $mname = ["1" => _jan,
                    "2" => _feb,
                    "3" => _mar,
@@ -47,17 +46,12 @@ for($i = 1; $i <= 12; $i++) {
                    "11" => _nov,
                    "12" => _dez];
 
-    $month .= show(_select_field, ["value" => common::cal($i),
-                                        "sel" => $sel,
-                                        "what" => $mname[$i]]);
+    $month .= common::select_field( common::cal($i),$monat == $i,$mname[$i]);
 }
 
 $year = '';
 for( $i = date("Y")-5; $i < date("Y")+3; $i++) {
-    $sel = $jahr == $i ? 'selected="selected"' : '';
-    $year .= show(_select_field, ["value" => $i,
-                                       "sel" => $sel,
-                                       "what" => $i]);
+    $year .= common::select_field( $i,$jahr == $i,$i);
 }
 
 $ktoday = mktime(0,0,0,date("n"),date("d"),date("Y"));
@@ -107,7 +101,7 @@ while($i <= 31 && checkdate($monat, $i, $jahr)) {
 
             $events = $bdays." ".$event;
 
-            if(isset($_GET['hl']) && intval($_GET['hl']) == $i) 
+            if(isset($_GET['hl']) && (int)($_GET['hl']) == $i)
                 $day = '<span class="fontMarked">'.common::cal($i).'</span>';
             else 
                 $day = common::cal($i);
@@ -115,13 +109,19 @@ while($i <= 31 && checkdate($monat, $i, $jahr)) {
             if(!checkdate($monat, $i, $jahr)) {
                 $data .= '<td class="calDay"></td>';
             } elseif($datum == $ktoday) {
-                $data .= show($dir."/day", ["day" => $day,
-                                                 "event" => $events,
-                                                 "class" => "calToday"]);
+                $smarty->caching = false;
+                $smarty->assign('day',$day);
+                $smarty->assign('event',$events);
+                $smarty->assign('class',"calToday");
+                $data .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/day.tpl');
+                $smarty->clearAllAssign();
             } else {
-                $data .= show($dir."/day", ["day" => $day,
-                                                 "event" => $events,
-                                                 "class" => "calDay"]);
+                $smarty->caching = false;
+                $smarty->assign('day',$day);
+                $smarty->assign('event',$events);
+                $smarty->assign('class',"calDay");
+                $data .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/day.tpl');
+                $smarty->clearAllAssign();
             }
             
             $i++;
@@ -131,4 +131,9 @@ while($i <= 31 && checkdate($monat, $i, $jahr)) {
     $show .= "<tr>".$data."</tr>";
 }
 
-$index = show($dir."/kalender", ["monate" => $month, "jahr" => $year, "show" => $show]);
+$smarty->caching = false;
+$smarty->assign('monate',$month);
+$smarty->assign('jahr',$year);
+$smarty->assign('show',$show);
+$index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/kalender.tpl');
+$smarty->clearAllAssign();

@@ -16,7 +16,7 @@
  */
 
 if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
-    $news_id = intval($_GET['id']); $add = ''; $notification_p = '';
+    $news_id = (int)($_GET['id']); $add = ''; $notification_p = '';
     if (common::$sql['default']->fetch("SELECT `intern` FROM `{prefix_news}` WHERE `id` = ?;", [$news_id],'intern') && !common::permission("intnews")) {
         $index = common::error(_error_wrong_permissions, 1);
     } else {
@@ -40,7 +40,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                                     common::$sql['default']->insert("INSERT INTO `{prefix_newscomments}` SET `news` = ?,`datum` = ?,`nick` = ?,`email` = ?,`hp` = ?,`reg` = ?,`comment` = ?, `ip` = ?;",
                                     [$news_id,time(),common::data('nick'),common::data('email'),
                                         (isset($_POST['hp']) && !common::$userid ? common::links($_POST['hp']) : common::links(common::data('hp'))),
-                                        intval(common::$userid),stringParser::encode($_POST['comment']),common::$userip]);
+                                        (int)(common::$userid),stringParser::encode($_POST['comment']),common::$userip]);
                                     common::setIpcheck("ncid(" . $news_id . ")");
                                     javascript::set('AnchorMove', 'notification-box');
                                     $_POST = []; //Clear Post
@@ -61,7 +61,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                     break;
                 case 'delete':
                     javascript::set('AnchorMove', 'notification-box');
-                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_newscomments}` WHERE `id` = ?;", [($cid = intval($_GET['cid']))],'reg');
+                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_newscomments}` WHERE `id` = ?;", [($cid = (int)($_GET['cid']))],'reg');
                     if (common::$userid >= 1 && ($reg == common::$userid || common::permission('news'))) {
                         common::$sql['default']->delete("DELETE FROM `{prefix_newscomments}` WHERE `id` = ?;", [$cid]);
                         notification::add_success(_comment_deleted,'news');
@@ -71,7 +71,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                     break;
                 case 'editcom':
                     javascript::set('AnchorMove', 'notification-box');
-                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_newscomments}` WHERE `id` = ?;", [($cid = intval($_GET['cid']))],'reg');
+                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_newscomments}` WHERE `id` = ?;", [($cid = (int)($_GET['cid']))],'reg');
                     if (common::$sql['default']->rowCount() && !empty($_POST['comment'])) {
                         if (common::$userid >= 1 && ($reg == common::$userid || common::permission('news'))) {
                             //-> Editby Text
@@ -98,14 +98,14 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                     }
                     break;
                 case 'edit':
-                    $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`comment` FROM `{prefix_newscomments}` WHERE `id` = ?;", [intval($_GET['cid'])]);
+                    $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`comment` FROM `{prefix_newscomments}` WHERE `id` = ?;", [(int)($_GET['cid'])]);
                     if (common::$userid >= 1 && ($get['reg'] == common::$userid || common::permission('news'))) {
                         javascript::set('AnchorMove', 'comForm');
 
                         $smarty->caching = false;
                         $smarty->assign('nick',common::autor($get['reg']));
-                        $smarty->assign('action','?action=show&amp;do=editcom&amp;id=' . $news_id .'&amp;cid=' . intval($_GET['cid']));
-                        $smarty->assign('prevurl','../news/?action=compreview&do=edit&id=' . $news_id .'&cid=' . intval($_GET['cid']));
+                        $smarty->assign('action','?action=show&amp;do=editcom&amp;id=' . $news_id .'&amp;cid=' . (int)($_GET['cid']));
+                        $smarty->assign('prevurl','../news/?action=compreview&do=edit&id=' . $news_id .'&cid=' . (int)($_GET['cid']));
                         $smarty->assign('id',$get['id']);
                         $smarty->assign('posteintrag',stringParser::decode($get['comment']));
                         $smarty->assign('notification',notification::get('news',true));

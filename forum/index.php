@@ -29,7 +29,7 @@ $smarty = common::getSmarty(); //Use Smarty
 
 //-> Prueft sicherheitsrelevante Gegebenheiten im Forum
 function forumcheck($tid, $what) {
-    return common::$sql['default']->rows("SELECT `".$what."` FROM `{prefix_forumthreads}` WHERE `id` = ? AND ".$what." = 1;",array(intval($tid))) ? true : false;
+    return common::$sql['default']->rows("SELECT `".$what."` FROM `{prefix_forumthreads}` WHERE `id` = ? AND ".$what." = 1;",array((int)($tid))) ? true : false;
 }
 
 //-> Funktion um Bestimmte Textstellen zu markieren

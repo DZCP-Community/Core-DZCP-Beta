@@ -23,43 +23,44 @@ foreach($qry as $get) {
     $intern =  common::permission('dlintern') ? "" : "AND `intern` = 0 "; $show = "";
     $qrydl = common::$sql['default']->select("SELECT * FROM `{prefix_downloads}` WHERE `kat` = ? ".$intern."ORDER BY `download`;", [$get['id']]);
     if(common::$sql['default']->rowCount()) {
-        $display = "none"; $img = "expand";
+        //Files
         foreach($qrydl as $getdl) {
-            if(isset($_GET['hl']) && intval($_GET['hl']) == $getdl['id']) {
-                $display = "";
-                $img = "collapse";
-                $download = highlight(stringParser::decode($getdl['download']));
-            } else
-                $download = stringParser::decode($getdl['download']);
+            $smarty->caching = false;
+            $smarty->assign('id',$getdl['id']);
+            $smarty->assign('download',stringParser::decode($getdl['download']));
+            $smarty->assign('titel',stringParser::decode($getdl['download']));
+            $link = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/downloads_link.tpl');
+            $smarty->clearAllAssign();
 
-            $link = show(_downloads_link, ["id" => $getdl['id'],
-                                                "download" => $download,
-                                                "titel" => stringParser::decode($getdl['download'])]);
-
-            $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $show .= show($dir."/downloads_show", ["class" => $class,
-                                                        "link" => $link,
-                                                        "kid" => $get['id'],
-                                                        "display" => $display,
-                                                        "beschreibung" => bbcode::parse_html($getdl['beschreibung']),
-                                                        "hits" => $getdl['hits']]);
+            $smarty->caching = false;
+            $smarty->assign('color',$color);
+            $smarty->assign('link',$link);
+            $smarty->assign('hits',$getdl['hits']);
+            $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/downloads_show.tpl');
+            $smarty->clearAllAssign();
+            $color++;
         }
-
-        $cntKat = common::cnt("{prefix_downloads}", " WHERE `kat` = ?","id", [$get['id']]);
-        $dltitel = ($cntKat == 1 ? _dl_file : _site_stats_files);
-        $kat = show(_dl_titel, ["id" => $get['id'],
-                                     "file" => $dltitel,
-                                     "cnt" => $cntKat,
-                                     "name" => stringParser::decode($get['name'])]);
-
-        $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-        $kats .= show($dir."/download_kats", ["kat" => $kat,
-                                                   "class" => $class,
-                                                   "kid" => $get['id'],
-                                                   "img" => $img,
-                                                   "show" => $show,
-                                                   "display" => $display]);
     }
+
+    //Kat
+    $cntKat = common::cnt("{prefix_downloads}", " WHERE `kat` = ?","id", [$get['id']]);
+    $dltitel = ($cntKat == 1 ? _dl_file : _dl_files);
+
+    $smarty->caching = false;
+    $smarty->assign('file',$dltitel);
+    $smarty->assign('cnt',$cntKat);
+    $smarty->assign('name',stringParser::decode($get['name']));
+    $kat = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/download_titel.tpl');
+    $smarty->clearAllAssign();
+
+    $smarty->caching = false;
+    $smarty->assign('kat',$kat);
+    $smarty->assign('show',$show);
+    $kats .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/download_kats.tpl');
+    $smarty->clearAllAssign();
 }
 
-$index = show($dir."/downloads", ["kats" => $kats]);
+$smarty->caching = false;
+$smarty->assign('kats',$kats);
+$index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/downloads.tpl');
+$smarty->clearAllAssign();

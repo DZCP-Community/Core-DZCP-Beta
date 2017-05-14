@@ -20,9 +20,9 @@ if(defined('_Forum')) {
                FROM `{prefix_forumkats}` s3, `{prefix_forumsubkats}` s2, `{prefix_forumthreads}` s1
                WHERE s1.kid = s2.id
                AND s2.sid = s3.id
-               AND s1.id = '".intval($_GET['id'])."'");
+               AND s1.id = '".(int)($_GET['id'])."'");
 
-  if(common::$sql['default']->rows("SELECT * FROM `{prefix_forumthreads}` WHERE id = '".intval($_GET['id'])."' AND kid = '".$checks['kid']."'"))
+  if(common::$sql['default']->rows("SELECT * FROM `{prefix_forumthreads}` WHERE id = '".(int)($_GET['id'])."' AND kid = '".$checks['kid']."'"))
   {
     if($checks['intern'] == 1 && !common::permission("intforum") && !common::forum_intern($checks['id']))
     {
@@ -30,14 +30,14 @@ if(defined('_Forum')) {
     } else {
       common::$sql['default']->update("UPDATE `{prefix_forumthreads}`
                     SET `hits` = hits+1
-                    WHERE id = '".intval($_GET['id'])."'");
+                    WHERE id = '".(int)($_GET['id'])."'");
 
       $qryp = common::$sql['default']->select("SELECT * FROM `{prefix_forumposts}`
-                  WHERE sid = '".intval($_GET['id'])."'
+                  WHERE sid = '".(int)($_GET['id'])."'
                   ORDER BY id
                   LIMIT ".($page - 1)*settings::get('m_fposts').",".settings::get('m_fposts')."");
 
-      $entrys = common::cnt("{prefix_forumposts}", " WHERE sid = ".intval($_GET['id']));
+      $entrys = common::cnt("{prefix_forumposts}", " WHERE sid = ".(int)($_GET['id']));
       $i = 2;
 
       if($entrys == 0) $pagenr = "1";
@@ -60,20 +60,17 @@ if(defined('_Forum')) {
         if($getp['reg'] == 0) $onoff = "";
         else                  $onoff = common::onlinecheck($getp['reg']);
 
-        $zitat = show("page/button_zitat", array("id" => $_GET['id'],
+        $zitat = show($dir."/button_zitat", array("id" => $_GET['id'],
                                                  "action" => "action=post&amp;do=add&amp;kid=".$getp['kid']."&amp;zitat=".$getp['id'],
                                                  "title" => _button_title_zitat));
 
         if($getp['reg'] == common::$userid || common::permission("forum"))
         {
-          $edit = common::getButtonEditSingle($getp['id'],"action=post&amp;do=edit");
-          $delete = show("page/button_delete_single", array("id" => $getp['id'],
-                                                           "action" => "action=post&amp;do=delete",
-                                                           "title" => _button_title_del,
-                                                           "del" => _confirm_del_entry));
+            $edit = common::getButtonEditSingle($getp['id'],"action=post&amp;do=edit");
+            $delete = common::button_delete_single($getp['id'],"action=post&amp;do=delete",_button_title_del,_confirm_del_entry);
         } else {
-          $delete = "";
-          $edit = "";
+            $delete = "";
+            $edit = "";
         }
 
         $ftxt = hl($getp['text'], (isset($_GET['hl']) ? $_GET['hl'] : ''));
@@ -86,7 +83,7 @@ if(defined('_Forum')) {
         $titel = show(_eintrag_titel_forum, array("postid" => $i+($page-1)*settings::get('m_fposts'),
                                                                                     "datum" => date("d.m.Y", $getp['date']),
                                                                                     "zeit" => date("H:i", $getp['date'])._uhr,
-                                            "url" => '?action=showthread&amp;id='.intval($_GET['id']).'&amp;page='.$page.'#p'.($i+($page-1)*settings::get('m_fposts')),
+                                            "url" => '?action=showthread&amp;id='.(int)($_GET['id']).'&amp;page='.$page.'#p'.($i+($page-1)*settings::get('m_fposts')),
                                             "edit" => $edit,
                                             "delete" => $delete));
 
@@ -142,17 +139,17 @@ if(defined('_Forum')) {
                                                       "zitat" => $zitat,
                                                       "onoff" => $onoff,
                                                       "top" => _topicon,
-                                                      "lp" => common::cnt("{prefix_forumposts}", " WHERE sid = '".intval($_GET['id'])."'")+1));
+                                                      "lp" => common::cnt("{prefix_forumposts}", " WHERE sid = '".(int)($_GET['id'])."'")+1));
         $i++;
       }
 
-      $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE id = '".intval($_GET['id'])."'");
+      $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE id = '".(int)($_GET['id'])."'");
 
       $getw = common::$sql['default']->fetch("SELECT s1.kid,s1.topic,s2.kattopic,s2.sid
                   FROM `{prefix_forumthreads}` AS s1
                   LEFT JOIN `{prefix_forumsubkats}` AS s2
                   ON s1.kid = s2.id
-                  WHERE s1.id = '".intval($_GET['id'])."'");
+                  WHERE s1.id = '".(int)($_GET['id'])."'");
 
       $kat = common::$sql['default']->fetch("SELECT name FROM `{prefix_forumkats}`
                     WHERE id = '".$getw['sid']."'");
@@ -171,12 +168,12 @@ if(defined('_Forum')) {
         $userposts = show(_forum_user_posts, array("posts" => common::userstats("forumposts",$get['t_reg'])));
       }
 
-      $zitat = show("page/button_zitat", array("id" => $_GET['id'],
+      $zitat = show($dir."/button_zitat", array("id" => $_GET['id'],
                                                "action" => "action=post&amp;do=add&amp;kid=".$getw['kid']."&amp;zitatt=".$get['id'],
                                                "title" => _button_title_zitat));
       if($get['closed'] == 1)
       {
-        $add = show("page/button_closed", array());
+        $add = show($dir."/button_closed", array());
       } else {
         $add = show(_forum_addpost, array("id" => $_GET['id'],
                                           "kid" => $getw['kid']));
@@ -246,7 +243,7 @@ if(defined('_Forum')) {
       $titel = show(_eintrag_titel_forum, array("postid" => "1",
                                                 "datum" => date("d.m.Y", $get['t_date']),
                                                 "zeit" => date("H:i", $get['t_date'])._uhr,
-                                                "url" => '?action=showthread&amp;id='.intval($_GET['id']).'&amp;page=1#p1',
+                                                "url" => '?action=showthread&amp;id='.(int)($_GET['id']).'&amp;page=1#p1',
                                                 "edit" => $editt,
                                                 "delete" => ""));
 
@@ -287,11 +284,11 @@ if(defined('_Forum')) {
 
       $abo = common::$sql['default']->rows("SELECT user FROM `{prefix_forum_abo}`
                  WHERE user = '".common::$userid."'
-                 AND fid = '".intval($_GET['id'])."'") ? 'checked="checked"' : '';
+                 AND fid = '".(int)($_GET['id'])."'") ? 'checked="checked"' : '';
       if(!common::$chkMe) {
           $f_abo = '';
       } else {
-          $f_abo = show($dir."/forum_abo", array("id" => intval($_GET['id']),
+          $f_abo = show($dir."/forum_abo", array("id" => (int)($_GET['id']),
                                              "abo" => $abo,
                                              "abo_info" => _foum_fabo_checkbox,
                                              "abo_title" => _forum_abo_title,
@@ -328,7 +325,7 @@ if(defined('_Forum')) {
                                                "ip" => $posted_ip,
                                                "top" => _topicon,
                                                "lpost" => $lpost,
-                                               "lp" => common::cnt("{prefix_forumposts}", " WHERE sid = '".intval($_GET['id'])."'")+1,
+                                               "lp" => common::cnt("{prefix_forumposts}", " WHERE sid = '".(int)($_GET['id'])."'")+1,
                                                "add" => $add,
                                                "nav" => $nav,
                                                "vote" => $vote,

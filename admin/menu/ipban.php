@@ -41,11 +41,11 @@ switch ($do) {
         }
     break;
     case 'delete':
-        common::$sql['default']->delete("DELETE FROM `{prefix_ipban}` WHERE `id` = ?;",array(intval($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_ipban}` WHERE `id` = ?;",array((int)($_GET['id'])));
         $show = common::info(_ipban_admin_deleted, "?admin=ipban");
     break;
     case 'edit':
-        $get = common::$sql['default']->fetch("SELECT `ip`,`data` FROM `{prefix_ipban}` WHERE `id` = ?;",array(intval($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT `ip`,`data` FROM `{prefix_ipban}` WHERE `id` = ?;",array((int)($_GET['id'])));
         $data_array = unserialize($get['data']);
         $show = show($dir."/ipban_form", array("newhead" => _ipban_edit_head,
             "do" => "edit_save&amp;id=".$_GET['id']."","ip_set" => stringParser::decode($get['ip']),
@@ -55,16 +55,16 @@ switch ($do) {
         if(empty($_POST['ip']))
             $show = common::error(_ip_empty);
         else {
-            $get = common::$sql['default']->fetch("SELECT `id`,`data` FROM `{prefix_ipban}` WHERE `id` = ?;",array(intval($_GET['id'])));
+            $get = common::$sql['default']->fetch("SELECT `id`,`data` FROM `{prefix_ipban}` WHERE `id` = ?;",array((int)($_GET['id'])));
             $data_array = unserialize($get['data']);
             $data_array['banned_msg'] = stringParser::decode($_POST['info']);
             common::$sql['default']->update("UPDATE `{prefix_ipban}` SET `ip` = ?, `time` = ?, `data` = ? WHERE `id` = ?;",
-                    array(stringParser::encode($_POST['ip']),time(),serialize($data_array),intval($get['id'])));
+                    array(stringParser::encode($_POST['ip']),time(),serialize($data_array),(int)($get['id'])));
             $show = common::info(_ipban_admin_edited, "?admin=ipban");
         }
     break;
     case 'enable':
-        $get = common::$sql['default']->fetch("SELECT `id`,`enable` FROM `{prefix_ipban}` WHERE `id` = ?;",array(intval($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT `id`,`enable` FROM `{prefix_ipban}` WHERE `id` = ?;",array((int)($_GET['id'])));
         common::$sql['default']->update("UPDATE `{prefix_ipban}` SET `enable` = ? WHERE `id` = ?;",array(($get['enable'] ? 0 : 1),$get['id']));
         $show = header("Location: ?admin=ipban&sfs_side=".(isset($_GET['sfs_side']) ? $_GET['sfs_side'] : 1)."&ub_side=".(isset($_GET['ub_side']) ? $_GET['ub_side'] : 1));
     break;
@@ -83,7 +83,7 @@ switch ($do) {
             
             $action = "?admin=ipban&amp;do=enable&amp;id=".$get['id']."&amp;ub_side=".(isset($_GET['ub_side']) ? $_GET['ub_side'] : 1)."&amp;sfs_side=".(isset($_GET['sfs_side']) ? $_GET['sfs_side'] : 1);
             $unban = ($get['enable'] ? show(_ipban_menu_icon_enable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_disable_ipban,array('ip'=>$get['ip'])))) : show(_ipban_menu_icon_disable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_enable_ipban,array('ip'=>$get['ip'])))));
-            $delete = show("page/button_delete_single", array("id" => $get['id'], "action" => "admin=ipban&amp;do=delete", "title" => _button_title_del, "del" => _confirm_del_ipban));
+            $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_ipban);
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             $show_search .= show($dir."/ipban_show_user", array("ip" => stringParser::decode($get['ip']), "bez" => stringParser::decode($data_array['banned_msg']), "rep" => stringParser::decode($data_array['frequency']), "zv" => stringParser::decode($data_array['confidence']).'%', "class" => $class, "delete" => $delete, "edit" => $edit, "unban" => $unban));
         }
@@ -118,7 +118,7 @@ switch ($do) {
             $qry = common::$sql['default']->select("SELECT * FROM `{prefix_ipban}` WHERE `typ` = 1 ORDER BY `id` DESC LIMIT ".$start.", 20;"); $color = 1;
             foreach($qry as $get) {
                 $data_array = unserialize($get['data']);
-                $delete = show("page/button_delete_single", array("id" => $get['id'], "action" => "admin=ipban&amp;do=delete", "title" => _button_title_del, "del" => _confirm_del_ipban));
+                $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_ipban);
                 $action = "?admin=ipban&amp;do=enable&amp;id=".$get['id']."&amp;sfs_side=".($site)."&amp;ub_side=".(isset($_GET['ub_side']) ? $_GET['ub_side'] : 1);
                 $unban = ($get['enable'] ? show(_ipban_menu_icon_enable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_disable_ipban,array('ip'=>$get['ip'])))) : show(_ipban_menu_icon_disable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_enable_ipban,array('ip'=>$get['ip'])))));
                 $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
@@ -156,7 +156,7 @@ switch ($do) {
             foreach($qry as $get) {
                 $data_array = unserialize($get['data']);
                 $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
-                $delete = show("page/button_delete_single", array("id" => $get['id'], "action" => "admin=ipban&amp;do=delete", "title" => _button_title_del, "del" => _confirm_del_ipban));
+                $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_ipban);
                 $action = "?admin=ipban&amp;do=enable&amp;id=".$get['id']."&amp;ub_side=".($site)."&amp;sfs_side=".(isset($_GET['sfs_side']) ? $_GET['sfs_side'] : 1);
                 $unban = ($get['enable'] ? show(_ipban_menu_icon_enable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_disable_ipban,array('ip'=>$get['ip'])))) : show(_ipban_menu_icon_disable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_enable_ipban,array('ip'=>$get['ip'])))));
                 $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;

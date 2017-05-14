@@ -703,7 +703,7 @@ class Securimage {
                                               $this->image_bg_color->g,
                                               $this->image_bg_color->b);
 
-        $alpha = intval($this->text_transparency_percentage / 100 * 127);
+        $alpha = (int)($this->text_transparency_percentage / 100 * 127);
 
         if ($this->use_transparent_text == true) {
             $this->gdtextcolor = imagecolorallocatealpha($this->im,
@@ -1102,7 +1102,7 @@ class Securimage {
         $fsize = filesize($this->wordlist_file);
         if ($fsize < 128) return false; // too small of a list to be effective
 
-        if (intval($numWords) < 1 || intval($numWords) > 5) $numWords = 1;
+        if ((int)($numWords) < 1 || (int)($numWords) > 5) $numWords = 1;
 
         $words = array();
         $i = 0;

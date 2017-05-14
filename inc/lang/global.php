@@ -37,7 +37,6 @@ define('_forum_pn_preview', '<img src="../inc/images/forum_pn.gif" alt="" class=
 define('_forum_zitat_preview', '<img src="../inc/images/zitat.gif" alt="" class="icon" style="cursor:pointer" />');
 define('_user_link_preview', '[country] <a class="[class]" href="javascript:void(0)">[nick]</a>');
 //Edited for DZCP 1.4
-define('_downloads_link', '<a href="?action=download&amp;id=[id]" style="display:block" title="[titel]"><img src="../inc/images/download.gif" alt="" class="icon" /> [download]</a>');
 define('_forum_thread_search_link', '[sticky] <a href="../forum/?action=showthread&amp;id=[id]&amp;hl=[hl]">[topic]</a> [closed]');
 ////////////////////
 ## Allgemein ##

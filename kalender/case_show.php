@@ -17,17 +17,35 @@
 
 if (!defined('_Kalender')) exit();
 
-$qry = common::$sql['default']->select("SELECT * FROM `{prefix_events}` WHERE DATE_FORMAT(FROM_UNIXTIME(datum), '%d.%m.%Y') = ? ORDER BY `datum`;",array(date("d.m.Y",intval($_GET['time']))));
+$qry = common::$sql['default']->select("SELECT * FROM `{prefix_events}` WHERE DATE_FORMAT(FROM_UNIXTIME(datum), '%d.%m.%Y') = ? ORDER BY `datum`;",array(date("d.m.Y",(int)($_GET['time']))));
 $events = '';
 foreach($qry as $get) {
-    $edit = common::permission("editkalender") ? show("page/button_edit_url",
-            array("action" => "../admin/?admin=kalender&do=edit&id=".$get['id'], "title" => _button_title_edit)) : '';
+    $edit = '';
+    if(common::permission("editkalender")) {
+        $smarty->caching = false;
+        $smarty->assign('action', "../admin/?admin=kalender&do=edit&id=" . $get['id']);
+        $smarty->assign('title', _button_title_edit);
+        $edit = $smarty->fetch('file:[' . common::$tmpdir . ']page/buttons/button_edit_url.tpl');
+        $smarty->clearAllAssign();
+    }
 
-    $events .= show($dir."/event_show", array("edit" => $edit,
-                                              "show_time" => date("H:i", $get['datum'])._uhr,
-                                              "show_event" => bbcode::parse_html($get['event']),
-                                              "show_title" => stringParser::decode($get['title'])));
+    $smarty->caching = false;
+    $smarty->assign('edit',$edit);
+    $smarty->assign('show_time',date("H:i", $get['datum'])._uhr);
+    $smarty->assign('show_event',bbcode::parse_html($get['event']));
+    $smarty->assign('show_title',stringParser::decode($get['title']));
+    $events .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/event_show.tpl');
+    $smarty->clearAllAssign();
 }
 
-$head = show(_kalender_events_head, array("datum" => date("d.m.Y",$_GET['time'])));
-$index = show($dir."/event", array("head" => $head, "events" => $events));
+$smarty->caching = false;
+$smarty->assign('datum',date("d.m.Y",$_GET['time']));
+$head = $smarty->fetch('string:'._kalender_events_head);
+$smarty->clearAllAssign();
+
+$smarty->caching = false;
+$smarty->assign('head',$head);
+$smarty->assign('events',$events);
+$index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/event.tpl');
+$smarty->clearAllAssign();
+unset($head,$events);

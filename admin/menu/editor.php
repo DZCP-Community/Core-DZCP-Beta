@@ -118,7 +118,7 @@ switch($do) {
             $_POST['html'] = (isset($_POST['html']) ? $_POST['html'] : 0);
             $_POST['php'] = (isset($_POST['php']) ? $_POST['php'] : 0);
             common::$sql['default']->insert("INSERT INTO `{prefix_sites}` SET `titel` = ?, `text` = ?, `html` = ?, `php` = ?;",
-                    array(stringParser::encode($_POST['titel']),stringParser::encode($_POST['inhalt']),intval($_POST['html']),(php_code_enabled ? intval($_POST['php']) : 0)));
+                    array(stringParser::encode($_POST['titel']),stringParser::encode($_POST['inhalt']),(int)($_POST['html']),(php_code_enabled ? (int)($_POST['php']) : 0)));
 
             $insert_id = common::$sql['default']->lastInsertId();
             $sign = (isset($_POST['pos']) && ($_POST['pos'] == "1" || $_POST['pos'] == "2")) ? ">= " : "> ";
@@ -126,15 +126,15 @@ switch($do) {
             $pos = preg_replace("=nav_(.*?)-=","",$_POST['pos']);
             $url = "../sites/?show=".$insert_id."";
 
-            common::$sql['default']->update("UPDATE `{prefix_navi}` SET `pos` = (pos+1) WHERE `pos` ".$sign." ?;",array(intval($pos)));
+            common::$sql['default']->update("UPDATE `{prefix_navi}` SET `pos` = (pos+1) WHERE `pos` ".$sign." ?;",array((int)($pos)));
             common::$sql['default']->insert("INSERT INTO `{prefix_navi}` SET `pos` = ?, `kat` = ?, `name` = ?, `url` = ?, `shown` = 1, `type` = 3, `editor` = ?, `wichtig` = 0;",
-                    array(intval($pos),stringParser::encode($kat),stringParser::encode($_POST['name']),stringParser::encode($url),intval($insert_id)));
+                    array((int)($pos),stringParser::encode($kat),stringParser::encode($_POST['name']),stringParser::encode($url),(int)($insert_id)));
 
             $show = common::info(_site_added, "?admin=editor");
         }
     break;
     case 'edit':
-        $gets = common::$sql['default']->fetch("SELECT * FROM `{prefix_sites}` WHERE `id` = ?;",array(intval($_GET['id'])));
+        $gets = common::$sql['default']->fetch("SELECT * FROM `{prefix_sites}` WHERE `id` = ?;",array((int)($_GET['id'])));
         $qry = common::$sql['default']->select("SELECT s2.*, s1.`name` AS `katname`, s1.`placeholder` "
                 . "FROM `{prefix_navi_kats}` AS `s1` "
                 . "LEFT JOIN `{prefix_navi}` AS `s2` "
@@ -153,7 +153,7 @@ switch($do) {
             $position .= empty($get['name']) ? '' : '<option value="'.stringParser::decode($get['placeholder']).'-'.($get['pos']+1).'" '.$sel.'>'._nach.' -> '.common::navi_name(stringParser::decode($get['name'])).'</option>';
         }
 
-        $getn = common::$sql['default']->fetch("SELECT `name` FROM `{prefix_navi}` WHERE `editor` = ?;",array(intval($_GET['id'])));
+        $getn = common::$sql['default']->fetch("SELECT `name` FROM `{prefix_navi}` WHERE `editor` = ?;",array((int)($_GET['id'])));
         $checked = ($gets['html'] ? 'checked="checked"' : '');
         $checked_php = $gets['php'] ? 'checked="checked"' : '';
 
@@ -235,23 +235,23 @@ switch($do) {
             $_POST['html'] = isset($_POST['html']) ? $_POST['html'] : 0;
             $_POST['php'] = isset($_POST['php']) ? $_POST['php'] : 0;
             common::$sql['default']->update("UPDATE `{prefix_sites}` SET `titel` = ?,`text` = ?,`html` = ?, `php` = ? WHERE `id` = ?;",
-                    array(stringParser::encode($_POST['titel']),stringParser::encode($_POST['inhalt']),intval($_POST['html']),(php_code_enabled ? intval($_POST['php']) : 0),intval($_GET['id'])));
+                    array(stringParser::encode($_POST['titel']),stringParser::encode($_POST['inhalt']),(int)($_POST['html']),(php_code_enabled ? (int)($_POST['php']) : 0),(int)($_GET['id'])));
 
             $sign = (isset($_POST['pos']) && ($_POST['pos'] == "1" || $_POST['pos'] == "2")) ? ">= " : "> ";
             $kat = preg_replace('/-(\d+)/','',$_POST['pos']);
             $pos = preg_replace("=nav_(.*?)-=","",$_POST['pos']);
 
             $url = "../sites/?show=".$_GET['id'];
-            common::$sql['default']->update("UPDATE `{prefix_navi}` SET `pos` = (pos+1) WHERE `pos` ".$sign." ?;",array(intval($pos)));
+            common::$sql['default']->update("UPDATE `{prefix_navi}` SET `pos` = (pos+1) WHERE `pos` ".$sign." ?;",array((int)($pos)));
             common::$sql['default']->update("UPDATE `{prefix_navi}` SET `pos` = ?, `kat` = ?, `name` = ?,`url` = ? WHERE `editor` = ?;",
-                    array(intval($pos),stringParser::encode($kat),stringParser::encode($_POST['name']),stringParser::encode($url),intval($_GET['id'])));
+                    array((int)($pos),stringParser::encode($kat),stringParser::encode($_POST['name']),stringParser::encode($url),(int)($_GET['id'])));
 
             $show = common::info(_site_edited, "?admin=editor");
         }
     break;
     case 'delete':
-        common::$sql['default']->delete("DELETE FROM `{prefix_sites}` WHERE `id` = ?;",array(intval($_GET['id'])));
-        common::$sql['default']->delete("DELETE FROM `{prefix_navi}` WHERE `editor` = ?;",array(intval($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_sites}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_navi}` WHERE `editor` = ?;",array((int)($_GET['id'])));
         $show = common::info(_editor_deleted, "?admin=editor");
     break;
     default:
@@ -259,10 +259,7 @@ switch($do) {
         foreach($qry as $get) {
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
-            $delete = show("page/button_delete_single", array("id" => $get['id'],
-                                                              "action" => "admin=editor&amp;do=delete",
-                                                              "title" => _button_title_del,
-                                                              "del" => _confirm_del_site));
+            $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_site);
 
             $show .= show($dir."/editor_show", array("name" => "<a href='../sites/?show=".$get['id']."'>".stringParser::decode($get['titel'])."</a>",
                                                       "del" => $delete,

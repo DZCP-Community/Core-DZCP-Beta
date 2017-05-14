@@ -57,13 +57,13 @@ ob_implicit_flush(false);
             if(!headers_sent()) {
                 common::$securimage->background_directory = basePath.'/inc/images/securimage/background/';
                 common::$securimage->code_length  = mt_rand(4, 6);
-                common::$securimage->image_height = isset($_GET['height']) ? intval($_GET['height']) : 40;
-                common::$securimage->image_width  = isset($_GET['width']) ? intval($_GET['width']) : 200;
+                common::$securimage->image_height = isset($_GET['height']) ? (int)($_GET['height']) : 40;
+                common::$securimage->image_width  = isset($_GET['width']) ? (int)($_GET['width']) : 200;
                 common::$securimage->perturbation = .75;
                 common::$securimage->text_color   = new Securimage_Color("#CA0000");
-                common::$securimage->num_lines    = isset($_GET['lines']) ? intval($_GET['lines']) : 2;
+                common::$securimage->num_lines    = isset($_GET['lines']) ? (int)($_GET['lines']) : 2;
                 common::$securimage->namespace    = isset($_GET['namespace']) ? $_GET['namespace'] : 'default';
-                if(isset($_GET['length'])) common::$securimage->code_length = intval($_GET['length']);
+                if(isset($_GET['length'])) common::$securimage->code_length = (int)($_GET['length']);
                 
                 $imgData = common::$securimage->show();
                 if(!$imgData['error']) {

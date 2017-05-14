@@ -18,7 +18,7 @@
 function navi($kat) {
     $navi="";
     if($k = common::$sql['default']->fetch("SELECT `level` FROM `{prefix_navi_kats}` WHERE `placeholder` = ?;", [stringParser::encode($kat)])) {
-        $permissions = ($kat == 'nav_admin' && common::admin_perms(common::$userid)) ? "" : (common::$chkMe >= 2 ? '' : " AND s1.`internal` = 0")." AND ".intval(common::$chkMe)." >= ".intval($k['level']);
+        $permissions = ($kat == 'nav_admin' && common::admin_perms(common::$userid)) ? "" : (common::$chkMe >= 2 ? '' : " AND s1.`internal` = 0")." AND ".(int)(common::$chkMe)." >= ".(int)($k['level']);
         $qry = common::$sql['default']->select("SELECT s1.* FROM `{prefix_navi}` AS `s1` "
                 . "LEFT JOIN `{prefix_navi_kats}` AS `s2` ON s1.`kat` = s2.`placeholder` "
                 . "WHERE s1.`kat` = ? AND s1.`shown` = 1 ".$permissions." "

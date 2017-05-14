@@ -45,7 +45,7 @@ switch ($do) {
         }
     break;
     case 'edit':
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_links}` WHERE `id` = ?;",array(intval($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_links}` WHERE `id` = ?;",array((int)($_GET['id'])));
         
         $tchecked = (!$get['banner'] ? 'checked="checked"' : '');
         $bchecked = ($get['banner'] ? 'checked="checked"' : '');
@@ -71,22 +71,19 @@ switch ($do) {
               $show = common::error(_links_empty_text, 1);
         } else {
             common::$sql['default']->update("UPDATE `{prefix_links}` SET `url` = ?, `text` = ?, `banner` = ?, `beschreibung` = ? WHERE id = ?;",
-                    array(stringParser::encode(common::links($_POST['link'])),stringParser::encode($_POST['text']),stringParser::encode($_POST['banner']),stringParser::encode($_POST['beschreibung']),intval($_GET['id'])));
+                    array(stringParser::encode(common::links($_POST['link'])),stringParser::encode($_POST['text']),stringParser::encode($_POST['banner']),stringParser::encode($_POST['beschreibung']),(int)($_GET['id'])));
             $show = common::info(_link_edited, "?admin=links");
         }
     break;
     case 'delete':
-        common::$sql['default']->delete("DELETE FROM `{prefix_links}` WHERE `id` = ?;",array(intval($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_links}` WHERE `id` = ?;",array((int)($_GET['id'])));
         $show = common::info(_link_deleted, "?admin=links");
     break;
     default:
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_links}` ORDER BY `banner` DESC;");
         foreach($qry as $get) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
-            $delete = show("page/button_delete_single", array("id" => $get['id'],
-                                                              "action" => "admin=links&amp;do=delete",
-                                                              "title" => _button_title_del,
-                                                              "del" => _confirm_del_link));
+            $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_link);
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             $show .= show($dir."/links_show", array("link" => common::cut(stringParser::decode($get['url']),40),

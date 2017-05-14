@@ -17,7 +17,7 @@
 
 if(defined('_Forum')) {
     if($do == "edit") {
-    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE id = '".intval($_GET['id'])."'");
+    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE id = '".(int)($_GET['id'])."'");
     if($get['t_reg'] == common::$userid || common::permission("forum"))
     {
       if(common::permission("forum"))
@@ -45,7 +45,7 @@ if(defined('_Forum')) {
         $getv = common::$sql['default']->fetch("SELECT * FROM `{prefix_votes}` WHERE id = '".$get['vote']."'");
         $fget = common::$sql['default']->fetch("SELECT s1.intern,s2.id FROM `{prefix_forumkats}` AS s1
                     LEFT JOIN `{prefix_forumsubkats}` AS s2 ON s2.`sid` = s1.id
-                    WHERE s2.`id` = '".intval($get['kid'])."'");
+                    WHERE s2.`id` = '".(int)($get['kid'])."'");
 
         $intern = ''; $intern_kat = ''; $isclosed = ''; $display = ''; $toggle = 'collapse';
         $internVisible = '';
@@ -149,7 +149,7 @@ if(defined('_Forum')) {
       $index = common::error(_error_wrong_permissions, 1);
     }
   } elseif($do == "editthread") {
-    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE id = '".intval($_GET['id'])."'");
+    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE id = '".(int)($_GET['id'])."'");
 
     if($get['t_reg'] == common::$userid || common::permission("forum"))
     {
@@ -197,7 +197,7 @@ if(defined('_Forum')) {
           $getv = common::$sql['default']->fetch("SELECT * FROM `{prefix_votes}` WHERE id = '".$get['vote']."'");
           $fget = common::$sql['default']->fetch("SELECT s1.intern,s2.id FROM `{prefix_forumkats}` AS s1
                          LEFT JOIN `{prefix_forumsubkats}` AS s2 ON s2.`sid` = s1.id
-                         WHERE s2.`id` = '".intval($_GET['kid'])."'");
+                         WHERE s2.`id` = '".(int)($_GET['kid'])."'");
 
             if($_POST['intern']) $intern = 'checked="checked"';
           $intern = ''; $intern_kat = ''; $internVisible = '';
@@ -260,7 +260,7 @@ if(defined('_Forum')) {
                                                 "vote" => $vote,
                                             "eintraghead" => _eintrag));
       } else {
-        $gett = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE id = '".intval($_GET['id'])."'");
+        $gett = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE id = '".(int)($_GET['id'])."'");
           if(!empty($gett['vote']))
       {
        $getv = common::$sql['default']->fetch("SELECT * FROM `{prefix_vote_results}` WHERE vid = '".$gett['vote']."'");
@@ -269,8 +269,8 @@ if(defined('_Forum')) {
 
           common::$sql['default']->update("UPDATE `{prefix_votes}`
                    SET `titel`  = '".stringParser::encode($_POST['question'])."',
-                       `intern` = '".intval($_POST['intern'])."',
-                       `closed` = '".intval($_POST['closed'])."'
+                       `intern` = '".(int)($_POST['intern'])."',
+                       `closed` = '".(int)($_POST['closed'])."'
                    WHERE id = '".$gett['vote']."'");
 
           common::$sql['default']->update("UPDATE `{prefix_vote_results}`
@@ -312,74 +312,74 @@ if(defined('_Forum')) {
               common::$sql['default']->insert("INSERT INTO `{prefix_votes}`
                      SET `datum`  = '".time()."',
                          `titel`  = '".stringParser::encode($_POST['question'])."',
-                         `intern` = '".intval($_POST['intern'])."',
+                         `intern` = '".(int)($_POST['intern'])."',
                          `forum`  = 1,
-                         `von`    = '".intval(common::$userid)."'");
+                         `von`    = '".(int)(common::$userid)."'");
 
           $vid = common::$sql['default']->lastInsertId();
               common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                    SET `vid`   = '".intval($vid)."',
+                    SET `vid`   = '".(int)($vid)."',
                         `what`  = 'a1',
                         `sel`   = '".stringParser::encode($_POST['a1'])."'");
 
               common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                     SET `vid`  = '".intval($vid)."',
+                     SET `vid`  = '".(int)($vid)."',
                          `what` = 'a2',
                          `sel`  = '".stringParser::encode($_POST['a2'])."'");
 
           if(!empty($_POST['a3']))
           {
               common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                       SET `vid`  = '".intval($vid)."',
+                       SET `vid`  = '".(int)($vid)."',
                            `what` = 'a3',
                            `sel`  = '".stringParser::encode($_POST['a3'])."'");
           }
           if(!empty($_POST['a4']))
           {
               common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                       SET `vid`  = '".intval($vid)."',
+                       SET `vid`  = '".(int)($vid)."',
                            `what` = 'a4',
                            `sel`  = '".stringParser::encode($_POST['a4'])."'");
           }
           if(!empty($_POST['a5']))
           {
               common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                       SET `vid`  = '".intval($vid)."',
+                       SET `vid`  = '".(int)($vid)."',
                            `what` = 'a5',
                            `sel`  = '".stringParser::encode($_POST['a5'])."'");
           }
           if(!empty($_POST['a6']))
           {
               common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                       SET `vid`  = '".intval($vid)."',
+                       SET `vid`  = '".(int)($vid)."',
                            `what` = 'a6',
                            `sel`  = '".stringParser::encode($_POST['a6'])."'");
           }
           if(!empty($_POST['a7']))
           {
               common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                       SET `vid`  = '".intval($vid)."',
+                       SET `vid`  = '".(int)($vid)."',
                            `what` = 'a7',
                            `sel`  = '".stringParser::encode($_POST['a7'])."'");
           }
           if(!empty($_POST['a8']))
           {
               common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                       SET `vid`  = '".intval($vid)."',
+                       SET `vid`  = '".(int)($vid)."',
                            `what` = 'a8',
                            `sel`  = '".stringParser::encode($_POST['a8'])."'");
           }
           if(!empty($_POST['a9']))
           {
               common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                       SET `vid`  = '".intval($vid)."',
+                       SET `vid`  = '".(int)($vid)."',
                            `what` = 'a9',
                            `sel`  = '".stringParser::encode($_POST['a9'])."'");
           }
           if(!empty($_POST['a10']))
           {
               common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                       SET `vid`  = '".intval($vid)."',
+                       SET `vid`  = '".(int)($vid)."',
                            `what` = 'a10',
                            `sel`  = '".stringParser::encode($_POST['a10'])."'");
           }
@@ -407,19 +407,19 @@ if(defined('_Forum')) {
                        `t_email`  = '".stringParser::encode($_POST['email'])."',
                        `t_hp`     = '".common::links($_POST['hp'])."',
                        `t_text`   = '".stringParser::encode($_POST['eintrag'])."',
-                       `sticky`   = '".intval($_POST['sticky'])."',
-                       `global`   = '".intval($_POST['global'])."',
+                       `sticky`   = '".(int)($_POST['sticky'])."',
+                       `global`   = '".(int)($_POST['global'])."',
                                             `vote`     = '".$vid."',
                        `edited`   = '".stringParser::encode($editedby)."'
-                   WHERE id = '".intval($_GET['id'])."'");
+                   WHERE id = '".(int)($_GET['id'])."'");
 
       $checkabo = common::$sql['default']->select("SELECT s1.user,s1.fid,s2.nick,s2.id,s2.email FROM `{prefix_forum_abo}` AS s1
                         LEFT JOIN `{prefix_users}` AS s2 ON s2.id = s1.user
-                      WHERE s1.fid = '".intval($_GET['id'])."'");
+                      WHERE s1.fid = '".(int)($_GET['id'])."'");
       foreach($checkabo as $getabo) {
         if(common::$userid != $getabo['user'])
         {
-          $gettopic = common::$sql['default']->fetch("SELECT topic FROM `{prefix_forumthreads}` WHERE id = '".intval($_GET['id'])."'");
+          $gettopic = common::$sql['default']->fetch("SELECT topic FROM `{prefix_forumthreads}` WHERE id = '".(int)($_GET['id'])."'");
 
           $subj = show(stringParser::decode(settings::get('eml_fabo_tedit_subj')), array("titel" => $title));
 
@@ -428,7 +428,7 @@ if(defined('_Forum')) {
                                                             "topic" => $gettopic['topic'],
                                                             "titel" => $title,
                                                             "domain" => common::$httphost,
-                                                            "id" => intval($_GET['id']),
+                                                            "id" => (int)($_GET['id']),
                                                             "entrys" => "1",
                                                             "page" => "1",
                                                             "text" => bbcode::parse_html($_POST['eintrag']),
@@ -463,7 +463,7 @@ if(defined('_Forum')) {
         $internVisible = '';
         $fget = common::$sql['default']->fetch("SELECT s1.intern,s2.id FROM `{prefix_forumkats}` AS s1
                        LEFT JOIN `{prefix_forumsubkats}` AS s2 ON s2.`sid` = s1.id
-                       WHERE s2.`id` = '".intval($_GET['kid'])."'");
+                       WHERE s2.`id` = '".(int)($_GET['kid'])."'");
                 $intern = ''; $intern_kat = ''; $internVisible = '';
                 if($fget['intern'] == "1") { $intern = 'checked="checked"'; $internVisible = 'style="display:none"'; };
 
@@ -535,7 +535,7 @@ if(defined('_Forum')) {
       }
     }
   } elseif($do == "addthread") {
-      if(common::$sql['default']->rows("SELECT id FROM `{prefix_forumsubkats}` WHERE id = '".intval($_GET['kid'])."'") == 0) {
+      if(common::$sql['default']->rows("SELECT id FROM `{prefix_forumsubkats}` WHERE id = '".(int)($_GET['kid'])."'") == 0) {
           $index = common::error(_id_dont_exist, 1);
       } else {
         if(settings::get("reg_forum") && !common::$chkMe)
@@ -586,7 +586,7 @@ if(defined('_Forum')) {
 
             $fget = common::$sql['default']->fetch("SELECT s1.intern,s2.id FROM `{prefix_forumkats}` AS s1
                                                  LEFT JOIN `{prefix_forumsubkats}` AS s2 ON s2.`sid` = s1.id
-                                                 WHERE s2.`id` = '".intval($_GET['kid'])."'");
+                                                 WHERE s2.`id` = '".(int)($_GET['kid'])."'");
 
             if($_POST['intern']) $intern = 'checked="checked"';
             $intern = ''; $intern_kat = ''; $internVisible = '';
@@ -655,100 +655,100 @@ if(defined('_Forum')) {
                                 . "FROM `{prefix_forumkats}` AS s1 "
                                 . "LEFT JOIN `{prefix_forumsubkats}` AS s2 "
                                 . "ON s2.`sid` = s1.id "
-                                . "WHERE s2.`id` = '".intval($_GET['kid'])."'");
+                                . "WHERE s2.`id` = '".(int)($_GET['kid'])."'");
 
                         if($fgetvote['intern'] == 1) $ivote = "`intern` = '1',";
-                        else $ivote = "`intern` = '".intval($_POST['intern'])."',";
+                        else $ivote = "`intern` = '".(int)($_POST['intern'])."',";
 
                     common::$sql['default']->insert("INSERT INTO `{prefix_votes}`
                                              SET `datum`  = '".time()."',
                                                      `titel`  = '".stringParser::encode($_POST['question'])."',
                                                      ".$ivote."
                                                      `forum`  = 1,
-                                                     `von`    = '".intval(common::$userid)."'");
+                                                     `von`    = '".(int)(common::$userid)."'");
 
                         $vid = common::$sql['default']->lastInsertId();
 
                     common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                                            SET `vid`   = '".intval($vid)."',
+                                            SET `vid`   = '".(int)($vid)."',
                                                     `what`  = 'a1',
                                                     `sel`   = '".stringParser::encode($_POST['a1'])."'");
 
                     common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                                             SET `vid`  = '".intval($vid)."',
+                                             SET `vid`  = '".(int)($vid)."',
                                                      `what` = 'a2',
                                                      `sel`  = '".stringParser::encode($_POST['a2'])."'");
 
                         if(!empty($_POST['a3']))
                         {
                             common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                                                 SET `vid`  = '".intval($vid)."',
+                                                 SET `vid`  = '".(int)($vid)."',
                                                          `what` = 'a3',
                                                          `sel`  = '".stringParser::encode($_POST['a3'])."'");
                         }
                         if(!empty($_POST['a4']))
                         {
                             common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                                                 SET `vid`  = '".intval($vid)."',
+                                                 SET `vid`  = '".(int)($vid)."',
                                                          `what` = 'a4',
                                                          `sel`  = '".stringParser::encode($_POST['a4'])."'");
                         }
                         if(!empty($_POST['a5']))
                         {
                             common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                                                 SET `vid`  = '".intval($vid)."',
+                                                 SET `vid`  = '".(int)($vid)."',
                                                          `what` = 'a5',
                                                          `sel`  = '".stringParser::encode($_POST['a5'])."'");
                         }
                         if(!empty($_POST['a6']))
                         {
                             common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                                                 SET `vid`  = '".intval($vid)."',
+                                                 SET `vid`  = '".(int)($vid)."',
                                                          `what` = 'a6',
                                                          `sel`  = '".stringParser::encode($_POST['a6'])."'");
                         }
                         if(!empty($_POST['a7']))
                         {
                             common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                                                 SET `vid`  = '".intval($vid)."',
+                                                 SET `vid`  = '".(int)($vid)."',
                                                          `what` = 'a7',
                                                          `sel`  = '".stringParser::encode($_POST['a7'])."'");
                         }
                         if(!empty($_POST['a8']))
                         {
                             common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                                                 SET `vid`  = '".intval($vid)."',
+                                                 SET `vid`  = '".(int)($vid)."',
                                                          `what` = 'a8',
                                                          `sel`  = '".stringParser::encode($_POST['a8'])."'");
                         }
                         if(!empty($_POST['a9']))
                         {
                             common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                                                 SET `vid`  = '".intval($vid)."',
+                                                 SET `vid`  = '".(int)($vid)."',
                                                          `what` = 'a9',
                                                          `sel`  = '".stringParser::encode($_POST['a9'])."'");
                         }
                         if(!empty($_POST['a10']))
                         {
                             common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}`
-                                                 SET `vid`  = '".intval($vid)."',
+                                                 SET `vid`  = '".(int)($vid)."',
                                                          `what` = 'a10',
                                                          `sel`  = '".stringParser::encode($_POST['a10'])."'");
                         }
             } else { $vid = ""; }
 
                 common::$sql['default']->insert("INSERT INTO `{prefix_forumthreads}`
-                                 SET     `kid`      = '".intval($_GET['kid'])."',
+                                 SET     `kid`      = '".(int)($_GET['kid'])."',
                                                 `t_date`   = '".time()."',
                                                 `topic`    = '".stringParser::encode($_POST['topic'])."',
                                                 `subtopic` = '".stringParser::encode($_POST['subtopic'])."',
                                                 `t_nick`   = '".stringParser::encode($_POST['nick'])."',
                                                 `t_email`  = '".stringParser::encode($_POST['email'])."',
                                                 `t_hp`     = '".common::links($_POST['hp'])."',
-                                                `t_reg`    = '".intval(common::$userid)."',
+                                                `t_reg`    = '".(int)(common::$userid)."',
                                                 `t_text`   = '".stringParser::encode($_POST['eintrag'])."',
-                                                `sticky`   = '".intval($_POST['sticky'])."',
-                                                `global`   = '".intval($_POST['global'])."',
+                                                `sticky`   = '".(int)($_POST['sticky'])."',
+                                                `global`   = '".(int)($_POST['global'])."',
                                                 `ip`       = '".common::$userip."',
                                                 `lp`       = '".time()."',
                                                 `vote`     = '".$vid."',

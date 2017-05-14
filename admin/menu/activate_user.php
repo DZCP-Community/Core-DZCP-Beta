@@ -20,23 +20,23 @@ $where = $where.': '._config_activate_user;
 
 switch ($do) {
     case 'activate':
-        common::$sql['default']->update("UPDATE `{prefix_users}` SET `level` = 1, `status` = 1, `actkey` = '' WHERE `id` = ?;", [intval($_GET['id'])]);
+        common::$sql['default']->update("UPDATE `{prefix_users}` SET `level` = 1, `status` = 1, `actkey` = '' WHERE `id` = ?;", [(int)$_GET['id']]);
         $show = common::info(_actived, "?admin=activate_user", 2);
     break;
     case 'delete':
         if(($id = isset($_GET['id']) ? $_GET['id'] : false) != false) {
-            common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;", [intval($id)]);
-            common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `user` = ?;", [intval($id)]);
-            common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;", [intval($id)]);
+            common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;", [(int)$id]);
+            common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `user` = ?;", [(int)$id]);
+            common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;", [(int)$id]);
             $show = common::info(_user_deleted, "?admin=activate_user", 3);
         }
     break;
     case 'delete-all':
         if(isset($_POST['userid']) && count($_POST['userid']) >= 1) {
             foreach($_POST['userid'] as $id) {
-                common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;", [intval($id)]);
-                common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `user` = ?;", [intval($id)]);
-                common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;", [intval($id)]);
+                common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;", [(int)$id]);
+                common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `user` = ?;", [(int)$id]);
+                common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;", [(int)$id]);
             }
 
             $show = common::info(_users_deleted, "?admin=activate_user", 4);
@@ -45,7 +45,7 @@ switch ($do) {
     case 'enable-all':
         if(isset($_POST['userid']) && count($_POST['userid']) >= 1) {
             foreach ($_POST['userid'] as $id) {
-                common::$sql['default']->update("UPDATE `{prefix_users}` SET `level` = 1, `status` = 1, `actkey` = '' WHERE `id` = ?;", [intval($id)]);
+                common::$sql['default']->update("UPDATE `{prefix_users}` SET `level` = 1, `status` = 1, `actkey` = '' WHERE `id` = ?;", [(int)$id]);
             }
 
             $show = common::info(_actived_all, "?admin=activate_user", 3);
@@ -118,7 +118,13 @@ switch ($do) {
             $smarty->clearAllAssign();
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $edit = str_replace("&amp;id=","",show("page/button_edit_akl", ["id" => $get['id'], "action" => "../user/?action=admin&edit=", "title" => _button_title_edit]));
+
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('action',"../user/?action=admin&edit=");
+            $smarty->assign('title',_button_title_edit);
+            $edit = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_edit_akl.tpl');
+            $smarty->clearAllAssign();
 
             $smarty->caching = false;
             $smarty->assign('id',$get['id']);

@@ -79,7 +79,7 @@ if(_adminMenu != 'true') exit;
             {
               $mp = common::$sql['default']->fetch("SELECT pos FROM `{prefix_sponsoren}`
                           WHERE name != '".$_POST['posname']."'
-                          AND pos = '".intval(($_POST['position']-1))."'");
+                          AND pos = '".(int)(($_POST['position']-1))."'");
 
               if($getpos['pos'] == $mp['pos']) $sel = 'selected="selected"';
               else $sel = '';
@@ -160,19 +160,19 @@ if(_adminMenu != 'true') exit;
 
             common::$sql['default']->update("UPDATE `{prefix_sponsoren}`
                       SET `pos` = pos+1
-                      WHERE pos ".$sign." '".intval($_POST['position'])."'");
+                      WHERE pos ".$sign." '".(int)($_POST['position'])."'");
 
             common::$sql['default']->insert("INSERT INTO `{prefix_sponsoren}`
                      SET `name`         = '".stringParser::encode($_POST['name'])."',
                                      `link`         = '".common::links($_POST['link'])."',
                                      `beschreibung` = '".stringParser::encode($_POST['beschreibung'])."',
-                                     `site`         = '".intval($_POST['site'])."',
+                                     `site`         = '".(int)($_POST['site'])."',
                                      `slink`        = '".$_POST['slink']."',
-                                     `banner`       = '".intval($_POST['banner'])."',
+                                     `banner`       = '".(int)($_POST['banner'])."',
                          `blink`        = '".$_POST['blink']."',
-                         `box`           = '".intval($_POST['box'])."',
+                         `box`           = '".(int)($_POST['box'])."',
                          `xlink`         = '".stringParser::encode($_POST['xlink'])."',
-                                     `pos`            = '".intval($_POST['position'])."'");
+                                     `pos`            = '".(int)($_POST['position'])."'");
 
           $id = common::$sql['default']->lastInsertId();
 
@@ -189,7 +189,7 @@ if(_adminMenu != 'true') exit;
               @copy($tmp1, basePath."/banner/sponsors/site_".$id.".".strtolower($end1));
               @unlink($_FILES['sdata']['tmp_name']);
             }
-              common::$sql['default']->update("UPDATE `{prefix_sponsoren}` SET `send` = '".$end1."' WHERE id = '".intval($id)."'");
+              common::$sql['default']->update("UPDATE `{prefix_sponsoren}` SET `send` = '".$end1."' WHERE id = '".(int)($id)."'");
           }
 
                   $tmp2 = $_FILES['bdata']['tmp_name'];
@@ -204,7 +204,7 @@ if(_adminMenu != 'true') exit;
               @copy($tmp2, basePath."/banner/sponsors/banner_".$id.".".strtolower($end2));
               @unlink($_FILES['bdata']['tmp_name']);
             }
-              common::$sql['default']->update("UPDATE `{prefix_sponsoren}` SET `bend` = '".$end2."' WHERE id = '".intval($id)."'");
+              common::$sql['default']->update("UPDATE `{prefix_sponsoren}` SET `bend` = '".$end2."' WHERE id = '".(int)($id)."'");
           }
 
                   $tmp3 = $_FILES['xdata']['tmp_name'];
@@ -220,14 +220,14 @@ if(_adminMenu != 'true') exit;
               @copy($tmp3, basePath."/banner/sponsors/box_".$id.".".strtolower($end3));
               @unlink($_FILES['xdata']['tmp_name']);
             }
-              common::$sql['default']->update("UPDATE `{prefix_sponsoren}` SET `xend` = '".$end3."' WHERE id = '".intval($id)."'");
+              common::$sql['default']->update("UPDATE `{prefix_sponsoren}` SET `xend` = '".$end3."' WHERE id = '".(int)($id)."'");
           }
 
           $show = common::info(_sponsor_added, "?admin=sponsors");
         }
       } elseif($do == "edit") {
 
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_sponsoren}` WHERE id = '".intval($_GET['id'])."'");
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_sponsoren}` WHERE id = '".(int)($_GET['id'])."'");
 
           $pos = common::$sql['default']->select("SELECT pos,name FROM `{prefix_sponsoren}` ORDER BY pos");
           foreach($pos as $getpos) {
@@ -235,7 +235,7 @@ if(_adminMenu != 'true') exit;
             {
               $mp = common::$sql['default']->fetch("SELECT pos FROM `{prefix_sponsoren}`
                           WHERE name != '".$get['name']."'
-                          AND pos = '".intval(($get['pos']-1))."'");
+                          AND pos = '".(int)(($get['pos']-1))."'");
 
               if($getpos['pos'] == $mp['pos']) $sel = 'selected="selected"';
               else $sel = '';
@@ -343,7 +343,7 @@ if(_adminMenu != 'true') exit;
           if(empty($_POST['link']))         $error = show("errors/errortable", array("error" => _sponsors_empty_link));
           if(empty($_POST['name']))         $error = show("errors/errortable", array("error" => _sponsors_empty_name));
 
-          $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_sponsoren}` WHERE id = '".intval($_GET['id'])."'");
+          $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_sponsoren}` WHERE id = '".(int)($_GET['id'])."'");
 
           $pos = common::$sql['default']->select("SELECT pos,name FROM `{prefix_sponsoren}` ORDER BY pos");
           foreach($pos as $getpos) {
@@ -351,7 +351,7 @@ if(_adminMenu != 'true') exit;
             {
               $mp = common::$sql['default']->fetch("SELECT pos FROM `{prefix_sponsoren}`
                           WHERE name != '".$get['name']."'
-                          AND pos = '".intval(($_POST['position']-1))."'");
+                          AND pos = '".(int)(($_POST['position']-1))."'");
 
               if($getpos['pos'] == $mp['pos']) $sel = 'selected="selected"';
               else $sel = '';
@@ -455,7 +455,7 @@ if(_adminMenu != 'true') exit;
 
 
         } else {
-          $get = common::$sql['default']->fetch("SELECT pos FROM `{prefix_sponsoren}` WHERE id = '".intval($_GET['id'])."'");
+          $get = common::$sql['default']->fetch("SELECT pos FROM `{prefix_sponsoren}` WHERE id = '".(int)($_GET['id'])."'");
 
           if($_POST['position'] != $get['pos'])
           {
@@ -464,26 +464,26 @@ if(_adminMenu != 'true') exit;
 
               common::$sql['default']->update("UPDATE `{prefix_sponsoren}`
                         SET `pos` = pos+1
-                        WHERE pos ".$sign." '".intval($_POST['position'])."'");
+                        WHERE pos ".$sign." '".(int)($_POST['position'])."'");
           }
 
           if($_POST['position'] == "lazy") $newpos = "";
-          else $newpos = "`pos` = '".intval($_POST['position'])."'";
+          else $newpos = "`pos` = '".(int)($_POST['position'])."'";
 
           common::$sql['default']->update("UPDATE `{prefix_sponsoren}`
                        SET      `name`         = '".stringParser::encode($_POST['name'])."',
                              `link`         = '".common::links($_POST['link'])."',
                              `beschreibung` = '".stringParser::encode($_POST['beschreibung'])."',
-                             `site`         = '".intval($_POST['site'])."',
+                             `site`         = '".(int)($_POST['site'])."',
                              `slink`        = '".$_POST['slink']."',
-                             `banner`       = '".intval($_POST['banner'])."',
+                             `banner`       = '".(int)($_POST['banner'])."',
                              `blink`        = '".$_POST['blink']."',
-                             `box`           = '".intval($_POST['box'])."',
+                             `box`           = '".(int)($_POST['box'])."',
                              `xlink`         = '".stringParser::encode($_POST['xlink'])."',
                              ".$newpos."
-                       WHERE id = '".intval($_GET['id'])."'");
+                       WHERE id = '".(int)($_GET['id'])."'");
 
-          $id = intval($_GET['id']);
+          $id = (int)($_GET['id']);
 
                   $tmp1 = $_FILES['sdata']['tmp_name'];
           $type1 = $_FILES['sdata']['type'];
@@ -505,7 +505,7 @@ if(_adminMenu != 'true') exit;
               @copy($tmp1, basePath."/banner/sponsors/site_".$id.".".strtolower($end1));
               @unlink($_FILES['sdata']['tmp_name']);
             }
-              common::$sql['default']->update("UPDATE `{prefix_sponsoren}` SET `send` = '".$end1."' WHERE id = '".intval($id)."'");
+              common::$sql['default']->update("UPDATE `{prefix_sponsoren}` SET `send` = '".$end1."' WHERE id = '".(int)($id)."'");
           }
 
                   $tmp2 = $_FILES['bdata']['tmp_name'];
@@ -528,7 +528,7 @@ if(_adminMenu != 'true') exit;
                           @copy($tmp2, basePath."/banner/sponsors/banner_".$id.".".strtolower($end2));
               @unlink($_FILES['bdata']['tmp_name']);
             }
-              common::$sql['default']->update("UPDATE `{prefix_sponsoren}` SET `bend` = '".$end2."' WHERE id = '".intval($id)."'");
+              common::$sql['default']->update("UPDATE `{prefix_sponsoren}` SET `bend` = '".$end2."' WHERE id = '".(int)($id)."'");
           }
 
                   $tmp3 = $_FILES['xdata']['tmp_name'];
@@ -551,24 +551,21 @@ if(_adminMenu != 'true') exit;
                           @copy($tmp3, basePath."/banner/sponsors/box_".$id.".".strtolower($end3));
               @unlink($_FILES['xdata']['tmp_name']);
             }
-              common::$sql['default']->update("UPDATE `{prefix_sponsoren}` SET `xend` = '".$end3."' WHERE id = '".intval($id)."'");
+              common::$sql['default']->update("UPDATE `{prefix_sponsoren}` SET `xend` = '".$end3."' WHERE id = '".(int)($id)."'");
           }
 
           $show = common::info(_sponsor_edited, "?admin=sponsors");
         }
       } elseif($do == "delete") {
           common::$sql['default']->delete("DELETE FROM `{prefix_sponsoren}`
-                   WHERE id = '".intval($_GET['id'])."'");
+                   WHERE id = '".(int)($_GET['id'])."'");
 
         $show = common::info(_sponsor_deleted, "?admin=sponsors");
       } else {
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_sponsoren}` ORDER BY pos");
         foreach($qry as $get) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
-          $delete = show("page/button_delete_single", array("id" => $get['id'],
-                                                            "action" => "admin=sponsors&amp;do=delete",
-                                                            "title" => _button_title_del,
-                                                            "del" => _confirm_del_link));
+            $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_link);
 
           $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
 

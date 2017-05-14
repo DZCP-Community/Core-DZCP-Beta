@@ -53,7 +53,7 @@ default:
                             . "FROM `{prefix_sites}` AS `s1` "
                             . "LEFT JOIN `{prefix_navi}` AS `s2` "
                             . "ON s1.`id` = s2.`editor` "
-                            . "WHERE s1.`id` = ?;", [intval($_GET['show'])]);
+                            . "WHERE s1.`id` = ?;", [(int)($_GET['show'])]);
     if(common::$sql['default']->rowCount()) {
         $navi_access = false;
         $navi = common::$sql['default']->fetch("SELECT s2.level FROM `{prefix_navi}` AS `s1` "

@@ -17,7 +17,7 @@
 
 if(defined('_Artikel')) {
     if($do == 'edit') {
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_acomments}` WHERE `id` = ?;", [intval($_GET['cid'])]);
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_acomments}` WHERE `id` = ?;", [(int)($_GET['cid'])]);
 
         $get_id = '?';
         $get_userid = $get['reg'];
@@ -36,7 +36,7 @@ if(defined('_Artikel')) {
         $editedby = $smarty->fetch('string:'._edited_by);
         $smarty->clearAllAssign();
     } else {
-        $get_id = common::cnt("{prefix_acomments}", " WHERE `artikel` = ?;","id", [intval($_GET['id'])])+1;
+        $get_id = common::cnt("{prefix_acomments}", " WHERE `artikel` = ?;","id", [(int)($_GET['id'])])+1;
         $get_userid = common::$userid;
         $get_date = time();
         $regCheck = false;

@@ -16,7 +16,7 @@
  */
 
 function fvote($id, $ajax=false) {
-    $get = common::$sql['default']->fetch("SELECT `id`,`closed`,`titel` FROM `{prefix_votes}` WHERE `id` = ? ".(common::permission("votes") ? ";" : " AND `intern` = 0;"), [intval($id)]);
+    $get = common::$sql['default']->fetch("SELECT `id`,`closed`,`titel` FROM `{prefix_votes}` WHERE `id` = ? ".(common::permission("votes") ? ";" : " AND `intern` = 0;"), [(int)($id)]);
     if(common::$sql['default']->rowCount()) {
         $results = ''; $votebutton = '';
         $qryv = common::$sql['default']->select("SELECT `id`,`stimmen`,`sel` FROM `{prefix_vote_results}` WHERE `vid` = ? ORDER BY `id` ASC;", [$get['id']]);

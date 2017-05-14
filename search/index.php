@@ -163,7 +163,7 @@ default:
           else        $d = 'OR ';
           $k = $kat[$y];
           $k = str_replace("k_","",$k);
-          $dosearch .= $d."s3.id = '".intval($k)."' ";
+          $dosearch .= $d."s3.id = '".(int)($k)."' ";
         }
         $dosearch .= ')';
       }

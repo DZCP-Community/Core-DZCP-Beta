@@ -16,7 +16,7 @@
  */
 
 if(defined('_Votes')) {
-    $get = common::$sql['default']->fetch("SELECT `id`,`intern`,`closed` FROM `{prefix_votes}` WHERE `id` = ?;", [intval($_GET['id'])]);
+    $get = common::$sql['default']->fetch("SELECT `id`,`intern`,`closed` FROM `{prefix_votes}` WHERE `id` = ?;", [(int)($_GET['id'])]);
     if(!$get['intern'] || ($get['intern'] && common::$chkMe)) {
         $qryv = common::$sql['default']->select("SELECT `user_id`,`time`,`created` FROM `{prefix_ip_action}` WHERE `what` = 'vid_".$get['id']."' ORDER BY `time` DESC;");
         if(common::$chkMe == 4 || $get['closed'] || common::permission('votesadmin') || common::$sql['default']->rows("SELECT `id` FROM `{prefix_ip_action}` "

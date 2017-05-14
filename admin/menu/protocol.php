@@ -20,7 +20,7 @@ if(_adminMenu != 'true') exit;
 $where = $where.': '._protocol;
 switch ($do) {
     case 'deletesingle':
-        common::$sql['default']->delete("DELETE FROM `{prefix_ip_action}` WHERE `id` = ?;",array(intval($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_ip_action}` WHERE `id` = ?;",array((int)($_GET['id'])));
         header("Location: ".common::GetServerVars('HTTP_REFERER'));
     break;
     default:

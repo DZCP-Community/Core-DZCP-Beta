@@ -20,7 +20,7 @@ if (!defined('_Downloads')) exit();
 if(settings::get("reg_dl") && !common::$chkMe)
     $index = common::error(_error_unregistered,1);
 else {
-    $get = common::$sql['default']->fetch("SELECT `url`,`id` FROM `{prefix_downloads}` WHERE `id` = ?;", [intval($_GET['id'])]);
+    $get = common::$sql['default']->fetch("SELECT `url`,`id` FROM `{prefix_downloads}` WHERE `id` = ?;", [(int)($_GET['id'])]);
     $file = preg_replace("#added...#Uis", "", stringParser::decode($get['url']));
     if(preg_match("=added...=Uis",stringParser::decode($get['url'])) != FALSE)
         $dlFile = "files/".$file;

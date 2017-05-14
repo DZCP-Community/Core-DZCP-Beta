@@ -40,16 +40,16 @@ switch ($do) {
                     $timeshifttime = mktime($_POST['h_ts'],$_POST['min_ts'],0,$_POST['m_ts'],$_POST['t_ts'],$_POST['j_ts']);
                     $timeshift = "`timeshift` = 1,";
                     $public = "`public` = 1,";
-                    $params[] = intval($timeshifttime);
+                    $params[] = (int)($timeshifttime);
                     $datum = "`datum` = ?,";
                 }
 
                 common::$sql['default']->insert("INSERT INTO `{prefix_news}` SET `autor` = ?,`kat` = ?,`titel` = ?,`text` = ?,`more` = ?,"
                         . "`link1` = ?,`link2` = ?,`link3` = ?,`url1` = ?,`url2` = ?,`url3` = ?,`intern` = ?,".$timeshift."".$public."".$datum."`sticky` = ?;",
-                        array_merge(array(intval(common::$userid),intval($_POST['kat']),stringParser::encode($_POST['titel']),stringParser::encode($_POST['newstext']),
+                        array_merge(array((int)(common::$userid),(int)($_POST['kat']),stringParser::encode($_POST['titel']),stringParser::encode($_POST['newstext']),
                             stringParser::encode($_POST['morenews']),stringParser::encode($_POST['link1']),stringParser::encode($_POST['link2']),stringParser::encode($_POST['link3']),
                             stringParser::encode(common::links($_POST['url1'])),stringParser::encode(common::links($_POST['url2'])),stringParser::encode(common::links($_POST['url3'])),(isset($_POST['intern']) ? 1 : 0)),
-                                $params,array(intval($stickytime))));
+                                $params,array((int)($stickytime))));
 
                 $picUploadError = false;
                 if(isset($_FILES['newspic']['tmp_name']) && !empty($_FILES['newspic']['tmp_name'])) {
@@ -101,21 +101,21 @@ switch ($do) {
                                               "what" => stringParser::decode($getk['kategorie'])));
         }
 
-        $dropdown_date = common::dropdown_date(common::dropdown("day",isset($_POST['t']) ? intval($_POST['t']) : date("d")),
-            common::dropdown("month",isset($_POST['m']) ? intval($_POST['m']) : date("m")),
-            common::dropdown("year",isset($_POST['j']) ? intval($_POST['j']) : date("Y")));
+        $dropdown_date = common::dropdown_date(common::dropdown("day",isset($_POST['t']) ? (int)($_POST['t']) : date("d")),
+            common::dropdown("month",isset($_POST['m']) ? (int)($_POST['m']) : date("m")),
+            common::dropdown("year",isset($_POST['j']) ? (int)($_POST['j']) : date("Y")));
 
-        $dropdown_time = common::dropdown_time(common::dropdown("hour",isset($_POST['h']) ? intval($_POST['h']) : date("H")),
-            common::dropdown("minute",isset($_POST['min']) ? intval($_POST['min']) : date("i")));
+        $dropdown_time = common::dropdown_time(common::dropdown("hour",isset($_POST['h']) ? (int)($_POST['h']) : date("H")),
+            common::dropdown("minute",isset($_POST['min']) ? (int)($_POST['min']) : date("i")));
 
         $timeshift_date = show(_dropdown_date_ts, array("nr" => "ts",
-                                                        "day" => common::dropdown("day",isset($_POST['t_ts']) ? intval($_POST['t_ts']) : date("d")),
-                                                        "month" => common::dropdown("month",isset($_POST['m_ts']) ? intval($_POST['m_ts']) : date("m")),
-                                                        "year" => common::dropdown("year",isset($_POST['j_ts']) ? intval($_POST['j_ts']) : date("Y"))));
+                                                        "day" => common::dropdown("day",isset($_POST['t_ts']) ? (int)($_POST['t_ts']) : date("d")),
+                                                        "month" => common::dropdown("month",isset($_POST['m_ts']) ? (int)($_POST['m_ts']) : date("m")),
+                                                        "year" => common::dropdown("year",isset($_POST['j_ts']) ? (int)($_POST['j_ts']) : date("Y"))));
 
         $timeshift_time = show(_dropdown_time_ts, array("nr" => "ts",
-                                                        "hour" => common::dropdown("hour",isset($_POST['h_ts']) ? intval($_POST['h_ts']) : date("H")),
-                                                        "minute" => common::dropdown("minute",isset($_POST['min_ts']) ? intval($_POST['min_ts']) : date("i")),
+                                                        "hour" => common::dropdown("hour",isset($_POST['h_ts']) ? (int)($_POST['h_ts']) : date("H")),
+                                                        "minute" => common::dropdown("minute",isset($_POST['min_ts']) ? (int)($_POST['min_ts']) : date("i")),
                                                         "uhr" => _uhr));
 
         $show = show($dir."/news_form", array("head" => _admin_news_head,
@@ -146,7 +146,7 @@ switch ($do) {
     break;
     case 'edit':
         if(isset($_GET['id'])) {
-            $_SESSION['editID'] = intval($_GET['id']);
+            $_SESSION['editID'] = (int)($_GET['id']);
         } else if(!array_key_exists('editID', $_SESSION)) {
             $_SESSION['editID'] = 0;
         }
@@ -170,7 +170,7 @@ switch ($do) {
                     $timeshifttime = mktime($_POST['h_ts'],$_POST['min_ts'],0,$_POST['m_ts'],$_POST['t_ts'],$_POST['j_ts']);
                     $timeshift = "`timeshift` = 1,";
                     $public = "`public` = 1,";
-                    $params[] = intval($timeshifttime);
+                    $params[] = (int)($timeshifttime);
                     $datum = "`datum` = ?,";
                 }
 
@@ -196,18 +196,18 @@ switch ($do) {
                             } else {
                                 //Remove Pic
                                 foreach(array("jpg", "gif", "png") as $tmpendung) {
-                                    if(file_exists(basePath."/inc/images/uploads/news/".intval($get['id']).".".$tmpendung))
-                                        @unlink(basePath."/inc/images/uploads/news/".intval($get['id']).".".$tmpendung);
+                                    if(file_exists(basePath."/inc/images/uploads/news/".(int)($get['id']).".".$tmpendung))
+                                        @unlink(basePath."/inc/images/uploads/news/".(int)($get['id']).".".$tmpendung);
                                 }
 
                                 //Remove minimize
                                 $files = common::get_files(basePath."/inc/images/uploads/news/",false,true,array("jpg", "gif", "png"));
                                 if($files) {
                                     foreach ($files as $file) {
-                                        if(preg_match("#".intval($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
-                                            $res = preg_match("#".intval($_GET['id'])."_(.*)#",$file,$match);
-                                            if(file_exists(basePath."/inc/images/uploads/news/".intval($get['id'])."_".$match[1]))
-                                                @unlink(basePath."/inc/images/uploads/news/".intval($get['id'])."_".$match[1]);
+                                        if(preg_match("#".(int)($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
+                                            $res = preg_match("#".(int)($_GET['id'])."_(.*)#",$file,$match);
+                                            if(file_exists(basePath."/inc/images/uploads/news/".(int)($get['id'])."_".$match[1]))
+                                                @unlink(basePath."/inc/images/uploads/news/".(int)($get['id'])."_".$match[1]);
                                         }
                                     }
                                 }
@@ -225,7 +225,7 @@ switch ($do) {
 
                 if(!$picUploadError) {
                     common::$sql['default']->update("UPDATE `{prefix_news}`
-                        SET `kat`        = '".intval($_POST['kat'])."',
+                        SET `kat`        = '".(int)($_POST['kat'])."',
                             `titel`      = '".stringParser::encode($_POST['titel'])."',
                             `text`       = '".stringParser::encode($_POST['newstext'])."',
                             `more`  = '".stringParser::encode($_POST['morenews'])."',
@@ -234,12 +234,12 @@ switch ($do) {
                             `link2`      = '".stringParser::encode($_POST['link2'])."',
                             `url2`       = '".common::links($_POST['url2'])."',
                             `link3`      = '".stringParser::encode($_POST['link3'])."',
-                            `intern`     = '".(isset($_POST['intern']) ? intval($_POST['intern']) : 0)."',
+                            `intern`     = '".(isset($_POST['intern']) ? (int)($_POST['intern']) : 0)."',
                             `url3`       = '".stringParser::encode(common::links($_POST['url3']))."',
                             ".$timeshift."
                             ".$public."
                             ".$datum."
-                            `sticky`     = '".intval($stickytime)."'
+                            `sticky`     = '".(int)($stickytime)."'
                         WHERE id = ".$get['id'].";");
                     
                     $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_news}` WHERE id = ".$get['id'].";");
@@ -327,30 +327,30 @@ switch ($do) {
     break;
     case 'public':
         if(isset($_GET['what']) && $_GET['what'] == 'set')
-            common::$sql['default']->update("UPDATE `{prefix_news}` SET `public` = '1', `datum`  = '".time()."' WHERE id = '".intval($_GET['id'])."'");
+            common::$sql['default']->update("UPDATE `{prefix_news}` SET `public` = '1', `datum`  = '".time()."' WHERE id = '".(int)($_GET['id'])."'");
         else
-            common::$sql['default']->update("UPDATE `{prefix_news}` SET `public` = '0' WHERE id = '".intval($_GET['id'])."'");
+            common::$sql['default']->update("UPDATE `{prefix_news}` SET `public` = '0' WHERE id = '".(int)($_GET['id'])."'");
 
         header("Location: ?admin=newsadmin");
     break;
     case 'delete':
-        common::$sql['default']->delete("DELETE FROM `{prefix_news}` WHERE id = '".intval($_GET['id'])."'");
-        common::$sql['default']->delete("DELETE FROM `{prefix_newscomments}` WHERE news = '".intval($_GET['id'])."'");
+        common::$sql['default']->delete("DELETE FROM `{prefix_news}` WHERE id = '".(int)($_GET['id'])."'");
+        common::$sql['default']->delete("DELETE FROM `{prefix_newscomments}` WHERE news = '".(int)($_GET['id'])."'");
 
         //Remove Pic
         foreach(array("jpg", "gif", "png") as $tmpendung) {
-            if(file_exists(basePath."/inc/images/uploads/news/".intval($_GET['id']).".".$tmpendung))
-                @unlink(basePath."/inc/images/uploads/news/".intval($_GET['id']).".".$tmpendung);
+            if(file_exists(basePath."/inc/images/uploads/news/".(int)($_GET['id']).".".$tmpendung))
+                @unlink(basePath."/inc/images/uploads/news/".(int)($_GET['id']).".".$tmpendung);
         }
 
         //Remove minimize
         $files = common::get_files(basePath."/inc/images/uploads/news/",false,true,array("jpg", "gif", "png"));
         if($files) {
             foreach ($files as $file) {
-                if(preg_match("#".intval($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
-                    $res = preg_match("#".intval($_GET['id'])."_(.*)#",$file,$match);
-                    if(file_exists(basePath."/inc/images/uploads/news/".intval($_GET['id'])."_".$match[1]))
-                        @unlink(basePath."/inc/images/uploads/news/".intval($_GET['id'])."_".$match[1]);
+                if(preg_match("#".(int)($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
+                    $res = preg_match("#".(int)($_GET['id'])."_(.*)#",$file,$match);
+                    if(file_exists(basePath."/inc/images/uploads/news/".(int)($_GET['id'])."_".$match[1]))
+                        @unlink(basePath."/inc/images/uploads/news/".(int)($_GET['id'])."_".$match[1]);
                 }
             }
         }
@@ -360,21 +360,21 @@ switch ($do) {
     case 'delnewspic':
         //Remove Pic
         foreach(array("jpg", "gif", "png") as $tmpendung) {
-            if(file_exists(basePath."/inc/images/uploads/news/".intval($_GET['id']).".".$tmpendung))
-                @unlink(basePath."/inc/images/uploads/news/".intval($_GET['id']).".".$tmpendung);
+            if(file_exists(basePath."/inc/images/uploads/news/".(int)($_GET['id']).".".$tmpendung))
+                @unlink(basePath."/inc/images/uploads/news/".(int)($_GET['id']).".".$tmpendung);
         }
 
         //Remove minimize
         $files = common::get_files(basePath."/inc/images/uploads/news/",false,true,array("jpg", "gif", "png"));
         foreach ($files as $file) {
-            if(preg_match("#".intval($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
-                $res = preg_match("#".intval($_GET['id'])."_(.*)#",$file,$match);
-                if(file_exists(basePath."/inc/images/uploads/news/".intval($_GET['id'])."_".$match[1]))
-                    @unlink(basePath."/inc/images/uploads/news/".intval($_GET['id'])."_".$match[1]);
+            if(preg_match("#".(int)($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
+                $res = preg_match("#".(int)($_GET['id'])."_(.*)#",$file,$match);
+                if(file_exists(basePath."/inc/images/uploads/news/".(int)($_GET['id'])."_".$match[1]))
+                    @unlink(basePath."/inc/images/uploads/news/".(int)($_GET['id'])."_".$match[1]);
             }
         }
 
-        $show = common::info(_newspic_deleted, "?admin=newsadmin&do=edit&id=".intval($_GET['id'])."");
+        $show = common::info(_newspic_deleted, "?admin=newsadmin&do=edit&id=".(int)($_GET['id'])."");
     break;
     default:
         $entrys = common::cnt('{prefix_news}'); $show_ = '';
@@ -382,10 +382,7 @@ switch ($do) {
                    LIMIT ".($page - 1)*settings::get('m_adminnews').",".settings::get('m_adminnews')."");
         foreach($qry as $get) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
-            $delete = show("page/button_delete_single", array("id" => $get['id'],
-                                                              "action" => "admin=newsadmin&amp;do=delete",
-                                                              "title" => _button_title_del,
-                                                              "del" => _confirm_del_news));
+            $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_news);
 
             $titel = show(_news_show_link, array("titel" =>stringParser::decode(common::cut($get['titel'],settings::get('l_newsadmin'))), "id" => $get['id']));
             $intern = ($get['intern'] ? _votes_intern : '');

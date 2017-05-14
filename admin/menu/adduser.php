@@ -56,8 +56,8 @@ if(isset($_POST['user'])) {
                           . "`level` = ?, "
                           . "`time` = ?, "
                           . "`status` = 1;",
-                [stringParser::encode($_POST['user']),stringParser::encode($_POST['nick']),stringParser::encode($_POST['email']),stringParser::encode($pwd),settings::get('default_pwd_encoder'),stringParser::encode($_POST['rlname']),intval($_POST['sex']),
-                (!$bday ? 0 : strtotime($bday)),stringParser::encode($_POST['city']),stringParser::encode($_POST['land']),$time=time(),intval($_POST['level']),$time]);
+                [stringParser::encode($_POST['user']),stringParser::encode($_POST['nick']),stringParser::encode($_POST['email']),stringParser::encode($pwd),settings::get('default_pwd_encoder'),stringParser::encode($_POST['rlname']),(int)$_POST['sex'],
+                (!$bday ? 0 : strtotime($bday)),stringParser::encode($_POST['city']),stringParser::encode($_POST['land']),$time=time(),(int)$_POST['level'],$time]);
 
         $insert_id = common::$sql['default']->lastInsertId();
         common::setIpcheck("createuser(".$_SESSION['id']."_".$insert_id.")");
@@ -65,7 +65,7 @@ if(isset($_POST['user'])) {
         //Insert Permissions
         $permissions = "";
         foreach($_POST['perm'] AS $v => $k) {
-            $permissions .= "`".substr($v, 2)."` = ".intval($k).", ";
+            $permissions .= "`".substr($v, 2)."` = ".(int)$k.", ";
         }
 
         if(!empty($permissions)) {
@@ -84,11 +84,11 @@ if(isset($_POST['user'])) {
         $groups = common::$sql['default']->select("SELECT * FROM `{prefix_groups}`;");
         foreach($groups as $get_group) {
             if(isset($_POST['group'.$get_group['id']])) {
-                common::$sql['default']->insert("INSERT INTO `{prefix_groupuser}` SET `user`  = ?, `group` = ?;", [$insert_id,intval($_POST['squad'.$get_group['id']])]);
+                common::$sql['default']->insert("INSERT INTO `{prefix_groupuser}` SET `user`  = ?, `group` = ?;", [$insert_id,(int)$_POST['squad'.$get_group['id']]]);
             }
 
             if(isset($_POST['group'.$get_group['id']])) {
-                common::$sql['default']->insert("INSERT INTO `{prefix_userposis}` SET `user` = ?, `posi` = ?, `group` = ?;", [$insert_id,intval($_POST['sqpos'.$get_group['id']]),$get_group['id']]);
+                common::$sql['default']->insert("INSERT INTO `{prefix_userposis}` SET `user` = ?, `posi` = ?, `group` = ?;", [$insert_id,(int)$_POST['sqpos'.$get_group['id']],$get_group['id']]);
             }
         }
 

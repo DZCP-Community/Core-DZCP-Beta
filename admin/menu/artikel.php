@@ -96,7 +96,7 @@ switch($do) {
             if(isset($_POST)) {
                 common::$sql['default']->insert("INSERT INTO `{prefix_artikel}` SET `autor` = ?, `kat` = ?, `titel` = ?, `text` = ?, "
                             ."`link1`  = ?, `link2`  = ?, `link3`  = ?, `url1`   = ?, `url2`   = ?, `url3`   = ?;",
-                array(intval(common::$userid),intval($_POST['kat']),stringParser::encode($_POST['titel']),stringParser::encode($_POST['artikel']),stringParser::encode($_POST['link1']),
+                array((int)(common::$userid),(int)($_POST['kat']),stringParser::encode($_POST['titel']),stringParser::encode($_POST['artikel']),stringParser::encode($_POST['link1']),
                         stringParser::encode($_POST['link2']),stringParser::encode($_POST['link3']),stringParser::encode(common::links($_POST['url1'])),stringParser::encode(common::links($_POST['url2'])),
                     stringParser::encode(common::links($_POST['url3']))));
 
@@ -111,7 +111,7 @@ switch($do) {
         }
     break;
     case 'edit':
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_artikel}` WHERE `id` = ?;",array(intval($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_artikel}` WHERE `id` = ?;",array((int)($_GET['id'])));
         $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_newskat}`;"); $kat = '';
         foreach($qryk as $getk) {
             $sel = ($get['kat'] == $getk['id'] ? 'selected="selected"' : '');
@@ -126,8 +126,8 @@ switch($do) {
 
         $artikelimage = ""; $delartikelpic = "";
         foreach(array("jpg", "gif", "png") as $tmpendung) {
-            if(file_exists(basePath."/inc/images/uploads/artikel/".intval($_GET['id']).".".$tmpendung)) {
-                $artikelimage = common::img_size('inc/images/uploads/artikel/'.intval($_GET['id']).'.'.$tmpendung)."<br /><br />";
+            if(file_exists(basePath."/inc/images/uploads/artikel/".(int)($_GET['id']).".".$tmpendung)) {
+                $artikelimage = common::img_size('inc/images/uploads/artikel/'.(int)($_GET['id']).'.'.$tmpendung)."<br /><br />";
                 $delartikelpic = '<a href="?admin=artikel&do=delartikelpic&id='.$_GET['id'].'">'._artikelpic_del.'</a><br /><br />';
             }
         }
@@ -168,54 +168,54 @@ switch($do) {
         if(isset($_POST)) {
             common::$sql['default']->update("UPDATE `{prefix_artikel}` SET `kat` = ?, `titel` = ?, `text` = ?, `link1` = ?, "
             . "`link2` = ?, `link3` = ?, `url1` = ?, `url2` = ?, `url3` = ? WHERE `id` = ?;",
-            array(intval($_POST['kat']),stringParser::encode($_POST['titel']),stringParser::encode($_POST['artikel']),stringParser::encode($_POST['link1']),
+            array((int)($_POST['kat']),stringParser::encode($_POST['titel']),stringParser::encode($_POST['artikel']),stringParser::encode($_POST['link1']),
                 stringParser::encode($_POST['link2']),stringParser::encode($_POST['link3']),stringParser::encode(common::links($_POST['url1'])),
-                stringParser::encode(common::links($_POST['url2'])),stringParser::encode(common::links($_POST['url3'])),intval($_GET['id'])));
+                stringParser::encode(common::links($_POST['url2'])),stringParser::encode(common::links($_POST['url3'])),(int)($_GET['id'])));
 
             if(isset($_FILES['artikelpic']['tmp_name']) && !empty($_FILES['artikelpic']['tmp_name'])) {
                 foreach(array("jpg", "gif", "png") as $tmpendung) {
-                    if(file_exists(basePath."/inc/images/uploads/artikel/".intval($_GET['id']).".".$tmpendung))
-                        @unlink(basePath."/inc/images/uploads/artikel/".intval($_GET['id']).".".$tmpendung);
+                    if(file_exists(basePath."/inc/images/uploads/artikel/".(int)($_GET['id']).".".$tmpendung))
+                        @unlink(basePath."/inc/images/uploads/artikel/".(int)($_GET['id']).".".$tmpendung);
                 }
 
                 //Remove minimize
                 $files = common::get_files(basePath."/inc/images/uploads/artikel/",false,true,array("jpg", "gif", "png"));
                 if($files) {
                     foreach ($files as $file) {
-                        if(preg_match("#".intval($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
-                            $res = preg_match("#".intval($_GET['id'])."_(.*)#",$file,$match);
-                            if(file_exists(basePath."/inc/images/uploads/artikel/".intval($_GET['id'])."_".$match[1]))
-                                @unlink(basePath."/inc/images/uploads/artikel/".intval($_GET['id'])."_".$match[1]);
+                        if(preg_match("#".(int)($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
+                            $res = preg_match("#".(int)($_GET['id'])."_(.*)#",$file,$match);
+                            if(file_exists(basePath."/inc/images/uploads/artikel/".(int)($_GET['id'])."_".$match[1]))
+                                @unlink(basePath."/inc/images/uploads/artikel/".(int)($_GET['id'])."_".$match[1]);
                         }
                     }
                 }
 
                 $endung = explode(".", $_FILES['artikelpic']['name']);
                 $endung = strtolower($endung[count($endung)-1]);
-                move_uploaded_file($_FILES['artikelpic']['tmp_name'], basePath."/inc/images/uploads/artikel/".intval($_GET['id']).".".strtolower($endung));
+                move_uploaded_file($_FILES['artikelpic']['tmp_name'], basePath."/inc/images/uploads/artikel/".(int)($_GET['id']).".".strtolower($endung));
             }
 
             $show = common::info(_artikel_edited, "?admin=artikel");
         }
     break;
     case 'delete':
-        common::$sql['default']->delete("DELETE FROM `{prefix_artikel}` WHERE `id` = ?;",array(intval($_GET['id'])));
-        common::$sql['default']->delete("DELETE FROM `{prefix_acomments}` WHERE `artikel` = ?;",array(intval($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_artikel}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_acomments}` WHERE `artikel` = ?;",array((int)($_GET['id'])));
 
         //Remove Pic
         foreach(array("jpg", "gif", "png") as $tmpendung) {
-            if(file_exists(basePath."/inc/images/uploads/artikel/".intval($_GET['id']).".".$tmpendung))
-                @unlink(basePath."/inc/images/uploads/artikel/".intval($_GET['id']).".".$tmpendung);
+            if(file_exists(basePath."/inc/images/uploads/artikel/".(int)($_GET['id']).".".$tmpendung))
+                @unlink(basePath."/inc/images/uploads/artikel/".(int)($_GET['id']).".".$tmpendung);
         }
 
         //Remove minimize
         $files = common::get_files(basePath."/inc/images/uploads/artikel/",false,true,array("jpg", "gif", "png"));
         if($files) {
             foreach ($files as $file) {
-                if(preg_match("#".intval($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
-                    $res = preg_match("#".intval($_GET['id'])."_(.*)#",$file,$match);
-                    if(file_exists(basePath."/inc/images/uploads/artikel/".intval($_GET['id'])."_".$match[1]))
-                        @unlink(basePath."/inc/images/uploads/artikel/".intval($_GET['id'])."_".$match[1]);
+                if(preg_match("#".(int)($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
+                    $res = preg_match("#".(int)($_GET['id'])."_(.*)#",$file,$match);
+                    if(file_exists(basePath."/inc/images/uploads/artikel/".(int)($_GET['id'])."_".$match[1]))
+                        @unlink(basePath."/inc/images/uploads/artikel/".(int)($_GET['id'])."_".$match[1]);
                 }
             }
         }
@@ -225,29 +225,29 @@ switch($do) {
     case 'delartikelpic':
         //Remove Pic
         foreach(array("jpg", "gif", "png") as $tmpendung) {
-            if(file_exists(basePath."/inc/images/uploads/artikel/".intval($_GET['id']).".".$tmpendung))
-                @unlink(basePath."/inc/images/uploads/artikel/".intval($_GET['id']).".".$tmpendung);
+            if(file_exists(basePath."/inc/images/uploads/artikel/".(int)($_GET['id']).".".$tmpendung))
+                @unlink(basePath."/inc/images/uploads/artikel/".(int)($_GET['id']).".".$tmpendung);
         }
 
         //Remove minimize
         $files = common::get_files(basePath."/inc/images/uploads/artikel/",false,true,array("jpg", "gif", "png"));
         if($files) {
             foreach ($files as $file) {
-                if(preg_match("#".intval($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
-                    $res = preg_match("#".intval($_GET['id'])."_(.*)#",$file,$match);
-                    if(file_exists(basePath."/inc/images/uploads/artikel/".intval($_GET['id'])."_".$match[1]))
-                        @unlink(basePath."/inc/images/uploads/artikel/".intval($_GET['id'])."_".$match[1]);
+                if(preg_match("#".(int)($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
+                    $res = preg_match("#".(int)($_GET['id'])."_(.*)#",$file,$match);
+                    if(file_exists(basePath."/inc/images/uploads/artikel/".(int)($_GET['id'])."_".$match[1]))
+                        @unlink(basePath."/inc/images/uploads/artikel/".(int)($_GET['id'])."_".$match[1]);
                 }
             }
         }
 
-        $show = common::info(_newspic_deleted, "?admin=artikel&do=edit&id=".intval($_GET['id'])."");
+        $show = common::info(_newspic_deleted, "?admin=artikel&do=edit&id=".(int)($_GET['id'])."");
     break;
     case 'public':
         if(isset($_GET['what']) && $_GET['what'] == 'set')
-            common::$sql['default']->update("UPDATE `{prefix_artikel}` SET `public` = 1, `datum`  = ? WHERE `id` = ?",array(time(),intval($_GET['id'])));
+            common::$sql['default']->update("UPDATE `{prefix_artikel}` SET `public` = 1, `datum`  = ? WHERE `id` = ?",array(time(),(int)($_GET['id'])));
         else
-            common::$sql['default']->update("UPDATE `{prefix_artikel}` SET `public` = 0 WHERE `id` = ?;",array(intval($_GET['id'])));
+            common::$sql['default']->update("UPDATE `{prefix_artikel}` SET `public` = 0 WHERE `id` = ?;",array((int)($_GET['id'])));
 
         header("Location: ?admin=artikel");
     break;
@@ -255,14 +255,7 @@ switch($do) {
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_artikel}` ".common::orderby_sql(array("titel","datum","autor"),'ORDER BY `public` ASC, `datum` DESC')." LIMIT ".($page - 1)*settings::get('m_adminartikel').",".settings::get('m_adminartikel').";");
         foreach($qry as $get) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
-
-            $smarty->caching = false;
-            $smarty->assign('id',$get['id']);
-            $smarty->assign('action',"admin=artikel&amp;do=delete");
-            $smarty->assign('title',_button_title_del);
-            $smarty->assign('del',_confirm_del_artikel);
-            $delete = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_delete_single.tpl');
-            $smarty->clearAllAssign();
+            $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_artikel);
 
             $smarty->caching = false;
             $smarty->assign('titel',common::cut(stringParser::decode($get['titel']),settings::get('l_newsadmin')));

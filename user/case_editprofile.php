@@ -64,12 +64,12 @@ if(defined('_UserMenu')) {
                             }
 
                             foreach (array("jpg", "gif", "png") as $tmpendung) {
-                                if (file_exists(basePath . "/inc/images/uploads/userpics/" . intval($getdel['id']) . "." . $tmpendung)) {
-                                    @unlink(basePath . "/inc/images/uploads/userpics/" . intval($getdel['id']) . "." . $tmpendung);
+                                if (file_exists(basePath . "/inc/images/uploads/userpics/" . (int)($getdel['id']) . "." . $tmpendung)) {
+                                    @unlink(basePath . "/inc/images/uploads/userpics/" . (int)($getdel['id']) . "." . $tmpendung);
                                 }
 
-                                if (file_exists(basePath . "/inc/images/uploads/useravatare/" . intval($getdel['id']) . "." . $tmpendung)) {
-                                    @unlink(basePath . "/inc/images/uploads/useravatare/" . intval($getdel['id']) . "." . $tmpendung);
+                                if (file_exists(basePath . "/inc/images/uploads/useravatare/" . (int)($getdel['id']) . "." . $tmpendung)) {
+                                    @unlink(basePath . "/inc/images/uploads/useravatare/" . (int)($getdel['id']) . "." . $tmpendung);
                                 }
                             }
 
@@ -124,10 +124,10 @@ if(defined('_UserMenu')) {
                                     . "`signatur` = ?,`beschreibung` = ?, `startpage` = ?, `profile_access` = ?"
                                     . " WHERE id = ?;", array(stringParser::encode($_POST['land']), stringParser::encode($_POST['user']),
                                     stringParser::encode($_POST['nick']), stringParser::encode($_POST['rlname']),
-                                    intval($_POST['sex']),
-                                    (!$bday ? 0 : strtotime($bday)), stringParser::encode($_POST['email']), intval($_POST['nletter']), intval($_POST['pnmail']), stringParser::encode($_POST['city']),
+                                    (int)($_POST['sex']),
+                                    (!$bday ? 0 : strtotime($bday)), stringParser::encode($_POST['email']), (int)($_POST['nletter']), (int)($_POST['pnmail']), stringParser::encode($_POST['city']),
                                     stringParser::encode(common::links($_POST['hp'])), stringParser::encode($_POST['sig']), stringParser::encode($_POST['ich']),
-                                    intval($_POST['startpage']), intval($_POST['visibility_profile']), common::$userid));
+                                    (int)($_POST['startpage']), (int)($_POST['visibility_profile']), common::$userid));
 
                             notification::add_success(_info_edit_profile_done);
                         }
@@ -183,8 +183,8 @@ if(defined('_UserMenu')) {
                                     }
                                 break;
                                 case 'almgr_delete':
-                                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `id` = ?;", array(intval($_GET['id'])))) {
-                                        common::$sql['default']->delete("DELETE FROM `{prefix_autologin}` WHERE `id` = ?;",array(intval($_GET['id'])));
+                                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `id` = ?;", array((int)($_GET['id'])))) {
+                                        common::$sql['default']->delete("DELETE FROM `{prefix_autologin}` WHERE `id` = ?;",array((int)($_GET['id'])));
                                         cookie::delete('pkey');
                                         cookie::delete('id');
                                         cookie::save();
@@ -192,7 +192,7 @@ if(defined('_UserMenu')) {
                                     }
                                 break;
                                 case 'almgr_edit':
-                                    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_autologin}` WHERE `id` = ?;", array(intval($_GET['id'])));
+                                    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_autologin}` WHERE `id` = ?;", array((int)($_GET['id'])));
                                     if(common::$sql['default']->rowCount()) {
                                         $smarty->caching = false;
                                         $smarty->assign('name',stringParser::decode($get['name']));
@@ -206,9 +206,9 @@ if(defined('_UserMenu')) {
                                     }
                                 break;
                                 case 'almgr_edit_save':
-                                    if(common::$sql['default']->rows("SELECT id FROM `{prefix_autologin}` WHERE `id` = ?;", array(intval($_GET['id'])))) {
+                                    if(common::$sql['default']->rows("SELECT id FROM `{prefix_autologin}` WHERE `id` = ?;", array((int)($_GET['id'])))) {
                                         common::$sql['default']->update("UPDATE `{prefix_autologin}` SET `name` = ? WHERE `id` = ?;",
-                                            array(stringParser::encode($_POST['name']), intval($_GET['id'])));
+                                            array(stringParser::encode($_POST['name']), (int)($_GET['id'])));
                                         notification::add_success(_almgr_editd);
                                     }
                                 break;

@@ -22,7 +22,7 @@ if(defined('_UserMenu')) {
     } else {
         switch ($do) {
             case 'show':
-                $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_messages}` WHERE `id` = ? LIMIT 1;",array(intval($_GET['id'])));
+                $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_messages}` WHERE `id` = ? LIMIT 1;",array((int)($_GET['id'])));
                 if(common::$sql['default']->rowCount() && ($get['von'] == common::$userid || $get['an'] == common::$userid)) {
                     common::$sql['default']->update("UPDATE `{prefix_messages}` SET `readed` = 1 WHERE `id` = ?;",array($get['id']));
 
@@ -170,7 +170,7 @@ if(defined('_UserMenu')) {
                 if(!empty($_POST)) {
                     foreach ($_POST as $key => $id) {
                         if(strpos($key, 'posteingang_') !== false) {
-                            $get = common::$sql['default']->fetch("SELECT `id`,`see` FROM `{prefix_messages}` WHERE `id` = ? LIMIT 1;",array(intval($id)));
+                            $get = common::$sql['default']->fetch("SELECT `id`,`see` FROM `{prefix_messages}` WHERE `id` = ? LIMIT 1;",array((int)($id)));
                             if(!$get['see']) {
                                 common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `id` = ?;",array($get['id']));
                             } else {
@@ -182,7 +182,7 @@ if(defined('_UserMenu')) {
                 header("Location: ?action=msg");
             break;
             case 'deletethis':
-                $get = common::$sql['default']->fetch("SELECT `id`,`see` FROM `{prefix_messages}` WHERE `id` = ? LIMIT 1;",array(intval($_GET['id'])));
+                $get = common::$sql['default']->fetch("SELECT `id`,`see` FROM `{prefix_messages}` WHERE `id` = ? LIMIT 1;",array((int)($_GET['id'])));
                 if(common::$sql['default']->rowCount()) {
                     if(!$get['see']) {
                         common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `id` = ?;",array($get['id']));
@@ -197,7 +197,7 @@ if(defined('_UserMenu')) {
                 if(!empty($_POST)) {
                     foreach ($_POST as $key => $id) {
                         if(strpos($key, 'postausgang_') !== false) {
-                            common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `id` = ?;",array(intval($id)));
+                            common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `id` = ?;",array((int)($id)));
                         }
                     }
                 }

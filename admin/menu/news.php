@@ -20,12 +20,12 @@ $where = $where.': '._config_newskats_edit_head;
 
 switch($do) {
     case 'delete':
-        $get = fetch("SELECT `id`,`katimg` FROM `{prefix_newskat}` WHERE `id` = ?;",array(intval($_GET['id'])));
+        $get = fetch("SELECT `id`,`katimg` FROM `{prefix_newskat}` WHERE `id` = ?;",array((int)($_GET['id'])));
         if(common::$sql['default']->rowCount()) {
             if(file_exists(basePath."/inc/images/uploads/newskat/".stringParser::decode($get['katimg']))) {
                 unlink(basePath."/inc/images/uploads/newskat/".stringParser::decode($get['katimg']));
             }
-            common::$sql['default']->delete("DELETE FROM `{prefix_newskat}` WHERE `id` = ?;",array(intval($get['id'])));
+            common::$sql['default']->delete("DELETE FROM `{prefix_newskat}` WHERE `id` = ?;",array((int)($get['id'])));
             $show = common::info(_config_newskat_deleted, "?admin=news");
         }
     break;
@@ -55,7 +55,7 @@ switch($do) {
         }
     break;
     case 'edit':
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_newskat}` WHERE `id` = ?;",array(intval($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_newskat}` WHERE `id` = ?;",array((int)($_GET['id'])));
         $files = common::get_files(basePath.'/inc/images/uploads/newskat/',false,true); $img = '';
         for($i=0; $i<count($files); $i++) {
             $sel = ($get['katimg'] == $files[$i] ? 'selected="selected"' : '');
@@ -69,7 +69,7 @@ switch($do) {
         $show = show($dir."/newskatform", array("head" => _config_newskats_edit_head,
                                                 "kat" => stringParser::decode($get['kategorie']),
                                                 "value" => _button_value_edit,
-                                                "id" => intval($_GET['id']),
+                                                "id" => (int)($_GET['id']),
                                                 "do" => $do,
                                                 "upload" => $upload,
                                                 "img" => $img));
@@ -80,7 +80,7 @@ switch($do) {
         } else {
             $katimg = ($_POST['img'] == "lazy" ? "" : "`katimg` = '".stringParser::encode($_POST['img'])."',");
             common::$sql['default']->update("UPDATE `{prefix_newskat}` SET ".$katimg." `kategorie` = ? WHERE id = ?;",
-                    array(stringParser::encode($_POST['kat']),intval($_GET['id'])));
+                    array(stringParser::encode($_POST['kat']),(int)($_GET['id'])));
             $show = common::info(_config_newskats_edited, "?admin=news");
         }
     break;
@@ -88,10 +88,7 @@ switch($do) {
         $qry = common::$sql['default']->select("SELECT `id`,`katimg`,`kategorie` FROM `{prefix_newskat}` ORDER BY `kategorie`;"); $kats = '';
         foreach($qry as $get) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
-            $delete = show("page/button_delete_single", array("id" => $get['id'],
-                                                              "action" => "admin=news&amp;do=delete",
-                                                              "title" => _button_title_del,
-                                                              "del" => _confirm_del_kat));
+            $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_kat);
 
             $img = show(_config_newskats_img, array("img" => stringParser::decode($get['katimg'])));
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;

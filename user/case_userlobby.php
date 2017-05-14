@@ -19,12 +19,12 @@ if(defined('_UserMenu')) {
     $where = _site_user_lobby;
     if (common::$chkMe) {
         $can_erase = false;
-        if(isset($_POST['erase']) && intval($_POST['erase']) == 1) {
+        if(isset($_POST['erase']) && (int)($_POST['erase']) == 1) {
             $_SESSION['lastvisit'] = time();
             common::$sql['default']->update("UPDATE `{prefix_userstats}` "
                        . "SET `lastvisit` = ? "
                        . "WHERE `user` = ?;",
-            array(intval($_SESSION['lastvisit']),common::$userid));
+            array((int)($_SESSION['lastvisit']),common::$userid));
         }
 
         //Get Userinfos
@@ -40,7 +40,7 @@ if(defined('_UserMenu')) {
         if (common::$sql['default']->rowCount()) {
             foreach($qrykat as $getkat) {
                 unset($nthread,$post,$forumposts_show);
-                if (common::forum_intern(intval($getkat['id']))) {
+                if (common::forum_intern((int)($getkat['id']))) {
                     $qrytopic = common::$sql['default']->select("SELECT `lp`,`id`,`topic`,`first`,`sticky` "
                                            . "FROM `{prefix_forumthreads}` "
                                            . "WHERE `kid` = ? AND `lp` > ? "

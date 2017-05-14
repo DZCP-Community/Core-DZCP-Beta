@@ -66,25 +66,25 @@ if(_adminMenu != 'true') exit;
 
           common::$sql['default']->update("UPDATE `{prefix_navi}`
                       SET `pos` = pos+1
-                      WHERE pos ".$sign." '".intval($pos)."'");
+                      WHERE pos ".$sign." '".(int)($pos)."'");
 
           common::$sql['default']->insert("INSERT INTO `{prefix_navi}`
-                      SET `pos`       = '".intval($pos)."',
+                      SET `pos`       = '".(int)($pos)."',
                           `kat`       = '".stringParser::encode($kat)."',
                           `name`      = '".stringParser::encode($_POST['name'])."',
                           `url`       = '".stringParser::encode($_POST['url'])."',
                           `shown`     = '1',
-                          `target`    = '".intval($_POST['target'])."',
-                          `internal`  = '".intval($_POST['internal'])."',
+                          `target`    = '".(int)($_POST['target'])."',
+                          `internal`  = '".(int)($_POST['internal'])."',
                           `type`      = '2',
-                          `wichtig`   = '".intval($_POST['wichtig'])."'");
+                          `wichtig`   = '".(int)($_POST['wichtig'])."'");
           $show = common::info(_navi_added,"?admin=navi");
         }
       } elseif($do == "delete") {
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_navi}` WHERE id = '".intval($_GET['id'])."'");
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_navi}` WHERE id = '".(int)($_GET['id'])."'");
 
-        common::$sql['default']->delete("DELETE FROM `{prefix_sites}` WHERE id = '".intval($get['editor'])."'");
-        common::$sql['default']->delete("DELETE FROM `{prefix_navi}` WHERE id = '".intval($_GET['id'])."'");
+        common::$sql['default']->delete("DELETE FROM `{prefix_sites}` WHERE id = '".(int)($get['editor'])."'");
+        common::$sql['default']->delete("DELETE FROM `{prefix_navi}` WHERE id = '".(int)($_GET['id'])."'");
 
         $show = common::info(_navi_deleted, "?admin=navi");
       } elseif($do == "edit") {
@@ -110,7 +110,7 @@ if(_adminMenu != 'true') exit;
           $i++;
         }
 
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_navi}` WHERE id = '".intval($_GET['id'])."'");
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_navi}` WHERE id = '".(int)($_GET['id'])."'");
 
         if($get['type'] == "1")
         {
@@ -155,34 +155,34 @@ if(_adminMenu != 'true') exit;
 
         common::$sql['default']->update("UPDATE `{prefix_navi}`
                     SET pos = pos+1
-                    WHERE pos ".$sign." '".intval($pos)."'");
+                    WHERE pos ".$sign." '".(int)($pos)."'");
 
         common::$sql['default']->update("UPDATE `{prefix_navi}`
-                    SET `pos`       = '".intval($pos)."',
+                    SET `pos`       = '".(int)($pos)."',
                         `kat`       = '".stringParser::encode($kat)."',
                         `name`      = '".stringParser::encode($_POST['name'])."',
                         `url`       = '".stringParser::encode($_POST['url'])."',
-                        `target`    = '".intval($_POST['target'])."',
-                        `shown`     = '".intval($_POST['sichtbar'])."',
-                        `internal`  = '".intval($_POST['internal'])."',
-                        `wichtig`   = '".intval($_POST['wichtig'])."'
-                    WHERE id = '".intval($_GET['id'])."'");
+                        `target`    = '".(int)($_POST['target'])."',
+                        `shown`     = '".(int)($_POST['sichtbar'])."',
+                        `internal`  = '".(int)($_POST['internal'])."',
+                        `wichtig`   = '".(int)($_POST['wichtig'])."'
+                    WHERE id = '".(int)($_GET['id'])."'");
 
         $show = common::info(_navi_edited,"?admin=navi");
       } elseif($do == "menu") {
         common::$sql['default']->update("UPDATE `{prefix_navi}`
-                    SET `shown`     = '".intval($_GET['set'])."'
-                    WHERE id = '".intval($_GET['id'])."'");
+                    SET `shown`     = '".(int)($_GET['set'])."'
+                    WHERE id = '".(int)($_GET['id'])."'");
 
         header("Location: ?admin=navi");
       } else if($do == 'intern') {
         common::$sql['default']->update("UPDATE `{prefix_navi_kats}`
-                    SET `intern` = '".intval($_GET['set'])."'
-                    WHERE id = '".intval($_GET['id'])."'");
+                    SET `intern` = '".(int)($_GET['set'])."'
+                    WHERE id = '".(int)($_GET['id'])."'");
 
         header("Location: ?admin=navi");
       } else if($do == 'editkat') {
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_navi_kats}` WHERE `id` = '".intval($_GET['id'])."'");
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_navi_kats}` WHERE `id` = '".(int)($_GET['id'])."'");
 
         $show = show($dir."/form_navi_kats", array("head" => _menu_edit_kat,
                                                    "name" => _sponsors_admin_name,
@@ -207,15 +207,15 @@ if(_adminMenu != 'true') exit;
         common::$sql['default']->update("UPDATE `{prefix_navi_kats}`
             SET `name`        = '".stringParser::encode($_POST['name'])."',
                 `placeholder` = 'nav_".stringParser::encode($_POST['placeholder'])."',
-                `level`       = '".intval($_POST['level'])."'
-            WHERE `id` = '".intval($_GET['id'])."'");
+                `level`       = '".(int)($_POST['level'])."'
+            WHERE `id` = '".(int)($_GET['id'])."'");
 
         $show = common::info(_menukat_updated, '?admin=navi');
       } else if($do == 'deletekat') {
-        common::$sql['default']->delete("DELETE FROM `{prefix_navi_kats}` WHERE `id` = '".intval($_GET['id'])."'");
+        common::$sql['default']->delete("DELETE FROM `{prefix_navi_kats}` WHERE `id` = '".(int)($_GET['id'])."'");
         $show = common::info(_menukat_deleted, '?admin=navi');
       }  else if($do == 'addkat') {
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_navi_kats}` WHERE `id` = '".intval($_GET['id'])."'");
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_navi_kats}` WHERE `id` = '".(int)($_GET['id'])."'");
 
         $show = show($dir."/form_navi_kats", array("head" => _menu_add_kat,
                                                    "name" => _sponsors_admin_name,
@@ -240,7 +240,7 @@ if(_adminMenu != 'true') exit;
         common::$sql['default']->insert("INSERT INTO `{prefix_navi_kats}`
             SET `name`        = '".stringParser::encode($_POST['name'])."',
                 `placeholder` = 'nav_".stringParser::encode($_POST['placeholder'])."',
-                `level`       = '".intval($_POST['intern'])."'");
+                `level`       = '".(int)($_POST['intern'])."'");
 
         $show = common::info(_menukat_inserted, '?admin=navi');
       } else {
@@ -255,19 +255,13 @@ if(_adminMenu != 'true') exit;
 
           if($get['type'] == "0")
           {
-            $delete = show("page/button_delete_single", array("id" => $get['id'],
-                                                              "action" => "admin=navi&amp;do=delete",
-                                                              "title" => _button_title_del,
-                                                              "del" => _confirm_del_navi));
-            $edit = "&nbsp;";
-            $type = _navi_space;
+                $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_navi);
+                $edit = "&nbsp;";
+                $type = _navi_space;
           } else {
-            $type = stringParser::decode($get['name']);
-            $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
-            $delete = show("page/button_delete_single", array("id" => $get['id'],
-                                                              "action" => "admin=navi&amp;do=delete",
-                                                              "title" => _button_title_del,
-                                                              "del" => _confirm_del_navi));
+                $type = stringParser::decode($get['name']);
+                $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
+                $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_navi);
           }
 
           if($get['shown'] == "1")
@@ -306,10 +300,7 @@ if(_adminMenu != 'true') exit;
             $delete = '';
           } else {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=editkat");
-            $delete = show("page/button_delete_single", array("id" => $get['id'],
-                                                              "action" => "admin=navi&amp;do=deletekat",
-                                                              "title" => _button_title_del,
-                                                              "del" => _confirm_del_menu));
+            $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=deletekat",_button_title_del,_confirm_del_menu);
           }
           $show_kats .= show($dir."/navi_kats", array("name" => stringParser::decode($get['name']),
                                                       "intern" => (empty($get['intern']) ? _noicon : _yesicon),

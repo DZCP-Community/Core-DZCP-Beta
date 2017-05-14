@@ -16,7 +16,7 @@
  */
 
 if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
-    $artikel_id = intval($_GET['id']); $add = '';
+    $artikel_id = (int)($_GET['id']); $add = '';
     if (!common::$sql['default']->fetch("SELECT `public` FROM `{prefix_artikel}` WHERE `id` = ?;", [$artikel_id],'public') && !common::permission("artikel")) {
         $index = common::error(_error_wrong_permissions, 1);
     } else {
@@ -39,7 +39,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                                 } else {
                                     common::$sql['default']->insert("INSERT INTO `{prefix_acomments}` SET `artikel` = ?,`datum` = ?,`nick` = ?,`email` = ?,`hp` = ?,`reg` = ?,`comment` = ?, `ip` = ?;",
                                     [$artikel_id,time(),(isset($_POST['nick']) && !common::$userid ? stringParser::encode($_POST['nick']) : common::data('nick')),(isset($_POST['email']) && !common::$userid ? stringParser::encode($_POST['email']) : common::data('email')),
-                                    (isset($_POST['hp']) && !common::$userid ? stringParser::encode(common::links($_POST['hp'])) : stringParser::encode(common::links(stringParser::decode(common::data('hp'))))),intval(common::$userid),stringParser::encode($_POST['comment']),common::$userip]);
+                                    (isset($_POST['hp']) && !common::$userid ? stringParser::encode(common::links($_POST['hp'])) : stringParser::encode(common::links(stringParser::decode(common::data('hp'))))),(int)(common::$userid),stringParser::encode($_POST['comment']),common::$userip]);
                                     common::setIpcheck("artid(" . $artikel_id . ")");
                                     javascript::set('AnchorMove', 'notification-box');
                                     $_POST = []; //Clear Post
@@ -60,7 +60,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                     break;
                 case 'delete':
                     javascript::set('AnchorMove', 'notification-box');
-                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_acomments}` WHERE `id` = ?;", [($cid = intval($_GET['cid']))],'reg');
+                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_acomments}` WHERE `id` = ?;", [($cid = (int)($_GET['cid']))],'reg');
                     if ($reg == common::$userid || common::permission('artikel')) {
                         common::$sql['default']->delete("DELETE FROM `{prefix_acomments}` WHERE `id` = ?;", [$cid]);
                         notification::add_success(_comment_deleted);
@@ -70,7 +70,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                     break;
                 case 'editcom':
                     javascript::set('AnchorMove', 'notification-box');
-                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_acomments}` WHERE `id` = ?;", [($cid = intval($_GET['cid']))],'reg');
+                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_acomments}` WHERE `id` = ?;", [($cid = (int)($_GET['cid']))],'reg');
                     if (common::$sql['default']->rowCount() && !empty($_POST['comment'])) {
                         if ($reg == common::$userid || common::permission('artikel')) {
                             //-> Editby Text
@@ -97,14 +97,14 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                     }
                     break;
                 case 'edit':
-                    $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`comment` FROM `{prefix_acomments}` WHERE `id` = ?;", [intval($_GET['cid'])]);
+                    $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`comment` FROM `{prefix_acomments}` WHERE `id` = ?;", [(int)($_GET['cid'])]);
                     if (common::$userid >= 1 && ($get['reg'] == common::$userid || common::permission('artikel'))) {
                         javascript::set('AnchorMove', 'comForm');
 
                         $smarty->caching = false;
                         $smarty->assign('nick',common::autor($get['reg']));
-                        $smarty->assign('action','?action=show&amp;do=editcom&amp;id=' . $artikel_id .'&amp;cid=' . intval($_GET['cid']));
-                        $smarty->assign('prevurl','../artikel/?action=compreview&do=edit&id=' . $artikel_id .'&cid=' . intval($_GET['cid']));
+                        $smarty->assign('action','?action=show&amp;do=editcom&amp;id=' . $artikel_id .'&amp;cid=' . (int)($_GET['cid']));
+                        $smarty->assign('prevurl','../artikel/?action=compreview&do=edit&id=' . $artikel_id .'&cid=' . (int)($_GET['cid']));
                         $smarty->assign('id',$get['id']);
                         $smarty->assign('posteintrag',stringParser::decode($get['comment']));
                         $smarty->assign('notification',notification::get('global',true));

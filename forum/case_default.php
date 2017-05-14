@@ -58,7 +58,7 @@ if(defined('_Forum')) {
                                                                   "img" => $iconpic,
                                                                   "date" => date("F j, Y, g:i a", $getlt['t_date'])));
 
-                      $lpdate = intval($getlt['t_date']);
+                      $lpdate = (int)($getlt['t_date']);
                     } elseif(!$getlt['first']) {
                         //Check Unreaded
                         $iconpic = "icon_topic_latest.gif";
@@ -77,7 +77,7 @@ if(defined('_Forum')) {
                                                                   "post_link" => '?action=showthread&kid='.$getlt['kid'].'&id='.$getlt['id'],
                                                                   "img" => $iconpic,
                                                                   "date" => date("F j, Y, g:i a", $getlp['date'])));
-                        $lpdate = intval($getlp['date']);
+                        $lpdate = (int)($getlp['date']);
                     }
                 }
 

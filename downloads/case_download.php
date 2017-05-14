@@ -20,7 +20,7 @@ if (!defined('_Downloads')) exit();
 if(settings::get("reg_dl") && !common::$chkMe)
     $index = common::error(_error_unregistered);
 else {
-    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_downloads}` WHERE `id` = ?;", [intval($_GET['id'])]);
+    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_downloads}` WHERE `id` = ?;", [(int)($_GET['id'])]);
     if(common::$sql['default']->rowCount()) {
         if(!common::permission('dlintern') && $get['intern']) {
             $index = common::error(_error_no_access);
@@ -42,10 +42,6 @@ else {
             if($size) {
                 $size_mb = @round($size/1048576,2);
                 $size_kb = @round($size/1024,2);
-                $speed_modem = @round(($size/1024)/(56/8)/60,2);
-                $speed_isdn = @round(($size/1024)/(128/8)/60,2);
-                $speed_dsl256 = @round(($size/1024)/(256/8)/60,2);
-                $speed_dsl512 = @round(($size/1024)/(512/8)/60,2);
                 $speed_dsl1024 = @round(($size/1024)/(1024/8)/60,2);
                 $speed_dsl2048 = @round(($size/1024)/(2048/8)/60,2);
                 $speed_dsl3072 = @round(($size/1024)/(3072/8)/60,2);
@@ -58,7 +54,10 @@ else {
             else
                 $traffic = @round(($size/1048576)*$get['hits'],2).' MB';
 
-            $getfile = show(_dl_getfile, ["file" => $rawfile]);
+            $smarty->caching = false;
+            $smarty->assign('file',$rawfile);
+            $getfile = $smarty->fetch('string:'._dl_getfile);
+            $smarty->clearAllAssign();
 
             if(!$size) {
                 $dlsize = $traffic = 'n/a';
@@ -77,27 +76,27 @@ else {
                 $date = date("d.m.Y H:i",$get['date'])._uhr;
 
             $lastdate = date("d.m.Y H:i",$get['last_dl'])._uhr;
-            $index = show($dir."/info", ["getfile" => $getfile,
-                                              "br1" => $br1,
-                                              "br2" => $br2,
-                                              "date" => $date,
-                                              "lastdate" => $lastdate,
-                                              "id" => $_GET['id'],
-                                              "dlname" => stringParser::decode($get['download']),
-                                              "loaded" => $get['hits'],
-                                              "traffic" => $traffic,
-                                              "speed_modem" => $speed_modem,
-                                              "speed_isdn" => $speed_isdn,
-                                              "speed_dsl256" => $speed_dsl256,
-                                              "speed_dsl512" => $speed_dsl512,
-                                              "speed_dsl1024" => $speed_dsl1024,
-                                              "speed_dsl2048" => $speed_dsl2048,
-                                              "speed_dsl3072" => $speed_dsl3072,
-                                              "speed_dsl6016" => $speed_dsl6016,
-                                              "speed_dsl16128" => $speed_dsl16128,
-                                              "size" => $dlsize,
-                                              "besch" => bbcode::parse_html($get['beschreibung']),
-                                              "file" => $rawfile]);
+
+            $smarty->caching = false;
+            $smarty->assign('getfile',$getfile);
+            $smarty->assign('br1',$br1);
+            $smarty->assign('br2',$br2);
+            $smarty->assign('date',$date);
+            $smarty->assign('lastdate',$lastdate);
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('dlname',stringParser::decode($get['download']));
+            $smarty->assign('loaded',$get['hits']);
+            $smarty->assign('traffic',$traffic);
+            $smarty->assign('speed_dsl1024',$speed_dsl1024);
+            $smarty->assign('speed_dsl2048',$speed_dsl2048);
+            $smarty->assign('speed_dsl3072',$speed_dsl3072);
+            $smarty->assign('speed_dsl6016',$speed_dsl6016);
+            $smarty->assign('speed_dsl16128',$speed_dsl16128);
+            $smarty->assign('size',$dlsize);
+            $smarty->assign('besch',bbcode::parse_html($get['beschreibung']));
+            $smarty->assign('file',$rawfile);
+            $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/info.tpl');
+            $smarty->clearAllAssign();
         }
     } else
         $index = common::error(_id_dont_exist,1);

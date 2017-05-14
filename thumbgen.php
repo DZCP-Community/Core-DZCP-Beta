@@ -33,8 +33,8 @@ $file_exp   = explode('.',$_GET['img']);
 $breite     = $size[0];
 $hoehe      = $size[1];
 
-$neueBreite = empty($_GET['width']) ? 100 : intval($_GET['width']);
-$neueHoehe = empty($_GET['height']) ? intval($hoehe*$neueBreite/$breite) : intval($_GET['height']);
+$neueBreite = empty($_GET['width']) ? 100 : (int)$_GET['width'];
+$neueHoehe = empty($_GET['height']) ? ((int)($hoehe*$neueBreite/$breite)) : (int)($_GET['height']);
 $file_cache = basePath.'/'.$file_exp[0].'_minimize_'.$neueBreite.'x'.$neueHoehe;
 $picture_build = false;
 

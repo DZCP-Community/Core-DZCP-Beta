@@ -21,7 +21,7 @@ if(defined('_Forum')) {
   {
     if($do == 'editthread')
     {
-      $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE id = '".intval($_GET['id'])."'");
+      $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE id = '".(int)($_GET['id'])."'");
 
       $get_datum = $get['t_date'];
 
@@ -97,7 +97,7 @@ if(defined('_Forum')) {
                 FROM `{prefix_forumthreads}` AS s1
                 LEFT JOIN `{prefix_forumsubkats}` AS s2
                 ON s1.kid = s2.id
-                WHERE s1.id = '".intval($tID)."'");
+                WHERE s1.id = '".(int)($tID)."'");
 
     $kat = common::$sql['default']->fetch("SELECT name FROM `{prefix_forumkats}` WHERE id = '".$getw['sid']."'");
 
@@ -147,7 +147,7 @@ if(defined('_Forum')) {
   } else {
     if($do == 'editpost')
     {
-      $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumposts}` WHERE id = '".intval($_GET['id'])."'");
+      $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumposts}` WHERE id = '".(int)($_GET['id'])."'");
       $get_datum = $get['date'];
 
       if($get['reg'] == 0) $guestCheck = false;
@@ -168,7 +168,7 @@ if(defined('_Forum')) {
         $pUId = common::$userid;
       }
       $tID = $_GET['id'];
-      $cnt = common::cnt("{prefix_forumposts}", " WHERE sid = '".intval($_GET['id'])."'")+2;
+      $cnt = common::cnt("{prefix_forumposts}", " WHERE sid = '".(int)($_GET['id'])."'")+2;
     }
 
     $titel = show(_eintrag_titel_forum, array("postid" => $cnt,
@@ -179,7 +179,7 @@ if(defined('_Forum')) {
                                         "delete" => ""));
     if($guestCheck)
     {
-      $getu = common::$sql['default']->fetch("SELECT nick,hp,email FROM `{prefix_users}` WHERE id = '".intval($pUId)."'");
+      $getu = common::$sql['default']->fetch("SELECT nick,hp,email FROM `{prefix_users}` WHERE id = '".(int)($pUId)."'");
 
       $email = common::CryptMailto(stringParser::decode($getu['email']),_emailicon_forum);
       $pn = _forum_pn_preview;

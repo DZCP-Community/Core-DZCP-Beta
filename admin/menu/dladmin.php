@@ -58,14 +58,14 @@ switch ($do) {
                     . "`kat` = ?, "
                     . "`intern` = ?;",
                     array(stringParser::encode($_POST['download']),$dl,time(),stringParser::encode($_POST['beschreibung']),
-                        intval($_POST['kat']),intval($_POST['intern']),intval($_POST['intern'])));
+                        (int)($_POST['kat']),(int)($_POST['intern']),(int)($_POST['intern'])));
 
             $show = common::info(_downloads_added, "?admin=dladmin");
         }
     break;
     case 'edit':
         $get  = common::$sql['default']->fetch("SELECT `download`,`intern`,`url`,`kat`,`beschreibung` FROM `{prefix_downloads}` WHERE `id` = ?;",
-                array(intval($_GET['id'])));
+                array((int)($_GET['id'])));
         $qryk = common::$sql['default']->select("SELECT `id`,`name` FROM `{prefix_download_kat}` ORDER BY `name`;"); $kats = '';
         foreach($qryk as $getk) {
             $sel = ($getk['id'] == $get['kat'] ? 'selected="selected"' : '');
@@ -97,25 +97,21 @@ switch ($do) {
                     . "`kat` = ?, "
                     . "`intern` = ? "
                     . "WHERE id = ?;",
-                array(stringParser::encode($_POST['download']),$dl,stringParser::encode($_POST['beschreibung']),intval($_POST['kat']),
-                    intval($_POST['intern']),intval($_GET['id'])));
+                array(stringParser::encode($_POST['download']),$dl,stringParser::encode($_POST['beschreibung']),(int)($_POST['kat']),
+                    (int)($_POST['intern']),(int)($_GET['id'])));
 
             $show = common::info(_downloads_edited, "?admin=dladmin");
         }
     break;
     case 'delete':
-        common::$sql['default']->delete("DELETE FROM `{prefix_downloads}` WHERE `id` = ?;",array(intval($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_downloads}` WHERE `id` = ?;",array((int)($_GET['id'])));
         $show = common::info(_downloads_deleted, "?admin=dladmin");
     break;
     default:
         $qry = common::$sql['default']->select("SELECT `id`,`download` FROM `{prefix_downloads}` ORDER BY id");
         foreach($qry as $get) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
-          
-            $delete = show("page/button_delete_single", array("id" => $get['id'],
-                                                              "action" => "admin=dladmin&amp;do=delete",
-                                                              "title" => _button_title_del,
-                                                              "del" => _confirm_del_dl));
+            $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_dl);
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             $show .= show($dir."/downloads_show", array("id" => $get['id'],

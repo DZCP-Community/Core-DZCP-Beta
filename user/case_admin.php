@@ -26,12 +26,12 @@ if(defined('_UserMenu')) {
             $posi = "";
             foreach($qrypos as $getpos) {
                 $check = common::$sql['default']->rows("SELECT `id` FROM `{prefix_userposis}` WHERE `posi` = ? AND `group` = ? AND `user` = ?;",
-                    array($getpos['id'],$getsq['id'],intval($_GET['edit'])));
+                    array($getpos['id'],$getsq['id'],(int)($_GET['edit'])));
                 $posi .= common::select_field($getpos['id'],$check,stringParser::decode($getpos['position']));
             }
 
             $check = common::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",
-                array(intval($_GET['edit']),$getsq['id'])) ? 'checked="checked"' : '';
+                array((int)($_GET['edit']),$getsq['id'])) ? 'checked="checked"' : '';
 
             $smarty->caching = false;
             $smarty->assign('id',$getsq['id']);
@@ -46,12 +46,12 @@ if(defined('_UserMenu')) {
         $smarty->assign('esquad',$esquads);
         $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin/admin_self.tpl');
         $smarty->clearAllAssign();
-    } elseif (isset($_GET['edit']) && (common::data("level", intval($_GET['edit'])) == 4 || common::rootAdmin(intval($_GET['edit']))) && !common::rootAdmin(common::$userid)) {
+    } elseif (isset($_GET['edit']) && (common::data("level", (int)($_GET['edit'])) == 4 || common::rootAdmin((int)($_GET['edit']))) && !common::rootAdmin(common::$userid)) {
         $index = common::error(_error_edit_admin, 1);
     } else {
         //Edit a User
         if ($do == "identy") {
-            if((common::data("level", intval($_GET['id'])) == 4 && !common::rootAdmin(intval($_GET['id'])) && !common::rootAdmin(common::$userid))) {
+            if((common::data("level", (int)($_GET['id'])) == 4 && !common::rootAdmin((int)($_GET['id'])) && !common::rootAdmin(common::$userid))) {
                 $index = common::error(_identy_admin, 1);
             } else {
                 $smarty->caching = false;
@@ -62,19 +62,19 @@ if(defined('_UserMenu')) {
                 common::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 0, `sessid` = '' WHERE id = ?;",array(common::$userid)); //Logout
                 session_regenerate_id();
 
-                $_SESSION['id'] = intval($_GET['id']);
-                $_SESSION['pwd'] =stringParser::decode(common::data("pwd", intval($_GET['id'])));
+                $_SESSION['id'] = (int)($_GET['id']);
+                $_SESSION['pwd'] =stringParser::decode(common::data("pwd", (int)($_GET['id'])));
                 $_SESSION['ip'] = common::$userip;
 
                 common::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ip` = ? WHERE `id` = ?;",
-                array(session_id(),common::$userip,intval($_GET['id'])));
-                common::setIpcheck("ident(" . common::$userid . "_" . intval($_GET['id']) . ")");
+                array(session_id(),common::$userip,(int)($_GET['id'])));
+                common::setIpcheck("ident(" . common::$userid . "_" . (int)($_GET['id']) . ")");
 
                 $index = common::info($msg, "?action=user&amp;id=" . $_GET['id'] . "", 5, false);
             }
         } else if ($do == "update") {
             if ($_POST && isset($_GET['user'])) {
-                $edituser = intval($_GET['user']);
+                $edituser = (int)($_GET['user']);
 
                 // Permissions Update
                 if (empty($_POST['perm'])) {
@@ -127,16 +127,16 @@ if(defined('_UserMenu')) {
                 foreach($sq as $getsq) {
                     if (isset($_POST['squad' . $getsq['id']])) {
                         common::$sql['default']->insert("INSERT INTO `{prefix_groupuser}` SET `user` = ?, `group`  = ?;",
-                        array($edituser,intval($_POST['squad' . $getsq['id']])));
+                        array($edituser,(int)($_POST['squad' . $getsq['id']])));
                     }
 
                     if (isset($_POST['squad' . $getsq['id']])) {
                         common::$sql['default']->insert("INSERT INTO {prefix_userposis} SET `user` = ?, `posi` = ?, `group` = ?;",
-                        array($edituser,intval($_POST['sqpos' . $getsq['id']]),intval($getsq['id'])));
+                        array($edituser,(int)($_POST['sqpos' . $getsq['id']]),(int)($getsq['id'])));
                     }
                 }
 
-                $level = intval($_POST['level']);
+                $level = (int)($_POST['level']);
                 if(common::permission("editusers") && common::data("level") != 4 && !common::rootAdmin(common::$userid) && $level == 4) {
                     $level = common::data("level",$edituser);
                 }
@@ -152,8 +152,8 @@ if(defined('_UserMenu')) {
                         . "`level`  = ?, "
                         . "`banned`  = ? "
                         . "WHERE `id` = ?;",
-                        array(stringParser::encode($_POST['nick']),stringParser::encode($_POST['email']),stringParser::encode($_POST['loginname']),(isset($_POST['listck']) ? intval($_POST['listck']) : 0),
-                        intval($update_level),intval($update_banned),$edituser));
+                        array(stringParser::encode($_POST['nick']),stringParser::encode($_POST['email']),stringParser::encode($_POST['loginname']),(isset($_POST['listck']) ? (int)($_POST['listck']) : 0),
+                        (int)($update_level),(int)($update_banned),$edituser));
 
                 common::setIpcheck("upduser(" . common::$userid . "_" . $edituser . ")");
             }
@@ -167,20 +167,20 @@ if(defined('_UserMenu')) {
             foreach($squads as $getsq) {
                 if (isset($_POST['squad' . $getsq['id']])) {
                     common::$sql['default']->insert("INSERT INTO `{prefix_groupuser}` SET `user`  = ?, `group` = ?;",
-                    array(intval(common::$userid),intval($_POST['squad' . $getsq['id']])));
+                    array((int)(common::$userid),(int)($_POST['squad' . $getsq['id']])));
                 }
 
                 if (isset($_POST['squad' . $getsq['id']])) {
                     common::$sql['default']->insert("INSERT INTO `{prefix_userposis}` SET `user` = ?, `posi` = ?, `group`  = ?",
-                    array(intval(common::$userid),intval($_POST['sqpos'.$getsq['id']]),intval($getsq['id'])));
+                    array((int)(common::$userid),(int)($_POST['sqpos'.$getsq['id']]),(int)($getsq['id'])));
                 }
             }
 
             $index = common::info(_admin_user_edited, "?action=user&amp;id=" . common::$userid . "");
         } elseif ($do == "delete") {
-            $delUID = intval($_GET['id']);
+            $delUID = (int)($_GET['id']);
             if ($_GET['verify'] == "yes") {
-                if (common::data("level", intval($_GET['id'])) == 4 || common::data("level", intval($_GET['id'])) == 3 || common::rootAdmin($delUID))
+                if (common::data("level", (int)($_GET['id'])) == 4 || common::data("level", (int)($_GET['id'])) == 3 || common::rootAdmin($delUID))
                     $index = common::error(_user_cant_delete_admin, 2);
                 else {
                     if($delUID >= 1) {
@@ -210,7 +210,7 @@ if(defined('_UserMenu')) {
         } elseif ($do == "full_delete") {
             $delUID = ((int)$_GET['id']);
             if ($_GET['verify'] == "yes") {
-                if (common::data("level", intval($_GET['id'])) == 4 || common::data("level", intval($_GET['id'])) == 3 || common::rootAdmin($delUID))
+                if (common::data("level", (int)($_GET['id'])) == 4 || common::data("level", (int)($_GET['id'])) == 3 || common::rootAdmin($delUID))
                     $index = common::error(_user_cant_delete_admin, 2);
                 else {
                     if($delUID >= 1) {
@@ -241,7 +241,7 @@ if(defined('_UserMenu')) {
             //Show edit user
             $get = common::$sql['default']->fetch("SELECT `id`,`user`,`nick`,`pwd`,`email`,`level`,`position`,`listck` "
                                     . "FROM `{prefix_users}` "
-                                    . "WHERE `id` = ?;",array(intval($_GET['edit'])));
+                                    . "WHERE `id` = ?;",array((int)($_GET['edit'])));
             if (common::$sql['default']->rowCount()) {
                 $where = _user_profile_of . common::autor(((int)$_GET['edit']));
                 $qrysq = common::$sql['default']->select("SELECT `id`,`name` FROM `{prefix_groups}` ORDER BY `id`;");
@@ -251,12 +251,12 @@ if(defined('_UserMenu')) {
                     $posi = "";
                     foreach($qrypos as $getpos) {
                         $check = common::$sql['default']->rows("SELECT `id` FROM `{prefix_userposis}` WHERE `posi` = ? AND `group` = ? AND `user` = ?;",
-                        array($getpos['id'],$getsq['id'],intval($_GET['edit'])));
+                        array($getpos['id'],$getsq['id'],(int)($_GET['edit'])));
                         $posi .= common::select_field($getpos['id'],$check,stringParser::decode($getpos['position']));
                     }
 
                     $checksquser = common::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",
-                    array(intval($_GET['edit']),$getsq['id']));
+                    array((int)($_GET['edit']),$getsq['id']));
                     $check = $checksquser ? 'checked="checked"' : '';
 
                     $smarty->caching = false;

@@ -21,7 +21,7 @@ $where = $where.': '._admin_dlkat;
 switch ($do) {
     case 'edit':
         $get = common::$sql['default']->fetch("SELECT `name` FROM `{prefix_download_kat}` WHERE `id` = ?;",
-                array(intval($_GET['id'])));
+                array((int)($_GET['id'])));
         $show = show($dir."/dlkats_form", array("newhead" => _dl_edit_head,
                                                 "do" => "editkat&amp;id=".$_GET['id']."",
                                                 "kat" => stringParser::decode($get['name']),
@@ -32,13 +32,13 @@ switch ($do) {
             $show = common::error(_dl_empty_kat,1);
         } else {
             common::$sql['default']->update("UPDATE `{prefix_download_kat}` SET `name` = ? WHERE `id` = ?;",
-                    array(stringParser::encode($_POST['kat']),intval($_GET['id'])));
+                    array(stringParser::encode($_POST['kat']),(int)($_GET['id'])));
             $show = common::info(_dl_admin_edited, "?admin=dlkats");
         }
     break;
     case 'delete':
         common::$sql['default']->delete("DELETE FROM `{prefix_download_kat}` WHERE `id` = ?;",
-                array(intval($_GET['id'])));
+                array((int)($_GET['id'])));
         $show = common::info(_dl_admin_deleted, "?admin=dlkats");
     break;
     case 'new':
@@ -60,11 +60,7 @@ switch ($do) {
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_download_kat}` ORDER BY `name`;");
         foreach($qry as $get) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
-
-            $delete = show("page/button_delete_single", array("id" => $get['id'],
-                                                              "action" => "admin=dlkats&amp;do=delete",
-                                                              "title" => _button_title_del,
-                                                              "del" => _confirm_del_kat));
+            $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_kat);
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             $show .= show($dir."/dlkats_show", array("edit" => $edit,

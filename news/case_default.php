@@ -17,7 +17,7 @@
 
 if(defined('_News')) {
     //-> Kategorie Filter
-    if(!($kat = isset($_GET['newskat']) ? intval($_GET['newskat']) : 0)) {
+    if(!($kat = isset($_GET['newskat']) ? (int)($_GET['newskat']) : 0)) {
         $navKat = 'lazy';
         $n_kat = '';
         $navWhere = "WHERE `public` = 1 ".(!common::permission("intnews") ? "AND `intern` = 0" : '')."";
@@ -57,7 +57,7 @@ if(defined('_News')) {
             $smarty->assign('titel',stringParser::decode($get['titel']));
             $smarty->assign('kat',$newsimage);
             $smarty->assign('id',$get['id']);
-            $smarty->assign('comments',common::cnt('{prefix_newscomments}', " WHERE `news` = ".intval($get['id'])));
+            $smarty->assign('comments',common::cnt('{prefix_newscomments}', " WHERE `news` = ".(int)($get['id'])));
             $smarty->assign('showmore','');
             $smarty->assign('dp','none');
             $smarty->assign('dir',$designpath);
@@ -116,7 +116,7 @@ if(defined('_News')) {
             $smarty->assign('titel',stringParser::decode($get['titel']));
             $smarty->assign('kat',$newsimage);
             $smarty->assign('id',$get['id']);
-            $smarty->assign('comments',common::cnt('{prefix_newscomments}', " WHERE `news` = ".intval($get['id'])));
+            $smarty->assign('comments',common::cnt('{prefix_newscomments}', " WHERE `news` = ".(int)($get['id'])));
             $smarty->assign('showmore','');
             $smarty->assign('dir',common::$designpath);
             $smarty->assign('intern',boolval($get['intern']));
@@ -138,7 +138,7 @@ if(defined('_News')) {
     $kategorien = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qrykat as $getkat) {
-            $sel = (isset($_GET['kat']) && intval($_GET['kat']) == $getkat['id'] ? 'selected' : '');
+            $sel = (isset($_GET['kat']) && (int)($_GET['kat']) == $getkat['id'] ? 'selected' : '');
             $kategorien .= "<option value='".$getkat['id']."' ".$sel.">".$getkat['kategorie']."</option>";
         }
     }

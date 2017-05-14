@@ -43,12 +43,12 @@ $where = $where.': '._partners_head;
           $show = common::error(_empty_url, 1);
         } else {
           common::$sql['default']->insert("INSERT INTO `{prefix_partners}` SET `link` = ?, `banner` = ?, `textlink` = ?;",
-                  array(stringParser::encode(common::links($_POST['link'])),stringParser::encode(empty($_POST['textlink']) ? $_POST['banner'] : $_POST['textlink']),intval(empty($_POST['textlink']) ? 0 : 1)));
+                  array(stringParser::encode(common::links($_POST['link'])),stringParser::encode(empty($_POST['textlink']) ? $_POST['banner'] : $_POST['textlink']),(int)(empty($_POST['textlink']) ? 0 : 1)));
 
           $show = common::info(_partners_added, "?admin=partners");
         }
       } elseif($do == "edit") {
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_partners}` WHERE `id` = ?;",array(intval($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_partners}` WHERE `id` = ?;",array((int)($_GET['id'])));
 
         $files = common::get_files(basePath.'/banner/partners/',false,true);
         for($i=0; $i<count($files); $i++)
@@ -77,20 +77,17 @@ $where = $where.': '._partners_head;
           common::$sql['default']->update("UPDATE `{prefix_partners}` SET `link` = ?, `banner` = ?, `textlink` = ? WHERE `id` = ?;",
                   array(stringParser::encode(common::links($_POST['link'])),
                       stringParser::encode(empty($_POST['textlink']) ? $_POST['banner'] : $_POST['textlink']),
-                      intval(empty($_POST['textlink']) ? 0 : 1),intval($_GET['id'])));
+                      (int)(empty($_POST['textlink']) ? 0 : 1),(int)($_GET['id'])));
           $show = common::info(_partners_edited, "?admin=partners");
         }
       } elseif($do == "delete") {
-        common::$sql['default']->delete("DELETE FROM `{prefix_partners}` WHERE `id` = ?;",array(intval($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_partners}` WHERE `id` = ?;",array((int)($_GET['id'])));
         $show = common::info(_partners_deleted,"?admin=partners");
       } else {
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_partners}` ORDER BY id;");
         foreach ($qry as $get) {
-          $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
-          $delete = show("page/button_delete_single", array("id" => $get['id'],
-                                                            "action" => "admin=partners&amp;do=delete",
-                                                            "title" => _button_title_del,
-                                                            "del" => _confirm_del_entry));
+            $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
+            $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_entry);
 
           $rlink = common::links(stringParser::decode($get['link']));
           $button = '<img src="../banner/partners/'.stringParser::decode($get['banner']).'" alt="'.$rlink.'" title="'.$rlink.'" />';

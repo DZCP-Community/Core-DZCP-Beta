@@ -17,7 +17,7 @@
 
 if(defined('_UserMenu')) {
     $where = _user_profile_of.'autor_'.$_GET['id'];
-    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;",array(intval($_GET['id'])));
+    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;",array((int)($_GET['id'])));
     if (!common::$sql['default']->rowCount()) {
         $index = common::error(_user_dont_exist, 1);
     } else {

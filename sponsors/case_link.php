@@ -17,7 +17,7 @@
 
 if (!defined('_Sponsors')) exit();
 
-$get = common::$sql['default']->fetch("SELECT `link`,`id` FROM `{prefix_sponsoren}` WHERE `id` = ?;", [intval($_GET['id'])]);
+$get = common::$sql['default']->fetch("SELECT `link`,`id` FROM `{prefix_sponsoren}` WHERE `id` = ?;", [(int)($_GET['id'])]);
 if(common::count_clicks('sponsoren',$get['id']))
     common::$sql['default']->update("UPDATE `{prefix_sponsoren}` SET `hits` = (hits+1) WHERE `id` = ?;", [$get['id']]);
 

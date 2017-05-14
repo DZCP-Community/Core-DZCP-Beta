@@ -27,7 +27,7 @@ switch ($do) {
                                                     "sel" => ""));
         }
 
-        $id = intval($_GET['id']);
+        $id = (int)($_GET['id']);
         $get = common::$sql['default']->fetch("SELECT `position`,`color` FROM `{prefix_positions}` WHERE `id` = ?;",array($id));
         $show = show($dir."/form_pos", array("newhead" => _pos_edit_head,
                                              "do" => "editpos&amp;id=".$id."",
@@ -43,15 +43,15 @@ switch ($do) {
         if(empty($_POST['kat'])) {
             $show = common::error(_pos_empty_kat,1);
         } else {
-            $id = intval($_GET['id']);
+            $id = (int)($_GET['id']);
             if($_POST['pos'] != 'lazy') {
-                $posid = intval($_POST['pos']);
+                $posid = (int)($_POST['pos']);
                 common::$sql['default']->update("UPDATE `{prefix_positions}` SET `pid` = (pid+1) WHERE `pid` " . ($_POST['pos'] == "1" || $_POST['pos'] == "2" ? ">= " : "> ")
-                    . " ?;", array(intval($_POST['pos'])));
+                    . " ?;", array((int)($_POST['pos'])));
             }
 
             common::$sql['default']->update("UPDATE `{prefix_positions}` SET `position` = ? ".
-                    ($_POST['pos'] == "lazy" ? "" : ",`pid` = ".intval($_POST['pos'])).", `color` = ? WHERE `id` = ?;",
+                    ($_POST['pos'] == "lazy" ? "" : ",`pid` = ".(int)($_POST['pos'])).", `color` = ? WHERE `id` = ?;",
                     array(stringParser::encode($_POST['kat']),stringParser::encode($_POST['color']),$id));
 
             // Permissions Update
@@ -101,7 +101,7 @@ switch ($do) {
         }
     break;
     case 'delete':
-        $get = fetch("SELECT `id` FROM `{prefix_positions}` WHERE `id` = ?;",array(intval($_GET['id'])));
+        $get = fetch("SELECT `id` FROM `{prefix_positions}` WHERE `id` = ?;",array((int)($_GET['id'])));
         if(common::$sql['default']->rowCount()) {
             common::$sql['default']->delete("DELETE FROM `{prefix_positions}` WHERE `id` = ?;",array($get['id']));
             common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `pos` = ?;",array($get['id']));
@@ -134,9 +134,9 @@ switch ($do) {
         } else {
             common::$sql['default']->update("UPDATE `{prefix_positions}` SET `pid` = (pid+1) WHERE `pid`;".
                     ($_POST['pos'] == "1" || $_POST['pos'] == "2" ? ">= " : "> ")." ?;",
-                    array(intval($_POST['pos'])));
+                    array((int)($_POST['pos'])));
             common::$sql['default']->insert("INSERT INTO `{prefix_positions}` SET `pid` = ?, `position` = ?, `color` = ?;",
-                array(intval($_POST['pos']),stringParser::encode($_POST['kat']),stringParser::encode($_POST['color'])));
+                array((int)($_POST['pos']),stringParser::encode($_POST['kat']),stringParser::encode($_POST['color'])));
             
             $posID = common::$sql['default']->lastInsertId();
             $qry = common::$sql['default']->show("SHOW FIELDS FROM `{prefix_permissions}`;"); $sql_update = '';
@@ -171,10 +171,7 @@ switch ($do) {
         $qry = common::$sql['default']->select("SELECT `id`,`position` FROM `{prefix_positions}` ORDER BY `pid` DESC;"); $show_pos = '';
         foreach($qry as $get) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
-            $delete = show("page/button_delete_single", array("id" => $get['id'],
-                                                              "action" => "admin=positions&amp;do=delete",
-                                                              "title" => _button_title_del,
-                                                              "del" => _confirm_del_entry));
+            $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_entry);
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             $show_pos .= show($dir."/positions_show", array("edit" => $edit,

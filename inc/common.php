@@ -48,7 +48,7 @@ use Jaybizzle\CrawlerDetect\CrawlerDetect;
 //-> Global
 if(!is_api) {
     $action = isset($_GET['action']) ? secure_global_imput($_GET['action']) : (isset($_POST['action']) ? secure_global_imput($_POST['action']) : 'default');
-    $page = isset($_GET['page']) ? intval(trim($_GET['page'])) : (isset($_POST['page']) ? intval(trim($_POST['page'])) : 1);
+    $page = isset($_GET['page']) ? (int)(trim($_GET['page'])) : (isset($_POST['page']) ? (int)(trim($_POST['page'])) : 1);
     $do = isset($_GET['do']) ? secure_global_imput($_GET['do']) : (isset($_POST['do']) ? secure_global_imput($_POST['do']) : '');
 } $index = ''; $show = ''; $color = 0;
 
@@ -303,8 +303,8 @@ class common {
         }
 
         self::lang($_SESSION['language']); //Lade Sprache
-        self::$userid = intval(self::userid());
-        self::$chkMe = intval(self::checkme());
+        self::$userid = (int)(self::userid());
+        self::$chkMe = (int)(self::checkme());
         if(!self::$chkMe && (!empty($_SESSION['id']) || !empty($_SESSION['pwd']))) {
             $_SESSION['id']        = '';
             $_SESSION['pwd']       = '';
@@ -407,7 +407,7 @@ class common {
 
         //-> User Hits und Lastvisit aktualisieren
         if(self::$userid >= 1 && !is_ajax && !is_thumbgen && !is_api && isset($_SESSION['lastvisit'])) {
-            self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `hits` = (hits+1), `lastvisit` = ? WHERE `user` = ?;", [intval($_SESSION['lastvisit']),intval(self::$userid)]);
+            self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `hits` = (hits+1), `lastvisit` = ? WHERE `user` = ?;", [(int)($_SESSION['lastvisit']),(int)(self::$userid)]);
         }
     }
 
@@ -439,8 +439,8 @@ class common {
     public static function autor(int $uid=0,string $class="",string $nick="",string $email="",string $cut="",string $add="") {
         $uid = (!$uid ? self::$userid : $uid);
         if(!$uid) return '* No UserID! *';
-        if(!dbc_index::issetIndex('user_'.intval($uid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($uid)]);
+        if(!dbc_index::issetIndex('user_'.(int)($uid))) {
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [(int)($uid)]);
             if(self::$sql['default']->rowCount()) {
                 dbc_index::setIndex('user_'.$get['id'], $get);
             } else {
@@ -449,9 +449,9 @@ class common {
             }
         }
 
-        $nickname = (!empty($cut)) ? self::cut(stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick')), $cut) :stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick'));
+        $nickname = (!empty($cut)) ? self::cut(stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick')), $cut) :stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick'));
         return show(_user_link, ["id" => $uid,
-            "country" => self::flag(dbc_index::getIndexKey('user_'.intval($uid), 'country')),
+            "country" => self::flag(dbc_index::getIndexKey('user_'.(int)($uid), 'country')),
             "class" => $class,
             "get" => $add,
             "nick" => $nickname]);
@@ -466,20 +466,20 @@ class common {
      */
     public static function autorcolerd(int $uid=0, $class="", $cut="") {
         /* TODO: Replace dbc_index */
-        if(!dbc_index::issetIndex('user_'.intval($uid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($uid)]);
+        if(!dbc_index::issetIndex('user_'.(int)($uid))) {
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [(int)($uid)]);
             if(self::$sql['default']->rowCount()) {
                 dbc_index::setIndex('user_'.$get['id'], $get);
             }
         }
 
-        $position = dbc_index::getIndexKey('user_'.intval($uid), 'position');
+        $position = dbc_index::getIndexKey('user_'.(int)($uid), 'position');
         $get = self::$sql['default']->fetch("SELECT `id`,`color` FROM `{prefix_positions}` WHERE `id` = ?;", [$position]);
         if(!$position || !self::$sql['default']->rowCount()) {
             return self::autor($uid,$class,'','',$cut);
         }
 
-        $nickname = (!empty($cut)) ? self::cut(stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick')), $cut) : stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick'));
+        $nickname = (!empty($cut)) ? self::cut(stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick')), $cut) : stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick'));
 
         $smarty = self::getSmarty();
         $smarty->caching = false;
@@ -502,8 +502,8 @@ class common {
      */
     public static function cleanautor(int $uid=0, $class="", $nick="", $email="") {
         /* TODO: Replace dbc_index */
-        if(!dbc_index::issetIndex('user_'.intval($uid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($uid)]);
+        if(!dbc_index::issetIndex('user_'.(int)($uid))) {
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [(int)($uid)]);
             if(self::$sql['default']->rowCount()) {
                 dbc_index::setIndex('user_' . $get['id'], $get);
             } else {
@@ -511,8 +511,8 @@ class common {
             }
         }
 
-        return show(_user_link_preview, ["id" => $uid, "country" => self::flag(dbc_index::getIndexKey('user_'.intval($uid), 'country')),
-            "class" => $class, "nick" =>stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick'))]);
+        return show(_user_link_preview, ["id" => $uid, "country" => self::flag(dbc_index::getIndexKey('user_'.(int)($uid), 'country')),
+            "class" => $class, "nick" =>stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick'))]);
     }
 
     /**
@@ -521,8 +521,8 @@ class common {
      */
     public static function rawautor(int $uid=0) {
         /* TODO: Replace dbc_index */
-        if(!dbc_index::issetIndex('user_'.intval($uid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($uid)]);
+        if(!dbc_index::issetIndex('user_'.(int)($uid))) {
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [(int)($uid)]);
             if(self::$sql['default']->rowCount()) {
                 dbc_index::setIndex('user_' . $get['id'], $get);
             } else {
@@ -530,8 +530,8 @@ class common {
             }
         }
 
-        return self::rawflag(dbc_index::getIndexKey('user_'.intval($uid), 'country'))." ".
-        self::jsconvert(stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick')));
+        return self::rawflag(dbc_index::getIndexKey('user_'.(int)($uid), 'country'))." ".
+        self::jsconvert(stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick')));
     }
 
     /**
@@ -542,14 +542,14 @@ class common {
      */
     public static function fabo_autor(int $uid,string $tpl=_user_link_fabo) {
         /* TODO: Replace dbc_index */
-        if(!dbc_index::issetIndex('user_'.intval($uid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($uid)]);
+        if(!dbc_index::issetIndex('user_'.(int)($uid))) {
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [(int)($uid)]);
             if(self::$sql['default']->rowCount()) {
                 dbc_index::setIndex('user_' . $get['id'], $get);
                 return show($tpl, ["id" => $uid, "nick" => stringParser::decode($get['nick'])]);
             }
         } else {
-            return show($tpl, ["id" => $uid, "nick" =>stringParser::decode(dbc_index::getIndexKey('user_'.intval($uid), 'nick'))]);
+            return show($tpl, ["id" => $uid, "nick" =>stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick'))]);
         }
 
         return '';
@@ -571,15 +571,15 @@ class common {
     public static function forum_intern(int $id=0) {
         if(!self::$chkMe) {
             $fget = self::$sql['default']->fetch("SELECT s1.`intern`,s2.`id` FROM `{prefix_forumkats}` AS `s1` LEFT JOIN `{prefix_forumsubkats}` AS `s2` ON s2.`sid` = s1.`id` WHERE s2.`id` = ?;",
-                [intval($id)]);
+                [(int)($id)]);
             return (!$fget['intern']);
         } else if(self::$chkMe == 4) {
             return true;
         } else {
             $team = self::$sql['default']->rows("SELECT s1.`id` FROM `{prefix_forum_access}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi` WHERE s2.`user` = ? AND s2.`posi` != 0 AND s1.`forum` = ?;",
-                [intval(self::$userid),intval($id)]);
+                [(int)(self::$userid),(int)($id)]);
             $user = self::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `user` = ? AND `forum` = ?;",
-                [intval(self::$userid),intval($id)]);
+                [(int)(self::$userid),(int)($id)]);
             return ($user || $team);
         }
     }
@@ -594,7 +594,7 @@ class common {
         /* TODO: Cacheing & Indexing a User */
         if (!$tid) { $tid = self::$userid; }
         if(!dbc_index::issetIndex('user_'.$tid)) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [intval($tid)]);
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [(int)($tid)]);
             dbc_index::setIndex('user_'.$tid, $get);
         }
 
@@ -654,7 +654,7 @@ class common {
      * @return string
      */
     public static function img_size(string $img) {
-        return "<a href=\"../".$img."\" rel=\"lightbox[l_".intval($img)."]\"><img src=\"../thumbgen.php?img=".$img."\" alt=\"\" /></a>";
+        return "<a href=\"../".$img."\" rel=\"lightbox[l_".(int)($img)."]\"><img src=\"../thumbgen.php?img=".$img."\" alt=\"\" /></a>";
     }
 
     /**
@@ -792,7 +792,7 @@ class common {
         TODO: Check has user a userstats row? (Create a new stat row)
         */
         if (!$tid) { $tid = self::$userid; }
-        return self::$sql['default']->fetch("SELECT `".$what."` FROM `{prefix_userstats}` WHERE `user` = ?;", [intval($tid)], $what);
+        return self::$sql['default']->fetch("SELECT `".$what."` FROM `{prefix_userstats}` WHERE `user` = ?;", [(int)($tid)], $what);
     }
 
     /**
@@ -810,7 +810,7 @@ class common {
                 case 'smtp':
                     $mail->isSMTP();
                     $mail->Host = stringParser::decode(settings::get('smtp_hostname'));
-                    $mail->Port = intval(settings::get('smtp_port'));
+                    $mail->Port = (int)(settings::get('smtp_port'));
                     switch (settings::get('smtp_tls_ssl')) {
                         case 1:
                             if($mail->Port == 25)
@@ -1009,7 +1009,7 @@ class common {
         if(dbc_index::issetIndex('vote_results_'.$vid)) {
             $data = dbc_index::getIndex('vote_results_'.$vid);
         } else {
-            $data = self::$sql['default']->select("SELECT `what`,`sel` FROM `{prefix_vote_results}` WHERE `vid` = ?;", [intval($vid)]);
+            $data = self::$sql['default']->select("SELECT `what`,`sel` FROM `{prefix_vote_results}` WHERE `vid` = ?;", [(int)($vid)]);
             dbc_index::setIndex('vote_results_'.$vid, $data);
         }
 
@@ -1292,19 +1292,19 @@ class common {
         if($squad) {
             if ($profil) {
                 $qry = self::$sql['default']->select("SELECT s1.`posi`,s2.`name` FROM `{prefix_userposis}` AS `s1` LEFT JOIN `{prefix_groups}` AS `s2` ON s1.`group` = s2.`id` "
-                    . "WHERE s1.`user` = ? AND s1.`group` = ? AND s1.`posi` != 0;", [intval($tid),intval($squad)]);
+                    . "WHERE s1.`user` = ? AND s1.`group` = ? AND s1.`posi` != 0;", [(int)($tid),(int)($squad)]);
             } else {
-                $qry = self::$sql['default']->select("SELECT `posi` FROM `{prefix_userposis}` WHERE `user` = ? AND `group` = ? AND `posi` != 0;", [intval($tid),intval($squad)]);
+                $qry = self::$sql['default']->select("SELECT `posi` FROM `{prefix_userposis}` WHERE `user` = ? AND `group` = ? AND `posi` != 0;", [(int)($tid),(int)($squad)]);
             }
 
             if(self::$sql['default']->rowCount()) {
                 foreach($qry as $get) {
-                    $position = self::$sql['default']->fetch("SELECT `position` FROM `{prefix_positions}` WHERE `id` = ?;", [intval($get['posi'])],'position');
+                    $position = self::$sql['default']->fetch("SELECT `position` FROM `{prefix_positions}` WHERE `id` = ?;", [(int)($get['posi'])],'position');
                     $squadname = (!empty($get['name']) ? '<b>' . $get['name'] . ':</b> ' : '');
                     return ($squadname.$position);
                 }
             } else {
-                $get = self::$sql['default']->fetch("SELECT `level`,`banned` FROM `{prefix_users}` WHERE `id` = ?;", [intval($tid)]);
+                $get = self::$sql['default']->fetch("SELECT `level`,`banned` FROM `{prefix_users}` WHERE `id` = ?;", [(int)($tid)]);
                 if (!$get['level'] && !$get['banned']) {
                     return _status_unregged;
                 } elseif ($get['level'] == 1) {
@@ -1323,11 +1323,11 @@ class common {
             }
         } else {
             $get = self::$sql['default']->fetch("SELECT s1.*,s2.`position` FROM `{prefix_userposis}` AS `s1` LEFT JOIN `{prefix_positions}` AS `s2` "
-                . "ON s1.`posi` = s2.`id` WHERE s1.`user` = ? AND s1.`posi` != 0 ORDER BY s2.pid ASC;", [intval($tid)]);
+                . "ON s1.`posi` = s2.`id` WHERE s1.`user` = ? AND s1.`posi` != 0 ORDER BY s2.pid ASC;", [(int)($tid)]);
             if(self::$sql['default']->rowCount()) {
                 return $get['position'];
             } else {
-                $get = self::$sql['default']->fetch("SELECT `level`,`banned` FROM `{prefix_users}` WHERE `id` = ?;", [intval($tid)]);
+                $get = self::$sql['default']->fetch("SELECT `level`,`banned` FROM `{prefix_users}` WHERE `id` = ?;", [(int)($tid)]);
                 if (!$get['level'] && !$get['banned']) {
                     return _status_unregged;
                 } elseif ($get['level'] == 1) {
@@ -1451,7 +1451,7 @@ class common {
      * @return string
      */
     public static function onlinecheck(int $tid) {
-        $row = self::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `id` = ? AND (time+1800)>? AND `online` = 1;", [intval($tid),time()]);
+        $row = self::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `id` = ? AND (time+1800)>? AND `online` = 1;", [(int)($tid),time()]);
         return $row ? "<img src=\"../inc/images/online.png\" alt=\"\" class=\"icon\" />" : "<img src=\"../inc/images/offline.png\" alt=\"\" class=\"icon\" />";
     }
 
@@ -1460,8 +1460,8 @@ class common {
      * @param int $userid
      */
     public static function set_lastvisit(int $userid) {
-        if(!self::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `id` = ? AND (time+1800)>?;", [intval($userid),time()])) {
-            $_SESSION['lastvisit'] = intval(self::data("time"));
+        if(!self::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `id` = ? AND (time+1800)>?;", [(int)($userid),time()])) {
+            $_SESSION['lastvisit'] = (int)(self::data("time"));
         }
     }
 
@@ -1856,7 +1856,7 @@ class common {
      */
     public static function setIpcheck(string $what = '',bool $time = true) {
         self::$sql['default']->insert("INSERT INTO `{prefix_ip_action}` SET `ip` = ?, `user_id` = ?, `what` = ?, `time` = ?, `created` = ?;",
-            [self::visitorIp(),intval(self::userid()),$what,($time ? time() : 0),time()]);
+            [self::visitorIp(),(int)(self::userid()),$what,($time ? time() : 0),time()]);
     }
 
     /**
@@ -1878,30 +1878,30 @@ class common {
             }
 
             if(self::$chkMe != 'unlogged') {
-                if (self::$sql['default']->rows("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `uid` = ? AND `ids` = ? AND `side` = ?;", [intval(self::$userid),intval($clickedID),$side_tag])) {
+                if (self::$sql['default']->rows("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `uid` = ? AND `ids` = ? AND `side` = ?;", [(int)(self::$userid),(int)($clickedID),$side_tag])) {
                     return false;
                 }
 
-                if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ip` = ? AND `ids` = ? AND `side` = ?;", [self::$userip,intval($clickedID),$side_tag])) {
+                if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ip` = ? AND `ids` = ? AND `side` = ?;", [self::$userip,(int)($clickedID),$side_tag])) {
                     if($update) {
                         self::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ?, `time` = ? WHERE `ip` = ? AND `ids` = ? AND `side` = ?;",
-                            [intval(self::$userid),(time()+count_clicks_expires),self::$userip,intval($clickedID),$side_tag]);
+                            [(int)(self::$userid),(time()+count_clicks_expires),self::$userip,(int)($clickedID),$side_tag]);
                     }
 
                     return false;
                 } else {
                     if($update) {
                         self::$sql['default']->insert("INSERT INTO `{prefix_clicks_ips}` SET `ip` = ?, `uid` = ?, `ids` = ?, `side` = ?, `time` = ?;",
-                            [self::$userip, intval(self::$userid), intval($clickedID), $side_tag, (time() + count_clicks_expires)]);
+                            [self::$userip, (int)(self::$userid), (int)($clickedID), $side_tag, (time() + count_clicks_expires)]);
                     }
 
                     return true;
                 }
             } else {
-                if(!self::$sql['default']->rows("SELECT id FROM `{prefix_clicks_ips}` WHERE `ip` = ? AND `ids` = ? AND `side` = ?;", [self::$userip,intval($clickedID),$side_tag])) {
+                if(!self::$sql['default']->rows("SELECT id FROM `{prefix_clicks_ips}` WHERE `ip` = ? AND `ids` = ? AND `side` = ?;", [self::$userip,(int)($clickedID),$side_tag])) {
                     if($update) {
                         self::$sql['default']->insert("INSERT INTO `{prefix_clicks_ips}` SET `ip` = ?, `uid` = 0, `ids` = ?, `side` = ?, `time` = ?;",
-                            [self::$userip,intval($clickedID),$side_tag,(time()+count_clicks_expires)]);
+                            [self::$userip,(int)($clickedID),$side_tag,(time()+count_clicks_expires)]);
                     }
 
                     return true;
@@ -1922,7 +1922,7 @@ class common {
         //Rechte des Users oder des Teams suchen
         if(!empty($checkID)) {
             $check = empty($pos) ? 'user' : 'pos'; $checked = [];
-            $qry = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `".$check."` = ?;", [intval($checkID)]);
+            $qry = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `".$check."` = ?;", [(int)($checkID)]);
             if (self::$sql['default']->rowCount()) {
                 foreach($qry as $k => $v) {
                     if($k != 'id' && $k != 'user' && $k != 'pos' && $k != 'intforum') {
@@ -1976,7 +1976,7 @@ class common {
                 if(self::$sql['default']->rowCount()) {
                     foreach($qry2 as $get2) {
                         $br = ($break % 2) ? '<br />' : ''; $break++;
-                        $chk = (self::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `".(empty($pos) ? 'user' : 'pos')."` = ? AND ".(empty($pos) ? 'user' : 'pos')." != 0 AND `forum` = ?;", [intval($checkID),$get2['id']]) ? ' checked="checked"' : '');
+                        $chk = (self::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `".(empty($pos) ? 'user' : 'pos')."` = ? AND ".(empty($pos) ? 'user' : 'pos')." != 0 AND `forum` = ?;", [(int)($checkID),$get2['id']]) ? ' checked="checked"' : '');
                         $fkats .= '<input type="checkbox" class="checkbox" id="board_'.$get2['id'].'" name="board['.$get2['id'].']" value="'.$get2['id'].'"'.$chk.' /><label for="board_'.$get2['id'].'"> '.stringParser::decode($get2['kattopic']).'</label> '.$br;
                     }
                 }
@@ -2004,7 +2004,7 @@ class common {
 
         // no need for these admin areas & check user permission
         $e = ['editusers', 'votes', 'contact', 'intnews', 'forum', 'dlintern','intforum'];
-        $qry = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `user` = ?;", [intval($userid)]);
+        $qry = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `user` = ?;", [(int)($userid)]);
         if(self::$sql['default']->rowCount()) {
             foreach($qry as $v => $k) {
                 if($v != 'id' && $v != 'user' && $v != 'pos' && !in_array($v, $e)) {
@@ -2018,7 +2018,7 @@ class common {
 
         // check rank permission
         $qry = self::$sql['default']->select("SELECT s1.* FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi` WHERE s2.`user` = ? AND s2.`posi` != 0;",
-            [intval($userid)]);
+            [(int)($userid)]);
         foreach($qry as $get) {
             foreach($get AS $v => $k) {
                 if($v != 'id' && $v != 'user' && $v != 'pos' && !in_array($v, $e)) {
@@ -2078,8 +2078,8 @@ class common {
      * @return bool|mixed|string
      */
     public static function check_msg() {
-        if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_messages}` WHERE `an` = ? AND `page` = 0;", [intval($_SESSION['id'])])) {
-            self::$sql['default']->update("UPDATE `{prefix_messages}` SET `page` = 1 WHERE `an` = ?;", [intval($_SESSION['id'])]);
+        if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_messages}` WHERE `an` = ? AND `page` = 0;", [(int)($_SESSION['id'])])) {
+            self::$sql['default']->update("UPDATE `{prefix_messages}` SET `page` = 1 WHERE `an` = ?;", [(int)($_SESSION['id'])]);
             $smarty = self::getSmarty();
             $smarty->caching = false;
             return $smarty->fetch('file:['.common::$tmpdir.']user/msg/new_msg.tpl');
@@ -2140,7 +2140,7 @@ class common {
         ## User aus der Datenbank suchen ##
         $get = self::$sql['default']->fetch("SELECT `id`,`time` FROM `{prefix_users}` "
             . "WHERE `id` = ? AND `sessid` = ? AND `ip` = ? AND level != 0;",
-            [intval($_SESSION['id']),session_id(),stringParser::encode(self::$userip)]);
+            [(int)($_SESSION['id']),session_id(),stringParser::encode(self::$userip)]);
 
         if(self::$sql['default']->rowCount()) {
             ## Schreibe Werte in die Server Sessions ##
@@ -2166,7 +2166,7 @@ class common {
     public static function isBanned(int $userid_set=0,bool $logout=true) {
         $userid_set = $userid_set ? $userid_set : self::$userid;
         if(self::checkme($userid_set) >= 1 || $userid_set) {
-            $get = self::$sql['default']->fetch("SELECT `banned` FROM `{prefix_users}` WHERE `id` = ? LIMIT 1;", [intval($userid_set)]);
+            $get = self::$sql['default']->fetch("SELECT `banned` FROM `{prefix_users}` WHERE `id` = ? LIMIT 1;", [(int)($userid_set)]);
             if($get['banned']) {
                 if($logout) {
                     self::dzcp_session_destroy();
@@ -2196,17 +2196,17 @@ class common {
             if ($uid) {
                 // check rank permission
                 if (self::$sql['default']->rows("SELECT s1.`" . $check . "` FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi`"
-                    . "WHERE s2.`user` = ? AND s1.`" . $check . "` = 1 AND s2.`posi` != 0;", [intval($uid)])) {
+                    . "WHERE s2.`user` = ? AND s1.`" . $check . "` = 1 AND s2.`posi` != 0;", [(int)($uid)])) {
                     return true;
                 }
 
                 // check user permission
-                if (!dbc_index::issetIndex('user_permission_' . intval($uid))) {
-                    $permissions = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `user` = ?;", [intval($uid)]);
-                    dbc_index::setIndex('user_permission_' . intval($uid), $permissions);
+                if (!dbc_index::issetIndex('user_permission_' . (int)($uid))) {
+                    $permissions = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `user` = ?;", [(int)($uid)]);
+                    dbc_index::setIndex('user_permission_' . (int)($uid), $permissions);
                 }
 
-                return dbc_index::getIndexKey('user_permission_' . intval($uid), $check) ? true : false;
+                return dbc_index::getIndexKey('user_permission_' . (int)($uid), $check) ? true : false;
             } else {
                 return false;
             }
@@ -2237,16 +2237,16 @@ class common {
      */
     public static function checkme(int $userid_set=0) {
         if (empty($_SESSION['id']) || empty($_SESSION['pwd'])) { return 0; }
-        if (!$userid = ($userid_set != 0 ? intval($userid_set) : self::userid())) { return 0; }
+        if (!$userid = ($userid_set != 0 ? (int)($userid_set) : self::userid())) { return 0; }
         if (self::rootAdmin($userid)) { return 4; }
-        if(!dbc_index::issetIndex('user_'.intval($userid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ? AND `pwd` = ? AND `ip` = ?;", [intval($userid),$_SESSION['pwd'],$_SESSION['ip']]);
+        if(!dbc_index::issetIndex('user_'.(int)($userid))) {
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ? AND `pwd` = ? AND `ip` = ?;", [(int)($userid),$_SESSION['pwd'],$_SESSION['ip']]);
             if (!self::$sql['default']->rowCount()) { return 0; }
             dbc_index::setIndex('user_'.$get['id'], $get);
             return $get['level'];
         }
 
-        return dbc_index::getIndexKey('user_'.intval($userid), 'level');
+        return dbc_index::getIndexKey('user_'.(int)($userid), 'level');
     }
 
     /**
@@ -2318,7 +2318,7 @@ class common {
             }
 
             if(self::$chkMe) {
-                self::$sql['default']->update("UPDATE `{prefix_users}` SET `time` = ?, `whereami` = ? WHERE `id` = ?;", [time(),stringParser::encode($where),intval(self::$userid)]);
+                self::$sql['default']->update("UPDATE `{prefix_users}` SET `time` = ?, `whereami` = ? WHERE `id` = ?;", [time(),stringParser::encode($where),(int)(self::$userid)]);
             }
         }
     }
@@ -2363,7 +2363,7 @@ class common {
                             self::$sql['default']->insert("INSERT INTO `{prefix_counter}` SET `visitors` = 1 WHERE `today` = ?;", [date("j.n.Y")]);
                         }
 
-                        self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ip` = ?, `datum` = ?;", [stringParser::encode(self::$userip),intval($datum)]);
+                        self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ip` = ?, `datum` = ?;", [stringParser::encode(self::$userip),(int)($datum)]);
                     }
                 } else {
                     if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter}` WHERE `today` = ?;", [date("j.n.Y")])) {
@@ -2372,7 +2372,7 @@ class common {
                         self::$sql['default']->insert("INSERT INTO `{prefix_counter}` SET `visitors` = 1, `today` = ?;", [date("j.n.Y")]);
                     }
 
-                    self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ip` = ?, `datum` = ?;", [stringParser::encode(self::$userip),intval($datum)]);
+                    self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ip` = ?, `datum` = ?;", [stringParser::encode(self::$userip),(int)($datum)]);
                 }
             }
         }
@@ -2395,6 +2395,25 @@ class common {
         $select_field = $smarty->fetch('file:['.common::$tmpdir.']page/select_field.tpl');
         $smarty->clearAllAssign();
         return $select_field;
+    }
+
+    /**
+     * Generiert die Select-Felder für ein Dropdown Menu
+     * @param string $value
+     * @param bool $is_selected
+     * @param string $what
+     * @return string
+     */
+    public static function button_delete_single(string $id,string $action,string $title=_button_title_del,string $del=_confirm_del_entry) {
+        $smarty = self::getSmarty();
+        $smarty->caching = false;
+        $smarty->assign('id',$id);
+        $smarty->assign('action',$action);
+        $smarty->assign('title',$title);
+        $smarty->assign('del',$del);
+        $delete = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_delete_single.tpl');
+        $smarty->clearAllAssign();
+        return $delete;
     }
 
     /**
@@ -2590,15 +2609,15 @@ class common {
      **/
     public static function userid() {
         if (empty($_SESSION['id']) || empty($_SESSION['pwd'])) { return 0; }
-        if(!dbc_index::issetIndex('user_'.intval($_SESSION['id']))) {
+        if(!dbc_index::issetIndex('user_'.(int)($_SESSION['id']))) {
             $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ? AND `pwd` = ?;",
-                [intval($_SESSION['id']),$_SESSION['pwd']]);
+                [(int)($_SESSION['id']),$_SESSION['pwd']]);
             if (!self::$sql['default']->rowCount()) { return 0; }
             dbc_index::setIndex('user_'.$get['id'], $get, 2);
             return $get['id'];
         }
 
-        return dbc_index::getIndexKey('user_'.intval($_SESSION['id']), 'id');
+        return dbc_index::getIndexKey('user_'.(int)($_SESSION['id']), 'id');
     }
 
     /**

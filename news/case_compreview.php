@@ -18,7 +18,7 @@
 if(defined('_News') && common::$chkMe >= 1) {
     //-> Edit news comment
     if($do == 'edit') {
-        $get = common::$sql['default']->fetch("SELECT `reg`,`datum` FROM `{prefix_newscomments}` WHERE `id` = ?;", [intval($_GET['cid'])]);
+        $get = common::$sql['default']->fetch("SELECT `reg`,`datum` FROM `{prefix_newscomments}` WHERE `id` = ?;", [(int)($_GET['cid'])]);
         $get_postid = isset($_GET['cid']) && $_GET['cid'] >= 1 ? $_GET['cid'] : 1;
         $get_userid = $get['reg'];
         $get_date = $get['datum'];
@@ -31,7 +31,7 @@ if(defined('_News') && common::$chkMe >= 1) {
         $editedby = $smarty->fetch('string:'._edited_by);
         $smarty->clearAllAssign();
     } else { //-> Add new news comment
-        $get_postid = common::cnt('{prefix_newscomments}', " WHERE `news` = ".intval($_GET['id']))+1;
+        $get_postid = common::cnt('{prefix_newscomments}', " WHERE `news` = ".(int)($_GET['id']))+1;
         $get_userid = common::$userid;
         $get_date = time();
         $regCheck = common::$chkMe >= 1 ? true : false;

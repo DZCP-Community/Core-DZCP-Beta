@@ -27,15 +27,6 @@ $dir = "downloads";
 define('_Downloads', true);
 $smarty = common::getSmarty(); //Use Smarty
 
-//-> Funktion um ein Datenbankinhalt zu highlighten
-function highlight($word) {
-    if (substr(phpversion(), 0, 1) == 5) {
-        return str_ireplace($word, '<span class="fontRed">' . $word . '</span>', $word);
-    } else {
-        return str_replace($word, '<span class="fontRed">' . $word . '</span>', $word);
-    }
-}
-
 if(file_exists(basePath."/downloads/case_".$action.".php"))
     require_once(basePath."/downloads/case_".$action.".php");
 

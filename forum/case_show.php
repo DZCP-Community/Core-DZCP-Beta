@@ -20,7 +20,7 @@ if(defined('_Forum')) {
             . "FROM `{prefix_forumkats}` AS `s1` "
             . "LEFT JOIN `{prefix_forumsubkats}` AS `s2` "
             . "ON s2.`sid` = s1.`id` "
-            . "WHERE s2.`id` = ?;",array($id=intval($_GET['id'])));
+            . "WHERE s2.`id` = ?;",array($id=(int)($_GET['id'])));
 
     if($checks['intern'] == 1 && (!common::permission("intforum") && !common::forum_intern($checks['id']))) {
         $index = common::error(_error_no_access, 1);
@@ -56,7 +56,7 @@ if(defined('_Forum')) {
         foreach($qry as $get) {
             $sticky = $get['sticky'] ? _forum_sticky : '';
             $global = $get['global'] ? _forum_global : '';
-            $closed = $get['closed'] ? show("page/button_closed") : '';
+            $closed = $get['closed'] ? show($dir."/button_closed") : '';
             $cntpage = common::cnt("{prefix_forumposts}", " WHERE sid = ".$get['id']);
             $pagenr = !$cntpage ? '1' : ceil($cntpage/settings::get('m_fposts'));
             $getlp = common::$sql['default']->fetch("SELECT `id`,`sid`,`kid`,`date`,`nick`,`reg`,`email` FROM `{prefix_forumposts}` WHERE `sid` = ? ORDER BY `date` DESC;",array($get['id']));
