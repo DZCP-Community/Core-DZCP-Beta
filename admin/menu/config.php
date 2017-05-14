@@ -22,7 +22,6 @@ if($_POST) {
     if(settings::changed(($key='upicsize'),($var=(int)($_POST['m_upicsize'])))) settings::set($key,$var);
     if(settings::changed(($key='m_artikel'),($var=(int)($_POST['m_artikel'])))) settings::set($key,$var);
     if(settings::changed(($key='m_adminartikel'),($var=(int)($_POST['m_adminartikel'])))) settings::set($key,$var);
-    if(settings::changed(($key='allowhover'),($var=(int)($_POST['ahover'])))) settings::set($key,$var);
     if(settings::changed(($key='securelogin'),($var=(int)($_POST['securelogin'])))) settings::set($key,$var);
     if(settings::changed(($key='m_userlist'),($var=(int)($_POST['m_userlist'])))) settings::set($key,$var);
     if(settings::changed(($key='m_adminnews'),($var=(int)($_POST['m_adminnews'])))) settings::set($key,$var);
