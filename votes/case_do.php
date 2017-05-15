@@ -99,7 +99,6 @@ if(defined('_Votes')) {
     }
 
     if(isset($_GET['fajax'])) {
-        require_once(basePath.'/inc/menu-functions/fvote.php');
         header("Content-type: text/html; charset=utf-8");
         echo utf8_encode(fvote($_GET['id'], 1));
         cookie::save();

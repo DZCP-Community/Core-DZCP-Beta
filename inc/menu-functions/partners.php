@@ -25,14 +25,14 @@ function partners() {
                 $smarty->caching = false;
                 $smarty->assign('link',stringParser::decode($get['link']));
                 $smarty->assign('name',stringParser::decode($get['banner']));
-                $partners .= $smarty->fetch('file:['.common::$tmpdir.']menu/partners_textlink.tpl');
+                $partners .= $smarty->fetch('file:['.common::$tmpdir.']menu/partners/partners_textlink.tpl');
                 $smarty->clearAllAssign();
             } else {
                 $smarty->caching = false;
                 $smarty->assign('link',stringParser::decode($get['link']));
                 $smarty->assign('title',htmlspecialchars(str_replace('http://', '', stringParser::decode($get['link']))));
                 $smarty->assign('banner',stringParser::decode($get['banner']));
-                $partners .= $smarty->fetch('file:['.common::$tmpdir.']menu/partners.tpl');
+                $partners .= $smarty->fetch('file:['.common::$tmpdir.']menu/partners/partners.tpl');
                 $smarty->clearAllAssign();
             }
 

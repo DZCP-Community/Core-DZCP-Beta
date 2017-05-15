@@ -1,6 +1,6 @@
   <tr>
     <td>
-      <form name="contentLogin" action="../?action=login&amp;do=yes" method="post" onsubmit="return(DZCP.submitButton())">
+      <form name="contentLogin" action="?action=login&amp;do=yes" method="post">
         <table class="mainContent" cellspacing="1">
           <tr>
             <td class="contentHead" colspan="2" align="center"><span class="fontBold">{lang msgID="login_head"}</span></td>

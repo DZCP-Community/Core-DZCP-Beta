@@ -25,12 +25,12 @@ function sponsors() {
             $smarty->assign('id',$get['id']);
             $smarty->assign('title',htmlspecialchars(str_replace('http://', '', stringParser::decode($get['link']))));
             $smarty->assign('banner',(empty($get['xlink']) ? "../banner/sponsors/box_".$get['id'].".".$get['xend'] : stringParser::decode($get['xlink'])));
-            $banner = $smarty->fetch('file:['.common::$tmpdir.']sponsors/sponsors_bannerlink.tpl');
+            $banner = $smarty->fetch('file:['.common::$tmpdir.']menu/sponsors/sponsors_bannerlink.tpl');
             $smarty->clearAllAssign();
 
             $smarty->caching = false;
             $smarty->assign('banner',$banner);
-            $sponsors .= $smarty->fetch('file:['.common::$tmpdir.']menu/sponsors.tpl');
+            $sponsors .= $smarty->fetch('file:['.common::$tmpdir.']menu/sponsors/sponsors.tpl');
             $smarty->clearAllAssign();
         }
     }

@@ -4,7 +4,7 @@
     <form name="form" action="#">
       <select id="tmp" name="tempswitch" onchange="DZCP.tempswitch()" class="tempswitch">
         <option value="lazy" class="dropdownKat"> - Template - </option>
-        [templates]
+        {$templates}
       </select>
     </form>
     </td>

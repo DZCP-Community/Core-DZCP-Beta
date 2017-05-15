@@ -20,6 +20,7 @@ include("../inc/buffer.php");
 
 ## INCLUDES ##
 include(basePath."/inc/common.php");
+include(basePath."/forum/helper.php");
 
 ## SETTINGS ##
 $where = _site_forum;

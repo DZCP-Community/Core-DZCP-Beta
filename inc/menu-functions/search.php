@@ -19,7 +19,7 @@ function search() {
     $smarty = common::getSmarty(); //Use Smarty
     $smarty->caching = true;
     $smarty->assign('searchword',(empty($_GET['searchword']) ? _search_word : $_GET['searchword']));
-    $search = $smarty->fetch('file:['.common::$tmpdir.']menu/search.tpl',common::getSmartyCacheHash('menu_search'));
+    $search = $smarty->fetch('file:['.common::$tmpdir.']menu/search/search.tpl',common::getSmartyCacheHash('menu_search'));
     $smarty->clearAllAssign();
     return $search;
 }

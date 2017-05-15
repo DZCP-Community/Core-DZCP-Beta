@@ -48,7 +48,6 @@ if(defined('_Artikel')) {
     $smarty->caching = false;
     $smarty->assign('show',$show);
     $smarty->assign('nav',$seiten);
-    $smarty->assign('idir','../inc/images');
     $smarty->assign('order_autor',common::orderby('autor'));
     $smarty->assign('order_datum',common::orderby('datum'));
     $smarty->assign('order_titel',common::orderby('titel'));

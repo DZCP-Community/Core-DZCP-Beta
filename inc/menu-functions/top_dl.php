@@ -31,7 +31,7 @@ function top_dl() {
             $smarty->assign('titel',common::cut(stringParser::decode($get['download']),settings::get('l_topdl')));
             $smarty->assign('info',$info);
             $smarty->assign('hits',$get['hits']);
-            $top_dl .= $smarty->fetch('file:['.common::$tmpdir.']menu/top_dl.tpl');
+            $top_dl .= $smarty->fetch('file:['.common::$tmpdir.']menu/top_dl/top_dl.tpl');
             $smarty->clearAllAssign();
         }
     }

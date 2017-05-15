@@ -1158,6 +1158,7 @@ class Securimage {
      */
     protected function validate() {
         $this->correct_code = false;
+
         if (!is_string($this->code) || strlen($this->code) == 0) {
             $code = $this->getCode();
         } else {

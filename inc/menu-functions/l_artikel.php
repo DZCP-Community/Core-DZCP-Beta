@@ -16,6 +16,7 @@
  */
 
 function l_artikel() {
+    $smarty = common::getSmarty(); //Use Smarty
     $qry = common::$sql['default']->select("SELECT `id`,`titel`,`text`,`autor`,`datum`,`kat`,`public` "
             . "FROM `{prefix_artikel}` "
             . "WHERE `public` = 1 "
@@ -30,12 +31,15 @@ function l_artikel() {
                     _autor.';'._news_admin_kat.';'._comments_head.'\', \''.date("d.m.Y H:i", $get['datum'])._uhr.';'.
                 common::fabo_autor($get['autor']).';'.common::jsconvert(stringParser::decode($getkat['kategorie'])).';'.
                 common::cnt('{prefix_acomments}',"WHERE `artikel` = ?","id", [$get['id']]).'\')" onmouseout="DZCP.hideInfo()"';
-            
-            $l_articles .= show("menu/last_artikel", ["id" => $get['id'],
-                                                           "titel" => common::cut(stringParser::decode($get['titel']),settings::get('l_lartikel')),
-                                                           "text" => common::cut(bbcode::parse_html($text),260),
-                                                           "datum" => date("d.m.Y", $get['datum']),
-                                                           "info" => $info]);
+
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('titel',common::cut(stringParser::decode($get['titel']),settings::get('l_lartikel')));
+            $smarty->assign('text',common::cut(bbcode::parse_html($text),260));
+            $smarty->assign('datum',date("d.m.Y", $get['datum']));
+            $smarty->assign('info',$info);
+            $l_articles .= $smarty->fetch('file:['.common::$tmpdir.']menu/l_artikel/last_artikel.tpl');
+            $smarty->clearAllAssign();
         }
     }
 

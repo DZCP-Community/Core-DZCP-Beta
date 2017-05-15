@@ -297,7 +297,6 @@ if(defined('_Forum')) {
 
       $vote = "";
       if(!empty($get['vote'])) {
-        include_once(basePath.'/inc/menu-functions/fvote.php');
         $vote = '<tr><td>'.fvote($get['vote']).'</td></tr>';
       }
 

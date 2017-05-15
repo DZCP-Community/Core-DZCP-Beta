@@ -17,7 +17,7 @@
 
 function counter($js=false) {
     global $where;
-    
+    $smarty = common::getSmarty(); //Use Smarty
     if(!$js) {
         $counter = '<div style="width:100%;padding:10px 0;text-align:center"><img src="../inc/images/ajax_loading.gif" alt="" /></div>'.
                 "<script language=\"javascript\" type=\"text/javascript\">DZCP.initDynLoader('navCounter','counter','',true);</script>";
@@ -64,15 +64,18 @@ function counter($js=false) {
             if(empty($where)) {
                 $where = '';
             }
-                $counter = show("menu/counter", ["v_today" => $v_today,
-                                                      "v_yesterday" => $yDay,
-                                                      "v_all" => ($getstats['allvisitors']),
-                                                      "v_perday" => round($getstats['avgvisitors'], 2),
-                                                      "v_max" => $getstats['maxvisitors'],
-                                                      "g_online" => strval(common::online_guests($where)),
-                                                      "u_online" => strval($online_reg),
-                                                      "info" => $info,
-                                                      "v_online" => $getstats['maxonline']]);
+                $smarty->caching = false;
+                $smarty->assign('v_today',$v_today);
+                $smarty->assign('v_yesterday',$yDay);
+                $smarty->assign('v_all',$getstats['allvisitors']);
+                $smarty->assign('v_perday',round($getstats['avgvisitors'], 2));
+                $smarty->assign('v_max',$getstats['maxvisitors']);
+                $smarty->assign('g_online',common::online_guests($where));
+                $smarty->assign('u_online',common::online_guests($where));
+                $smarty->assign('v_online',$getstats['maxonline']);
+                $smarty->assign('info',$info);
+                $counter = $smarty->fetch('file:['.common::$tmpdir.']menu/counter/counter.tpl');
+                $smarty->clearAllAssign();
         }
     }
 

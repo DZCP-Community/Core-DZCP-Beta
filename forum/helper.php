@@ -31,9 +31,9 @@ function fvote($id, $ajax=false) {
 
                         $votebutton = "";
                         $results .= show("forum/vote_results", ["answer" => stringParser::decode($getv['sel']),
-                                                                     "percent" => $percent,
-                                                                     "stimmen" => $getv['stimmen'],
-                                                                     "balken" => $balken]);
+                            "percent" => $percent,
+                            "stimmen" => $getv['stimmen'],
+                            "balken" => $balken]);
                     } else {
                         $votebutton = '<input id="contentSubmitFVote" type="submit" value="'._button_value_vote.'" class="voteSubmit" />';
                         $results .= show("forum/vote_vote", ["id" => $getv['id'], "answer" => stringParser::decode($getv['sel'])]);
@@ -47,12 +47,12 @@ function fvote($id, $ajax=false) {
 
         $getf = common::$sql['default']->fetch("SELECT `id`,`kid` FROM `{prefix_forumthreads}` WHERE `vote` = ?;", [$get['id']]);
         $vote = show("forum/vote", ["titel" => stringParser::decode($get['titel']),
-                                         "vid" => $get['id'],
-                                         "fid" => $getf['id'],
-                                         "kid" => $getf['kid'],
-                                         "results" => $results,
-                                         "votebutton" => $votebutton,
-                                         "stimmen" => $stimmen]);
+            "vid" => $get['id'],
+            "fid" => $getf['id'],
+            "kid" => $getf['kid'],
+            "results" => $results,
+            "votebutton" => $votebutton,
+            "stimmen" => $stimmen]);
     }
 
     return empty($vote) ? '<div style="margin:2px 0;text-align:center;">'._no_entrys.'</div>' : ($ajax ? $vote : '<div id="navFVote">'.$vote.'</div>');

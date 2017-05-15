@@ -38,11 +38,11 @@
   </td>
 </tr>
 <tr>
-  <td colspan="2" class="contentMainTop"><span class="fontBold">{lang msgID="nick"}&nbsp;<a href="{$order_nick}"><img src="../inc/images/order.gif" alt="" class="icon" /></a></span></td>
+  <td colspan="2" class="contentMainTop"><span class="fontBold">{lang msgID="nick"}&nbsp;<a href="{$order_nick}"><img src="{idir}/order.gif" alt="" class="icon" /></a></span></td>
   <td colspan="2" class="contentMainTop"><span class="fontBold">{lang msgID="status"}</span></td>
   <td width="1%" class="contentMainTop"><span class="fontBold">{lang msgID="hpicon_blank"}</span></td>
   <td width="1%" class="contentMainTop"><span class="fontBold">{lang msgID="mficon_blank"}</span></td>
-  <td width="55" class="contentMainTop"><span class="fontBold">{lang msgID="profil_age"}&nbsp;<a href="{$order_age}"><img src="../inc/images/order.gif" alt="" class="icon" /></a></span></td>
+  <td width="55" class="contentMainTop"><span class="fontBold">{lang msgID="profil_age"}&nbsp;<a href="{$order_age}"><img src="{idir}/order.gif" alt="" class="icon" /></a></span></td>
 {$edel}
 </tr>
 {$show}

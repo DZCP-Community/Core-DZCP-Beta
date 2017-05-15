@@ -15,10 +15,19 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-$secure = settings::get('securelogin') ? show("menu/secure", ["help" => _login_secure_help]) : '';
-$login = show("menu/login", ["register" => _register,
-                                  "what" => _login_login,
-                                  "secure" => $secure,
-                                  "signup" => _login_signup,
-                                  "permanent" => _login_permanent,
-                                  "lostpwd" => _login_lostpwd]);
+function login() {
+    $login = '';
+    if(!common::$chkMe) {
+        $smarty = common::getSmarty(); //Use Smarty
+
+        $smarty->caching = false;
+        $secure = $smarty->fetch('file:[' . common::$tmpdir . ']menu/login/secure.tpl');
+
+        $smarty->caching = false;
+        $smarty->assign('secure', $secure);
+        $login = $smarty->fetch('file:[' . common::$tmpdir . ']menu/login/login.tpl');
+        $smarty->clearAllAssign();
+    }
+
+    return $login;
+}

@@ -288,7 +288,7 @@ class common {
             }
         }
 
-//-> Sprache aendern
+        //-> Sprache aendern
         if(!is_api) {
             if (isset($_GET['set_language']) && !empty($_GET['set_language'])) {
                 if (file_exists(basePath . "/inc/lang/" . $_GET['set_language'] . ".php")) {
@@ -313,7 +313,7 @@ class common {
             $_SESSION['language'] = stringParser::decode(settings::get('language'));
         }
 
-//-> Prueft ob der User gebannt ist, oder die IP des Clients warend einer offenen session veraendert wurde.
+        //-> Prueft ob der User gebannt ist, oder die IP des Clients warend einer offenen session veraendert wurde.
         if(!is_api) {
             if (self::$chkMe && self::$userid && !empty($_SESSION['ip'])) {
                 if ($_SESSION['ip'] != self::visitorIp() || self::isBanned(self::$userid, false)) {
@@ -627,7 +627,7 @@ class common {
      * @param int $back
      * @return mixed|string
      */
-    public static function error(string $error,int $back=1) {
+    public static function error(string $error,int $back=3) {
         $smarty = self::getSmarty();
         $smarty->caching = false;
         $smarty->assign('error',$error);
@@ -2685,7 +2685,12 @@ class common {
 
             //misc vars
             $lang = $_SESSION['language'];
-            $template_switch = show("menu/tmp_switch", ["templates" => $tmpldir]);
+
+            $smarty->caching = false;
+            $smarty->assign('templates',$tmpldir);
+            $template_switch = $smarty->fetch('file:['.common::$tmpdir.']page/template_switch.tpl');
+            $smarty->clearAllAssign();
+
             $clanname =stringParser::decode(settings::get("clanname"));
             $headtitle = show(_index_headtitle, ["clanname" => $clanname]);
             $title =stringParser::decode(strip_tags($title));
@@ -2705,7 +2710,7 @@ class common {
 
             //filter placeholders
             $dir = self::$designpath; //after template index autodetect!!!
-            $blArr = ["[clanname]","[title]","[java_vars]","[template_switch]","[headtitle]","[login]",
+            $blArr = ["[clanname]","[title]","[java_vars]","[template_switch]","[headtitle]",
                 "[index]","[dir]","[where]","[lang]"];
             $pholdervars = '';
             for($i=0;$i<=count($blArr)-1;$i++) {

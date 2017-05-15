@@ -15,9 +15,14 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-//{lang msgID="language_german"}
-
+/**
+ * Usage {lang msgID="language_german"}
+ * @param $params
+ * @param $smarty
+ * @return mixed|string
+ */
 function smarty_function_lang($params, &$smarty) {
+    /** @var TYPE_NAME $params */
     $params['msgID']='_'.$params['msgID'];
     if(!defined($params['msgID'])) {
         return 'MsgID: "'.$params['msgID'].'"" does not exist!';

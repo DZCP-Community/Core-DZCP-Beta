@@ -16,6 +16,7 @@
  */
 
 function kalender($month="",$year="",$js=false) {
+    $smarty = common::getSmarty(); //Use Smarty
     header("Content-Type: text/html; charset=utf-8");
     if(!$js) {
         $kalender = '<div style="width:100%;padding:10px 0;text-align:center"><img src="../inc/images/ajax_loading.gif" alt="" /></div>'.
@@ -49,7 +50,7 @@ function kalender($month="",$year="",$js=false) {
         $today = mktime(0,0,0,date("n"),date("d"),date("Y"));
         $i = 1; $show = '';
         while($i <= 31 && checkdate($monat, $i, $jahr)) {
-            $data = ''; $event = ''; $bdays = '';
+            $data = '';
             for($iw = 1; $iw <= 7; $iw++) {
                 unset($titlebd); unset($titleev);
 
@@ -88,10 +89,19 @@ function kalender($month="",$year="",$js=false) {
 
                     if(!checkdate($monat, $i, $jahr))
                         $data .= '<td class="navKalEmpty"></td>';
-                    elseif($datum == $today)
-                        $data .= show("menu/kal_day", ["day" => $day, "id" => "navKalToday"]);
-                    else
-                        $data .= show("menu/kal_day", ["day" => $day, "id" => "navKalDays"]);
+                    elseif($datum == $today) {
+                        $smarty->caching = false;
+                        $smarty->assign('day',$day);
+                        $smarty->assign('id',"navKalToday");
+                        $data .= $smarty->fetch('file:['.common::$tmpdir.']menu/kalender/kal_day.tpl');
+                        $smarty->clearAllAssign();
+                    } else {
+                        $smarty->caching = false;
+                        $smarty->assign('day',$day);
+                        $smarty->assign('id',"navKalDays");
+                        $data .= $smarty->fetch('file:['.common::$tmpdir.']menu/kalender/kal_day.tpl');
+                        $smarty->clearAllAssign();
+                    }
 
                     $i++;
                 }
@@ -116,14 +126,16 @@ function kalender($month="",$year="",$js=false) {
           $ly = $jahr;
         }
 
-        $kalender = show("menu/kalender", ["monat" => $month,
-                                                "show" => $show,
-                                                "year" => $jahr,
-                                                "nm" => $nm,
-                                                "ny" => $ny,
-                                                "lm" => $lm,
-                                                "ly" => $ly]);
-
+        $smarty->caching = false;
+        $smarty->assign('monat',$month);
+        $smarty->assign('show',$show);
+        $smarty->assign('year',$jahr);
+        $smarty->assign('nm',$nm);
+        $smarty->assign('ny',$ny);
+        $smarty->assign('lm',$lm);
+        $smarty->assign('ly',$ly);
+        $kalender = $smarty->fetch('file:['.common::$tmpdir.']menu/kalender/kalender.tpl');
+        $smarty->clearAllAssign();
     }
 
     return '<div id="navKalender">'.$kalender.'</div>';

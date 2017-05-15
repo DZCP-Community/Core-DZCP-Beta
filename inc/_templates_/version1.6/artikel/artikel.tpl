@@ -10,10 +10,10 @@
   </td>
 </tr>
 <tr>
-  <td class="contentMainTop" width="10%"><span class="fontBold">{lang msgID="datum"}&nbsp;<a href="{$order_datum}"><img src="{$idir}/order.gif" alt="" class="icon" /></a></span></td>
-  <td class="contentMainTop" width="40%"><span class="fontBold">{lang msgID="artikel"}&nbsp;<a href="{$order_titel}"><img src="{$idir}/order.gif" alt="" class="icon" /></a></span></td>
-  <td class="contentMainTop" width="30%"><span class="fontBold">{lang msgID="news_admin_kat"}&nbsp;<a href="{$order_kat}"><img src="{$idir}/order.gif" alt="" class="icon" /></a></span></td>
-  <td class="contentMainTop" width="30%"><span class="fontBold">{lang msgID="autor"}&nbsp;<a href="{$order_autor}"><img src="{$idir}/order.gif" alt="" class="icon" /></a></span></td>
+  <td class="contentMainTop" width="10%"><span class="fontBold">{lang msgID="datum"}&nbsp;<a href="{$order_datum}"><img src="{idir}/order.gif" alt="" class="icon" /></a></span></td>
+  <td class="contentMainTop" width="40%"><span class="fontBold">{lang msgID="artikel"}&nbsp;<a href="{$order_titel}"><img src="{idir}/order.gif" alt="" class="icon" /></a></span></td>
+  <td class="contentMainTop" width="30%"><span class="fontBold">{lang msgID="news_admin_kat"}&nbsp;<a href="{$order_kat}"><img src="{idir}/order.gif" alt="" class="icon" /></a></span></td>
+  <td class="contentMainTop" width="30%"><span class="fontBold">{lang msgID="autor"}&nbsp;<a href="{$order_autor}"><img src="{idir}/order.gif" alt="" class="icon" /></a></span></td>
 </tr>
 {$show}
 <tr>

@@ -16,5 +16,14 @@
  */
 
 function avatar() {
-    return common::$chkMe >= 1 ? show("menu/avatars", ["avatar_show" => common::useravatar(0,70,70)]) : '';
+    $smarty = common::getSmarty(); //Use Smarty
+    $avatar = '';
+    if(common::$chkMe >= 1) {
+        $smarty->caching = false;
+        $smarty->assign('avatar_show', common::useravatar(0, 70, 70));
+        $avatar = $smarty->fetch('file:[' . common::$tmpdir . ']menu/avatar/avatars.tpl');
+        $smarty->clearAllAssign();
+    }
+
+    return $avatar;
 }

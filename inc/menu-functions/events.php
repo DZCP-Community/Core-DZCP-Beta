@@ -16,6 +16,7 @@
  */
 
 function events() {
+    $smarty = common::getSmarty(); //Use Smarty
     $qry = common::$sql['default']->select("SELECT `id`,`datum`,`title`,`event` "
                       . "FROM `{prefix_events}` "
                       . "WHERE `datum` > ? "
@@ -26,13 +27,19 @@ function events() {
             $info = 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['title'])).'\', \''._kalender_uhrzeit.';'.
                     _datum.'\', \''.date("H:i", $get['datum'])._uhr.';'.
                     date("d.m.Y", $get['datum']).'\')" onmouseout="DZCP.hideInfo()"';
-            
-            $events = show(_next_event_link, ["datum" => date("d.m.",$get['datum']),
-                                                   "timestamp" => $get['datum'],
-                                                   "event" => stringParser::decode($get['title']),
-                                                   "info" => $info]);
 
-            $eventbox .= show("menu/event", ["events" => $events, "info" => $info]);
+            $smarty->caching = false;
+            $smarty->assign('datum',date("d.m.",$get['datum']));
+            $smarty->assign('timestamp',$get['datum']);
+            $smarty->assign('event',stringParser::decode($get['title']));
+            $events = $smarty->fetch('file:['.common::$tmpdir.']menu/event/next_event_link.tpl');
+            $smarty->clearAllAssign();
+
+            $smarty->caching = false;
+            $smarty->assign('events',$events);
+            $smarty->assign('info',$info);
+            $eventbox .= $smarty->fetch('file:['.common::$tmpdir.']menu/event/event.tpl');
+            $smarty->clearAllAssign();
         }
     }
 
