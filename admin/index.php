@@ -83,8 +83,14 @@ if (!isset($_SESSION['id']) || empty($_SESSION['id']) || !common::admin_perms($_
                 $link = constant("_config_" . str_replace('.xml', '', $file_xml));
                 $menu = (string) $xml->Menu;
                 $type = str_replace('.xml', '', $file_xml);
-                if (!empty($menu) && !empty($rights) && $permission)
-                    $amenu[$menu][$type] = show("['[link]','?admin=[name]','background-image:url(menu/[name]." . $end . ");'],\n", ["link" => $link, 'name' => $type]);
+                if (!empty($menu) && !empty($rights) && $permission) {
+                    $smarty->caching = false;
+                    $smarty->assign('link',$link);
+                    $smarty->assign('name',$type);
+                    $smarty->assign('end',$end);
+                    $amenu[$menu][$type] = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin_nav_link.tpl');
+                    $smarty->clearAllAssign();
+                }
             }
         }
     }
@@ -125,26 +131,26 @@ if (!isset($_SESSION['id']) || empty($_SESSION['id']) || !common::admin_perms($_
 
     //DZCP.de Version
     $version = new dzcp_version(false);
-    $index = show($dir . "/admin", ["version" => '<b>DZCP-Live: '.$version->getLiveVersion()['version'].' - '.$version->getLiveVersion()['release'].
-        ' / DZCP-Development: '.$version->getDevVersion()['version'].' - '.$version->getDevVersion()['release'].'</b>',
-                                         "einst" => _config_einst,
-                                         "content" => _content,
-                                         "addons" => _addons,
-                                         "rootadmin" => _rootadmin,
-                                         "notification" => notification::get(),
-                                         "rootmenu" => $rootmenu,
-                                         "settingsmenu" => $settingsmenu,
-                                         "contentmenu" => $contentmenu,
-                                         "addonsmenu" => $addonsmenu,
-                                         "radmin1" => $radmin1,
-                                         "radmin2" => $radmin2,
-                                         "adminc1" => $adminc1,
-                                         "adminc2" => $adminc2,
-                                         "cdminc1" => $cdminc1,
-                                         "cdminc2" => $cdminc2,
-                                         "addons1" => $addons1,
-                                         "addons2" => $addons2,
-                                         "show" => $show]);
+
+    $smarty->caching = false;
+    $smarty->assign('version','<b>DZCP-Live: '.$version->getLiveVersion()['version'].' - '.$version->getLiveVersion()['release'].
+        ' / DZCP-Development: '.$version->getDevVersion()['version'].' - '.$version->getDevVersion()['release'].'</b>');
+    $smarty->assign('notification',notification::get());
+    $smarty->assign('rootmenu',$rootmenu);
+    $smarty->assign('settingsmenu',$settingsmenu);
+    $smarty->assign('contentmenu',$contentmenu);
+    $smarty->assign('addonsmenu',$addonsmenu);
+    $smarty->assign('radmin1',$radmin1);
+    $smarty->assign('radmin2',$radmin2);
+    $smarty->assign('adminc1',$adminc1);
+    $smarty->assign('adminc2',$adminc2);
+    $smarty->assign('cdminc1',$cdminc1);
+    $smarty->assign('cdminc2',$cdminc2);
+    $smarty->assign('addons1',$addons1);
+    $smarty->assign('addons2',$addons2);
+    $smarty->assign('show',$show);
+    $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin.tpl');
+    $smarty->clearAllAssign();
 }
 
 ## INDEX OUTPUT ##

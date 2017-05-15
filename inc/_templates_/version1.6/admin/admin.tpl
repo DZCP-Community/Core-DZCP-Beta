@@ -12,29 +12,29 @@
 <tr>
   <td>
     <div style="position:relative">
-      <script language="javascript" type="text/javascript" src="../inc/_js/admin.js"></script>
+      <script language="javascript" type="text/javascript" src="../inc/_templates_/version1.6/_js/admin.js"></script>
       <script language="javascript" type="text/javascript">
       var ITEMS = [
-      [radmin1]
-        ['{$rootadmin}',null,null,
-          [rootmenu]
+          {$radmin1}
+        ['{lang msgID="rootadmin"}',null,null,
+          {$rootmenu}
         ],
-      [radmin2]
-      [adminc1]
-        ['{$einst}',null,null,
-          [settingsmenu]
+          {$radmin2}
+          {$adminc1}
+        ['{lang msgID="config_einst"}',null,null,
+          {$settingsmenu}
         ],
-      [adminc2]
-      [cdminc1]
-        ['{$content}',null,null,
-          [contentmenu]
+          {$adminc2}
+          {$cdminc1}
+        ['{lang msgID="content"}',null,null,
+          {$contentmenu}
         ],
-      [cdminc2]
-      [addons1]
-        ['{$addons}',null,null,
-          [addonsmenu]
+          {$cdminc2}
+          {$addons1}
+        ['{lang msgID="addons"}',null,null,
+            {$addonsmenu}
         ]
-      [addons2]
+          {$addons2}
       ];
           new menu (ITEMS, POS);
       </script>
@@ -57,7 +57,6 @@
     </div>
   </td>
 </tr>
-<tr><td>&nbsp;</td></tr>
 <tr>
   <td style="height:20px"></td>
 </tr>
