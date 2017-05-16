@@ -216,4 +216,10 @@ $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_config.tpl');
 $smarty->clearAllAssign();
 
 
-$show = show($dir."/form", array("head" => _config_global_head, "what" => "config", "value" => _button_value_config, "show" => $show));
+$smarty->caching = false;
+$smarty->assign('head',_config_global_head);
+$smarty->assign('what',"config");
+$smarty->assign('value',_button_value_config);
+$smarty->assign('show',$show);
+$show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form.tpl');
+$smarty->clearAllAssign();

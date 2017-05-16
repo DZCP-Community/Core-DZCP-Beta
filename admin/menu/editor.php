@@ -39,27 +39,31 @@ switch($do) {
             $position .= empty($get['name']) ? '' : '<option value="'.stringParser::decode($get['placeholder']).'-'.($get['pos']+1).'" '.$sel.'>'._nach.' -> '.common::navi_name(stringParser::decode($get['name'])).'</option>';
         }
 
-        $show = show($dir."/form_editor", array("head" => _editor_add_head,
-                                                "what" => _button_value_add,
-                                                "bbcode" => _bbcode,
-                                                "titel" => _titel,
-                                                "preview" => _preview,
-                                                "e_titel" => "",
-                                                "e_inhalt" => "",
-                                                "checked" => "",
-                                                "checked_php" => "",
-                                                "disabled_php" => (php_code_enabled ? '' : ' disabled'),
-                                                "pos" => _position,
-                                                "name" => _editor_linkname,
-                                                "n_name" => "",
-                                                "position" => $position,
-                                                "ja" => _yes,
-                                                "nein" => _no,
-                                                "wichtig" => _navi_wichtig,
-                                                "error" => "",
-                                                "allow_html" => _editor_allow_html,
-                                                "inhalt" => _inhalt,
-                                                "do" => "addsite"));
+        $smarty->caching = false;
+        $smarty->assign('head',_editor_add_head);
+        $smarty->assign('what',_button_value_add);
+        $smarty->assign('bbcode',_bbcode);
+        $smarty->assign('titel',_titel);
+        $smarty->assign('preview',_preview);
+        $smarty->assign('e_titel','');
+        $smarty->assign('e_inhalt','');
+        $smarty->assign('checked','');
+        $smarty->assign('checked_php','');
+        $smarty->assign('disabled_php', (php_code_enabled ? '' : ' disabled'));
+        $smarty->assign('pos',_position);
+        $smarty->assign('name',_editor_linkname);
+        $smarty->assign('n_name','');
+        $smarty->assign('position',$position);
+        $smarty->assign('ja',_yes);
+        $smarty->assign('nein',_no);
+        $smarty->assign('wichtig',_navi_wichtig);
+        $smarty->assign('error','');
+        $smarty->assign('allow_html',_editor_allow_html);
+        $smarty->assign('inhalt',_inhalt);
+        $smarty->assign('do',"addsite");
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_editor.tpl');
+        $smarty->clearAllAssign();
+
     break;
     case 'addsite':
         if(empty($_POST['titel']) || empty($_POST['inhalt']) || $_POST['pos'] == "lazy") {
@@ -70,7 +74,11 @@ switch($do) {
             elseif($_POST['pos'] == "lazy")
                 $error = _navi_no_pos;
 
-            $error = show("errors/errortable", array("error" => $error));
+            $smarty->caching = false;
+            $smarty->assign('error',$error);
+            $error = $smarty->fetch('file:['.common::$tmpdir.']/errors/errortable.tpl');
+            $smarty->clearAllAssign();
+
             $checked = isset($_POST['html']) ? 'checked="checked"' : '';
             $checked_php = isset($_POST['php']) ? 'checked="checked"' : '';
             $kat_ = preg_replace('/-(\d+)/','',$_POST['pos']);
@@ -93,27 +101,30 @@ switch($do) {
                 $position .= empty($get['name']) ? '' : '<option value="'.stringParser::decode($get['placeholder']).'-'.($get['pos']+1).'" '.$sel.'>'._nach.' -> '.common::navi_name(stringParser::decode($get['name'])).'</option>';
             }
 
-            $show = show($dir."/form_editor", array("head" => _editor_add_head,
-                                                    "what" => _button_value_add,
-                                                    "preview" => _preview,
-                                                    "bbcode" => _bbcode,
-                                                    "error" => $error,
-                                                    "checked" => $checked,
-                                                    "checked_php" => $checked_php,
-                                                    "disabled_php" => (php_code_enabled ? '' : ' disabled'),
-                                                    "pos" => _position,
-                                                    "ja" => _yes,
-                                                    "nein" => _no,
-                                                    "name" => _editor_linkname,
-                                                    "position" => $position,
-                                                    "n_name" => stringParser::decode($_POST['name']),
-                                                    "wichtig" => _navi_wichtig,
-                                                    "titel" => _titel,
-                                                    "e_titel" => stringParser::decode($_POST['titel']),
-                                                    "e_inhalt" => stringParser::decode($_POST['inhalt']),
-                                                    "allow_html" => _editor_allow_html,
-                                                    "inhalt" => _inhalt,
-                                                    "do" => "addsite"));
+            $smarty->caching = false;
+            $smarty->assign('head',_editor_add_head);
+            $smarty->assign('what',_button_value_add);
+            $smarty->assign('preview',_preview);
+            $smarty->assign('bbcode',_bbcode);
+            $smarty->assign('error',$error);
+            $smarty->assign('checked',$checked);
+            $smarty->assign('checked_php',$checked_php);
+            $smarty->assign('disabled_php',(php_code_enabled ? '' : ' disabled'));
+            $smarty->assign('pos',_position);
+            $smarty->assign('ja',_yes);
+            $smarty->assign('nein',_no);
+            $smarty->assign('name',_editor_linkname);
+            $smarty->assign('position',$position);
+            $smarty->assign('n_name',stringParser::decode($_POST['name']));
+            $smarty->assign('wichtig',_navi_wichtig);
+            $smarty->assign('titel',_titel);
+            $smarty->assign('e_titel',stringParser::decode($_POST['titel']));
+            $smarty->assign('e_inhalt',stringParser::decode($_POST['inhalt']));
+            $smarty->assign('allow_html',_editor_allow_html);
+            $smarty->assign('inhalt',_inhalt);
+            $smarty->assign('do',"addsite");
+            $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_editor.tpl');
+            $smarty->clearAllAssign();
         } else {
             $_POST['html'] = (isset($_POST['html']) ? $_POST['html'] : 0);
             $_POST['php'] = (isset($_POST['php']) ? $_POST['php'] : 0);
@@ -157,27 +168,32 @@ switch($do) {
         $checked = ($gets['html'] ? 'checked="checked"' : '');
         $checked_php = $gets['php'] ? 'checked="checked"' : '';
 
-        $show = show($dir."/form_editor", array("head" => _editor_edit_head,
-                                                "what" => _button_value_edit,
-                                                "bbcode" => _bbcode,
-                                                "preview" => _preview,
-                                                "titel" => _titel,
-                                                "e_titel" => stringParser::decode($gets['titel']),
-                                                "e_inhalt" => stringParser::decode($gets['text']),
-                                                "checked" => $checked,
-                                                "checked_php" => $checked_php,
-                                                "disabled_php" => (php_code_enabled ? '' : ' disabled'),
-                                                "pos" => _position,
-                                                "name" => _editor_linkname,
-                                                "n_name" => stringParser::decode($getn['name']),
-                                                "position" => $position,
-                                                "ja" => _yes,
-                                                "nein" => _no,
-                                                "wichtig" => _navi_wichtig,
-                                                "error" => "",
-                                                "allow_html" => _editor_allow_html,
-                                                "inhalt" => _inhalt,
-                                                "do" => "editsite&amp;id=".$_GET['id'].""));
+
+        $smarty->caching = false;
+        $smarty->assign('head',_editor_edit_head);
+        $smarty->assign('what',_button_value_edit);
+        $smarty->assign('bbcode',_bbcode);
+        $smarty->assign('preview',_preview);
+        $smarty->assign('titel',_titel);
+        $smarty->assign('e_titel',stringParser::decode($gets['titel']));
+        $smarty->assign('e_inhalt',stringParser::decode($gets['inhalt']));
+        $smarty->assign('checked',$checked);
+        $smarty->assign('checked_php',$checked_php);
+        $smarty->assign('disabled_php',(php_code_enabled ? '' : ' disabled'));
+        $smarty->assign('pos',_position);
+        $smarty->assign('name',_editor_linkname);
+        $smarty->assign('n_name',stringParser::decode($getn['name']));
+        $smarty->assign('position',$position);
+        $smarty->assign('ja',_yes);
+        $smarty->assign('nein',_no);
+        $smarty->assign('wichtig',_navi_wichtig);
+        $smarty->assign('error','');
+        $smarty->assign('allow_html',_editor_allow_html);
+        $smarty->assign('inhalt',_inhalt);
+        $smarty->assign('do', "editsite&amp;id=".$_GET['id']."");
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_editor.tpl');
+        $smarty->clearAllAssign();
+
     break;
     case 'editsite':
         if(empty($_POST['titel']) || empty($_POST['inhalt']) || $_POST['pos'] == "lazy") {
@@ -187,8 +203,10 @@ switch($do) {
                 $error = _empty_editor_inhalt;
             elseif($_POST['pos'] == "lazy")
                 $error = _navi_no_pos;
-
-            $error = show("errors/errortable", array("error" => $error));
+            $smarty->caching = false;
+            $smarty->assign('error',$error);
+            $error = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'errors/errortable.tpl');
+            $smarty->clearAllAssign();
             $checked = isset($_POST['html']) ? 'checked="checked"' : '';
             $checked_php = isset($_POST['php']) ? 'checked="checked"' : '';
 
@@ -210,27 +228,30 @@ switch($do) {
                 $position .= empty($get['name']) ? '' : '<option value="'.stringParser::decode($get['placeholder']).'-'.($get['pos']+1).'" '.$sel.'>'._nach.' -> '.common::navi_name(stringParser::decode($get['name'])).'</option>';
             }
 
-            $show = show($dir."/form_editor", array("head" => _editor_edit_head,
-                                                    "what" => _button_value_edit,
-                                                    "bbcode" => _bbcode,
-                                                    "preview" => _preview,
-                                                    "error" => $error,
-                                                    "checked" => $checked,
-                                                    "checked_php" => $checked_php,
-                                                    "disabled_php" => (php_code_enabled ? '' : ' disabled'),
-                                                    "pos" => _position,
-                                                    "ja" => _yes,
-                                                    "nein" => _no,
-                                                    "name" => _editor_linkname,
-                                                    "position" => $position,
-                                                    "n_name" => stringParser::decode($_POST['name']),
-                                                    "wichtig" => _navi_wichtig,
-                                                    "titel" => _titel,
-                                                    "e_titel" => stringParser::decode($_POST['titel']),
-                                                    "e_inhalt" => stringParser::decode($_POST['inhalt']),
-                                                    "allow_html" => _editor_allow_html,
-                                                    "inhalt" => _inhalt,
-                                                    "do" => "editsite&amp;id=".$_GET['id'].""));
+            $smarty->caching = false;
+            $smarty->assign('head',_editor_edit_head);
+            $smarty->assign('what',_button_value_edit);
+            $smarty->assign('bbcode',_bbcode);
+            $smarty->assign('preview',_preview);
+            $smarty->assign('error',$error);
+            $smarty->assign('checked',$checked);
+            $smarty->assign('checked_php',$checked_php);
+            $smarty->assign('disabled_php',(php_code_enabled ? '' : ' disabled'));
+            $smarty->assign('pos',_position);
+            $smarty->assign('ja',_yes);
+            $smarty->assign('nein',_no);
+            $smarty->assign('name',_editor_linkname);
+            $smarty->assign('position',$position);
+            $smarty->assign('n_name',stringParser::decode($_POST['name']));
+            $smarty->assign('wichtig',_navi_wichtig);
+            $smarty->assign('titel',_titel);
+            $smarty->assign('e_titel',stringParser::decode($_POST['titel']));
+            $smarty->assign('e_inhalt',stringParser::decode($_POST['inhalt']));
+            $smarty->assign('allow_html',_editor_allow_html);
+            $smarty->assign('inhalt',_inhalt);
+            $smarty->assign('do',"editsite&amp;id=".$_GET['id']."");
+            $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_editor.tpl');
+            $smarty->clearAllAssign();
         } else {
             $_POST['html'] = isset($_POST['html']) ? $_POST['html'] : 0;
             $_POST['php'] = isset($_POST['php']) ? $_POST['php'] : 0;
@@ -261,10 +282,13 @@ switch($do) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_site);
 
-            $show .= show($dir."/editor_show", array("name" => "<a href='../sites/?show=".$get['id']."'>".stringParser::decode($get['titel'])."</a>",
-                                                      "del" => $delete,
-                                                      "edit" => $edit,
-                                                      "class" => $class));
+            $smarty->caching = false;
+            $smarty->assign('name', "<a href='../sites/?show=".$get['id']."'>".stringParser::decode($get['titel'])."</a>");
+            $smarty->assign('del',$delete);
+            $smarty->assign('edit',$edit);
+            $smarty->assign('class',$class);
+            $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/editor_show.tpl');
+            $smarty->clearAllAssign();
         }
 
         if(empty($show)) {
@@ -274,6 +298,10 @@ switch($do) {
             $smarty->clearAllAssign();
         }
 
-        $show = show($dir."/editor", array("show" => $show));
+        $smarty->caching = false;
+        $smarty->assign('show',$show);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/editor.tpl');
+        $smarty->clearAllAssign();
+
     break;
 }

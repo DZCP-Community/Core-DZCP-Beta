@@ -22,10 +22,14 @@ switch ($do) {
     case 'edit':
         $get = common::$sql['default']->fetch("SELECT `name` FROM `{prefix_download_kat}` WHERE `id` = ?;",
                 array((int)($_GET['id'])));
-        $show = show($dir."/dlkats_form", array("newhead" => _dl_edit_head,
-                                                "do" => "editkat&amp;id=".$_GET['id']."",
-                                                "kat" => stringParser::decode($get['name']),
-                                                "what" => _button_value_edit));
+        $smarty->caching = false;
+        $smarty->assign('newhead',_dl_edit_head);
+        $smarty->assign('do',"editkat&amp;id=".$_GET['id']."");
+        $smarty->assign('kat',stringParser::decode($get['name']));
+        $smarty->assign('what',_button_value_edit);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/dlkats_form.tpl');
+        $smarty->clearAllAssign();
+
     break;
     case 'editkat':
         if(empty($_POST['kat'])) {
@@ -42,10 +46,14 @@ switch ($do) {
         $show = common::info(_dl_admin_deleted, "?admin=dlkats");
     break;
     case 'new':
-        $show = show($dir."/dlkats_form", array("newhead" => _dl_new_head,
-                                                "do" => "add",
-                                                "kat" => "",
-                                                "what" => _button_value_add));
+        $smarty->caching = false;
+        $smarty->assign('newhead',_dl_new_head);
+        $smarty->assign('do',"add");
+        $smarty->assign('kat',"");
+        $smarty->assign('what',_button_value_add);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/dlkats_form.tpl');
+        $smarty->clearAllAssign();
+
     break;
     case 'add':
         if(empty($_POST['kat'])) {
@@ -63,12 +71,19 @@ switch ($do) {
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_kat);
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $show .= show($dir."/dlkats_show", array("edit" => $edit,
-                                                     "name" => stringParser::decode($get['name']),
-                                                     "class" => $class,
-                                                     "delete" => $delete));
+            $smarty->caching = false;
+            $smarty->assign('edit',$edit);
+            $smarty->assign('name', stringParser::decode($get['name']));
+            $smarty->assign('class',$class);
+            $smarty->assign('delete',$delete);
+            $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/dlkats_show.tpl');
+            $smarty->clearAllAssign();
         }
 
-        $show = show($dir."/dlkats", array("show" => $show));
+        $smarty->caching = false;
+        $smarty->assign('show',$show);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/dlkats.tpl');
+        $smarty->clearAllAssign();
+
     break;
 }

@@ -23,20 +23,27 @@ switch ($do) {
         $positions = "";
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forumkats}` ORDER BY `kid`;");
         foreach($qry as $get) {
-            $positions .= show(_select_field, array("value" => ($get['kid']+1),
-                                                    "what" => _nach.' '.stringParser::decode($get['name']),
-                                                    "sel" => ""));
+            $smarty->caching = false;
+            $smarty->assign('value',($get['kid']+1));
+            $smarty->assign('what',_nach.' '.stringParser::decode($get['name']));
+            $smarty->assign('sel','');
+            $positions .= $smarty->fetch('string:'._select_field);
+            $smarty->clearAllAssign();
         }
 
-        $show = show($dir."/katform", array("fkat" => _config_katname,
-                                            "head" => _config_forum_kat_head,
-                                            "fkid" => _position,
-                                            "fart" => _kind,
-                                            "positions" => $positions,
-                                            "public" => _config_forum_public,
-                                            "intern" => _config_forum_intern,
-                                            "value" => _button_value_add,
-                                            "kat" => ""));
+        $smarty->caching = false;
+        $smarty->assign('fkat',_config_katname);
+        $smarty->assign('head',_config_forum_kat_head);
+        $smarty->assign('fkid',_position);
+        $smarty->assign('fart',_kind);
+        $smarty->assign('positions',$positions);
+        $smarty->assign('public',_config_forum_public);
+        $smarty->assign('intern',_config_forum_intern);
+        $smarty->assign('value',_button_value_add);
+        $smarty->assign('kat','');
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/katform.tpl');
+        $smarty->clearAllAssign();
+
     break;
     case 'addkat':
         if(!empty($_POST['kat'])) {
@@ -68,23 +75,29 @@ switch ($do) {
             $pos = common::$sql['default']->select("SELECT * FROM `{prefix_forumkats}` ORDER BY kid;");
             foreach($pos as $getpos) {
             if($get['name'] != $getpos['name']) {
-                    $positions .= show(_select_field, array("value" => $getpos['kid']+1, 
-                                                            "what" => _nach.' '.stringParser::decode($getpos['name'])));
+                $smarty->caching = false;
+                $smarty->assign('value',$getpos['kid']+1);
+                $smarty->assign('what',_nach.' '.stringParser::decode($getpos['name']));
+                $positions .= $smarty->fetch('string:'._select_field);
+                $smarty->clearAllAssign();
                 }
             }
 
             if($get['intern'] == "1") $sel = 'selected="selected"';
-            $show = show($dir."/katform_edit", array("fkat" => _config_katname,
-                                                     "head" => _config_forum_kat_head_edit,
-                                                     "fkid" => _position,
-                                                     "fart" => _kind,
-                                                     "id" => $get['id'],
-                                                     "sel" => $sel,
-                                                     "positions" => $positions,
-                                                     "public" => _config_forum_public,
-                                                     "intern" => _config_forum_intern,
-                                                     "value" => _button_value_edit,
-                                                     "kat" => stringParser::decode($get['name'])));
+            $smarty->caching = false;
+            $smarty->assign('fkat',_config_katname);
+            $smarty->assign('head',_config_forum_kat_head_edit);
+            $smarty->assign('fkid',_position);
+            $smarty->assign('fart',_kind);
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('sel',$sel);
+            $smarty->assign('positions',$positions);
+            $smarty->assign('public',_config_forum_public);
+            $smarty->assign('intern',_config_forum_intern);
+            $smarty->assign('value',_button_value_edit);
+            $smarty->assign('kat',stringParser::decode($get['name']));
+            $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/katform_edit.tpl');
+            $smarty->clearAllAssign();
         }
     break;
     case 'editkat':
@@ -111,22 +124,29 @@ switch ($do) {
         $positions = "";
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forumsubkats}` WHERE sid = " . (int) $_GET['id']." ORDER BY pos");
         foreach($qry as $get) {
-            $positions .= show(_select_field, array("value" => $get['pos']+1,
+            $smarty->caching = false;
+            $smarty->assign('value',$get['pos']+1);
+            $positions .= $smarty->fetch('string:'._select_field);
+            $smarty->clearAllAssign();
             "what" => _nach.' '.stringParser::decode($get['kattopic']),
             "sel" => ""));
         }
-        
-        $show = show($dir."/skatform", array("head" => _config_forum_add_skat,
-                                             "fkat" => _config_forum_skatname,
-                                             "fstopic" => _config_forum_stopic,
-                                             "skat" => "",
-                                             "what" => "addskat",
-                                             "stopic" => "",
-                                             "id" => $_GET['id'],
-                                             "nothing" => "",
-                                             "tposition" => _position,
-                                             "position" => $positions,
-                                             "value" => _button_value_add));
+
+        $smarty->caching = false;
+        $smarty->assign('head',_config_forum_add_skat);
+        $smarty->assign('fkat',_config_forum_skatname);
+        $smarty->assign('fstopic',_config_forum_stopic);
+        $smarty->assign('skat','');
+        $smarty->assign('what',"addskat");
+        $smarty->assign('stopic','');
+        $smarty->assign('id',$_GET['id']);
+        $smarty->assign('nothing','');
+        $smarty->assign('tposition',_position);
+        $smarty->assign('position',$positions);
+        $smarty->assign('value',_button_value_add);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/skatform.tpl');
+        $smarty->clearAllAssign();
+
     break;
     case 'addskat':
         if(empty($_POST['skat'])) {
@@ -148,22 +168,28 @@ switch ($do) {
             $pos = common::$sql['default']->select("SELECT `kattopic`,`pos` FROM `{prefix_forumsubkats}` WHERE `sid` = ? ORDER BY `pos`;",array($get['sid']));
             foreach($pos as $getpos) {
                 if($get['kattopic'] != $getpos['kattopic']) {
-                    $positions .= show(_select_field, array("value" => $getpos['pos']+1,
-                                                            "what" => _nach.' '.stringParser::decode($getpos['kattopic'])));
+                    $smarty->caching = false;
+                    $smarty->assign('value',$getpos['pos']+1);
+                    $smarty->assign('what', _nach.' '.stringParser::decode($getpos['kattopic']));
+                    $positions .= $smarty->fetch('string:'._select_field);
+                    $smarty->clearAllAssign();
                 }
             }
 
-            $show = show($dir."/skatform", array("head" => _config_forum_edit_skat,
-                                                 "fkat" => _config_forum_skatname,
-                                                 "fstopic" => _config_forum_stopic,
-                                                 "skat" => stringParser::decode($get['kattopic']),
-                                                 "what" => "editskat",
-                                                 "stopic" => stringParser::decode($get['subtopic']),
-                                                 "id" => $_GET['id'],
-                                                 "sid" => $get['sid'],
-                                                 "tposition" => _position,
-                                                 "position" => $positions,
-                                                 "value" => _button_value_edit));
+            $smarty->caching = false;
+            $smarty->assign('head',_config_forum_edit_skat);
+            $smarty->assign('fkat',_config_forum_skatname);
+            $smarty->assign('fstopic',_config_forum_stopic);
+            $smarty->assign('skat',stringParser::decode($get['kattopic']));
+            $smarty->assign('what',"editskat");
+            $smarty->assign('stopic',stringParser::decode($get['subtopic']));
+            $smarty->assign('id',$_GET['id']);
+            $smarty->assign('sid',$get['sid']);
+            $smarty->assign('tposition',_position);
+            $smarty->assign('position',$positions);
+            $smarty->assign('value',_button_value_edit);
+            $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/skatform.tpl');
+            $smarty->clearAllAssign();
         } //--> End while subkat sort
     break;
     case 'editskat':
@@ -211,36 +237,55 @@ switch ($do) {
                     array((int)($_GET['id'])));
             foreach($qryk as $getk) {
                 if(!empty($getk['kattopic'])) {
-                    $subkat = show(_config_forum_subkats, array("topic" => stringParser::decode($getk['kattopic']),
-                                                                "subtopic" => stringParser::decode($getk['subtopic']),
-                                                                "id" => $getk['id']));
+                    $smarty->caching = false;
+                    $smarty->assign('topic',stringParser::decode($getk['kattopic']));
+                    $smarty->assign('subtopic',stringParser::decode($getk['subtopic']));
+                    $smarty->assign('id',$getk['id']);
+                    $subkat = $smarty->fetch('string:'._config_forum_subkats);
+                    $smarty->clearAllAssign();
 
                     $edit = common::getButtonEditSingle($getk['id'],"admin=".$admin."&amp;do=editsubkat");
                     $delete = common::button_delete_single($getk['id'],"admin=forum&amp;do=deletesubkat",_button_title_del,_confirm_del_entry);
 
                     $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-                    $subkats .= show($dir."/forum_show_subkats_show", array("subkat" => $subkat,
-                                                                            "delete" => $delete,
-                                                                            "class" => $class,
-                                                                            "edit" => $edit));
+                    $smarty->caching = false;
+                    $smarty->assign('subkat',$subkat);
+                    $smarty->assign('delete',$delete);
+                    $smarty->assign('class',$class);
+                    $smarty->assign('edit',$edit);
+                    $subkats .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_show_subkats_show.tpl');
+                    $smarty->clearAllAssign();
                 }
 
-                $skathead = show(_config_forum_subkathead, array("kat" => stringParser::decode($getk['name'])));
-                $add = show(_config_forum_subkats_add, array("id" => $_GET['id']));
+                $smarty->caching = false;
+                $smarty->assign('kat',stringParser::decode($getk['name']));
+                $skathead = $smarty->fetch('string:'._config_forum_subkathead);
+                $smarty->clearAllAssign();
 
-                $show = show($dir."/forum_show_subkats", array("head" => _config_forum_head,
-                                                               "subkathead" => $skathead,
-                                                               "subkats" => $subkats,
-                                                               "add" => $add,
-                                                               "subkat" => _config_forum_subkat,
-                                                               "delete" => _deleteicon_blank,
-                                                               "edit" => _editicon_blank));
+                $smarty->caching = false;
+                $smarty->assign('id',$_GET['id']);
+                $add = $smarty->fetch('string:'._config_forum_subkats_add);
+                $smarty->clearAllAssign();
+
+                $smarty->caching = false;
+                $smarty->assign('head',_config_forum_head);
+                $smarty->assign('subkathead',$skathead);
+                $smarty->assign('subkats',$subkats);
+                $smarty->assign('add',$add);
+                $smarty->assign('subkat',_config_forum_subkat);
+                $smarty->assign('delete',_deleteicon_blank);
+                $smarty->assign('edit',_editicon_blank);
+                $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_show_subkats.tpl');
+                $smarty->clearAllAssign();
             }
         } else {
             $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forumkats}` ORDER BY `kid`;");
             foreach($qry as $get) {
-                $kat = show(_config_forum_kats_titel, array("kat" => stringParser::decode($get['name']),
-                                                            "id" => $get['id']));
+                $smarty->caching = false;
+                $smarty->assign('kat',stringParser::decode($get['name']));
+                $smarty->assign('id',$get['id']);
+                $kat = $smarty->fetch('string:'._config_forum_kats_titel);
+                $smarty->clearAllAssign();
 
                 $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
                 $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_entry);
@@ -249,22 +294,28 @@ switch ($do) {
 
                 $kats = "";
                 $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-                $kats .= show($dir."/forum_show_kats", array("class" => $class,
-                                                             "kat" => $kat,
-                                                             "status" => $status,
-                                                             "skats" => common::cnt('{prefix_forumsubkats}', " WHERE sid = ?","id",array((int)($get['id']))),
-                                                             "edit" => $edit,
-                                                             "delete" => $delete));
+                $smarty->caching = false;
+                $smarty->assign('class',$class);
+                $smarty->assign('kat',$kat);
+                $smarty->assign('status',$status);
+                $smarty->assign('skats',common::cnt('{prefix_forumsubkats}', " WHERE sid = ?","id",array((int)($get['id']))));
+                $smarty->assign('edit',$edit);
+                $smarty->assign('delete',$delete);
+                $kats .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_show_kats.tpl');
+                $smarty->clearAllAssign();
             }
-            
-            $show = show($dir."/forum", array("head" => _config_forum_head,
-                                              "mainkat" => _config_forum_mainkat,
-                                              "edit" => _editicon_blank,
-                                              "skats" => _cnt,
-                                              "status" => _config_forum_status,
-                                              "delete" => _deleteicon_blank,
-                                              "add" => _config_forum_kats_add,
-                                              "kats" => $kats));
+
+            $smarty->caching = false;
+            $smarty->assign('head',_config_forum_head);
+            $smarty->assign('mainkat',_config_forum_mainkat);
+            $smarty->assign('edit',_editicon_blank);
+            $smarty->assign('skats',_cnt);
+            $smarty->assign('status',_config_forum_status);
+            $smarty->assign('delete',_deleteicon_blank);
+            $smarty->assign('add',_config_forum_kats_add);
+            $smarty->assign('kats',$kats);
+            $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum.tpl');
+            $smarty->clearAllAssign();
         }
     break;
 }

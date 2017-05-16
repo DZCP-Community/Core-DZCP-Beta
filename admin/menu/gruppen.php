@@ -31,7 +31,10 @@ switch ($do) {
             }
         }
 
-        $show = show($dir."/groups_add");
+        $smarty->caching = false;
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/groups_add.tpl');
+        $smarty->clearAllAssign();
+
     break;
     case 'delete':
         common::$sql['default']->delete("DELETE FROM `{prefix_groups}` WHERE `id` = ?;",array((int)($_GET['id'])));
@@ -51,9 +54,13 @@ switch ($do) {
         }
 
         $get = common::$sql['default']->fetch("SELECT `id`,`name`,`beschreibung` FROM `{prefix_groups}` WHERE id = '".(int)($_GET['id'])."'");
-        $show = show($dir."/groups_edit", array("id" => $get['id'],
-                                                "sgroup" => stringParser::decode($get['name']),
-                                                "beschreibung" => stringParser::decode($get['beschreibung'])));
+        $smarty->caching = false;
+        $smarty->assign('id',$get['id']);
+        $smarty->assign('sgroup',stringParser::decode($get['name']));
+        $smarty->assign('beschreibung',stringParser::decode($get['beschreibung']));
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/groups_edit.tpl');
+        $smarty->clearAllAssign();
+
     break;
     default:
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_groups}` ORDER BY id"); $groups = '';
@@ -62,9 +69,19 @@ switch ($do) {
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_team);
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $groups .= show($dir."/groups_show", array("squad" => stringParser::decode($get['name']),"edit" => $edit, "class" => $class, "delete" => $delete));
+            $smarty->caching = false;
+            $smarty->assign('squad',stringParser::decode($get['name']));
+            $smarty->assign('edit',$edit);
+            $smarty->assign('class',$class);
+            $smarty->assign('delete',$delete);
+            $groups .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/groups_show.tpl');
+            $smarty->clearAllAssign();
         }
 
-        $show = show($dir."/groups", array("groups" => $groups));
+        $smarty->caching = false;
+        $smarty->assign('groups',$groups);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/groups.tpl');
+        $smarty->clearAllAssign();
+
     break;
 }

@@ -21,26 +21,36 @@ switch ($do) {
     case 'new':
         $qry = common::$sql['default']->select("SELECT `id`,`name` FROM `{prefix_download_kat}` ORDER BY `name`;"); $kats = '';
         foreach($qry as $get) {
-            $kats .= show(_select_field, array("value" => $get['id'],
-                                               "what" => stringParser::decode($get['name']),
-                                               "sel" => ""));
+            $smarty->caching = false;
+            $smarty->assign('value',$get['id']);
+            $smarty->assign('what',stringParser::decode($get['name']));
+            $smarty->assign('sel','');
+            $kats .= $smarty->fetch('string:'._select_field);
+            $smarty->clearAllAssign();
         }
 
         $files = common::get_files(basePath.'/downloads/files/',false,true); $dl = '';
         foreach ($files as $file) {
-            $dl .= show(_downloads_files_exists, array("dl" => $file, "sel" => ""));
+            $smarty->caching = false;
+            $smarty->assign('dl',$file);
+            $smarty->assign('sel','');
+            $dl .= $smarty->fetch('string:'._downloads_files_exists);
+            $smarty->clearAllAssign();
         }
+        $smarty->caching = false;
+        $smarty->assign('admin_head',_downloads_admin_head);
+        $smarty->assign('ddownload','');
+        $smarty->assign('dintern','');
+        $smarty->assign('durl','');
+        $smarty->assign('file',$dl);
+        $smarty->assign('nothing','');
+        $smarty->assign('what',_button_value_add);
+        $smarty->assign('do',"add");
+        $smarty->assign('dbeschreibung','');
+        $smarty->assign('kats',$kats);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_dl.tpl');
+        $smarty->clearAllAssign();
 
-        $show = show($dir."/form_dl", array("admin_head" => _downloads_admin_head,
-                                            "ddownload" => "",
-                                            "dintern" => "",
-                                            "durl" => "",
-                                            "file" => $dl,
-                                            "nothing" => "",
-                                            "what" => _button_value_add,
-                                            "do" => "add",
-                                            "dbeschreibung" => "",
-                                            "kats" => $kats));
     break;
     case 'add':
         if(empty($_POST['download']) || empty($_POST['url'])) {
@@ -69,19 +79,26 @@ switch ($do) {
         $qryk = common::$sql['default']->select("SELECT `id`,`name` FROM `{prefix_download_kat}` ORDER BY `name`;"); $kats = '';
         foreach($qryk as $getk) {
             $sel = ($getk['id'] == $get['kat'] ? 'selected="selected"' : '');
-            $kats .= show(_select_field, array("value" => $getk['id'],
-                                               "what" => stringParser::decode($getk['name']),
-                                               "sel" => $sel));
+            $smarty->caching = false;
+            $smarty->assign('value',$getk['id']);
+            $smarty->assign('what',stringParser::decode($getk['name']));
+            $smarty->assign('sel',$sel);
+            $kats .= $smarty->fetch('string:'._select_field);
+            $smarty->clearAllAssign();
         }
 
-        $show = show($dir."/form_dl", array("admin_head" => _downloads_admin_head_edit,
-                                            "ddownload" => stringParser::decode($get['download']),
-                                            "dintern" => $get['intern'] ? 'checked="checked"' : '',
-                                            "durl" => stringParser::decode($get['url']),
-                                            "dbeschreibung" => stringParser::decode($get['beschreibung']),
-                                            "what" => _button_value_edit,
-                                            "do" => "editdl&amp;id=".$_GET['id']."",
-                                            "kats" => $kats));
+        $smarty->caching = false;
+        $smarty->assign('admin_head',_downloads_admin_head_edit);
+        $smarty->assign('ddownload',stringParser::decode($get['download']));
+        $smarty->assign('dintern',$get['intern'] ? 'checked="checked"' : '');
+        $smarty->assign('durl',stringParser::decode($get['url']));
+        $smarty->assign('dbeschreibung',stringParser::decode($get['beschreibung']));
+        $smarty->assign('what',_button_value_edit);
+        $smarty->assign('do',"editdl&amp;id=".$_GET['id']."");
+        $smarty->assign('kats',$kats);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_dl.tpl');
+        $smarty->clearAllAssign();
+
     break;
     case 'editdl':
         if(empty($_POST['download']) || empty($_POST['url'])) {
@@ -114,17 +131,24 @@ switch ($do) {
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_dl);
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $show .= show($dir."/downloads_show", array("id" => $get['id'],
-                                                        "dl" => stringParser::decode($get['download']),
-                                                        "class" => $class,
-                                                        "edit" => $edit,
-                                                        "delete" => $delete));
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('dl',stringParser::decode($get['download']));
+            $smarty->assign('class',$class);
+            $smarty->assign('edit',$edit);
+            $smarty->assign('delete',$delete);
+            $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/downloads_show.tpl');
+            $smarty->clearAllAssign();
         }
 
         if (empty($show)) {
             $show = '<tr><td colspan="3" class="contentMainSecond">'._no_entrys.'</td></tr>';
         }
 
-        $show = show($dir."/downloads", array("show" => $show));
+        $smarty->caching = false;
+        $smarty->assign('show',$show);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/downloads.tpl');
+        $smarty->clearAllAssign();
+
     break;
 }

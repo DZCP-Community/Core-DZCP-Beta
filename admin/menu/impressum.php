@@ -25,9 +25,17 @@ if($do == "update") {
     settings::load(true);
     $show = common::info(_config_set, "?admin=impressum");
 } else {
-    $show = show($dir."/form_impressum", array("domain" =>stringParser::decode(settings::get('i_domain')),
-                                               "bbcode" => bbcode::parse_html("seitenautor"),
-                                               "postautor" =>stringParser::decode(settings::get('i_autor'))));
+    $smarty->caching = false;
+    $smarty->assign('domain',stringParser::decode(settings::get('i_domain')));
+    $smarty->assign('bbcode',bbcode::parse_html("seitenautor"));
+    $smarty->assign('postautor',stringParser::decode(settings::get('i_autor')));
+    $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_impressum.tpl');
+    $smarty->clearAllAssign();
 
-    $show = show($dir."/imp", array("what" => "impressum", "value" => _button_value_edit, "show" => $show));
+    $smarty->caching = false;
+    $smarty->assign('what',"impressum");
+    $smarty->assign('value',_button_value_edit);
+    $smarty->assign('show',$show);
+    $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/imp.tpl');
+    $smarty->clearAllAssign();
 }
