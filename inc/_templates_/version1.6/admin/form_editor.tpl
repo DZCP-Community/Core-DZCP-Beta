@@ -5,7 +5,7 @@
       var prevURL = '../sites/?action=preview';
      //-->
     </script>
-    <form id="editorForm" name="editorForm" action="?admin=editor&amp;do=[do]" method="post" onsubmit="return(DZCP.submitButton())">
+    <form id="editorForm" name="editorForm" action="?admin=editor&amp;do={$do}" method="post" onsubmit="return(DZCP.submitButton())">
     <table class="hperc" cellspacing="1">
       <tr>
         <td class="contentHead" align="center" colspan="2"><span class="fontBold">{$head}</span></td>

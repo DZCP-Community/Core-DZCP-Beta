@@ -3,7 +3,7 @@
 </tr>
 <tr>
 <td>
-<form name="formular" action="?admin=linkus&amp;do=[do]" method="post" onsubmit="return(DZCP.submitButton())">
+<form name="formular" action="?admin=linkus&amp;do={$do}" method="post" onsubmit="return(DZCP.submitButton())">
 <input type="hidden" name="banner" value="1" />
 <table class="hperc" cellspacing="1">
 <tr>

@@ -3,7 +3,7 @@
 </tr>
 <tr>
 <td>
-<form name="forum" enctype="multipart/form-data" action="?admin=forum&amp;do=editkat&amp;id=[id]" method="post" onsubmit="return(DZCP.submitButton())">
+<form name="forum" enctype="multipart/form-data" action="?admin=forum&amp;do=editkat&amp;id={$id}" method="post" onsubmit="return(DZCP.submitButton())">
 <table class="hperc" cellspacing="1">
 <tr>
   <td class="contentMainTop" width="150"><span class="fontBold">{$fkat}:</span></td>

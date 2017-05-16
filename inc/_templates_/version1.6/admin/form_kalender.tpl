@@ -3,7 +3,7 @@
 </tr>
 <tr>
 <td>
-<form name="kalenderadmin" method="post" action="?admin=kalender&amp;do=[do]" onsubmit="return(DZCP.submitButton())">
+<form name="kalenderadmin" method="post" action="?admin=kalender&amp;do={$do}" onsubmit="return(DZCP.submitButton())">
 <table class="hperc" cellspacing="1">
 <tr>
   <td class="contentMainTop"><span class="fontBold">{lang msgID="datum"}:</span></td>

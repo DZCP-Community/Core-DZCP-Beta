@@ -3,7 +3,7 @@
 </tr>
 <tr>
 <td>
-<form enctype="multipart/form-data" action="?admin=gruppen&amp;do=edit&amp;id=[id]" method="post" onsubmit="return(DZCP.submitButton())">
+<form enctype="multipart/form-data" action="?admin=gruppen&amp;do=edit&amp;id={$id}" method="post" onsubmit="return(DZCP.submitButton())">
 <table class="hperc" cellspacing="1">
 <tr>
   <td class="contentMainTop"><span class="fontBold">{lang msgID="member_admin_squad"}:</span></td>

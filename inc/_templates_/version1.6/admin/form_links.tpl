@@ -3,7 +3,7 @@
 </tr>
 <tr>
 	<td>
-	<form name="linksadmin" action="?admin=links&amp;do=[do]" method="post" onsubmit="return(DZCP.submitButton())">
+	<form name="linksadmin" action="?admin=links&amp;do={$do}" method="post" onsubmit="return(DZCP.submitButton())">
 		<table class="hperc" cellspacing="1">
 		<tr>
 		  <td class="contentMainTop"><span class="fontBold">{lang msgID="links_link"}:</span></td>
