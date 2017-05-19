@@ -47,9 +47,15 @@ switch ($do) {
     case 'edit':
         $get = common::$sql['default']->fetch("SELECT `ip`,`data` FROM `{prefix_ipban}` WHERE `id` = ?;",array((int)($_GET['id'])));
         $data_array = unserialize($get['data']);
-        $show = show($dir."/ipban_form", array("newhead" => _ipban_edit_head,
-            "do" => "edit_save&amp;id=".$_GET['id']."","ip_set" => stringParser::decode($get['ip']),
-            "info" => stringParser::decode($data_array['banned_msg']),"what" => _button_value_edit));
+        $smarty->caching = false;
+        $smarty->assign('newhead',_ipban_edit_head);
+        $smarty->assign('do',"edit_save&amp;id=".$_GET['id']."");
+        $smarty->assign('ip_set',stringParser::decode($get['ip']));
+        $smarty->assign('info',stringParser::decode($data_array['banned_msg']));
+        $smarty->assign('what',_button_value_edit);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/ipban_form.tpl');
+        $smarty->clearAllAssign();
+
     break;
     case 'edit_save':
         if(empty($_POST['ip']))
@@ -69,7 +75,14 @@ switch ($do) {
         $show = header("Location: ?admin=ipban&sfs_side=".(isset($_GET['sfs_side']) ? $_GET['sfs_side'] : 1)."&ub_side=".(isset($_GET['ub_side']) ? $_GET['ub_side'] : 1));
     break;
     case 'new':
-        $show = show($dir."/ipban_form", array("newhead" => _ipban_new_head, "do" => "add", "ip_set" => '', "info" => '', "what" => _button_value_add));
+        $smarty->caching = false;
+        $smarty->assign('newhead',_ipban_new_head);
+        $smarty->assign('do',"add");
+        $smarty->assign('ip_set','');
+        $smarty->assign('info','');
+        $smarty->assign('what',_button_value_add);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/ipban_form.tpl');
+        $smarty->clearAllAssign();
     break;
     case 'search':
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_ipban}` WHERE `ip` LIKE '%?%' ORDER BY `ip` ASC;",array(stringParser::encode($_POST['ip']))); //Suche
@@ -85,13 +98,28 @@ switch ($do) {
             $unban = ($get['enable'] ? show(_ipban_menu_icon_enable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_disable_ipban,array('ip'=>$get['ip'])))) : show(_ipban_menu_icon_disable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_enable_ipban,array('ip'=>$get['ip'])))));
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_ipban);
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $show_search .= show($dir."/ipban_show_user", array("ip" => stringParser::decode($get['ip']), "bez" => stringParser::decode($data_array['banned_msg']), "rep" => stringParser::decode($data_array['frequency']), "zv" => stringParser::decode($data_array['confidence']).'%', "class" => $class, "delete" => $delete, "edit" => $edit, "unban" => $unban));
+            $smarty->caching = false;
+            $smarty->assign('ip',stringParser::decode($get['ip']));
+            $smarty->assign('bez',stringParser::decode($data_array['banned_msg']));
+            $smarty->assign('rep',stringParser::decode($data_array['frequency']));
+            $smarty->assign('zv',stringParser::decode($data_array['confidence']).'%');
+            $smarty->assign('class',$class);
+            $smarty->assign('delete',$delete);
+            $smarty->assign('edit',$edit);
+            $smarty->assign('unban',$unban);
+            $show_search .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/ipban_show_user.tpl');
+            $smarty->clearAllAssign();
         }
 
         if(empty($show_search))
             $show_search = '<tr><td colspan="7" class="contentMainSecond">'._no_entrys.'</td></tr>';
 
-        $show = show($dir."/ipban_search", array("value" => _button_value_save, "show" => $show_search));
+        $smarty->caching = false;
+        $smarty->assign('value',_button_value_save);
+        $smarty->assign('show',$show_search);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/ipban_search.tpl');
+        $smarty->clearAllAssign();
+
     break;
     default:
         //typ: 0 = Off, 1 = GSL, 2 = SysBan, 3 = Ipban
@@ -122,7 +150,16 @@ switch ($do) {
                 $action = "?admin=ipban&amp;do=enable&amp;id=".$get['id']."&amp;sfs_side=".($site)."&amp;ub_side=".(isset($_GET['ub_side']) ? $_GET['ub_side'] : 1);
                 $unban = ($get['enable'] ? show(_ipban_menu_icon_enable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_disable_ipban,array('ip'=>$get['ip'])))) : show(_ipban_menu_icon_disable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_enable_ipban,array('ip'=>$get['ip'])))));
                 $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-                $show_sfs .= show($dir."/ipban_show_sfs", array("ip" => stringParser::decode($get['ip']), "bez" => stringParser::decode($data_array['banned_msg']), "rep" => stringParser::decode($data_array['frequency']), "zv" => stringParser::decode($data_array['confidence']).'%', "class" => $class, "delete" => $delete, "unban" => $unban));
+                $smarty->caching = false;
+                $smarty->assign('ip',stringParser::decode($get['ip']));
+                $smarty->assign('bez',stringParser::decode($data_array['banned_msg']));
+                $smarty->assign('rep',stringParser::decode($data_array['frequency']));
+                $smarty->assign('zv',stringParser::decode($data_array['confidence']).'%');
+                $smarty->assign('class',$class);
+                $smarty->assign('delete',$delete);
+                $smarty->assign('unban',$unban);
+                $show_sfs .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/ipban_show_sfs.tpl');
+                $smarty->clearAllAssign();
             }
         }
 
@@ -160,18 +197,29 @@ switch ($do) {
                 $action = "?admin=ipban&amp;do=enable&amp;id=".$get['id']."&amp;ub_side=".($site)."&amp;sfs_side=".(isset($_GET['sfs_side']) ? $_GET['sfs_side'] : 1);
                 $unban = ($get['enable'] ? show(_ipban_menu_icon_enable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_disable_ipban,array('ip'=>$get['ip'])))) : show(_ipban_menu_icon_disable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_enable_ipban,array('ip'=>$get['ip'])))));
                 $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-                $show_user .= show($dir."/ipban_show_user", array("ip" => stringParser::decode($get['ip']), "bez" => stringParser::decode($data_array['banned_msg']), "class" => $class, "delete" => $delete, "edit" => $edit, "unban" => $unban));
+                $smarty->caching = false;
+                $smarty->assign('ip',stringParser::decode($get['ip']));
+                $smarty->assign('bez',stringParser::decode($data_array['banned_msg']));
+                $smarty->assign('class',$class);
+                $smarty->assign('delete',$delete);
+                $smarty->assign('edit',$edit);
+                $smarty->assign('unban',$unban);
+                $show_user .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/ipban_show_user.tpl');
+                $smarty->clearAllAssign();
             }
         }
 
         if(empty($show_user))
             $show_user = '<tr><td colspan="8" class="contentMainSecond">'._no_entrys.'</td></tr>';
 
-        $show = show($dir."/ipban", array("show_spam" => $show_sfs,
-                                          "show_user" => $show_user,
-                                          "count_user" => $count_user,
-                                          "count_spam" => $count_spam,
-                                          "pager_sfs" => $pager_sfs,
-                                          "pager_user" => $pager_user));
+        $smarty->caching = false;
+        $smarty->assign('show_spam',$show_sfs);
+        $smarty->assign('show_user',$show_user);
+        $smarty->assign('count_user',$count_user);
+        $smarty->assign('count_spam',$count_spam);
+        $smarty->assign('pager_sfs',$pager_sfs);
+        $smarty->assign('pager_user',$pager_user);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/ipban.tpl');
+        $smarty->clearAllAssign();
     break;
 }

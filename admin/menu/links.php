@@ -20,15 +20,18 @@ $where = $where.': '._config_links;
 
 switch ($do) {
     case 'new':
-        $show = show($dir."/form_links", array("head" => _links_admin_head,
-                                               "bchecked" => 'checked="checked"',
-                                               "bnone" => "",
-                                               "tchecked" => "",
-                                               "llink" => "",
-                                               "lbeschreibung" => "",
-                                               "ltext" => "",
-                                               "what" => _button_value_add,
-                                               "do" => "add"));
+        $smarty->caching = false;
+        $smarty->assign('head',_links_admin_head);
+        $smarty->assign('bchecked','checked="checked"');
+        $smarty->assign('tchecked','');
+        $smarty->assign('bnone','');
+        $smarty->assign('llink','');
+        $smarty->assign('lbeschreibung','');
+        $smarty->assign('ltext','');
+        $smarty->assign('what',_button_value_add);
+        $smarty->assign('do',"add");
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_links.tpl');
+        $smarty->clearAllAssign();
     break;
     case 'add':
         if(empty($_POST['link']) || empty($_POST['beschreibung']) || (isset($_POST['banner']) && empty($_POST['text']))) {
@@ -51,15 +54,19 @@ switch ($do) {
         $bchecked = ($get['banner'] ? 'checked="checked"' : '');
         $bnone = ($get['banner'] ? '' : "display:none");
 
-        $show = show($dir."/form_links", array("head" => _links_admin_head_edit,
-                                               "bchecked" => $bchecked,
-                                               "tchecked" => $tchecked,
-                                               "bnone" => $bnone,
-                                               "llink" => common::links(stringParser::decode($get['url'])),
-                                               "lbeschreibung" => stringParser::decode($get['beschreibung']),
-                                               "ltext" => stringParser::decode($get['text']),
-                                               "what" => _button_value_edit,
-                                               "do" => "editlink&amp;id=".$_GET['id'].""));
+        $smarty->caching = false;
+        $smarty->assign('head',_links_admin_head_edit);
+        $smarty->assign('bchecked',$bchecked);
+        $smarty->assign('tchecked',$tchecked);
+        $smarty->assign('bnone',$bnone);
+        $smarty->assign('llink',common::links(stringParser::decode($get['url'])));
+        $smarty->assign('lbeschreibung',stringParser::decode($get['beschreibung']));
+        $smarty->assign('ltext',stringParser::decode($get['text']));
+        $smarty->assign('what',_button_value_edit);
+        $smarty->assign('do',"editlink&amp;id=".$_GET['id']."");
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_links.tpl');
+        $smarty->clearAllAssign();
+
     break;
     case 'editlink':
         if(empty($_POST['link']) || empty($_POST['beschreibung']) || (isset($_POST['banner']) && empty($_POST['text']))) {
@@ -86,16 +93,22 @@ switch ($do) {
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_link);
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $show .= show($dir."/links_show", array("link" => common::cut(stringParser::decode($get['url']),40),
-                                                    "class" => $class,
-                                                    "edit" => $edit,
-                                                    "delete" => $delete));
+            $smarty->caching = false;
+            $smarty->assign('link',common::cut(stringParser::decode($get['url']),40));
+            $smarty->assign('class',$class);
+            $smarty->assign('edit',$edit);
+            $smarty->assign('delete',$delete);
+            $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/links_show.tpl');
+            $smarty->clearAllAssign();
         }
 
         if(empty($show)) {
             $show = '<tr><td colspan="3" class="contentMainSecond">'._no_entrys.'</td></tr>';
         }
 
-        $show = show($dir."/links", array("show" => $show));
+        $smarty->caching = false;
+        $smarty->assign('show',$show);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/links.tpl');
+        $smarty->clearAllAssign();
     break;
 }

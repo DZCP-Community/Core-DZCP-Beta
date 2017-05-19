@@ -41,13 +41,16 @@ switch ($do) {
             $dropdown_time = common::dropdown_date(common::dropdown("hour",date("H",time())),
                 common::dropdown("minute",date("i",time())));
 
-            $show = show($dir."/form_kalender", array("dropdown_time" => $dropdown_time,
-                                                      "dropdown_date" => $dropdown_date,
-                                                      "what" => _button_value_add,
-                                                      "do" => "addevent",
-                                                      "k_event" => "",
-                                                      "k_beschreibung" => "",
-                                                      "head" => _kalender_admin_head));
+            $smarty->caching = false;
+            $smarty->assign('dropdown_time',$dropdown_time);
+            $smarty->assign('dropdown_date',$dropdown_date);
+            $smarty->assign('what',_button_value_add);
+            $smarty->assign('do',"addevent");
+            $smarty->assign('k_event','');
+            $smarty->assign('k_beschreibung','');
+            $smarty->assign('head',_kalender_admin_head);
+            $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_kalender.tpl');
+            $smarty->clearAllAssign();
         }
     break;
     case 'edit':
@@ -60,13 +63,17 @@ switch ($do) {
         $dropdown_time = common::dropdown_time(common::dropdown("hour",date("H",$get['datum'])),
             common::dropdown("minute",date("i",$get['datum'])));
 
-        $show = show($dir."/form_kalender", array("dropdown_time" => $dropdown_time,
-                                                  "dropdown_date" => $dropdown_date,
-                                                  "what" => _button_value_edit,
-                                                  "do" => "editevent&amp;id=".$_GET['id'],
-                                                  "k_event" => stringParser::decode($get['title']),
-                                                  "k_beschreibung" => stringParser::decode($get['event']),
-                                                  "head" => _kalender_admin_head_edit));
+        $smarty->caching = false;
+        $smarty->assign('dropdown_time',$dropdown_time);
+        $smarty->assign('dropdown_date',$dropdown_date);
+        $smarty->assign('what',_button_value_edit);
+        $smarty->assign('do',"editevent&amp;id=".$_GET['id']);
+        $smarty->assign('k_event',stringParser::decode($get['title']));
+        $smarty->assign('k_beschreibung',stringParser::decode($get['event']));
+        $smarty->assign('head',_kalender_admin_head_edit);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_kalender.tpl');
+        $smarty->clearAllAssign();
+
     break;
     case 'editevent':
         if(empty($_POST['title']) || empty($_POST['event'])) {
@@ -92,18 +99,28 @@ switch ($do) {
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_kalender);
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $show .= show($dir."/kalender_show", array("datum" => date("d.m.y H:i", $get['datum'])._uhr,
-                                                       "event" => stringParser::decode($get['title']),
-                                                       "time" => $get['datum'],
-                                                       "class" => $class,
-                                                       "edit" => $edit,
-                                                       "delete" => $delete));
+
+            $smarty->caching = false;
+            $smarty->assign('datum',date("d.m.y H:i", $get['datum'])._uhr);
+            $smarty->assign('event',stringParser::decode($get['title']));
+            $smarty->assign('time',$get['datum']);
+            $smarty->assign('class',$class);
+            $smarty->assign('edit',$edit);
+            $smarty->assign('delete',$delete);
+            $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/kalender_show.tpl');
+            $smarty->clearAllAssign();
         }
 
         if (empty($show)) {
             $show = '<tr><td colspan="4" class="contentMainSecond">' . _no_entrys . '</td></tr>';
         }
 
-        $show = show($dir."/kalender", array("show" => $show, "order_date" => common::orderby('datum'), "order_titel" => common::orderby('event')));
+        $smarty->caching = false;
+        $smarty->assign('show',$show);
+        $smarty->assign('order_date', common::orderby('datum'));
+        $smarty->assign('order_titel',common::orderby('event'));
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/kalender.tpl');
+        $smarty->clearAllAssign();
+
     break;
 }
