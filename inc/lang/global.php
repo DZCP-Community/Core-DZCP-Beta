@@ -20,8 +20,6 @@ define('_user_mailto_texttop', '<img src=\\"../inc/images/mailto.gif\\" align=\\
 define('_ipban_menu_icon_enable', '<a href="[action]" title="[lang_ipban_disable]" rel="[info]" class="confirm"><img src="../inc/images/admin_lock_closed.jpg" alt="" class="icon" /></a>');
 define('_ipban_menu_icon_disable', '<a href="[action]" title="[lang_ipban_enable]" rel="[info]" class="confirm"><img src="../inc/images/admin_lock_open.jpg" alt="" class="icon" /></a>');
 define('_elevel_startpage_select', '<option value="1" [selu]>[lang_status_user]</option><option value="2" [selt]>[lang_status_trial]</option><option value="3" [selm]>[lang_status_member]</option><option value="4" [sela]>[lang_status_admin]</option>');
-//Forum
-define("_forum_team_groups", '[<a style="color:[color]" href="#">[group]</a>] ');
 ## ADDED / REDEFINED FOR 1.5.2
 define('_dropdown_date_ts', '<select id="t_[nr]" name="t_[nr]" class="dropdown">[day]</select> <select id="m_[nr]" name="m_[nr]" class="dropdown">[month]</select> <select id="j_[nr]" name="j_[nr]" class="dropdown">[year]</select>');
 define('_dropdown_time_ts', '<select id="h_[nr]" name="h_[nr]" class="dropdown">[hour]</select> <select id="min_[nr]" name="min_[nr]" class="dropdown">[minute]</select>[uhr]');
@@ -33,12 +31,10 @@ define('_hpicon_forum', '<a href="{$hp}" target="_blank"><img src="../inc/images
 define('_emailicon_forum', '<a href=\\"mailto:"+d+"\\"><img src=\\"../inc/images/forum_email.gif\\" title="+d+" class=\\"icon\\" /></a>');
 define('_forum_pn_preview', '<img src="../inc/images/forum_pn.gif" alt="" class="icon" style="cursor:pointer" />');
 define('_forum_zitat_preview', '<img src="../inc/images/zitat.gif" alt="" class="icon" style="cursor:pointer" />');
-define('_user_link_preview', '[country] <a class="[class]" href="javascript:void(0)">[nick]</a>');
 //Edited for DZCP 1.4
 define('_forum_thread_search_link', '[sticky] <a href="../forum/?action=showthread&amp;id=[id]&amp;hl=[hl]">[topic]</a> [closed]');
 ////////////////////
 ## Allgemein ##
-define('_user_link', '[country] <a class="[class]" href="../user/?action=user&amp;id=[id][get]">[nick]</a>');
 define('_user_link_noreg', '<a class=\\"[class]\\" href=\\"mailto:"+d+"\\">[nick]</a>');
 define('_link_mailto', '<a href=\\"mailto:"+d+"\\">{$nick}</a>');
 define('_link_hp', '<a href="[hp]"><img src="../inc/images/hp.gif" alt="" title="[hp]" class="icon" /></a>');

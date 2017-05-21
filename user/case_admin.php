@@ -141,7 +141,7 @@ if(defined('_UserMenu')) {
                     $level = common::data("level",$edituser);
                 }
                 
-                $newpwd = !empty($_POST['passwd']) ? "`pwd` = '" . md5($_POST['passwd']) . "'," : "";
+                $newpwd = !empty($_POST['passwd']) ? "`pwd` = '" . common::pwd_encoder($_POST['passwd']) . "'," : "";
                 $update_level = $_POST['level'] == 'banned' ? 0 : $level;
                 $update_banned = $_POST['level'] == 'banned' ? 1 : 0;
                 common::$sql['default']->update("UPDATE {prefix_users} SET ".$newpwd." "
@@ -277,6 +277,7 @@ if(defined('_UserMenu')) {
                 $editpwd = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin/admin_editpwd.tpl');
 
                 //User Levels
+                $elevel = '';
                 $levels = ['banned' => _admin_level_banned, 1 => _status_user, 4 => _status_admin];
                 foreach ($levels as $id => $text) {
                     if(common::$chkMe != 4 && $id == 4)

@@ -437,6 +437,7 @@ class common {
      * @return mixed|string
      */
     public static function autor(int $uid=0,string $class="",string $nick="",string $email="",string $cut="",string $add="") {
+        $smarty = self::getSmarty();
         $uid = (!$uid ? self::$userid : $uid);
         if(!$uid) return '* No UserID! *';
         if(!dbc_index::issetIndex('user_'.(int)($uid))) {
@@ -450,11 +451,15 @@ class common {
         }
 
         $nickname = (!empty($cut)) ? self::cut(stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick')), $cut) :stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick'));
-        return show(_user_link, ["id" => $uid,
-            "country" => self::flag(dbc_index::getIndexKey('user_'.(int)($uid), 'country')),
-            "class" => $class,
-            "get" => $add,
-            "nick" => $nickname]);
+
+        $smarty->caching = false;
+        $smarty->assign('id',$uid);
+        $smarty->assign('country',self::flag(dbc_index::getIndexKey('user_'.(int)($uid), 'country')));
+        $smarty->assign('class',$class);
+        $smarty->assign('get',$add);
+        $smarty->assign('nick',$nickname);
+        $user = $smarty->fetch('file:['.common::$tmpdir.']user/user_link.tpl');
+        return $user;
     }
 
     /**
@@ -465,17 +470,11 @@ class common {
      * @return mixed|string
      */
     public static function autorcolerd(int $uid=0, $class="", $cut="") {
-        /* TODO: Replace dbc_index */
-        if(!dbc_index::issetIndex('user_'.(int)($uid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [(int)($uid)]);
-            if(self::$sql['default']->rowCount()) {
-                dbc_index::setIndex('user_'.$get['id'], $get);
-            }
-        }
+        /* TODO: dbc_index */
 
-        $position = dbc_index::getIndexKey('user_'.(int)($uid), 'position');
-        $get = self::$sql['default']->fetch("SELECT `id`,`color` FROM `{prefix_positions}` WHERE `id` = ?;", [$position]);
-        if(!$position || !self::$sql['default']->rowCount()) {
+        $getp = self::$sql['default']->fetch("SELECT `position` FROM `{prefix_users}` WHERE `id` = ?;", [(int)($uid)]);
+        $get = self::$sql['default']->fetch("SELECT `id`,`color` FROM `{prefix_positions}` WHERE `id` = ?;", [$getp['position']]);
+        if(!$getp['position'] || !self::$sql['default']->rowCount()) {
             return self::autor($uid,$class,'','',$cut);
         }
 
@@ -484,12 +483,11 @@ class common {
         $smarty = self::getSmarty();
         $smarty->caching = false;
         $smarty->assign('id',$uid);
-        $smarty->assign('country',self::data('country',$uid));
+        $smarty->assign('country',self::flag(self::data('country',$uid)));
         $smarty->assign('class',$class);
         $smarty->assign('color',stringParser::decode($get['color']));
         $smarty->assign('nick',$nickname);
         $autor = $smarty->fetch('file:['.common::$tmpdir.']user/user_link_colerd.tpl');
-        $smarty->clearAllAssign();
         return $autor;
     }
 
@@ -502,6 +500,8 @@ class common {
      */
     public static function cleanautor(int $uid=0, $class="", $nick="", $email="") {
         /* TODO: Replace dbc_index */
+        $smarty = self::getSmarty();
+
         if(!dbc_index::issetIndex('user_'.(int)($uid))) {
             $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [(int)($uid)]);
             if(self::$sql['default']->rowCount()) {
@@ -511,8 +511,13 @@ class common {
             }
         }
 
-        return show(_user_link_preview, ["id" => $uid, "country" => self::flag(dbc_index::getIndexKey('user_'.(int)($uid), 'country')),
-            "class" => $class, "nick" =>stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick'))]);
+        $smarty->caching = false;
+        $smarty->assign('id',$uid);
+        $smarty->assign('country',self::flag(dbc_index::getIndexKey('user_'.(int)($uid), 'country')));
+        $smarty->assign('class',$class);
+        $smarty->assign('nick',stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick')));
+        $user = $smarty->fetch('file:['.common::$tmpdir.']user/user_link_preview.tpl');
+        return $user;
     }
 
     /**
@@ -537,19 +542,18 @@ class common {
     /**
      * Nickausgabe ohne Profillink oder Emaillink fr das ForenAbo
      * @param int $uid
-     * @param string $tpl
      * @return mixed|string
      */
-    public static function fabo_autor(int $uid,string $tpl=_user_link_fabo) {
+    public static function fabo_autor(int $uid) {
         /* TODO: Replace dbc_index */
         if(!dbc_index::issetIndex('user_'.(int)($uid))) {
             $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [(int)($uid)]);
             if(self::$sql['default']->rowCount()) {
                 dbc_index::setIndex('user_' . $get['id'], $get);
-                return show($tpl, ["id" => $uid, "nick" => stringParser::decode($get['nick'])]);
+                return stringParser::decode($get['nick']);
             }
         } else {
-            return show($tpl, ["id" => $uid, "nick" =>stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick'))]);
+            return stringParser::decode(stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick')));
         }
 
         return '';

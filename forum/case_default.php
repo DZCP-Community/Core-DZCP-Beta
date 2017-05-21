@@ -50,16 +50,19 @@ if(defined('_Forum')) {
                                 $iconpic = "icon_topic_newest.gif";
                             }
                         }
-                       
-                        $lpost .= show(_forum_thread_lpost, array("nick" => _forum_from.' '.common::autor($getlt['t_reg'], '',
-                                                                    stringParser::decode($getlt['t_nick']), 
-                                                                    stringParser::decode($getlt['t_email'])).' ',
-                                                                  "post_link" => '?action=showthread&kid='.$getlt['kid'].'&id='.$getlt['id'],
-                                                                  "img" => $iconpic,
-                                                                  "date" => date("F j, Y, g:i a", $getlt['t_date'])));
 
-                      $lpdate = (int)($getlt['t_date']);
-                    } elseif(!$getlt['first']) {
+                        $smarty->caching = false;
+                        $smarty->assign('nick',_forum_from.' '.common::autor($getlt['t_reg'], '',
+                                stringParser::decode($getlt['t_nick']),
+                                stringParser::decode($getlt['t_email'])).' ');
+                        $smarty->assign('post_link','?action=showthread&kid='.$getlt['kid'].'&id='.$getlt['id']);
+                        $smarty->assign('img',$iconpic);
+                        $smarty->assign('date',date("F j, Y, g:i a", $getlt['t_date']));
+                        $lpost .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_thread_lpost.tpl');
+                        $smarty->clearAllAssign();
+
+                        $lpdate = (int)($getlt['t_date']);
+                   } elseif(!$getlt['first']) {
                         //Check Unreaded
                         $iconpic = "icon_topic_latest.gif";
                         if(common::$userid >= 1 && $_SESSION['lastvisit']) {
@@ -70,20 +73,20 @@ if(defined('_Forum')) {
                                 $iconpic = "icon_topic_newest.gif";
                             }
                         }
-                        
-                        $lpost .= show(_forum_thread_lpost, array("nick" => _forum_from.' '.common::autor($getlp['reg'], '',
-                                                                    stringParser::decode($getlp['nick']), 
-                                                                    stringParser::decode($getlp['email'])).' ',
-                                                                  "post_link" => '?action=showthread&kid='.$getlt['kid'].'&id='.$getlt['id'],
-                                                                  "img" => $iconpic,
-                                                                  "date" => date("F j, Y, g:i a", $getlp['date'])));
-                        $lpdate = (int)($getlp['date']);
-                    }
-                }
 
-                $threads = common::cnt('{prefix_forumthreads}', " WHERE `kid` = ?","id",array($gets['id']));
-                $posts = common::cnt('{prefix_forumposts}', " WHERE `kid` = ?","id",array($gets['id']));
-                $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
+                       $smarty->caching = false;
+                       $smarty->assign('nick',_forum_from.' '.common::autor($getlp['reg'], '',
+                               stringParser::decode($getlp['nick']),
+                               stringParser::decode($getlp['email'])).' ');
+                       $smarty->assign('post_link','?action=showthread&kid='.$getlt['kid'].'&id='.$getlt['id']);
+                       $smarty->assign('img',$iconpic);
+                       $smarty->assign('date',date("F j, Y, g:i a", $getlp['date']));
+                       $lpost .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_thread_lpost.tpl');
+                       $smarty->clearAllAssign();
+
+                       $lpdate = (int)($getlp['date']);
+                   }
+                }
                 
                 //Unreaded
                 $frompic = "read";
@@ -102,55 +105,92 @@ if(defined('_Forum')) {
                         $frompic = "unread";
                     }
                 }
-                
+
+                $threads = common::cnt('{prefix_forumthreads}', " WHERE `kid` = ?","id",array($gets['id']));
+                $posts = common::cnt('{prefix_forumposts}', " WHERE `kid` = ?","id",array($gets['id']));
+
                 //Show
-                $showt .= show($dir."/kats_show", array("topic" => stringParser::decode($gets['kattopic']),
-                                                        "subtopic" => stringParser::decode($gets['subtopic']),
-                                                        "lpost" => $lpost,
-                                                        "frompic" => $frompic,
-                                                        "subforum" => "",
-                                                      //  "new" => common::check_new($lpdate),
-                                                        "threads" => $threads,
-                                                        "posts" => $posts+$threads,
-                                                        "class" => $class,
-                                                        "kid" => $gets['sid'],
-                                                        "id" => $gets['id']));
+                $smarty->caching = false;
+                $smarty->assign('topic',stringParser::decode($gets['kattopic']));
+                $smarty->assign('subtopic',stringParser::decode($gets['subtopic']));
+                $smarty->assign('lpost',$lpost);
+                $smarty->assign('frompic',$frompic);
+                $smarty->assign('subforum',"");
+                $smarty->assign('threads',$threads);
+                $smarty->assign('posts',$posts+$threads);
+                $smarty->assign('kid',$gets['sid']);
+                $smarty->assign('id',$gets['id']);
+                $showt .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/kats_show.tpl');
+                $smarty->clearAllAssign();
             }
         } //end while
 
-        $katname = $get['intern'] ? show(_forum_katname_intern, array("katname" => stringParser::decode($get['name']))) : stringParser::decode($get['name']);
+        $katname = stringParser::decode($get['name']);
+        if($get['intern']) {
+            $smarty->caching = false;
+            $smarty->assign('katname',stringParser::decode($get['name']));
+            $katname = $smarty->fetch('string:'._forum_katname_intern);
+            $smarty->clearAllAssign();
+        }
+
         if(!empty($showt)) {
-            $show .= show($dir."/kats", array("katname" => $katname, "showt" => $showt));
+            $smarty->caching = false;
+            $smarty->assign('katname',$katname);
+            $smarty->assign('showt',$showt);
+            $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/kats.tpl');
+            $smarty->clearAllAssign();
         }
     }
     
     /* Stats */
-    $stats = show($dir."/forum_stats", array("total_posts" => strval(common::cnt("{prefix_forumposts}")),
-                                             "total_topics" => strval(common::cnt("{prefix_forumthreads}")),
-                                             "total_members" => strval(common::cnt("{prefix_users}","WHERE `banned` = 0 AND `level` >= 1")),
-                                             "newest_member" => common::autor(common::$sql['default']->fetch("SELECT `id` FROM `{prefix_users}` WHERE `level` >= 1 AND "
-                                                    . "`banned` = 0 ORDER BY `regdatum` DESC;",array(),"id"))));
-    
-    $threads = show(_forum_cnt_threads, array("threads" => common::cnt("{prefix_forumthreads}")));
-    $posts = show(_forum_cnt_posts, array("posts" => common::cnt("{prefix_forumposts}")+common::cnt("{prefix_forumthreads}")));
-
     $qrytp = common::$sql['default']->select("SELECT `id`,`user`,`forumposts` FROM `{prefix_userstats}` ORDER BY `forumposts` DESC LIMIT 5;");
     $show_top = '';
     foreach($qrytp as $gettp) {
         if($gettp['forumposts'] >= 1) {
-            $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $show_top .= show($dir."/top_posts_show", array("nick" => common::autor($gettp['user']),
-                                                            "posts" => $gettp['forumposts'],
-                                                            "class" => $class));
+            $smarty->caching = false;
+            $smarty->assign('nick',common::autor($gettp['user']));
+            $smarty->assign('posts',$gettp['forumposts']);
+            $smarty->assign('color',$color);
+            $show_top .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/top_posts_show.tpl');
+            $smarty->clearAllAssign(); $color++;
         }
     } //end while
-    
-    $top_posts = show($dir."/top_posts", array("show" => $show_top));
+    $color = 0;
+
+    //Top Posters
+    $smarty->caching = false;
+    $smarty->assign('show',$show_top);
+    $top_posts = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/top_posts.tpl');
+    $smarty->clearAllAssign(); unset($show_top);
+
+    //Stats
+    $smarty->caching = false;
+    $smarty->assign('total_posts',common::cnt("{prefix_forumposts}"));
+    $smarty->assign('total_topics',common::cnt("{prefix_forumthreads}"));
+    $smarty->assign('total_members',common::cnt("{prefix_users}","WHERE `banned` = 0 AND `level` >= 1"));
+    $smarty->assign('top_posts',$top_posts);
+    $smarty->assign('newest_member',common::autor(common::$sql['default']->fetch("SELECT `id` FROM `{prefix_users}` WHERE `level` >= 1 AND `banned` = 0 ORDER BY `regdatum` DESC;",[],"id")));
+    $stats = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_stats.tpl');
+    $smarty->clearAllAssign();
+
+    $smarty->caching = false;
+    $smarty->assign('threads',common::cnt("{prefix_forumthreads}"));
+    $threads = $smarty->fetch('string:'._forum_cnt_threads);
+    $smarty->clearAllAssign();
+
+    $smarty->caching = false;
+    $smarty->assign('posts',(common::cnt("{prefix_forumposts}")+common::cnt("{prefix_forumthreads}")));
+    $posts = $smarty->fetch('string:'._forum_cnt_posts);
+    $smarty->clearAllAssign();
 
     /* Wer ist online */
     $qry = common::$sql['default']->select('SELECT `position`,`color` FROM `{prefix_positions}`;'); $team_groups = '';
     foreach($qry as $get) {
-        $team_groups .= show(_forum_team_groups, array('color' => stringParser::decode($get['color']), 'group' => stringParser::decode($get['position'])));
+        $smarty->caching = false;
+        $smarty->assign('color',stringParser::decode($get['color']));
+        $smarty->assign('group',stringParser::decode($get['position']));
+        $team_groups .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_team_groups.tpl');
+        $smarty->clearAllAssign();
     }
 
     common::update_online($where); //Update Where
@@ -177,23 +217,31 @@ if(defined('_Forum')) {
     $counter_gast = common::online_guests($where,true);
     
     $total_users=($counter_users+$counter_gast);
-    $forum_user_stats = show(_forum_online_info0,array('users' => strval($total_users),
-                                                       't_gast' => ($counter_gast == 1 ? _forum_gast : _forum_gaste),
-                                                       'regs'  => strval($counter_users), 
-                                                       't_regs' => ($counter_users == 1 ? _forum_reg : _forum_regs),
-                                                       'gast'  => strval($counter_gast),
-                                                       't_is' => ($total_users == 1 ? _forum_ist : _forum_sind),
-                                                       'timer' => strval((1800/60/60))));
-    
-    $online = show($dir."/online", array("nick" => $nick, "forum_online_info0" => $forum_user_stats, 'groups' => $team_groups));
+    $smarty->caching = false;
+    $smarty->assign('users',$total_users);
+    $smarty->assign('counter_gast',$counter_gast);
+    $smarty->assign('regs',$counter_users);
+    $smarty->assign('counter_users',$counter_users);
+    $smarty->assign('gast',$counter_gast);
+    $smarty->assign('total_users',$total_users);
+    $smarty->assign('timer',(1800/60/60));
+    $forum_user_stats = $smarty->fetch('string:'._forum_online_info0);
+    $smarty->clearAllAssign();
+
+    $smarty->caching = false;
+    $smarty->assign('nick',$nick);
+    $smarty->assign('forum_online_info0',$forum_user_stats);
+    $smarty->assign('groups',$team_groups);
+    $online = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/online.tpl');
+    $smarty->clearAllAssign();
 
     /* Index */
-    $index = show($dir."/forum", array("head" => _forum_head,
-                                       "threads" => $threads,
-                                       "stats" => $stats,
-                                       "search" => _forum_searchlink,
-                                       "posts" => $posts,
-                                       "show" => $show,
-                                       "online" => $online,
-                                       "top_posts" => $top_posts));
+    $smarty->caching = false;
+    $smarty->assign('threads',$threads);
+    $smarty->assign('stats',$stats);
+    $smarty->assign('posts',$posts);
+    $smarty->assign('show',$show);
+    $smarty->assign('online',$online);
+    $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum.tpl');
+    $smarty->clearAllAssign();
 }

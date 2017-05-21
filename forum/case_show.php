@@ -27,10 +27,22 @@ if(defined('_Forum')) {
     } else {
         //Filter
         if(true) {
-            
+            //orderby = desc or asc
+            //sortby =
+
+            /*
+             *
+             *   <option value="autor">{lang msgID="autor"}</option>
+                        <option value="time">{lang msgID="forum_sort_bcc"}</option>
+                        <option value="posts">{lang msgID="replies"}</option>
+                        <option value="hits">{lang msgID="hits"}</option>
+
+             */
+
+
+
         }
-        
-        
+
         if(empty($_POST['suche'])) {
             $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forumthreads}` "
                     . "WHERE `kid` = ? OR `global` = 1 "
@@ -61,39 +73,46 @@ if(defined('_Forum')) {
             $pagenr = !$cntpage ? '1' : ceil($cntpage/settings::get('m_fposts'));
             $getlp = common::$sql['default']->fetch("SELECT `id`,`sid`,`kid`,`date`,`nick`,`reg`,`email` FROM `{prefix_forumposts}` WHERE `sid` = ? ORDER BY `date` DESC;",array($get['id']));
             $is_lp = common::$sql['default']->rowCount();
-            
+
             //Check Unreaded
             if($is_lp) {
                 $iconpic = "icon_topic_latest.gif";
                 if(common::$userid >= 1 && $_SESSION['lastvisit']) {
                     //Check in Posts
                     if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumposts}` "
-                            . "WHERE `date` >= ? AND `reg` != ? AND `id` = ?;",
+                            . "WHERE `date` <= ? AND `reg` != ? AND `id` = ?;",
                             array($_SESSION['lastvisit'],common::$userid,$getlp['id']))) {
                         $iconpic = "icon_topic_newest.gif";
                     }
                 }
             }
 
-            $lpost = $is_lp ? show(_forum_thread_lpost, array("nick" => common::autor($getlp['reg'], '', $getlp['nick'], stringParser::decode($getlp['email'])),
-                                                              "img" => $iconpic,
-                                                              "post_link" => '?action=showthread&kid='.$getlp['kid'].'&id='.$getlp['sid'],
-                                                              "date" => date("d.m.y H:i", $getlp['date'])._uhr)) : '-';
-            $lpdate = $is_lp ? $getlp['date'] : '';
+            $lpost = '-';
+            if($is_lp) {
+                $smarty->caching = false;
+                $smarty->assign('nick',common::autor($getlp['reg'], '', $getlp['nick'], stringParser::decode($getlp['email'])));
+                $smarty->assign('post_link','?action=showthread&kid='.$getlp['kid'].'&id='.$getlp['sid']);
+                $smarty->assign('img',$iconpic);
+                $smarty->assign('date',date("F j, Y, g:i a", $getlp['date']));
+                $lpost = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_thread_lpost.tpl');
+                $smarty->clearAllAssign();
+            }
+
+            $lpdate = common::$sql['default']->rowCount() ? $getlp['date'] : '';
 
             //Unreaded
             $frompic = $get['closed'] ? "read_locked" : "read";
             if(common::$userid >= 1 && $_SESSION['lastvisit']) {
                 //Check new Threads
-                if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumthreads}` "
-                        . "WHERE (`t_date` >= ? || `lp` >= ?) AND `t_reg` != ? AND `id` = ?;",
-                        array($_SESSION['lastvisit'],$_SESSION['lastvisit'],common::$userid,$get['id']))) {
-                    $get['closed'] ? "unread_locked" : "unread";
+                if(common::$sql['default']->rows($test="SELECT `id` FROM `{prefix_forumthreads}` "
+                        . "WHERE (`t_date` <= ? || `lp` >= ?) AND `t_reg` != ? AND `id` = ?;",
+                        array($lastvisit=$_SESSION['lastvisit'],$lastvisit,common::$userid,$get['id']))) {
+                    $frompic = $get['closed'] ? "unread_locked" : "unread";
                 }
 
                 //Check new Posts
                 if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumposts}` "
-                        . "WHERE `date` >= ? AND `reg` != ? AND `sid` = ?;",
+                        . "WHERE `date` <= ? AND `reg` != ? AND `sid` = ?;",
                         array($_SESSION['lastvisit'],common::$userid,$get['id']))) {
                     $frompic = $get['closed'] ? "unread_locked" : "unread";
                 }
@@ -123,7 +142,12 @@ if(defined('_Forum')) {
         if(!empty($_POST['suche'])) {
             $show = show($dir."/search", array("threads" => $threads, "nav" => $nav));
         } else {
-            $show = show($dir."/forum_show_thread", array("nav" => $nav, "threads" => $threads, "kid" => $id));
+            $smarty->caching = false;
+            $smarty->assign('nav',$nav);
+            $smarty->assign('threads',$threads);
+            $smarty->assign('kid',$id);
+            $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_show_thread.tpl');
+            $smarty->clearAllAssign();
         }
 
         $kat = common::$sql['default']->fetch("SELECT s1.`kattopic`,s2.`name` "
@@ -133,53 +157,69 @@ if(defined('_Forum')) {
                          . "WHERE s1.`id` = ?;",array($id));
 
 
-        $wheres = show(_forum_subkat_where, array("where" => stringParser::decode($gets['kattopic']),"id" => $gets['id']));
+        $wheres = show(_forum_subkat_where, array("mainkat" => '',"where" => stringParser::decode($gets['kattopic']),"id" => $gets['id']));
 
         /* Wer ist online */
         $qry = common::$sql['default']->select('SELECT `position`,`color` FROM `{prefix_positions}`;'); $team_groups = '';
         foreach($qry as $get) {
-            $team_groups .= show(_forum_team_groups, array('color' => stringParser::decode($get['color']), 'group' => stringParser::decode($get['position'])));
+            $smarty->caching = false;
+            $smarty->assign('color',stringParser::decode($get['color']));
+            $smarty->assign('group',stringParser::decode($get['position']));
+            $team_groups .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_team_groups.tpl');
+            $smarty->clearAllAssign();
         }
 
-        $where = $where.': '.stringParser::decode($kat['kattopic']);
         common::update_online($where); //Update Where
-            $qryo = common::$sql['default']->select("SELECT `id` FROM `{prefix_users}` WHERE `whereami` = ? AND (time+1800) > ".time().";",array($where));
-            if(common::$sql['default']->rowCount()) {
-                $i=0; $check = 1; $nick = '';
-                $cnto = common::cnt('{prefix_users}', " WHERE (time+1800) > ".time()." AND `whereami` = ?;",'id',array($where));
-                foreach($qryo as $geto) {
-                    if($i == 5) {
-                        $end = "<br />";
-                        $i=0;
-                    }  else  {
-                        $end = ($cnto == $check ? "" : ", ");
-                    }
+        $qryo = common::$sql['default']->select("SELECT `id` FROM `{prefix_users}` WHERE `whereami` LIKE ? AND (time+1800) > ".time().";",array("%".$where."%"));
+        if(common::$sql['default']->rowCount()) {
+            $i=0; $check = 1; $nick = '';
+            $cnto = common::cnt('{prefix_users}', " WHERE (time+1800) > ".time()." AND `whereami` LIKE ?;",'id',array("%".$where."%"));
+            foreach($qryo as $geto) {
+                if($i == 5) {
+                    $end = "<br />";
+                    $i=0;
+                }  else  {
+                    $end = ($cnto == $check ? "" : ", ");
+                }
 
-                    $nick .= common::autorcolerd($geto['id']).$end;
-                    $i++; $check++;
-                } //end while
-            } else {
-                $nick = _forum_nobody_is_online;
-            }
+                $nick .= common::autorcolerd($geto['id']).$end;
+                $i++; $check++;
+            } //end while
+        } else {
+            $nick = _forum_nobody_is_online;
+        }
 
-            $counter_users = common::online_reg($where,true);
-            $counter_gast = common::online_guests($where,true);
-    
+        $counter_users = common::online_reg($where,true);
+        $counter_gast = common::online_guests($where,true);
+
         $total_users=($counter_users+$counter_gast);
-        $forum_user_stats = show(_forum_online_info0,array('users' => strval($total_users),
-                                                           't_gast' => ($counter_gast == 1 ? _forum_gast : _forum_gaste),
-                                                           'regs'  => strval($counter_users), 
-                                                           't_regs' => ($counter_users == 1 ? _forum_reg : _forum_regs),
-                                                           'gast'  => strval($counter_gast),
-                                                           't_is' => ($total_users == 1 ? _forum_ist : _forum_sind),
-                                                           'timer' => strval((1800/60/60))));
-    
-        $online = show($dir."/online", array("nick" => $nick, "forum_online_info0" => $forum_user_stats, 'groups' => $team_groups));
-        $index = show($dir."/forum_show", array("where" => $wheres,
-                                                "title" => stringParser::decode($kat['kattopic']),
-                                                "mainkat" => stringParser::decode($kat['name']),
-                                                "show" => $show,
-                                                "online" => $online,    
-                                                "search" => $search));
+        $smarty->caching = false;
+        $smarty->assign('users',$total_users);
+        $smarty->assign('counter_gast',$counter_gast);
+        $smarty->assign('regs',$counter_users);
+        $smarty->assign('counter_users',$counter_users);
+        $smarty->assign('gast',$counter_gast);
+        $smarty->assign('total_users',$total_users);
+        $smarty->assign('timer',(1800/60/60));
+        $forum_user_stats = $smarty->fetch('string:'._forum_online_info0);
+        $smarty->clearAllAssign();
+
+        $smarty->caching = false;
+        $smarty->assign('nick',$nick);
+        $smarty->assign('forum_online_info0',$forum_user_stats);
+        $smarty->assign('groups',$team_groups);
+        $online = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/online.tpl');
+        $smarty->clearAllAssign();
+
+        /* Index */
+        $smarty->caching = false;
+        $smarty->assign('where',$wheres);
+        $smarty->assign('title',stringParser::decode($kat['kattopic']));
+        $smarty->assign('mainkat',stringParser::decode($kat['name']));
+        $smarty->assign('show',$show);
+        $smarty->assign('online',$online);
+        $smarty->assign('search',$search);
+        $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_show.tpl');
+        $smarty->clearAllAssign();
     }
 }
