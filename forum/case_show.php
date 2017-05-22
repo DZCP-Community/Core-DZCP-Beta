@@ -26,39 +26,66 @@ if(defined('_Forum')) {
         $index = common::error(_error_no_access, 1);
     } else {
         //Filter
-        if(true) {
-            //orderby = desc or asc
-            //sortby =
+        $orderby = 'DESC'; $sortby = 's1.`global` '.$orderby.', s1.`sticky` '.$orderby.', s1.`lp` '.$orderby.', s1.`t_date` '.$orderby;
+        if(isset($_POST['orderby']) || isset($_POST['sortby'])) {
+            if(isset($_POST['orderby'])) {
+                if(strtoupper($_POST['orderby']) == 'ASC')
+                    $orderby = 'ASC';
+                else
+                    $orderby = 'DESC';
 
-            /*
-             *
-             *   <option value="autor">{lang msgID="autor"}</option>
-                        <option value="time">{lang msgID="forum_sort_bcc"}</option>
-                        <option value="posts">{lang msgID="replies"}</option>
-                        <option value="hits">{lang msgID="hits"}</option>
+                $sortby = 's1.`global` DESC, s1.`sticky` DESC, s1.`lp` '.$orderby.', s1.`t_date` '.$orderby;
+            }
 
-             */
+            if(isset($_POST['sortby'])) {
+                switch (strtolower($_POST['sortby'])) {
+                    case 'autor':
+                        $sortby = 's1.`global` DESC, s1.`sticky` DESC, s1.`t_reg` '.$orderby.', s1.`t_date` '.$orderby;
+                        break;
+                    case 'thread':
+                        $sortby = 's1.`global` DESC, s1.`sticky` DESC, s1.`topic` '.$orderby.', s1.`t_date` '.$orderby;
+                        break;
+                    case 'posts':
+                        $sortby = 's1.`global` DESC, s1.`sticky` DESC, s1.`posts` '.$orderby.', s1.`t_date` '.$orderby;
+                        break;
+                    case 'hits':
+                        $sortby = 's1.`global` DESC, s1.`sticky` DESC, s1.`hits` '.$orderby.', s1.`t_date` '.$orderby;
+                        break;
+                }
+            }
+        }
 
+        $sorts_options_sortby = '';
+        $sorts = ['lp'=>_forum_lpost,'autor'=>_autor,'thread'=>_forum_thread,'posts'=>_replies,'hits'=>_hits];
+        foreach ($sorts as $var => $text) {
+            $sorts_options_sortby .= common::select_field($var,(isset($_POST['sortby']) && $var == strtolower($_POST['sortby'])),$text);
+        }
 
-
+        $sorts_options_orderby = '';
+        $sorts = ['desc'=>_forum_sort_descending,'asc'=>_forum_sort_ascending];
+        foreach ($sorts as $var => $text) {
+            $sorts_options_orderby .= common::select_field($var,(isset($_POST['orderby']) && $var == strtolower($_POST['orderby'])),$text);
         }
 
         if(empty($_POST['suche'])) {
+            $sortby = str_replace('s1.','',$sortby);
             $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forumthreads}` "
                     . "WHERE `kid` = ? OR `global` = 1 "
-                    . "ORDER BY `global` DESC, `sticky` DESC, `lp` DESC, `t_date` DESC "
+                    . "ORDER BY ".$sortby." "
                     . "LIMIT ".(($page - 1)*settings::get('m_fthreads')).",".settings::get('m_fthreads').";",
                     array($id));
             
             $_SESSION['search_type'] = "";
             $entrys = common::$sql['default']->rowCount();
         } else {
+            common::$gump->sanitize($_POST);
+            $filters = array('suche' => 'trim|addslashes|sanitize_string');
             $qry = common::$sql['default']->select("SELECT s1.global,s1.topic,s1.subtopic,s1.t_text,s1.t_email,s1.hits,s1.t_reg,s1.t_date,s1.closed,s1.sticky,s1.id,s1.lp,s1.t_nick "
                     . "FROM `{prefix_forumthreads}` AS s1 "
                     . "WHERE s1.topic LIKE ? AND s1.kid = ? OR s1.subtopic LIKE ? AND s1.kid = ? OR s1.t_text LIKE ? AND s1.kid = ? "
-                    . "ORDER BY s1.global DESC, s1.sticky DESC, s1.lp DESC, s1.t_date DESC "
+                    . "ORDER BY ".$sortby." "
                     . "LIMIT ".($page - 1)*settings::get('m_fthreads').",".settings::get('m_fthreads').";",
-                    array($search="%".$_POST['suche']."%",$id,$search,$id,$search,$id));
+                    array($search="%".common::$gump->filter($_POST, $filters)['suche']."%",$id,$search,$id,$search,$id));
             
             $_SESSION['search_type'] = "text";
             $entrys = common::$sql['default']->rowCount();
@@ -68,10 +95,9 @@ if(defined('_Forum')) {
         foreach($qry as $get) {
             $sticky = $get['sticky'] ? _forum_sticky : '';
             $global = $get['global'] ? _forum_global : '';
-            $closed = $get['closed'] ? show($dir."/button_closed") : '';
             $cntpage = common::cnt("{prefix_forumposts}", " WHERE sid = ".$get['id']);
             $pagenr = !$cntpage ? '1' : ceil($cntpage/settings::get('m_fposts'));
-            $getlp = common::$sql['default']->fetch("SELECT `id`,`sid`,`kid`,`date`,`nick`,`reg`,`email` FROM `{prefix_forumposts}` WHERE `sid` = ? ORDER BY `date` DESC;",array($get['id']));
+            $getlp = common::$sql['default']->fetch("SELECT `id`,`sid`,`kid`,`date`,`nick`,`reg`,`email` FROM `{prefix_forumposts}` WHERE `sid` = ? ORDER BY `date` DESC;", [$get['id']]);
             $is_lp = common::$sql['default']->rowCount();
 
             //Check Unreaded
@@ -118,37 +144,42 @@ if(defined('_Forum')) {
                 }
             }
             
-            $gets = common::$sql['default']->fetch("SELECT `id` FROM `{prefix_forumsubkats}` WHERE `id` = ?;",array($get['id']));
-            $threads .= show($dir."/forum_show_threads", array("new" => common::check_new($get['lp']),
-                                                               "kid" => $gets['id'],
-                                                               "id" => $get['id'],
-                                                               "frompic" => $frompic,
-                                                               "hl" => (!empty($_POST['suche']) ? '&amp;hl='.$_POST['suche'] : ''),
-                                                               "topic" => stringParser::decode($get['topic']),
-                                                               "subtopic" =>stringParser::decode(common::cut($get['subtopic'],settings::get('l_forumsubtopic'))),
-                                                               "hits" => $get['hits'],
-                                                               "replys" => common::cnt("{prefix_forumposts}", " WHERE sid = '".$get['id']."'"),
-                                                               "lpost" => $lpost,
-                                                               "autor" => common::autor($get['t_reg'], '', $get['t_nick'], $get['t_email'])));
+            $gets = common::$sql['default']->fetch("SELECT `id` FROM `{prefix_forumsubkats}` WHERE `id` = ?;", [$get['id']]);
+
+            $smarty->caching = false;
+            $smarty->assign('new',common::check_new($get['lp']));
+            $smarty->assign('kid',$gets['id']);
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('frompic',$frompic);
+            $smarty->assign('hl',(!empty($_POST['suche']) ? '&amp;hl='.$_POST['suche'] : ''));
+            $smarty->assign('topic',stringParser::decode($get['topic']));
+            $smarty->assign('subtopic',stringParser::decode(common::cut($get['subtopic'],settings::get('l_forumsubtopic'))));
+            $smarty->assign('hits',$get['hits']);
+            $smarty->assign('replys',common::cnt("{prefix_forumposts}", " WHERE sid = '".$get['id']."'"));
+            $smarty->assign('lpost',$lpost);
+            $smarty->assign('autor',common::autor($get['t_reg'], '', $get['t_nick'], $get['t_email']));
+            $threads .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_show_threads.tpl');
+            $smarty->clearAllAssign();
         }
 
-        $gets = common::$sql['default']->fetch("SELECT `id`,`kattopic` FROM `{prefix_forumsubkats}` WHERE `id` = ?;",array($id));
-        $search = show($dir."/forum_skat_search", array("id" => $id,
-                                                        "kid" => $_GET['kid'],
-                                                        "suchwort" => isset($_POST['suche']) ? $_POST['suche'] : ''));
+        $smarty->caching = false;
+        $smarty->assign('id',$id);
+        $smarty->assign('kid',(int)$_GET['kid']);
+        $smarty->assign('suchwort',isset($_POST['suche']) ? $_POST['suche'] : '');
+        $search = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_skat_search.tpl');
+        $smarty->clearAllAssign();
 
         $nav = common::nav($entrys,settings::get('m_fthreads'),"?action=show&amp;id=".$id."");
 
-        if(!empty($_POST['suche'])) {
-            $show = show($dir."/search", array("threads" => $threads, "nav" => $nav));
-        } else {
-            $smarty->caching = false;
-            $smarty->assign('nav',$nav);
-            $smarty->assign('threads',$threads);
-            $smarty->assign('kid',$id);
-            $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_show_thread.tpl');
-            $smarty->clearAllAssign();
-        }
+        $smarty->caching = false;
+        $smarty->assign('nav',$nav);
+        $smarty->assign('threads',$threads);
+        $smarty->assign('kid',$id);
+        $smarty->assign('id',$checks['id']);
+        $smarty->assign('sorts_options_sortby',$sorts_options_sortby);
+        $smarty->assign('sorts_options_orderby',$sorts_options_orderby);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_show_thread.tpl');
+        $smarty->clearAllAssign();
 
         $kat = common::$sql['default']->fetch("SELECT s1.`kattopic`,s2.`name` "
                          . "FROM `{prefix_forumsubkats}` AS `s1` "
@@ -157,7 +188,14 @@ if(defined('_Forum')) {
                          . "WHERE s1.`id` = ?;",array($id));
 
 
-        $wheres = show(_forum_subkat_where, array("mainkat" => '',"where" => stringParser::decode($gets['kattopic']),"id" => $gets['id']));
+        $gets = common::$sql['default']->fetch("SELECT `id`,`kattopic` FROM `{prefix_forumsubkats}` WHERE `id` = ?;", [$id]);
+
+        $smarty->caching = false;
+        $smarty->assign('mainkat','');
+        $smarty->assign('where',stringParser::decode($gets['kattopic']));
+        $smarty->assign('id',$gets['id']);
+        $wheres = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_subkat_where.tpl');
+        $smarty->clearAllAssign();
 
         /* Wer ist online */
         $qry = common::$sql['default']->select('SELECT `position`,`color` FROM `{prefix_positions}`;'); $team_groups = '';

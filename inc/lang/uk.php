@@ -851,7 +851,6 @@ define('_forum_admin_head' , 'Admin');
 define('_forum_admin_addsticky' , 'mark as <span class="fontWichtig">important</span>?');
 define('_forum_katname_intern' , '<span class="fontWichtig">Internal:</span> {$katname}');
 define('_forum_sticky' , '<span class="fontWichtig">Important:</span>');
-define('_forum_subkat_where' , '<a href="../forum/">[mainkat]</a> <span class="fontBold">Board:</span> <a href="?action=show&amp;id=[id]">[where]</a>');
 define('_forum_head_skat_search' , 'Search in this category');
 define('_forum_head_threads' , 'Threads');
 define('_forum_replys' , 'Answers');

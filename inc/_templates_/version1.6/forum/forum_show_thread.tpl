@@ -18,14 +18,10 @@
                 <form method="post" action="?action=show&kid={$kid}&id={$id}">
                     <span class="gensmall">{lang msgID="forum_sort_by"}</span>
                     <select name="sortby" id="sk">
-                        <option value="autor">{lang msgID="autor"}</option>
-                        <option value="time">{lang msgID="forum_sort_bcc"}</option>
-                        <option value="posts">{lang msgID="replies"}</option>
-                        <option value="hits">{lang msgID="hits"}</option>
-                    </select> 
+                        {$sorts_options_sortby}
+                    </select>
                     <select name="orderby" id="sd">
-                        <option value="desc">{lang msgID="forum_sort_descending"}</option>
-                        <option value="asc">{lang msgID="forum_sort_ascending"}</option>
+                        {$sorts_options_orderby}
                     </select>&nbsp;
                     <input class="submit" id="contentSubmit" type="submit" name="sort" value="{lang msgID="forum_go"}">
                     <input class="submit" id="newPostSubmit" type="button" value="{lang msgID="forum_new_thread"}" onclick="DZCP.goTo('../forum/?action=thread&do=add&kid={$kid}')">

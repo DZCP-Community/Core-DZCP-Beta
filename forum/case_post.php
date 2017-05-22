@@ -713,7 +713,8 @@ if(defined('_Forum')) {
 
                         common::$sql['default']->update("UPDATE `{prefix_forumthreads}`
                                                  SET `lp`   = '".time()."',
-                                                 `t_text`   = '".$text."'
+                                                 `t_text`   = '".$text."',
+                                                 `posts` = (posts+1) 
                                                  WHERE id = '".$gettdp['id']."'");
                 } else {
                         common::$sql['default']->insert("INSERT INTO `{prefix_forumposts}`
@@ -722,14 +723,14 @@ if(defined('_Forum')) {
                                                  `date`  = '".time()."',
                                                  `nick`  = '".stringParser::encode($_POST['nick'])."',
                                                  `email` = '".stringParser::encode($_POST['email'])."',
-                                                 `hp`    = '".common::links($_POST['hp'])."',
                                                  `reg`   = '".stringParser::encode(common::$userid)."',
                                                  `text`  = '".stringParser::encode($_POST['eintrag'])."',
                                                  `ip`    = '".common::$userip."'");
 
                         common::$sql['default']->update("UPDATE `{prefix_forumthreads}`
                                                 SET `lp`    = '".time()."',
-                                                        `first` = '0'
+                                                        `first` = '0',
+                                                         `posts` = (posts+1) 
                                                 WHERE id    = '".(int)($_GET['id'])."'");
                 }
 
@@ -789,6 +790,10 @@ if(defined('_Forum')) {
     {
         common::$sql['default']->delete("DELETE FROM `{prefix_forumposts}`
                  WHERE id = '".(int)($_GET['id'])."'");
+
+        common::$sql['default']->update("UPDATE `{prefix_forumthreads}`
+                                                SET `posts` = (posts-1) 
+                                                WHERE id = '".(int)($get['sid'])."'");
 
       $fposts = common::userstats("forumposts",$get['reg'])-1;
         common::$sql['default']->update("UPDATE `{prefix_userstats}`
