@@ -23,20 +23,27 @@ $where = $where.': '._partners_head;
         $files = common::get_files(basePath.'/banner/partners/',false,true);
         for($i=0; $i<count($files); $i++)
         {
-          $banners .= show(_partners_select_icons, array("icon" => $files[$i],
-                                                         "sel" => ""));
+            $smarty->caching = false;
+            $smarty->assign('icon',$files[$i]);
+            $smarty->assign('sel','');
+            $banners .= $smarty->fetch('string:'._partners_select_icons);
+            $smarty->clearAllAssign();
         }
-        $show = show($dir."/form_partners", array("do" => "addbutton",
-                                                  "head" => _partners_add_head,
-                                                  "nothing" => "",
-                                                  "banner" => _partners_button,
-                                                  "link" => _link,
-                                                  "e_link" => "",
-                                                  "e_textlink" => "",
-                                                  "or" => _or,
-                                                  "textlink" => _partnerbuttons_textlink,
-                                                  "banners" => $banners,
-                                                  "what" => _button_value_add));
+
+          $smarty->caching = false;
+          $smarty->assign('do',"addbutton");
+          $smarty->assign('head',_partners_add_head);
+          $smarty->assign('nothing','');
+          $smarty->assign('banner',_partners_button);
+          $smarty->assign('link',_link);
+          $smarty->assign('e_link','');
+          $smarty->assign('e_textlink','');
+          $smarty->assign('or',_or);
+          $smarty->assign('textlink',_partnerbuttons_textlink);
+          $smarty->assign('banners',$banners);
+          $smarty->assign('what',_button_value_add);
+          $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_partners.tpl');
+          $smarty->clearAllAssign();
       } elseif($do == "addbutton") {
         if(empty($_POST['link']))
         {
@@ -56,20 +63,26 @@ $where = $where.': '._partners_head;
           if(stringParser::decode($get['banner']) == $files[$i]) $sel = 'selected="selected"';
           else $sel = "";
 
-          $banners .= show(_partners_select_icons, array("icon" => $files[$i],
-                                                         "sel" => $sel));
+            $smarty->caching = false;
+            $smarty->assign('icon',$files[$i]);
+            $smarty->assign('sel',$sel);
+            $banners .= $smarty->fetch('string:'._partners_select_icons);
+            $smarty->clearAllAssign();
         }
-        $show = show($dir."/form_partners", array("do" => "editbutton&amp;id=".$get['id']."",
-                                                  "head" => _partners_edit_head,
-                                                  "nothing" => "",
-                                                  "banner" => _partners_button,
-                                                  "link" => _link,
-                                                  "e_link" => stringParser::decode($get['link']),
-                                                  "e_textlink" => (empty($get['textlink']) ? '' : stringParser::decode($get['banner'])),
-                                                  "or" => _or,
-                                                  "textlink" => _partnerbuttons_textlink,
-                                                  "banners" => $banners,
-                                                  "what" => _button_value_edit));
+          $smarty->caching = false;
+          $smarty->assign('do',"editbutton&amp;id=".$get['id']."");
+          $smarty->assign('head',_partners_edit_head);
+          $smarty->assign('nothing','');
+          $smarty->assign('banner',_partners_button);
+          $smarty->assign('link',_link);
+          $smarty->assign('e_link',stringParser::decode($get['link']));
+          $smarty->assign('e_textlink',(empty($get['textlink']) ? '' : stringParser::decode($get['banner'])));
+          $smarty->assign('or',_or);
+          $smarty->assign('textlink',_partnerbuttons_textlink);
+          $smarty->assign('banners',$banners);
+          $smarty->assign('what',_button_value_edit);
+          $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_partners.tpl');
+          $smarty->clearAllAssign();
       } elseif($do == "editbutton") {
         if(empty($_POST['link'])) {
           $show = common::error(_empty_url, 1);
@@ -92,19 +105,25 @@ $where = $where.': '._partners_head;
           $rlink = common::links(stringParser::decode($get['link']));
           $button = '<img src="../banner/partners/'.stringParser::decode($get['banner']).'" alt="'.$rlink.'" title="'.$rlink.'" />';
           $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-          $show .= show($dir."/partners_show", array("class" => $class,
-                                                      "button" => (empty($get['textlink']) ? $button : '<center>'._partnerbuttons_textlink.': <b>'.stringParser::decode($get['banner']).'</b></center>'),
-                                                      "link" => stringParser::decode($get['link']),
-                                                      "id" => $get['id'],
-                                                      "edit" => $edit,
-                                                      "delete" => $delete));
+            $smarty->caching = false;
+            $smarty->assign('class',$class);
+            $smarty->assign('button',(empty($get['textlink']) ? $button : '<center>'._partnerbuttons_textlink.': <b>'.stringParser::decode($get['banner']).'</b></center>'));
+            $smarty->assign('link',stringParser::decode($get['link']));
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('edit',$edit);
+            $smarty->assign('delete',$delete);
+            $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/partners_show.tpl');
+            $smarty->clearAllAssign();
         }
 
-        $show = show($dir."/partners", array("head" => _partners_head,
-                                             "add" => _partners_link_add,
-                                             "show" => $show,
-                                             "edit" => _editicon_blank,
-                                             "del" =>_deleteicon_blank,
-                                             "link" => _link,
-                                             "button" => _partners_button));
+          $smarty->caching = false;
+          $smarty->assign('head',_partners_head);
+          $smarty->assign('add',_partners_link_add);
+          $smarty->assign('show',$show);
+          $smarty->assign('edit',_editicon_blank);
+          $smarty->assign('del',_deleteicon_blank);
+          $smarty->assign('link',_link);
+          $smarty->assign('button',_partners_button);
+          $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/partners.tpl');
+          $smarty->clearAllAssign();
       }

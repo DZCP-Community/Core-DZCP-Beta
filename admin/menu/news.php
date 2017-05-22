@@ -32,18 +32,24 @@ switch($do) {
     case 'add':
         $files = common::get_files(basePath.'/inc/images/uploads/newskat/',false,true); $img = "";
         for($i=0; $i<count($files); $i++) {
-            $img .= show(_select_field, array("value" => $files[$i],
-                                              "sel" => "",
-                                              "what" => $files[$i]));
+            $smarty->caching = false;
+            $smarty->assign('value',$files[$i]);
+            $smarty->assign('sel','');
+            $smarty->assign('what',$files[$i]);
+            $img .= $smarty->fetch('string:'._select_field);
+            $smarty->clearAllAssign();
         }
 
-        $show = show($dir."/newskatform", array("head" => _config_newskats_add_head,
-                                                "kat" => "",
-                                                "value" => _button_value_add,
-                                                "nothing" => "",
-                                                "do" => "addnewskat",
-                                                "upload" => _config_neskats_katbild_upload,
-                                                "img" => $img));
+        $smarty->caching = false;
+        $smarty->assign('head',_config_newskats_add_head);
+        $smarty->assign('kat','');
+        $smarty->assign('value',_button_value_add);
+        $smarty->assign('nothing','');
+        $smarty->assign('do',"addnewskat");
+        $smarty->assign('upload',_config_neskats_katbild_upload);
+        $smarty->assign('img',$img);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/newskatform.tpl');
+        $smarty->clearAllAssign();
     break;
     case 'addnewskat':
         if(empty($_POST['kat'])) {
@@ -59,20 +65,34 @@ switch($do) {
         $files = common::get_files(basePath.'/inc/images/uploads/newskat/',false,true); $img = '';
         for($i=0; $i<count($files); $i++) {
             $sel = ($get['katimg'] == $files[$i] ? 'selected="selected"' : '');
-            $img .= show(_select_field, array("value" => $files[$i],
-                                              "sel" => $sel,
-                                              "what" => $files[$i]));
+            $smarty->caching = false;
+            $smarty->assign('value',$files[$i]);
+            $smarty->assign('sel',$sel);
+            $smarty->assign('what',$files[$i]);
+            $img .= $smarty->fetch('string:'._select_field);
+            $smarty->clearAllAssign();
         }
 
-        $upload = show(_config_neskats_katbild_upload_edit, array("id" => $_GET['id']));
-        $do = show(_config_newskats_editid, array("id" => $_GET['id']));
-        $show = show($dir."/newskatform", array("head" => _config_newskats_edit_head,
-                                                "kat" => stringParser::decode($get['kategorie']),
-                                                "value" => _button_value_edit,
-                                                "id" => (int)($_GET['id']),
-                                                "do" => $do,
-                                                "upload" => $upload,
-                                                "img" => $img));
+        $smarty->caching = false;
+        $smarty->assign('id',$_GET['id']);
+        $upload = $smarty->fetch('string:'._config_neskats_katbild_upload_edit);
+        $smarty->clearAllAssign();
+
+        $smarty->caching = false;
+        $smarty->assign('id',$_GET['id']);
+        $do = $smarty->fetch('string:'._config_newskats_editid);
+        $smarty->clearAllAssign();
+
+        $smarty->caching = false;
+        $smarty->assign('head',_config_newskats_edit_head);
+        $smarty->assign('kat',stringParser::decode($get['kategorie']));
+        $smarty->assign('value',_button_value_edit);
+        $smarty->assign('id',(int)($_GET['id']));
+        $smarty->assign('do',$do);
+        $smarty->assign('upload',$upload);
+        $smarty->assign('img',$img);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/newskatform.tpl');
+        $smarty->clearAllAssign();
     break;
     case 'editnewskat':
         if(empty($_POST['kat'])) {
@@ -89,16 +109,25 @@ switch($do) {
         foreach($qry as $get) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_kat);
-
-            $img = show(_config_newskats_img, array("img" => stringParser::decode($get['katimg'])));
+            $smarty->caching = false;
+            $smarty->assign('img',stringParser::decode($get['katimg']));
+            $img = $smarty->fetch('string:'._config_newskats_img);
+            $smarty->clearAllAssign();
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $kats .= show($dir."/newskats_show", array("mainkat" => stringParser::decode($get['kategorie']),
-                                                       "class" => $class,
-                                                       "img" => $img,
-                                                       "delete" => $delete,
-                                                       "edit" => $edit));
+
+            $smarty->caching = false;
+            $smarty->assign('mainkat',stringParser::decode($get['kategorie']));
+            $smarty->assign('class',$class);
+            $smarty->assign('img',$img);
+            $smarty->assign('delete',$delete);
+            $smarty->assign('edit',$edit);
+            $kats .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/newskats_show.tpl');
+            $smarty->clearAllAssign();
         }
 
-        $show = show($dir."/newskats", array("kats" => $kats));
+        $smarty->caching = false;
+        $smarty->assign('kats',$kats);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/newskats.tpl');
+        $smarty->clearAllAssign();
     break;
 }

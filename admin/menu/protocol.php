@@ -100,19 +100,25 @@ switch ($do) {
                     $action = '<b style="color:red">undefined:</b> <b>'.$a.'</b>';
             }
 
-            $show .= show($dir."/protocol_show", array("datum" => $date,
-                                                       "class" => $class,
-                                                       "delete" => $delete,
-                                                       "user" => $get['ip'],
-                                                       "action" => $action));
+            $smarty->caching = false;
+            $smarty->assign('datum',$date);
+            $smarty->assign('class',$class);
+            $smarty->assign('delete',$delete);
+            $smarty->assign('user', $get['ip']);
+            $smarty->assign('action',$action);
+            $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/protocol_show.tpl');
+            $smarty->clearAllAssign();
         }
 
         if(empty($show))
             $show = '<tr><td colspan="3" class="contentMainSecond">'._no_entrys.'</td></tr>';
 
         $sip = (isset($_GET['sip']) && !empty($_GET['sip'])) ? "&amp;sip=".$_GET['sip'] : "";
-        $show = show($dir."/protocol", array("show" => $show,
-                                             "search" => $swhat,
-                                             "nav" => common::nav($entrys,$maxprot,"?admin=protocol".$sip)));
+        $smarty->caching = false;
+        $smarty->assign('show',$show);
+        $smarty->assign('search',$swhat);
+        $smarty->assign('nav',common::nav($entrys,$maxprot,"?admin=protocol".$sip));
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/protocol.tpl');
+        $smarty->clearAllAssign();
     break;
 }

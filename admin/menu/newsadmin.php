@@ -96,9 +96,12 @@ switch ($do) {
         $qryk = common::$sql['default']->select("SELECT id,kategorie FROM `{prefix_newskat}`"); $kat = '';
         foreach($qryk as $getk) {
             $sel = (isset($_POST['kat']) && $_POST['kat'] == $getk['id'] ? 'selected="selected"' : '');
-            $kat .= show(_select_field, array("value" => $getk['id'],
-                                              "sel" => $sel,
-                                              "what" => stringParser::decode($getk['kategorie'])));
+            $smarty->caching = false;
+            $smarty->assign('value',$getk['id']);
+            $smarty->assign('sel',$sel);
+            $smarty->assign('what',stringParser::decode($getk['kategorie']));
+            $kat .= $smarty->fetch('string:'._select_field);
+            $smarty->clearAllAssign();
         }
 
         $dropdown_date = common::dropdown_date(common::dropdown("day",isset($_POST['t']) ? (int)($_POST['t']) : date("d")),
@@ -108,41 +111,50 @@ switch ($do) {
         $dropdown_time = common::dropdown_time(common::dropdown("hour",isset($_POST['h']) ? (int)($_POST['h']) : date("H")),
             common::dropdown("minute",isset($_POST['min']) ? (int)($_POST['min']) : date("i")));
 
-        $timeshift_date = show(_dropdown_date_ts, array("nr" => "ts",
-                                                        "day" => common::dropdown("day",isset($_POST['t_ts']) ? (int)($_POST['t_ts']) : date("d")),
-                                                        "month" => common::dropdown("month",isset($_POST['m_ts']) ? (int)($_POST['m_ts']) : date("m")),
-                                                        "year" => common::dropdown("year",isset($_POST['j_ts']) ? (int)($_POST['j_ts']) : date("Y"))));
+        $smarty->caching = false;
+        $smarty->assign('nr',"ts");
+        $smarty->assign('day',common::dropdown("day",isset($_POST['t_ts']) ? (int)($_POST['t_ts']) : date("d")));
+        $smarty->assign('month', common::dropdown("month",isset($_POST['m_ts']) ? (int)($_POST['m_ts']) : date("m")));
+        $smarty->assign('year', common::dropdown("year",isset($_POST['j_ts']) ? (int)($_POST['j_ts']) : date("Y")));
+        $timeshift_date = $smarty->fetch('string:'._dropdown_date_ts);
+        $smarty->clearAllAssign();
 
-        $timeshift_time = show(_dropdown_time_ts, array("nr" => "ts",
-                                                        "hour" => common::dropdown("hour",isset($_POST['h_ts']) ? (int)($_POST['h_ts']) : date("H")),
-                                                        "minute" => common::dropdown("minute",isset($_POST['min_ts']) ? (int)($_POST['min_ts']) : date("i")),
-                                                        "uhr" => _uhr));
+        $smarty->caching = false;
+        $smarty->assign('nr',"ts");
+        $smarty->assign('hour',common::dropdown("hour",isset($_POST['h_ts']) ? (int)($_POST['h_ts']) : date("H")));
+        $smarty->assign('minute', common::dropdown("minute",isset($_POST['min_ts']) ? (int)($_POST['min_ts']) : date("i")));
+        $smarty->assign('uhr',_uhr);
+        $timeshift_time = $smarty->fetch('string:'._dropdown_time_ts);
+        $smarty->clearAllAssign();
 
-        $show = show($dir."/news_form", array("head" => _admin_news_head,
-                                              "autor" => common::autor(),
-                                              "n_newspic" => "",
-                                              "delnewspic" => "",
-                                              "kat" => $kat,
-                                              "do" => "add",
-                                              "all_disabled" => ($saved ? " disabled" : ""),
-                                              "titel" => (isset($_POST['titel']) ? $_POST['titel'] : ''),
-                                              "newstext" => (isset($_POST['newstext']) ? $_POST['newstext'] : ''),
-                                              "morenews" => (isset($_POST['morenews']) ? $_POST['morenews'] : ''),
-                                              "link1" => (isset($_POST['link1']) ? $_POST['link1'] : ''),
-                                              "link2" => (isset($_POST['link2']) ? $_POST['link2'] : ''),
-                                              "link3" => (isset($_POST['link3']) ? $_POST['link3'] : ''),
-                                              "url1" => (isset($_POST['url1']) ? $_POST['url1'] : ''),
-                                              "url2" => (isset($_POST['url2']) ? $_POST['url2'] : ''),
-                                              "url3" => (isset($_POST['url3']) ? $_POST['url3'] : ''),
-                                              "klapplink" => (isset($_POST['klapptitel']) ? $_POST['klapptitel'] : ''),
-                                              "sticky" => (isset($_POST['sticky']) ? 'checked="checked"' : ''),
-                                              "button" =>  _button_value_add,
-                                              "intern" => (isset($_POST['intern']) ? 'checked="checked"' : ''),
-                                              "dropdown_time" => $dropdown_time,
-                                              "dropdown_date" => $dropdown_date,
-                                              "timeshift_date" => $timeshift_date,
-                                              "timeshift_time" => $timeshift_time,
-                                              "timeshift" => (isset($_POST['timeshift']) ? 'checked="checked"' : '')));
+        $smarty->caching = false;
+        $smarty->assign('head',_admin_news_head);
+        $smarty->assign('autor',common::autor());
+        $smarty->assign('n_newspic','');
+        $smarty->assign('delnewspic','');
+        $smarty->assign('kat',$kat);
+        $smarty->assign('do',"add");
+        $smarty->assign('all_disabled',($saved ? " disabled" : ""));
+        $smarty->assign('titel',(isset($_POST['titel']) ? $_POST['titel'] : ''));
+        $smarty->assign('newstext',(isset($_POST['newstext']) ? $_POST['newstext'] : ''));
+        $smarty->assign('morenews',(isset($_POST['morenews']) ? $_POST['morenews'] : ''));
+        $smarty->assign('link1',(isset($_POST['link1']) ? $_POST['link1'] : ''));
+        $smarty->assign('link2',(isset($_POST['link2']) ? $_POST['link2'] : ''));
+        $smarty->assign('link3',(isset($_POST['link3']) ? $_POST['link3'] : ''));
+        $smarty->assign('url1',(isset($_POST['url1']) ? $_POST['url1'] : ''));
+        $smarty->assign('url2',(isset($_POST['url2']) ? $_POST['url2'] : ''));
+        $smarty->assign('url3',(isset($_POST['url3']) ? $_POST['url3'] : ''));
+        $smarty->assign('klapplink',(isset($_POST['klapptitel']) ? $_POST['klapptitel'] : ''));
+        $smarty->assign('sticky',(isset($_POST['sticky']) ? 'checked="checked"' : ''));
+        $smarty->assign('button',_button_value_add);
+        $smarty->assign('intern',(isset($_POST['intern']) ? 'checked="checked"' : ''));
+        $smarty->assign('dropdown_time',$dropdown_time);
+        $smarty->assign('dropdown_date',$dropdown_date);
+        $smarty->assign('timeshift_date',$timeshift_date);
+        $smarty->assign('timeshift_time',$timeshift_time);
+        $smarty->assign('timeshift',(isset($_POST['timeshift']) ? 'checked="checked"' : ''));
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/news_form.tpl');
+        $smarty->clearAllAssign();
     break;
     case 'edit':
         if(isset($_GET['id'])) {
@@ -255,17 +267,32 @@ switch ($do) {
         $qryk = common::$sql['default']->select("SELECT id,kategorie FROM `{prefix_newskat}`"); $kat = '';
         foreach($qryk as $getk) {
             $sel = ($get['kat'] == $getk['id'] ? 'selected="selected"' : '');
-            $kat .= show(_select_field, array("value" => $getk['id'],
-                                              "sel" => $sel,
-                                              "what" => stringParser::decode($getk['kategorie'])));
+            $smarty->caching = false;
+            $smarty->assign('value',$getk['id']);
+            $smarty->assign('sel',$sel);
+            $smarty->assign('what',stringParser::decode($getk['kategorie']));
+            $kat .= $smarty->fetch('string:'._select_field);
+            $smarty->clearAllAssign();
         }
 
         $int = ($get['intern'] ? 'checked="checked"' : '');
         $timeshift = ($get['timeshift'] ? 'checked="checked"' : '');
         $sticky = ($get['sticky'] ? 'checked="checked"' : '');
 
-        $dropdown_date = show(_dropdown_date, array("day" => common::dropdown("day",date("d")), "month" => common::dropdown("month",date("m")), "year" => common::dropdown("year",date("Y"))));
-        $dropdown_time = show(_dropdown_time, array("hour" => common::dropdown("hour",date("H")), "minute" => common::dropdown("minute",date("i")), "uhr" => _uhr));
+        $smarty->caching = false;
+        $smarty->assign('day',common::dropdown("day",date("d")));
+        $smarty->assign('month',common::dropdown("month",date("m")));
+        $smarty->assign('year',common::dropdown("year",date("Y")));
+        $dropdown_date = $smarty->fetch('string:'._dropdown_date);
+        $smarty->clearAllAssign();
+
+        $smarty->caching = false;
+        $smarty->assign('hour', common::dropdown("hour",date("H")));
+        $smarty->assign('minute',common::dropdown("minute",date("i")));
+        $smarty->assign('uhr',_uhr);
+        $dropdown_time = $smarty->fetch('string:'._dropdown_time);
+        $smarty->clearAllAssign();
+
         if($get['sticky']) {
             $dropdown_date = common::dropdown_date(common::dropdown("day",date("d",$get['sticky'])),
                 common::dropdown("month",date("m",$get['sticky'])),
@@ -275,19 +302,39 @@ switch ($do) {
                 common::dropdown("minute",date("i",$get['sticky'])));
         }
 
-        $timeshift_date = show(_dropdown_date_ts, array("nr" => "ts", "day" => common::dropdown("day",date("d")), "month" => common::dropdown("month",date("m")), "year" => common::dropdown("year",date("Y"))));
-        $timeshift_time = show(_dropdown_time_ts, array("nr" => "ts", "hour" => common::dropdown("hour",date("H")), "minute" => common::dropdown("minute",date("i")), "uhr" => _uhr));
-        
-        if($get['timeshift']) {
-            $timeshift_date = show(_dropdown_date_ts, array("nr" => "ts",
-                                                            "day" => common::dropdown("day",date("d",$get['datum'])),
-                                                            "month" => common::dropdown("month",date("m",$get['datum'])),
-                                                            "year" => common::dropdown("year",date("Y",$get['datum']))));
 
-            $timeshift_time = show(_dropdown_time_ts, array("nr" => "ts",
-                                                            "hour" => common::dropdown("hour",date("H",$get['datum'])),
-                                                            "minute" => common::dropdown("minute",date("i",$get['datum'])),
-                                                            "uhr" => _uhr));
+        $smarty->caching = false;
+        $smarty->assign('nr', "ts");
+        $smarty->assign('day', common::dropdown("day",date("d")));
+        $smarty->assign('month',common::dropdown("month",date("m")));
+        $smarty->assign('year',common::dropdown("year",date("Y")));
+        $timeshift_date = $smarty->fetch('string:'._dropdown_date_ts);
+        $smarty->clearAllAssign();
+
+        $smarty->caching = false;
+        $smarty->assign('nr','ts');
+        $smarty->assign('hour', common::dropdown("hour",date("H")));
+        $smarty->assign('minute',common::dropdown("minute",date("i")));
+        $smarty->assign('uhr',_uhr);
+        $dropdown_time = $smarty->fetch('string:'._dropdown_time_ts);
+        $smarty->clearAllAssign();
+
+        if($get['timeshift']) {
+            $smarty->caching = false;
+            $smarty->assign('nr', "ts");
+            $smarty->assign('day',common::dropdown("day",date("d",$get['datum'])));
+            $smarty->assign('month',common::dropdown("month",date("m",$get['datum'])));
+            $smarty->assign('year',common::dropdown("year",date("Y",$get['datum'])));
+            $timeshift_date = $smarty->fetch('string:'._dropdown_date_ts);
+            $smarty->clearAllAssign();
+
+            $smarty->caching = false;
+            $smarty->assign('nr','ts');
+            $smarty->assign('hour', common::dropdown("hour",date("H",$get['datum'])));
+            $smarty->assign('minute',common::dropdown("minute",date("i",$get['datum'])));
+            $smarty->assign('uhr',_uhr);
+            $dropdown_time = $smarty->fetch('string:'._dropdown_time_ts);
+            $smarty->clearAllAssign();
         }
 
         $newsimage = ""; $delnewspic = "";
@@ -299,31 +346,34 @@ switch ($do) {
             }
         }
 
-        $show = show($dir."/news_form", array("head" => _admin_news_edit_head,
-                                              "autor" => common::autor($get['autor']),
-                                              "n_newspic" => $newsimage,
-                                              "delnewspic" => $delnewspic,
-                                              "kat" => $kat,
-                                              "all_disabled" => "",
-                                              "do" => "edit",
-                                              "titel" => stringParser::decode($get['titel']),
-                                              "newstext" => stringParser::decode($get['text']),
-                                              "morenews" => stringParser::decode($get['more']),
-                                              "link1" => stringParser::decode($get['link1']),
-                                              "link2" => stringParser::decode($get['link2']),
-                                              "link3" => stringParser::decode($get['link3']),
-                                              "url1" => stringParser::decode($get['url1']),
-                                              "url2" => stringParser::decode($get['url2']),
-                                              "url3" => stringParser::decode($get['url3']),
-                                              "dropdown_date" => $dropdown_date,
-                                              "dropdown_time" => $dropdown_time,
-                                              "timeshift_date" => $timeshift_date,
-                                              "timeshift_time" => $timeshift_time,
-                                              "timeshift" => $timeshift,
-                                              "error" => "",
-                                              "button" => _button_value_edit,
-                                              "intern" => $int,
-                                              "sticky" => $sticky));
+        $smarty->caching = false;
+        $smarty->assign('head',_admin_news_edit_head);
+        $smarty->assign('autor',common::autor($get['autor']));
+        $smarty->assign('n_newspic',$newsimage);
+        $smarty->assign('delnewspic',$delnewspic);
+        $smarty->assign('kat',$kat);
+        $smarty->assign('do',"edit");
+        $smarty->assign('all_disabled','');
+        $smarty->assign('titel',stringParser::decode($get['titel']));
+        $smarty->assign('newstext',stringParser::decode($get['text']));
+        $smarty->assign('morenews', stringParser::decode($get['more']));
+        $smarty->assign('link1',stringParser::decode($get['link1']));
+        $smarty->assign('link2',stringParser::decode($get['link2']));
+        $smarty->assign('link3',stringParser::decode($get['link3']));
+        $smarty->assign('url1',stringParser::decode($get['url1']));
+        $smarty->assign('url2',stringParser::decode($get['url2']));
+        $smarty->assign('url3',stringParser::decode($get['url3']));
+        $smarty->assign('dropdown_time',$dropdown_time);
+        $smarty->assign('dropdown_date',$dropdown_date);
+        $smarty->assign('timeshift_date',$timeshift_date);
+        $smarty->assign('timeshift_time',$timeshift_time);
+        $smarty->assign('timeshift',$timeshift);
+        $smarty->assign('error','');
+        $smarty->assign('button',_button_value_edit);
+        $smarty->assign('intern',$int);
+        $smarty->assign('sticky',$sticky);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/news_form.tpl');
+        $smarty->clearAllAssign();
     break;
     case 'public':
         if(isset($_GET['what']) && $_GET['what'] == 'set')
@@ -383,8 +433,13 @@ switch ($do) {
         foreach($qry as $get) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_news);
+            $smarty->caching = false;
+            $smarty->assign('titel',stringParser::decode(common::cut($get['titel'],settings::get('l_newsadmin'))));
+            $smarty->assign('id', $get['id']);
+            $titel = $smarty->fetch('string:'._news_show_link);
+            $smarty->clearAllAssign();
 
-            $titel = show(_news_show_link, array("titel" =>stringParser::decode(common::cut($get['titel'],settings::get('l_newsadmin'))), "id" => $get['id']));
+
             $intern = ($get['intern'] ? _votes_intern : '');
             $sticky = ($get['sticky'] ? _news_sticky : '');
             $datum = empty($get['datum']) ? _no_public : date("d.m.y H:i", $get['datum'])._uhr;
@@ -392,33 +447,40 @@ switch ($do) {
                     : '<a href="?admin=newsadmin&amp;do=public&amp;id='.$get['id'].'&amp;what=set"><img src="../inc/images/nonpublic.gif" alt="" title="'._public.'" /></a>');
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $show .= show($dir."/admin_show", array("date" => $datum,
-                                                    "titel" => $titel,
-                                                    "class" => $class,
-                                                    "autor" => common::autor($get['autor']),
-                                                    "intnews" => $intern,
-                                                    "sticky" => $sticky,
-                                                    "public" => $public,
-                                                    "edit" => $edit,
-                                                    "delete" => $delete));
+            $smarty->caching = false;
+            $smarty->assign('date',$datum);
+            $smarty->assign('titel',$titel);
+            $smarty->assign('class',$class);
+            $smarty->assign('autor',common::autor($get['autor']));
+            $smarty->assign('intnews',$intern);
+            $smarty->assign('sticky',$sticky);
+            $smarty->assign('public',$public);
+            $smarty->assign('edit',$edit);
+            $smarty->assign('delete',$delete);
+            $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin_show.tpl');
+            $smarty->clearAllAssign();
         }
 
         if(empty($show))
             $show = '<tr><td colspan="3" class="contentMainSecond">'._no_entrys.'</td></tr>';
 
         $nav = common::nav($entrys,settings::get('m_adminnews'),"?admin=newsadmin".(isset($_GET['show']) ? $_GET['show'].common::orderby_nav() : common::orderby_nav()));
-        $show = show($dir."/admin_news", array("head" => _news_admin_head,
-                                               "nav" => $nav,
-                                               "autor" => _autor,
-                                               "titel" => _titel,
-                                               "val" => "newsadmin",
-                                               "date" => _datum,
-                                               "show" => $show,
-                                               "order_autor" => common::orderby('autor'),
-                                               "order_date" => common::orderby('datum'),
-                                               "order_titel" => common::orderby('titel'),
-                                               "edit" => _editicon_blank,
-                                               "delete" => _deleteicon_blank,
-                                               "add" => _admin_news_head));
+
+        $smarty->caching = false;
+        $smarty->assign('head',_news_admin_head);
+        $smarty->assign('nav',$nav);
+        $smarty->assign('autor',_autor);
+        $smarty->assign('titel',_titel);
+        $smarty->assign('val', "newsadmin");
+        $smarty->assign('date',_datum);
+        $smarty->assign('show',$show);
+        $smarty->assign('order_autor',common::orderby('autor'));
+        $smarty->assign('order_date',common::orderby('datum'));
+        $smarty->assign('order_titel',common::orderby('titel'));
+        $smarty->assign('edit',_editicon_blank);
+        $smarty->assign('delete',_deleteicon_blank);
+        $smarty->assign('add',_admin_news_head);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin_news.tpl');
+        $smarty->clearAllAssign();
     break;
 }

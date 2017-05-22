@@ -22,21 +22,27 @@ switch ($do) {
     case 'edit':
         $qry = common::$sql['default']->select("SELECT `pid`,`position` FROM `{prefix_positions}` ORDER BY `pid` DESC;"); $positions = '';
         foreach($qry as $get) {
-            $positions .= show(_select_field, array("value" => ($get['pid']+1),
-                                                    "what" => _nach.' '.stringParser::decode($get['position']),
-                                                    "sel" => ""));
+            $smarty->caching = false;
+            $smarty->assign('value',($get['pid']+1));
+            $smarty->assign('what', _nach.' '.stringParser::decode($get['position']));
+            $smarty->assign('sel','');
+            $positions .= $smarty->fetch('string:'._select_field);
+            $smarty->clearAllAssign();
         }
 
         $id = (int)($_GET['id']);
         $get = common::$sql['default']->fetch("SELECT `position`,`color` FROM `{prefix_positions}` WHERE `id` = ?;",array($id));
-        $show = show($dir."/form_pos", array("newhead" => _pos_edit_head,
-                                             "do" => "editpos&amp;id=".$id."",
-                                             "kat" => stringParser::decode($get['position']),
-                                             "color" => stringParser::decode($get['color']),
-                                             "getpermissions" => common::getPermissions($id, 1),
-                                             "getboardpermissions" => common::getBoardPermissions($id, 1),
-                                             "positions" => $positions,
-                                             "what" => _button_value_edit));
+        $smarty->caching = false;
+        $smarty->assign('newhead',_pos_edit_head);
+        $smarty->assign('do',"editpos&amp;id=".$id."");
+        $smarty->assign('kat',stringParser::decode($get['position']));
+        $smarty->assign('color',stringParser::decode($get['color']));
+        $smarty->assign('getpermissions',common::getPermissions($id, 1));
+        $smarty->assign('getboardpermissions', common::getBoardPermissions($id, 1));
+        $smarty->assign('positions',$positions);
+        $smarty->assign('what',_button_value_edit);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_pos.tpl');
+        $smarty->clearAllAssign();
         unset($positions,$qry,$get);
     break;
     case 'editpos':
@@ -111,21 +117,26 @@ switch ($do) {
     case 'new':
         $qry = common::$sql['default']->select("SELECT `pid`,`position` FROM `{prefix_positions}` ORDER BY `pid` DESC;"); $positions = '';
         foreach($qry as $get) {
-            $positions .= show(_select_field, array("value" => ($get['pid']+1),
-                                                    "what" => _nach.' '.stringParser::decode($get['position']),
-                                                    "sel" => ""));
+            $smarty->caching = false;
+            $smarty->assign('value',($get['pid']+1));
+            $smarty->assign('what',_nach.' '.stringParser::decode($get['position']));
+            $smarty->assign('sel','');
+            $positions .= $smarty->fetch('string:'._select_field);
+            $smarty->clearAllAssign();
         }
 
-        $show = show($dir."/form_pos", array("newhead" => _pos_new_head,
-                                             "do" => "add",
-                                             "getpermissions" => common::getPermissions(),
-                                             "getboardpermissions" => common::getBoardPermissions(),
-                                             "nothing" => "",
-                                             "positions" => $positions,
-                                             "kat" => "",
-                                             "color" => "#000000",
-                                             "what" => _button_value_add));
-
+        $smarty->caching = false;
+        $smarty->assign('newhead',_pos_new_head);
+        $smarty->assign('do',"add");
+        $smarty->assign('getpermissions',common::getPermissions());
+        $smarty->assign('getboardpermissions',common::getBoardPermissions());
+        $smarty->assign('nothing','');
+        $smarty->assign('positions',$positions);
+        $smarty->assign('kat','');
+        $smarty->assign('color', "#000000");
+        $smarty->assign('what',_button_value_add);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_pos.tpl');
+        $smarty->clearAllAssign();
         unset($positions,$qry,$get);
     break;
     case 'add':
@@ -174,10 +185,13 @@ switch ($do) {
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_entry);
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $show_pos .= show($dir."/positions_show", array("edit" => $edit,
-                                                            "name" => stringParser::decode($get['position']),
-                                                            "class" => $class,
-                                                            "delete" => $delete));
+            $smarty->caching = false;
+            $smarty->assign('edit',$edit);
+            $smarty->assign('name',stringParser::decode($get['position']));
+            $smarty->assign('class',$class);
+            $smarty->assign('delete',$delete);
+            $show_pos .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/positions_show.tpl');
+            $smarty->clearAllAssign();
         }
 
         if(empty($show_pos)) {
@@ -187,7 +201,10 @@ switch ($do) {
             $smarty->clearAllAssign();
         }
 
-        $show = show($dir."/positions", array("show" => $show_pos));
+        $smarty->caching = false;
+        $smarty->assign('show',$show_pos);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/positions.tpl');
+        $smarty->clearAllAssign();
         unset($show_pos,$qry,$get);
     break;
 }
