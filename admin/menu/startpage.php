@@ -46,18 +46,25 @@ switch ($do) {
             $selt = $get['level'] == 2 ? 'selected="selected"' : '';
             $selm = $get['level'] == 3 ? 'selected="selected"' : '';
             $sela = $get['level'] == 4 ? 'selected="selected"' : '';
-            $elevel = show(_elevel_startpage_select, array("selu" => $selu,
-                                                           "selt" => $selt,
-                                                           "selm" => $selm,
-                                                           "sela" => $sela));
-            
-            $show = show($dir."/startpage_form", array("head" => _admin_startpage_edit,
-                                                        "do" => "edit&amp;id=".$_GET['id'],
-                                                        "name" => (isset($_POST['name']) && !empty($_POST['name']) ? $_POST['name'] : stringParser::decode($get['name'])),
-                                                        "url" => (isset($_POST['url']) ? $_POST['url'] : stringParser::decode($get['url'])),
-                                                        "level" => $elevel,
-                                                        "what" => _button_value_edit,
-                                                        "error" => (!empty($error) ? show("errors/errortable", array("error" => $error)) : "")));
+            $smarty->caching = false;
+            $smarty->assign('selu',$selu);
+            $smarty->assign('selt',$selt);
+            $smarty->assign('selm',$selm);
+            $smarty->assign('sela',$sela);
+            $elevel = $smarty->fetch('string:'._elevel_startpage_select);
+            $smarty->clearAllAssign();
+
+
+            $smarty->caching = false;
+            $smarty->assign('head',_admin_startpage_edit);
+            $smarty->assign('do', "edit&amp;id=".$_GET['id']);
+            $smarty->assign('name',(isset($_POST['name']) && !empty($_POST['name']) ? $_POST['name'] : stringParser::decode($get['name'])));
+            $smarty->assign('url',(isset($_POST['url']) ? $_POST['url'] : stringParser::decode($get['url'])));
+            $smarty->assign('level',$elevel);
+            $smarty->assign('what',_button_value_edit);
+            $smarty->assign('error',(!empty($error) ? show("errors/errortable", array("error" => $error)) : ""));
+            $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/startpage_form.tpl');
+            $smarty->clearAllAssign();
         }
     break;
     case 'new':
@@ -78,14 +85,25 @@ switch ($do) {
             if(notification::has()) {
                 javascript::set('AnchorMove', 'notification-box');
             }
-            
-            $elevel = show(_elevel_startpage_select, array("selu" => '',
-                                                           "selt" => '',
-                                                           "selm" => '',
-                                                           "sela" => ''));
-            
-            $show = show($dir."/startpage_form", array("head" => _admin_startpage_add_head, "do" => "new", "name" => (isset($_POST['name']) ? $_POST['name'] : ''),
-            "url" => (isset($_POST['url']) ? $_POST['url'] : ''), "level" => $elevel, "what" => _button_value_add, "error" => (!empty($error) ? show("errors/errortable", array("error" => $error)) : "")));
+
+            $smarty->caching = false;
+            $smarty->assign('selu','');
+            $smarty->assign('selt','');
+            $smarty->assign('selm','');
+            $smarty->assign('sela','');
+            $elevel = $smarty->fetch('string:'._elevel_startpage_select);
+            $smarty->clearAllAssign();
+
+            $smarty->caching = false;
+            $smarty->assign('head',_admin_startpage_add_head);
+            $smarty->assign('do',"new");
+            $smarty->assign('name',(isset($_POST['name']) ? $_POST['name'] : ''));
+            $smarty->assign('url',(isset($_POST['url']) ? $_POST['url'] : ''));
+            $smarty->assign('level',$elevel);
+            $smarty->assign('what',_button_value_add);
+            $smarty->assign('error',(!empty($error) ? show("errors/errortable", array("error" => $error)) : ""));
+            $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/startpage_form.tpl');
+            $smarty->clearAllAssign();
         }
     break;
     default:
@@ -94,7 +112,14 @@ switch ($do) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_entry);
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-            $show .= show($dir."/startpage_show", array("edit" => $edit, "name" => stringParser::decode($get['name']), "url" => stringParser::decode($get['url']), "class" => $class, "delete" => $delete));
+            $smarty->caching = false;
+            $smarty->assign('edit',$edit);
+            $smarty->assign('name', stringParser::decode($get['name']));
+            $smarty->assign('url',stringParser::decode($get['url']));
+            $smarty->assign('class',$class);
+            $smarty->assign('delete',$delete);
+            $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/startpage_show.tpl');
+            $smarty->clearAllAssign();;
         }
 
         if(empty($show)) {
@@ -104,6 +129,9 @@ switch ($do) {
             $smarty->clearAllAssign();
         }
 
-        $show = show($dir."/startpage", array("show" => $show));
+        $smarty->caching = false;
+        $smarty->assign('show',$show);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/startpage.tpl');
+        $smarty->clearAllAssign();
     break;
 }

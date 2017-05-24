@@ -23,55 +23,77 @@ if(_adminMenu != 'true') exit;
 
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_sponsoren}` ORDER BY pos");
         foreach($qry as $get) {
-          $positions .= show(_select_field, array("value" => $get['pos']+1,
-                                                  "sel" => "",
-                                                  "what" => _nach.' '.stringParser::decode($get['name'])));
+            $smarty->caching = false;
+            $smarty->assign('value', $get['pos']+1);
+            $smarty->assign('sel','');
+            $smarty->assign('what', _nach.' '.stringParser::decode($get['name']));
+            $positions .= $smarty->fetch('string:'._select_field);
+            $smarty->clearAllAssign();
           $posname = $get['name'];
         }
 
-        $show = show($dir."/form_sponsors", array("head" => _sponsors_admin_head,
-                                                                          "error" => "",
-                                                     "name" => _sponsors_admin_name,
-                                                                          "sname" => "",
-                                                                          "link" => _links_link,
-                                                                          "slink" => "",
-                                                                          "beschreibung" => _beschreibung,
-                                                                          "sbeschreibung" => "",
-                                                                          "site" => _sponsors_admin_site,
-                                                                          "addsite" => _sponsors_admin_addsite,
-                                                                          "schecked" => "",
-                                                                          "snone" => "none",
-                                                                          "add_site" => _sponsors_admin_add_site,
-                                                                          "upload" => _sponsors_admin_upload,
-                                                                          "url" => _sponsors_admin_url,
-                                                                          "site_link" => "",
-                                                                          "sitepic" => "",
-                                                                                                    "banner" => _sponsors_admin_banner,
-                                                                          "addbanner" => _sponsors_admin_addbanner,
-                                                                          "bchecked" => "",
-                                                                          "bnone" => "none",
-                                                                          "add_banner" => _sponsors_admin_add_banner,
-                                                                          "banner_link" => "",
-                                                                          "bannerpic" => "",
-                                                                                                    "box" => _sponsors_admin_box,
-                                                                          "addbox" => _sponsors_admin_addbox,
-                                                                          "xchecked" => "",
-                                                                          "xnone" => "none",
-                                                                          "add_box" => _sponsors_admin_add_box,
-                                                                          "box_link" => "",
-                                                                          "boxpic" => "",
-                                                                                                    "pos" => _position,
-                                                                          "first" => _admin_first,
-                                                                          "positions" => $positions,
-                                                                          "posname" => $posname,
-                                                                          "what" => _button_value_add,
-                                                     "do" => "add"));
+
+          $smarty->caching = false;
+          $smarty->assign('head',_sponsors_admin_head);
+          $smarty->assign('error','');
+          $smarty->assign('name',_sponsors_admin_name);
+          $smarty->assign('sname','');
+          $smarty->assign('link',_links_link);
+          $smarty->assign('slink','');
+          $smarty->assign('beschreibung',_beschreibung);
+          $smarty->assign('sbeschreibung','');
+          $smarty->assign('site',_sponsors_admin_site);
+          $smarty->assign('addsite',_sponsors_admin_addsite);
+          $smarty->assign('schecked','');
+          $smarty->assign('snone',"none");
+          $smarty->assign('add_site',_sponsors_admin_add_site);
+          $smarty->assign('upload',_sponsors_admin_upload);
+          $smarty->assign('url',_sponsors_admin_url);
+          $smarty->assign('site_link','');
+          $smarty->assign('sitepic','');
+          $smarty->assign('banner',_sponsors_admin_banner);
+          $smarty->assign('addbanner',_sponsors_admin_addbanner);
+          $smarty->assign('bchecked','');
+          $smarty->assign('bnone','none');
+          $smarty->assign('add_banner',_sponsors_admin_add_banner);
+          $smarty->assign('banner_link','');
+          $smarty->assign('bannerpic','');
+          $smarty->assign('box',_sponsors_admin_box);
+          $smarty->assign('addbox',_sponsors_admin_addbox);
+          $smarty->assign('xchecked','');
+          $smarty->assign('xnone','none');
+          $smarty->assign('add_box',_sponsors_admin_add_box);
+          $smarty->assign('box_link','');
+          $smarty->assign('boxpic','');
+          $smarty->assign('pos',_position);
+          $smarty->assign('first',_admin_first);
+          $smarty->assign('positions',$positions);
+          $smarty->assign('posname',$posname);
+          $smarty->assign('what',_button_value_add);
+          $smarty->assign('do',"add");
+          $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_sponsors.tpl');
+          $smarty->clearAllAssign();
       } elseif($do == "add") {
         if(empty($_POST['name']) || empty($_POST['link']) || empty($_POST['beschreibung']))
         {
-          if(empty($_POST['beschreibung'])) $error = show("errors/errortable", array("error" => _sponsors_empty_beschreibung));
-              if(empty($_POST['link']))         $error = show("errors/errortable", array("error" => _sponsors_empty_link));
-              if(empty($_POST['name']))         $error = show("errors/errortable", array("error" => _sponsors_empty_name));
+          if(empty($_POST['beschreibung']))
+              $smarty->caching = false;
+            $smarty->assign('error',_sponsors_empty_beschreibung);
+            $error = $smarty->fetch('file:['.common::$tmpdir.']errors/errortable.tpl');
+            $smarty->clearAllAssign();
+
+              if(empty($_POST['link']))
+                  $smarty->caching = false;
+                $smarty->assign('error',_sponsors_empty_link);
+                $error = $smarty->fetch('file:['.common::$tmpdir.']errors/errortable.tpl');
+                $smarty->clearAllAssign();
+
+              if(empty($_POST['name']))
+                  $smarty->caching = false;
+                $smarty->assign('error',_sponsors_empty_name);
+                $error = $smarty->fetch('file:['.common::$tmpdir.']errors/errortable.tpl');
+                $smarty->clearAllAssign();
+
 
           $pos = common::$sql['default']->select("SELECT pos,name FROM `{prefix_sponsoren}` ORDER BY pos");
           foreach($pos as $getpos) {
@@ -84,9 +106,12 @@ if(_adminMenu != 'true') exit;
               if($getpos['pos'] == $mp['pos']) $sel = 'selected="selected"';
               else $sel = '';
 
-              $positions .= show(_select_field, array("value" => $getpos['pos']+1,
-                                                      "what" => _nach.' '.stringParser::decode($getpos['name']),
-                                                      "sel" => $sel));
+                $smarty->caching = false;
+                $smarty->assign('value',$getpos['pos']+1);
+                $smarty->assign('what',_nach.' '.stringParser::decode($getpos['name']));
+                $smarty->assign('sel',$sel);
+                $positions .= $smarty->fetch('string:'._select_field);
+                $smarty->clearAllAssign();
             }
           }
 
@@ -115,45 +140,46 @@ if(_adminMenu != 'true') exit;
               $xnone = "none";
             }
 
-            $show = show($dir."/form_sponsors", array("head" => _sponsors_admin_head,
-                                                         "error" => $error,
-                                                      "name" => _sponsors_admin_name,
-                                                      "sname" => $_POST['name'],
-                                                      "link" => _links_link,
-                                                      "slink" => $_POST['link'],
-                                                      "beschreibung" => _beschreibung,
-                                                      "sbeschreibung" => stringParser::decode($_POST['beschreibung']),
-                                                      "site" => _sponsors_admin_site,
-                                                      "addsite" => _sponsors_admin_addsite,
-                                                      "schecked" => $schecked,
-                                                      "snone" => $snone,
-                                                      "add_site" => _sponsors_admin_add_site,
-                                                      "upload" => _sponsors_admin_upload,
-                                                      "url" => _sponsors_admin_url,
-                                                      "site_link" => $_POST['slink'],
-                                                      "sitepic" => "",
-                                                            "banner" => _sponsors_admin_banner,
-                                                      "addbanner" => _sponsors_admin_addbanner,
-                                                      "bchecked" => $bchecked,
-                                                      "bnone" => $bnone,
-                                                      "add_banner" => _sponsors_admin_add_banner,
-                                                      "banner_link" => $_POST['blink'],
-                                                      "bannerpic" => "",
-                                                            "box" => _sponsors_admin_box,
-                                                      "addbox" => _sponsors_admin_addbox,
-                                                      "xchecked" => $xchecked,
-                                                      "xnone" => $xnone,
-                                                      "add_box" => _sponsors_admin_add_box,
-                                                      "box_link" => $_POST['xlink'],
-                                                        "boxpic" => "",
-                                                            "pos" => _position,
-                                                        "first" => _admin_first,
-                                                        "positions" => $positions,
-                                                        "posname" => $_POST['posname'],
-                                                      "what" => _button_value_add,
-                                                      "do" => "add"));
-
-
+            $smarty->caching = false;
+            $smarty->assign('head',_sponsors_admin_head);
+            $smarty->assign('error',$error);
+            $smarty->assign('name',_sponsors_admin_name);
+            $smarty->assign('sname',$_POST['name']);
+            $smarty->assign('link',_links_link);
+            $smarty->assign('slink',$_POST['link']);
+            $smarty->assign('beschreibung',_beschreibung);
+            $smarty->assign('sbeschreibung',stringParser::decode($_POST['beschreibung']));
+            $smarty->assign('site',_sponsors_admin_site);
+            $smarty->assign('addsite',_sponsors_admin_addsite);
+            $smarty->assign('schecked',$schecked);
+            $smarty->assign('snone',$snone);
+            $smarty->assign('add_site',_sponsors_admin_add_site);
+            $smarty->assign('upload',_sponsors_admin_upload);
+            $smarty->assign('url',_sponsors_admin_url);
+            $smarty->assign('site_link',$_POST['slink']);
+            $smarty->assign('sitepic','');
+            $smarty->assign('banner',_sponsors_admin_banner);
+            $smarty->assign('addbanner',_sponsors_admin_addbanner);
+            $smarty->assign('bchecked',$bchecked);
+            $smarty->assign('bnone',$bnone);
+            $smarty->assign('add_banner',_sponsors_admin_add_banner);
+            $smarty->assign('banner_link',$_POST['blink']);
+            $smarty->assign('bannerpic','');
+            $smarty->assign('box',_sponsors_admin_box);
+            $smarty->assign('addbox',_sponsors_admin_addbox);
+            $smarty->assign('xchecked',$xchecked);
+            $smarty->assign('xnone',$xnone);
+            $smarty->assign('add_box',_sponsors_admin_add_box);
+            $smarty->assign('box_link',$_POST['xlink']);
+            $smarty->assign('boxpic','');
+            $smarty->assign('pos',_position);
+            $smarty->assign('first',_admin_first);
+            $smarty->assign('positions',$positions);
+            $smarty->assign('posname',$_POST['posname']);
+            $smarty->assign('what',_button_value_add);
+            $smarty->assign('do',"add");
+            $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_sponsors.tpl');
+            $smarty->clearAllAssign();
         } else {
           if($_POST['position'] == 1 || $_POST['position'] == 2) $sign = ">= ";
           else $sign = "> ";
@@ -240,9 +266,13 @@ if(_adminMenu != 'true') exit;
               if($getpos['pos'] == $mp['pos']) $sel = 'selected="selected"';
               else $sel = '';
 
-              $positions .= show(_select_field, array("value" => $getpos['pos']+1,
-                                                      "what" => _nach.' '.stringParser::decode($getpos['name']),
-                                                      "sel" => $sel));
+                $smarty->caching = false;
+                $smarty->assign('value',$getpos['pos']+1);
+                $smarty->assign('what',_nach.' '.stringParser::decode($getpos['name']));
+                $smarty->assign('sel',$sel);
+                $positions .= $smarty->fetch('string:'._select_field);
+                $smarty->clearAllAssign();
+
               $posname = $getpos['name'];
             }
           }
@@ -299,49 +329,66 @@ if(_adminMenu != 'true') exit;
             }
     }
 
-         $show = show($dir."/form_sponsors", array("head" => _sponsors_admin_head,
-                                                   "error" => "",
-                                                   "name" => _sponsors_admin_name,
-                                                   "sname" => $get['name'],
-                                                   "link" => _links_link,
-                                                   "slink" => $get['link'],
-                                                   "beschreibung" => _beschreibung,
-                                                   "sbeschreibung" => stringParser::decode($get['beschreibung']),
-                                                   "site" => _sponsors_admin_site,
-                                                   "addsite" => _sponsors_admin_addsite,
-                                                   "schecked" => $schecked,
-                                                   "snone" => $snone,
-                                                   "add_site" => _sponsors_admin_add_site,
-                                                   "upload" => _sponsors_admin_upload,
-                                                   "url" => _sponsors_admin_url,
-                                                   "site_link" => $get['slink'],
-                                                   "sitepic" => $sitepic,
-                                                     "banner" => _sponsors_admin_banner,
-                                                   "addbanner" => _sponsors_admin_addbanner,
-                                                   "bchecked" => $bchecked,
-                                                   "bnone" => $bnone,
-                                                   "add_banner" => _sponsors_admin_add_banner,
-                                                   "banner_link" => $get['blink'],
-                                                   "bannerpic" => $bannerpic,
-                                                     "box" => _sponsors_admin_box,
-                                                   "addbox" => _sponsors_admin_addbox,
-                                                   "xchecked" => $xchecked,
-                                                   "xnone" => $xnone,
-                                                   "add_box" => _sponsors_admin_add_box,
-                                                   "box_link" => $get['xlink'],
-                                                     "boxpic" => $boxpic,
-                                                   "pos" => _position,
-                                                   "first" => _admin_first,
-                                                   "positions" => $positions,
-                                                   "posname" => $posname,
-                                                   "what" => _button_value_edit,
-                                                   "do" => "editsponsor&amp;id=".$_GET['id'].""));
+          $smarty->caching = false;
+          $smarty->assign('head',_sponsors_admin_head);
+          $smarty->assign('error','');
+          $smarty->assign('name',_sponsors_admin_name);
+          $smarty->assign('sname',$get['name']);
+          $smarty->assign('link',_links_link);
+          $smarty->assign('slink',$get['link']);
+          $smarty->assign('beschreibung',_beschreibung);
+          $smarty->assign('sbeschreibung',stringParser::decode($get['beschreibung']));
+          $smarty->assign('site',_sponsors_admin_site);
+          $smarty->assign('addsite',_sponsors_admin_addsite);
+          $smarty->assign('schecked',$schecked);
+          $smarty->assign('snone',$snone);
+          $smarty->assign('add_site',_sponsors_admin_add_site);
+          $smarty->assign('upload',_sponsors_admin_upload);
+          $smarty->assign('url',_sponsors_admin_url);
+          $smarty->assign('site_link',$get['slink']);
+          $smarty->assign('sitepic',$sitepic);
+          $smarty->assign('banner',_sponsors_admin_banner);
+          $smarty->assign('addbanner',_sponsors_admin_addbanner);
+          $smarty->assign('bchecked',$bchecked);
+          $smarty->assign('bnone',$bnone);
+          $smarty->assign('add_banner',_sponsors_admin_add_banner);
+          $smarty->assign('banner_link',$get['blink']);
+          $smarty->assign('bannerpic',$bannerpic);
+          $smarty->assign('box',_sponsors_admin_box);
+          $smarty->assign('addbox',_sponsors_admin_addbox);
+          $smarty->assign('xchecked',$xchecked);
+          $smarty->assign('xnone',$xnone);
+          $smarty->assign('add_box',_sponsors_admin_add_box);
+          $smarty->assign('box_link',$get['xlink']);
+          $smarty->assign('boxpic',$boxpic);
+          $smarty->assign('pos',_position);
+          $smarty->assign('first',_admin_first);
+          $smarty->assign('positions',$positions);
+          $smarty->assign('posname',$posname);
+          $smarty->assign('what',_button_value_edit);
+          $smarty->assign('do',"editsponsor&amp;id=".$_GET['id']."");
+          $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_sponsors.tpl');
+          $smarty->clearAllAssign();
       } elseif($do == "editsponsor") {
       if(empty($_POST['name']) || empty($_POST['link']) || empty($_POST['beschreibung']))
       {
-      if(empty($_POST['beschreibung'])) $error = show("errors/errortable", array("error" => _sponsors_empty_beschreibung));
-          if(empty($_POST['link']))         $error = show("errors/errortable", array("error" => _sponsors_empty_link));
-          if(empty($_POST['name']))         $error = show("errors/errortable", array("error" => _sponsors_empty_name));
+          if(empty($_POST['beschreibung']))
+              $smarty->caching = false;
+          $smarty->assign('error',_sponsors_empty_beschreibung);
+          $error = $smarty->fetch('file:['.common::$tmpdir.']errors/errortable.tpl');
+          $smarty->clearAllAssign();
+
+          if(empty($_POST['link']))
+              $smarty->caching = false;
+          $smarty->assign('error',_sponsors_empty_link);
+          $error = $smarty->fetch('file:['.common::$tmpdir.']errors/errortable.tpl');
+          $smarty->clearAllAssign();
+
+          if(empty($_POST['name']))
+              $smarty->caching = false;
+          $smarty->assign('error',_sponsors_empty_name);
+          $error = $smarty->fetch('file:['.common::$tmpdir.']errors/errortable.tpl');
+          $smarty->clearAllAssign();
 
           $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_sponsoren}` WHERE id = '".(int)($_GET['id'])."'");
 
@@ -356,9 +403,14 @@ if(_adminMenu != 'true') exit;
               if($getpos['pos'] == $mp['pos']) $sel = 'selected="selected"';
               else $sel = '';
 
-              $positions .= show(_select_field, array("value" => $getpos['pos']+1,
-                                                      "what" => _nach.' '.stringParser::decode($getpos['name']),
-                                                      "sel" => $sel));
+
+                $smarty->caching = false;
+                $smarty->assign('value',$getpos['pos']+1);
+                $smarty->assign('what',_nach.' '.stringParser::decode($getpos['name']));
+                $smarty->assign('sel',$sel);
+                $positions .= $smarty->fetch('string:'._select_field);
+                $smarty->clearAllAssign();
+
               $posname = $getpos['name'];
             }
           }
@@ -415,45 +467,46 @@ if(_adminMenu != 'true') exit;
                 }
             }
 
-             $show = show($dir."/form_sponsors", array("head" => _sponsors_admin_head,
-                                                       "error" => $error,
-                                                       "name" => _sponsors_admin_name,
-                                                       "sname" => $_POST['name'],
-                                                       "link" => _links_link,
-                                                       "slink" => $_POST['link'],
-                                                       "beschreibung" => _beschreibung,
-                                                       "sbeschreibung" => stringParser::decode($_POST['beschreibung']),
-                                                       "site" => _sponsors_admin_site,
-                                                       "addsite" => _sponsors_admin_addsite,
-                                                       "schecked" => $schecked,
-                                                       "snone" => $snone,
-                                                       "add_site" => _sponsors_admin_add_site,
-                                                       "upload" => _sponsors_admin_upload,
-                                                       "url" => _sponsors_admin_url,
-                                                       "site_link" => $_POST['slink'],
-                                                       "sitepic" => $sitepic,
-                                                         "banner" => _sponsors_admin_banner,
-                                                       "addbanner" => _sponsors_admin_addbanner,
-                                                       "bchecked" => $bchecked,
-                                                       "bnone" => $bnone,
-                                                       "add_banner" => _sponsors_admin_add_banner,
-                                                       "banner_link" => $_POST['blink'],
-                                                       "bannerpic" => $bannerpic,
-                                                         "box" => _sponsors_admin_box,
-                                                       "addbox" => _sponsors_admin_addbox,
-                                                       "xchecked" => $xchecked,
-                                                       "xnone" => $xnone,
-                                                       "add_box" => _sponsors_admin_add_box,
-                                                       "box_link" => $_POST['xlink'],
-                                                       "boxpic" => $boxpic,
-                                                         "pos" => _position,
-                                                        "first" => _admin_first,
-                                                        "positions" => $positions,
-                                                       "posname" => $_POST['posname'],
-                                                       "what" => _button_value_edit,
-                                                       "do" => "editsponsor&amp;id=".$_GET['id'].""));
-
-
+          $smarty->caching = false;
+          $smarty->assign('head',_sponsors_admin_head);
+          $smarty->assign('error',$error);
+          $smarty->assign('name',_sponsors_admin_name);
+          $smarty->assign('sname',$_POST['name']);
+          $smarty->assign('link',_links_link);
+          $smarty->assign('slink',$_POST['link']);
+          $smarty->assign('beschreibung',_beschreibung);
+          $smarty->assign('sbeschreibung',stringParser::decode($_POST['beschreibung']));
+          $smarty->assign('site',_sponsors_admin_site);
+          $smarty->assign('addsite',_sponsors_admin_addsite);
+          $smarty->assign('schecked',$schecked);
+          $smarty->assign('snone',$snone);
+          $smarty->assign('add_site',_sponsors_admin_add_site);
+          $smarty->assign('upload',_sponsors_admin_upload);
+          $smarty->assign('url',_sponsors_admin_url);
+          $smarty->assign('site_link',$_POST['slink']);
+          $smarty->assign('sitepic',$sitepic);
+          $smarty->assign('banner',_sponsors_admin_banner);
+          $smarty->assign('addbanner',_sponsors_admin_addbanner);
+          $smarty->assign('bchecked',$bchecked);
+          $smarty->assign('bnone',$bnone);
+          $smarty->assign('add_banner',_sponsors_admin_add_banner);
+          $smarty->assign('banner_link',$_POST['blink']);
+          $smarty->assign('bannerpic',$bannerpic);
+          $smarty->assign('box',_sponsors_admin_box);
+          $smarty->assign('addbox',_sponsors_admin_addbox);
+          $smarty->assign('xchecked',$xchecked);
+          $smarty->assign('xnone',$xnone);
+          $smarty->assign('add_box',_sponsors_admin_add_box);
+          $smarty->assign('box_link',$_POST['xlink']);
+          $smarty->assign('boxpic',$boxpic);
+          $smarty->assign('pos',_position);
+          $smarty->assign('first',_admin_first);
+          $smarty->assign('positions',$positions);
+          $smarty->assign('posname',$_POST['posname']);
+          $smarty->assign('what',_button_value_edit);
+          $smarty->assign('do',"editsponsor&amp;id=".$_GET['id']."");
+          $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_sponsors.tpl');
+          $smarty->clearAllAssign();
         } else {
           $get = common::$sql['default']->fetch("SELECT pos FROM `{prefix_sponsoren}` WHERE id = '".(int)($_GET['id'])."'");
 
@@ -569,16 +622,22 @@ if(_adminMenu != 'true') exit;
 
           $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
 
-          $show .= show($dir."/sponsors_show", array("link" => common::cut(stringParser::decode($get['link']),40),
-                                                       "class" => $class,
-                                                       "name" => $get['name'],
-                                                       "edit" => $edit,
-                                                       "delete" => $delete));
+            $smarty->caching = false;
+            $smarty->assign('link', common::cut(stringParser::decode($get['link']),40));
+            $smarty->assign('class',$class);
+            $smarty->assign('name',$get['name']);
+            $smarty->assign('edit',$edit);
+            $smarty->assign('delete',$delete);
+            $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/sponsors_show.tpl');
+            $smarty->clearAllAssign();
         }
 
-        $show = show($dir."/sponsors", array("head" => _sponsor_head,
-                                               "show" => $show,
-                                             "sname" => _sponsor_name,
-                                             "slink" => _links_link,
-                                               "add" => _sponsors_admin_add));
+          $smarty->caching = false;
+          $smarty->assign('head',_sponsor_head);
+          $smarty->assign('show',$show);
+          $smarty->assign('sname',_sponsor_name);
+          $smarty->assign('slink',_links_link);
+          $smarty->assign('add',_sponsors_admin_add);
+          $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/sponsors.tpl');
+          $smarty->clearAllAssign();
       }
