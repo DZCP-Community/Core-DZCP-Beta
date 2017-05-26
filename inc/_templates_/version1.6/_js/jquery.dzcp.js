@@ -7,7 +7,7 @@
 var doc = document, ie4 = document.all, opera = window.opera;
 var innerLayer, layer, x, y, offsetX = 15, offsetY = 5;
 var tickerc = 0, mTimer = new Array(), tickerTo = new Array(), tickerSpeed = new Array();
-var isIE = false, isWin = false, isOpera = false, jQueryV = "1.11.3", $ = jQuery;
+var jQueryV = "1.11.3", $ = jQuery;
 
 function changeme(that) {document.location.href="index.php?kat=" + that.value;}
 
@@ -78,10 +78,6 @@ var DZCP = {
         doc.body.id = 'dzcp-engine-1.7';
         DZCP.DebugLogger("jQuery Version: "+$().jquery+" is loaded!");
         DZCP.DebugLogger('Load DZCP-Engine 1.7');
-
-        isIE  = (navigator.appVersion.indexOf("MSIE") !== -1) ? true : false;
-        isWin = (navigator.appVersion.toLowerCase().indexOf("win") !== -1) ? true : false;
-        isOpera = (navigator.userAgent.indexOf("Opera") !== -1) ? true : false;
 
         $('body').append('<div id="infoDiv"></div>');
         $('body').append('<div id="dialog"></div>');

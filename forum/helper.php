@@ -15,6 +15,25 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
+function fvote_question(array $answers = array()) {
+    $smarty = common::getSmarty(true);
+    $answers_tpl = '';
+    if(count($answers) >= 1) {
+        $i=1;
+        foreach ($answers as $answer) {
+            $smarty->caching = false;
+            $smarty->assign('answer_num',$i);
+            $smarty->assign('answer_key',$answer['key']);
+            $smarty->assign('answer',$answer['answer']);
+            $answers_tpl .= $smarty->fetch('file:['.common::$tmpdir.']forum/vote/question_vote.tpl');
+            $i++;
+        }
+    }
+
+    $smarty->clearAllAssign();
+    return $answers_tpl;
+}
+
 function fvote($id, $ajax=false) {
     $get = common::$sql['default']->fetch("SELECT `id`,`closed`,`titel` FROM `{prefix_votes}` WHERE `id` = ? ".(common::permission("votes") ? ";" : " AND `intern` = 0;"), [(int)($id)]);
     if(common::$sql['default']->rowCount()) {
@@ -56,4 +75,52 @@ function fvote($id, $ajax=false) {
     }
 
     return empty($vote) ? '<div style="margin:2px 0;text-align:center;">'._no_entrys.'</div>' : ($ajax ? $vote : '<div id="navFVote">'.$vote.'</div>');
+}
+
+function send_forum_abo(bool $is_thread = false, int $id,string $eintrag,bool $edit = false) {
+    global $title;
+    $smarty = common::getSmarty(true);
+    $checkabo = common::$sql['default']->select("SELECT s1.`user`,s1.`fid`,s2.`nick`,s2.`id`,s2.`email` FROM `{prefix_forum_abo}` AS s1
+                        LEFT JOIN `{prefix_users}` AS s2 ON s2.`id` = s1.`user`
+                      WHERE s1.`fid` = ?;",[$id]);
+
+    foreach ($checkabo as $getabo) {
+        if (common::$userid != $getabo['user']) {
+            $gettopic = common::$sql['default']->fetch("SELECT `topic` FROM `{prefix_forumthreads}` WHERE `id` = ;", [$id]);
+            $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?;",'id',[$id]);
+
+            $smarty->caching = false;
+            $smarty->assign('titel',$title);
+            if($is_thread && !$edit) {
+                $subj = $smarty->fetch('string:'.stringParser::decode(settings::get('eml_fabo_tedit_subj')));
+            } else if(!$is_thread &&!$edit) {
+                $subj = $smarty->fetch('string:'.stringParser::decode(settings::get('eml_fabo_npost_subj')));
+            } else {
+                $subj = $smarty->fetch('string:'.stringParser::decode(settings::get('eml_fabo_pedit_subj')));
+            }
+            $smarty->clearAllAssign();
+
+            $smarty->caching = false;
+            $smarty->assign('nick',stringParser::decode($getabo['nick']));
+            $smarty->assign('postuser',common::fabo_autor(common::$userid));
+            $smarty->assign('topic',$gettopic['topic']);
+            $smarty->assign('titel',$title);
+            $smarty->assign('domain',common::$httphost);
+            $smarty->assign('id',$id);
+            $smarty->assign('entrys',!$entrys ? 1 : $entrys);
+            $smarty->assign('page',!$entrys ? 1 : ceil($entrys/settings::get('m_fposts')));
+            $smarty->assign('text',bbcode::parse_html($eintrag));
+            $smarty->assign('clan',settings::get('clanname'));
+            if($is_thread && !$edit) {
+                $message = $smarty->fetch('string:'.common::bbcode_email(settings::get('eml_fabo_tedit')));
+            } else if(!$is_thread &&!$edit) {
+                $message = $smarty->fetch('string:'.common::bbcode_email(settings::get('eml_fabo_npost')));
+            } else {
+                $message = $smarty->fetch('string:'.common::bbcode_email(settings::get('eml_fabo_pedit')));
+            }
+            $smarty->clearAllAssign();
+
+            common::sendMail(stringParser::decode($getabo['email']), $subj, $message);
+        }
+    }
 }

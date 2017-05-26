@@ -169,6 +169,7 @@ define("_forum_sort_descending", 'Absteigend');
 define("_forum_sort_ascending", 'Aufsteigend');
 define("_forum_go", 'Los');
 define("_forum_from", 'Von');
+define("_forum_admin_editby", 'der Nachricht "<span class="fontWichtig">zuletzt editiert</span>" anh&auml;ngen?');
 
 //Startpage
 define('_profil_startpage', 'Startseite');
@@ -290,7 +291,7 @@ define('_admin_squads_teams', 'Team-Show');
 define('_admin_squads_no_navi', 'Nicht einf&uuml;gen');
 define('_config_direct_refresh', 'Direkte Weiterleitung');
 define('_config_direct_refresh_info', 'Wenn aktiviert, wird nach einer Aktion (z.B. Eintr&auml;ge in Forum, News, etc) direkt weitergeleitet, anstatt eine Infonachricht auszugeben.');
-define('_eintrag_titel_forum', '<a href="[url]" title="Diesen Beitrag anzeigen"><span class="fontBold">#[postid]</span></a> am [datum] um [zeit]  [edit] [delete]');
+define('_eintrag_titel_forum', '<a href="{$url}" title="Diesen Beitrag anzeigen"><span class="fontBold">#{$postid}</span></a> am {$datum} um {$zeit}{lang msgID="uhr"} {$edit} {$delete}');
 define('_eintrag_titel', '<span class="fontBold">#{$postid}</span> am {$datum} um {$zeit}{lang msgID="uhr"} {$edit} {$delete}');
 
 ## ADDED / REDEFINED FOR 1.5.1
@@ -558,7 +559,7 @@ define('_member_admin_votes', 'Interne Umfragen sehen');
 define('_member_admin_votesadmin', 'Admin: Umfragen');
 define('_msg_global_all', 'alle Mitglieder');
 define('_pos_empty_kat', 'Du musst eine Rangbezeichnung angeben!');
-define('_forum_lastpost', '<a href="?action=showthread&amp;id=[tid]&amp;page=[page]#p[id]"><img src="../inc/images/forum_lpost.gif" alt="" title="Zum letzten Eintrag" class="icon" /></a>');
+define('_forum_lastpost', '<a href="?action=showthread&amp;id={$tid}&amp;page={$page}#p{$id}"><img src="../inc/images/forum_lpost.gif" alt="" title="Zum letzten Eintrag" class="icon" /></a>');
 define('_forum_addpost', '<a href="?action=post&amp;do=add&amp;kid=[kid]&amp;id=[id]"><img src="../inc/images/forum_reply.gif" alt="" title="Neuer Eintrag" class="icon" /></a>');
 define('_pn_write', 'eine Nachricht schreiben');
 //--------------------------------------------\\
@@ -818,8 +819,10 @@ define('_news_comments_write_head', 'Neuen Newskommentar schreiben');
 define('_news_archiv_sort', 'Sortieren nach');
 define('_news_archiv_head', 'Newsarchiv');
 define('_news_kat_choose', 'Kategorie w&auml;hlen');
+
 ## Artikel ##
 define('_artikel_comments_write_head', 'Neuen Artikelkommentar schreiben');
+
 ## Forum ##
 define('_forum_head', 'Forum');
 define('_forum_topic', 'Topic');
@@ -843,9 +846,8 @@ define('_forum_newthread_successful', 'Das Thema wurde erfolgreich ins Forum ein
 define('_forum_new_post_head', 'Neuen Forenpost eintragen');
 define('_forum_newpost_successful', 'Der Post wurde erfolgreich ins Forum eingetragen!');
 define('_posted_by', '<span class="fontBold">&raquo;</span> ');
-define('_forum_post_where', '<a href="../forum/">[mainkat]</a> <span class="fontBold">Forum:</span> <a href="?action=show&amp;id=[kid]">[wherekat]</a> <span class="fontBold">Thema:</span> <a href="?action=showthread&amp;id=[tid]">[wherepost]</a>');
 define('_forum_lpostlink', 'Letzter Post');
-define('_forum_user_posts', '<span class="fontBold">Posts:</span> [posts]');
+define('_forum_user_posts', '<span class="fontBold">Posts:</span> {$posts}');
 define('_sig', '<br /><br /><hr />');
 define('_error_forum_closed', 'Dieses Thema ist geschlossen!');
 define('_forum_search_head', 'Forensuche');
@@ -869,6 +871,8 @@ define('_forum_search_kat_all', 'allen Kategorien');
 define('_forum_search_results', 'Suchergebnisse');
 define('_forum_online_head', 'Im Forum online:');
 define('_forum_nobody_is_online', 'Zur Zeit ist kein User im Forum online!');
+define('_forum_admin_closed', 'Umfrage schlie&szlig;en');
+
 ## Kalender ##
 //-> Allgemein
 define('_kalender_head', 'Kalender');
@@ -881,9 +885,11 @@ define('_donnerstag', 'Donnerstag');
 define('_freitag', 'Freitag');
 define('_samstag', 'Samstag');
 define('_sonntag', 'Sonntag');
+
 //-> Events
 define('_kalender_events_head', 'Ereignisse am [datum]');
 define('_kalender_uhrzeit', 'Uhrzeit');
+
 //-> Admin
 define('_kalender_admin_head_add', 'Ereignis hinzuf&uuml;gen');
 define('_kalender_admin_head_edit', 'Ereignis editieren');
@@ -894,6 +900,7 @@ define('_kalender_error_no_event', 'Du musst das Ereignis beschreiben!');
 define('_kalender_successful_added', 'Das Ereignis wurde erfolgreich eingetragen!');
 define('_kalender_successful_edited', 'Das Ereignis wurde erfolgreich editiert!');
 define('_kalender_deleted', 'Das Ereignis wurde erfolgreich gel&ouml;scht!');
+
 ## Umfragen ##
 define('_error_vote_closed', 'Diese Umfrage ist geschlossen!');
 define('_votes_admin_closed', 'Umfrage schlie&szlig;en');
@@ -918,6 +925,7 @@ define('_votes_admin_edit_head', 'Umfrage editieren');
 define('_vote_admin_successful_edited', 'Die Umfrage wurde erfolgreich editiert!');
 define('_vote_admin_successful_menu1', 'Die Umfrage wurde erfolgreich aus dem Men&uuml; ausgetragen!');
 define('_error_voted_again', 'Du hast bereits an dieser Umfrage teilgenommen!');
+
 ## Links/Sponsoren ##
 define('_links_head', 'Links');
 define('_links_admin_head', 'Neuen Link hinzuf&uuml;gen');
@@ -934,6 +942,7 @@ define('_link_added', 'Der Link wurde erfolgreich hinzugef&uuml;gt!');
 define('_link_edited', 'Der Link wurde erfolgreich editiert!');
 define('_link_deleted', 'Der Link wurde erfolgreich gel&ouml;scht!');
 define('_sponsor_head', 'Sponsoren');
+
 ## Downloads ##
 define('_downloads_head', 'Downloads');
 define('_downloads_download', 'Download');
@@ -962,10 +971,12 @@ define('_dl_traffic', 'verursachter Traffic');
 define('_dl_loaded', 'bisherige Downloads');
 define('_dl_date', 'Uploaddatum');
 define('_dl_wait', 'Download der Datei: ');
+
 ## Teams ##
 define('_member_squad_head', 'Teams');
 define('_member_squad_no_entrys', '<tr><td align="center"><span class="fontBold">Keine eingetragenen Member</span></td></tr>');
 define('_member_squad_weare', 'Wir sind insgesamt <span class="fontBold">[cm] Member</span> und besitzen <span class="fontBold">[cs] Team(s)</span>');
+
 ## User ##
 define('_profil_head', '<span class="fontBold">Userprofil von {$nick}</span> [{$profilhits} mal angesehen]');
 define('_user_noposi', '<option value="lazy" class="dropdownKat">keine Position</option>');
@@ -1171,6 +1182,7 @@ define('_profil_url1', 'Page #1');
 define('_profil_url2', 'Page #2');
 define('_profil_url3', 'Page #3');
 define('_profil_ich', 'Beschreibung');
+
 ## Upload ##
 define('_upload_ext_error', 'Nur jpg, gif oder png Dateien!');
 define('_upload_wrong_size', 'Die ausgew&auml;hlte Datei ist gr&ouml;&szlig;er als zugelassen!');
@@ -1184,10 +1196,10 @@ define('_upload_over_limit', 'Du darfst nicht mehr Bilder hochladen! L&ouml;sche
 define('_upload_file_exists', 'Die angegebene Datei existiert bereits! Benenne die Datei um oder w&auml;hle eine andere Datei aus!');
 define('_upload_head', 'Userbild uploaden');
 define('_upload_userpic_info', 'Nur jpg, gif oder png Dateien mit einer maximalen Gr&ouml;&szlig;e von {$userpicsize}KB!<br />Die empfohlene Gr&ouml;&szlig;e ist 170px * 210px ');
-define('_upload_icons_head', 'GameIcons');
 define('_upload_ava_head', 'Useravatar');
 define('_upload_userava_info', 'Nur jpg, gif oder png Dateien mit einer maximalen Gr&ouml;&szlig;e von {$userpicsize}KB!<br />Die empfohlene Gr&ouml;&szlig;e ist 100px * 100px ');
 define('_upload_newskats_head', 'Kategoriebilder');
+
 ## Unzugeordnet ##
 define('_forum_no_last_post', 'Der letzte Post kann leider nicht angezeigt werden!');
 define('_config_maxwidth', 'Bilder autom. verkleinern');
@@ -1237,6 +1249,7 @@ define('_error_no_access', 'Du hast nicht die n&ouml;tigen Rechte um diesen Bere
 define('_artikel_show_link', '<a href="../artikel/?action=show&amp;id=[id]">[titel]</a>');
 define('_ulist_bday', 'Geburtstag');
 define('_ulist_last_login', 'Letzter Login');
+
 ## Impressum ##
 define('_impressum_head', 'Impressum');
 define('_impressum_autor', 'Autor der Seite');
@@ -1416,7 +1429,6 @@ define('_inhalt', 'Inhalt');
 define('_allow', 'Erlauben');
 define('_deny', 'Verbieten');
 define('_editor_allow_html', 'HTML/BBCODE erlauben?');
-define('_editor_allow_php', 'PHP-Code erlauben?');
 define('_empty_editor_inhalt', 'Du musst einen Text schreiben!');
 define('_site_added', 'Die Seite wurde erfolgreich eingetragen!');
 define('_editor_linkname', 'Link-Name');
@@ -1501,6 +1513,7 @@ define('_profile_added', 'Das Profilfeld wurde erfolgreich hinzugef&uuml;gt!');
 define('_profil_no_name', 'Du musst einen Feldnamen angeben!');
 define('_profil_deleted', 'Das Profilfeld wurde erfolgreich gel&ouml;scht!');
 define('_profile_edited', 'Das Profilfeld wurde erfolgreich editiert!');
+
 ## Misc ##
 define('_error_have_to_be_logged', 'Du musst eingeloggt sein um diese Funktion Nutzen zu k&ouml;nnen!');
 define('_error_invalid_email', 'Du hast eine ung&uuml;ltige Emailadresse angegeben!');
@@ -1518,7 +1531,7 @@ define('_error_back', 'zur&uuml;ck');
 define('_user_dont_exist', 'Der von dir angegebene User existiert nicht!');
 define('_error_fwd', 'weiter');
 define('_error_wrong_permissions', 'Du hast nicht die erforderlichen Rechte um diese Aktion durchzuf&uuml;hren!');
-define('_error_flood_post', 'Du kannst nur alle [sek] Sekunden einen neuen Eintrag schreiben!');
+define('_error_flood_post', 'Du kannst nur alle {$sek} Sekunden einen neuen Eintrag schreiben!');
 define('_empty_titel', 'Du musst einen Titel angeben!');
 define('_empty_eintrag', 'Du musst einen Beitrag schreiben!');
 define('_empty_nick', 'Du musst deinen Nick angeben!');
@@ -1608,8 +1621,6 @@ define('_linkname', 'Linkname');
 define('_url', 'URL');
 define('_admin', 'Admin');
 define('_hits', 'Zugriffe');
-define('_map', 'Map');
-define('_game', 'Game');
 define('_autor', 'Autor');
 define('_yes', 'Ja');
 define('_no', 'Nein');
@@ -1621,7 +1632,6 @@ define('_comment_deleted', 'Der Kommentar wurde erfolgreich gel&ouml;scht!');
 define('_stichwort', 'Stichwort');
 define('_eintragen_titel', 'Eintragen');
 define('_titel', 'Titel');
-define('_bbcode', 'BBCode');
 define('_answer', 'Antwort');
 define('_eintrag', 'Eintrag');
 define('_weiter', 'weiter');
@@ -1634,16 +1644,6 @@ define('_wartungsmodus', 'Die Webseite ist momentan wegen Wartungsarbeiten gesch
 Bitte versuche es in ein paar Minuten erneut!');
 define('_wartungsmodus_head', 'Wartungsmodus');
 define('_kalender', 'Kalender');
-define('_ts_os', 'Betriebsystem');
-define('_ts_uptime', 'Uptime');
-define('_ts_channels', 'Channels');
-define('_ts_user', 'User');
-define('_ts_users_head', 'User Informationen');
-define('_ts_player', 'User');
-define('_ts_channel', 'Channel');
-define('_ts_logintime', 'Eingeloggt seit');
-define('_ts_idletime', 'AFK seit');
-define('_ts_channel_head', 'Channel Informationen');
 define('_config_tmpdir', 'Standardtemplate');
 define('_navi_info', 'Alle in "_" eingebetteten Linknamen (wie _admin_) sind Platzhalter, die f&uuml;r die jeweiligen &Uuml;bersetzungen ben&ouml;tigt werden!');
 define('_member_admin_intnews', 'Interne News sehen');

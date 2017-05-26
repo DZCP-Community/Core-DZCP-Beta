@@ -45,7 +45,7 @@ class notification {
 
     public static function get($index='global',$tr=false) {
         $notification = '';
-        self::$smarty = common::getSmarty();
+        self::$smarty = common::getSmarty(true);
         self::$smarty->caching = false;
         if(array_key_exists(strval($index),self::$notification_index) &&
             count(self::$notification_index[$index]) >= 1) {
@@ -63,6 +63,7 @@ class notification {
             }
         }
 
+        self::$smarty->clearAllAssign();
         return ($tr ? '<tr><td class="contentMainFirst" colspan="2" align="center">'.$notification.'</td></tr>' : $notification);
     }
 

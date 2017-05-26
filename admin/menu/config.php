@@ -57,7 +57,6 @@ if($_POST) {
     if(settings::changed(($key='badwords'),($var=stringParser::encode($_POST['badwords'])))) settings::set($key,$var);
     if(settings::changed(($key='regcode'),($var=(int)($_POST['regcode'])))) settings::set($key,$var);
     if(settings::changed(($key='forum_vote'),($var=(int)($_POST['forum_vote'])))) settings::set($key,$var);
-    if(settings::changed(($key='reg_forum'),($var=(int)($_POST['reg_forum'])))) settings::set($key,$var);
     if(settings::changed(($key='reg_artikel'),($var=(int)($_POST['reg_artikel'])))) settings::set($key,$var);
     if(settings::changed(($key='reg_newscomments'),($var=(int)($_POST['reg_nc'])))) settings::set($key,$var);
     if(settings::changed(($key='reg_dl'),($var=(int)($_POST['reg_dl'])))) settings::set($key,$var);

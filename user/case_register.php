@@ -22,7 +22,7 @@ if(defined('_UserMenu')) {
         // POST
         // ########################################
 
-        if ($do == "add" && !common::$chkMe && common::isIP(common::visitorIp())) {
+        if ($do == "add" && !common::$chkMe && common::isIP(common::visitorIp()) && !common::$CrawlerDetect->isCrawler()) {
             $check_user = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `user`= ?;",
                 array(stringParser::encode($_POST['user'])));
 

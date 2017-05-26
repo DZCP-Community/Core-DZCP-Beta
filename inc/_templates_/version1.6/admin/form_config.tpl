@@ -441,15 +441,6 @@
   <td>
     <table class="hperc" cellspacing="0">
       <tr>
-        <td class="contentMainTop" style="width:180px"><span class="fontBold">{lang msgID="forum"}:</span></td>
-        <td class="contentMainFirst info" align="center">
-          <select name="reg_forum" class="dropdown">
-            <option value="0">{lang msgID="no"}</option>
-            <option value="1" {$selr_forum}>{lang msgID="yes"}</option>
-          </select>
-        </td>
-      </tr>
-      <tr>
         <td class="contentMainTop"><span class="fontBold">{lang msgID="admin_nc"}:</span></td>
         <td class="contentMainFirst info" align="center">
           <select name="reg_nc" class="dropdown">

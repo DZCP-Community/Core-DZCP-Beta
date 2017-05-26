@@ -15,7 +15,7 @@
         {$threads}
         <tr align="center">
             <td class="forumTD" colspan="6">
-                <form method="post" action="?action=show&kid={$kid}&id={$id}">
+                <form method="post" action="?action=show&kid={$kid}">
                     <span class="gensmall">{lang msgID="forum_sort_by"}</span>
                     <select name="sortby" id="sk">
                         {$sorts_options_sortby}

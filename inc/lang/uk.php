@@ -184,6 +184,8 @@ define("_forum_sort_descending", 'Descending');
 define("_forum_sort_ascending", 'Ascending');
 define("_forum_go", 'Go');
 define("_forum_from", 'From');
+define('_forum_admin_closed' , 'Close vote');
+define("_forum_admin_editby", 'der Nachricht "<span class="fontWichtig">zuletzt editiert</span>" anh&auml;ngen?');
 
 //Startpage
 define('_profil_startpage', 'Startseite');
@@ -315,7 +317,7 @@ define('_admin_squads_no_navi' , 'Don\'t show');
 define('_config_cache_info' , 'here you can set intervals, when teamspeak and gamserver will be reloaded. Outherwise the informations will be read from the cache.');
 define('_config_direct_refresh' , 'Direct Forward');
 define('_config_direct_refresh_info' , 'If activated, the site will be forwarded directly, instead of showing the status information.');
-define('_eintrag_titel_forum' , '<a href="[url]" title="Show this post"><span class="fontBold">#[postid]</span></a> at [datum] on [zeit]  [edit] [delete]');
+define('_eintrag_titel_forum' , '<a href="{$url}" title="Show this post"><span class="fontBold">#{$postid}</span></a> at {$datum} on {$zeit}{lang msgID="uhr"} {$edit} {$delete}');
 define('_eintrag_titel' , '<span class="fontBold">#{$postid}</span> at {$datum} on {$zeit}{lang msgID="uhr"} {$edit} {$delete}');
 
 ## ADDED / REDEFINED FOR 1.5.1
@@ -584,7 +586,7 @@ define('_member_admin_votes' , 'View internal votes');
 define('_member_admin_votesadmin' , 'Admin: Votes');
 define('_msg_global_all' , 'all members');
 define('_pos_empty_kat' , 'You have to indicate a position!');
-define('_forum_lastpost' , '<a href="?action=showthread&amp;id=[tid]&amp;page=[page]#p[id]"><img src="../inc/images/forum_lpost.gif" alt="" title="Go to the last entry" class="icon" /></a>');
+define('_forum_lastpost' , '<a href="?action=showthread&amp;id={$tid}&amp;page={$page}#p{$id}"><img src="../inc/images/forum_lpost.gif" alt="" title="Go to the last entry" class="icon" /></a>');
 define('_forum_addpost' , '<a href="?action=post&amp;do=add&amp;kid=[kid]&amp;id=[id]"><img src="../inc/images/forum_reply.gif" alt="" title="New entry" class="icon" /></a>');
 define('_pn_write' , '{$nick} a new message');
 //--------------------------------------------\\
@@ -862,7 +864,7 @@ define('_forum_newpost_successful' , 'The post was successfully registered to th
 define('_posted_by' , '<span class="fontBold">&raquo;</span> ');
 define('_forum_post_where' , '<a href="../forum/">[mainkat]</a> <span class="fontBold">Board:</span> <a href="?action=show&amp;id=[kid]">[wherekat]</a> <span class="fontBold">Thread:</span> <a href="?action=showthread&amp;id=[tid]">[wherepost]</a>');
 define('_forum_lpostlink' , 'Last post');
-define('_forum_user_posts' , '<span class="fontBold">posts:</span> [posts]');
+define('_forum_user_posts' , '<span class="fontBold">posts:</span> {$posts}');
 define('_sig' , '<br /><br /><hr />');
 define('_error_forum_closed' , 'This thread is closed!');
 define('_forum_search_head' , 'Board search');
@@ -1543,7 +1545,7 @@ define('_error_back' , 'back');
 define('_user_dont_exist' , 'The requested user does not exist!');
 define('_error_fwd' , 'forward');
 define('_error_wrong_permissions' , 'You don`t have the right permissions to do this!');
-define('_error_flood_post' , 'You just can write a new entry every [sek] seconds!');
+define('_error_flood_post' , 'You just can write a new entry every {$sek} seconds!');
 define('_empty_titel' , 'You have to indicate a title!');
 define('_empty_eintrag' , 'You have to indicate an entry!');
 define('_empty_nick' , 'You have to indicate a nick!');
@@ -1646,7 +1648,6 @@ define('_comment_deleted' , 'The comment was successfullydeleted!');
 define('_stichwort' , 'Keyword');
 define('_eintragen_titel' , 'insert');
 define('_titel' , 'Title');
-define('_bbcode' , 'BBCode');
 define('_answer' , 'Answer');
 define('_eintrag' , 'Entry');
 define('_weiter' , 'forward');

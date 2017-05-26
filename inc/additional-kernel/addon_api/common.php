@@ -6,9 +6,12 @@
 
 define('DZCPApi', true);
 
+//Base Class
+require_once(basePathAPI.'/libs/event.class.php');
+
 //-> Neue PHP Liberty's oder Classen einbinden
 if($libs_files = common::get_files(basePathAPI.'/libs/',false,true, ['php'])) {
     foreach($libs_files AS $func)
-    { require_once(basePathAPI.'/libs/'.$func); }
+    { if($func != 'event.class.php') require_once(basePathAPI.'/libs/'.$func); }
     unset($libs_files,$func);
 }

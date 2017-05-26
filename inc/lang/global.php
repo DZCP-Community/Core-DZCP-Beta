@@ -71,11 +71,9 @@ define('_newsc_delete', '<a href="?action=show&amp;id=[id]&amp;do=delete&cid=[ci
 ## News ##
 define('_news_show_link', '<a href="../news/?action=show&amp;id=[id]">[titel]</a>');
 ## Forum ##
-define('_forum_dowhat_add_thread', 'addthread&amp;kid=[kid]');
 define('_forum_add_lastpost', '?action=showthread&amp;id=[tid]&amp;page=[page]#p[id]');
 define('_forum_dowhat_add_post', 'addpost&amp;kid=[kid]&amp;id=[id]');
 define('_forum_avatar', '<img src="../inc/images/uploads/useravatare/[id].[endung]" border="1" width="100" height="100" alt="" />');
-define('_forum_dowhat_edit_thread', 'editthread&amp;id=[id]');
 define('_forum_dowhat_edit_post', 'editpost&amp;id=[id]');
 define('_forum_select_field_kat', '<option value="[value]" class="dropdownKat">[what]</option> [skat]');
 define('_forum_select_field_skat', '<option value="[value]">-> [what]</option>');

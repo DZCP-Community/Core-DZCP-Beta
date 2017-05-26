@@ -254,25 +254,26 @@ CREATE TABLE `dzcp_forumsubkats` (
 -- ----------------------------
 DROP TABLE IF EXISTS `dzcp_forumthreads`;
 CREATE TABLE `dzcp_forumthreads` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL,
   `kid` int(10) NOT NULL DEFAULT '0',
   `t_date` int(20) NOT NULL DEFAULT '0',
-  `topic` varchar(249) CHARACTER SET utf8 NOT NULL DEFAULT '',
-  `subtopic` varchar(100) CHARACTER SET utf8 NOT NULL DEFAULT '',
-  `t_nick` varchar(50) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `topic` varchar(249) NOT NULL DEFAULT '',
+  `subtopic` varchar(100) NOT NULL DEFAULT '',
+  `t_nick` varchar(100) NOT NULL DEFAULT '',
   `t_reg` int(11) NOT NULL DEFAULT '0',
-  `t_email` varchar(100) CHARACTER SET utf8 NOT NULL DEFAULT '',
-  `t_text` text CHARACTER SET utf8,
+  `t_email` varchar(100) NOT NULL DEFAULT '',
+  `t_text` text,
   `hits` int(10) NOT NULL DEFAULT '0',
   `first` int(1) NOT NULL DEFAULT '0',
-  `lp` int(20) NOT NULL DEFAULT '0',
+  `lp` int(11) NOT NULL DEFAULT '0',
   `sticky` int(1) NOT NULL DEFAULT '0',
   `closed` int(1) NOT NULL DEFAULT '0',
   `global` int(1) NOT NULL DEFAULT '0',
-  `edited` text CHARACTER SET utf8,
-  `ip` varchar(15) CHARACTER SET utf8 NOT NULL DEFAULT '0.0.0.0',
-  `t_hp` varchar(249) CHARACTER SET utf8 NOT NULL DEFAULT '',
-  `vote` varchar(10) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `edited` text,
+  `ip` varchar(15) NOT NULL DEFAULT '0.0.0.0',
+  `t_hp` varchar(249) NOT NULL DEFAULT '',
+  `vote` int(11) NOT NULL DEFAULT '0',
+  `posts` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `kid` (`kid`) USING BTREE,
   KEY `lp` (`lp`) USING BTREE,
@@ -724,7 +725,6 @@ INSERT INTO dzcp_settings VALUES (null, 'prev', 'ijgf9i5t', 'hs4', '3', 'string'
 INSERT INTO dzcp_settings VALUES (null, 'regcode', '1', '1', '1', 'int');
 INSERT INTO dzcp_settings VALUES (null, 'reg_artikel', '1', '1', '1', 'int');
 INSERT INTO dzcp_settings VALUES (null, 'reg_dl', '1', '1', '1', 'int');
-INSERT INTO dzcp_settings VALUES (null, 'reg_forum', '1', '1', '1', 'int');
 INSERT INTO dzcp_settings VALUES (null, 'reg_newscomments', '1', '1', '1', 'int');
 INSERT INTO dzcp_settings VALUES (null, 'sendmail_path', '/usr/sbin/sendmail', '/usr/sbin/sendmail', '150', 'string');
 INSERT INTO dzcp_settings VALUES (null, 'smtp_hostname', 'master.hammermaps.de', 'localhost', '100', 'string');

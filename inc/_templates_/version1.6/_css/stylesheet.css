@@ -235,7 +235,8 @@ div.sideContent {
 
 /* Index Bereich (Mainframe) */
 div#index {
-    padding:14px
+    padding-left: 10px;
+    padding-right: 10px;
 }
 .index {
     margin:	0 7px;
@@ -617,7 +618,7 @@ td.counterSpace {
 Global styles of the content
 ---------------------------------------------*/
 td.contentHead,td.contentMainTop,td.contentMainFirst,td.contentMainSecond,td.contentBottom,td.contentBottomLeft,td.navHead.box {
-  height: 16px;
+  /*height: 16px;*/
   padding: 3px;
   vertical-align: middle;
 }

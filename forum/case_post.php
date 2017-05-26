@@ -22,19 +22,6 @@ if(defined('_Forum')) {
 
     if($get['reg'] == common::$userid || common::permission("forum"))
     {
-      if($get['reg'] != 0)
-        {
-            $form = show("page/editor_regged", array("nick" => common::autor($get['reg']),
-                                                 "von" => _autor));
-        } else {
-        $form = show("page/editor_notregged", array("nickhead" => _nick,
-                                                    "emailhead" => _email,
-                                                    "hphead" => _hp,
-                                                    "postemail" => stringParser::decode($get['email']),
-                                                                                    "posthp" => stringParser::decode($get['hp']),
-                                                                                    "postnick" => stringParser::decode($get['nick'])));
-      }
-
       $dowhat = show(_forum_dowhat_edit_post, array("id" => $_GET['id']));
       $index = show($dir."/post", array("titel" => _forum_edit_post_head,
                                         "nickhead" => _nick,
@@ -43,7 +30,7 @@ if(defined('_Forum')) {
                                         "id" => $_GET['id'],
                                         "ip" => _iplog_info,
                                         "dowhat" => $dowhat,
-                                        "form" => $form,
+                                        "form" => common::editor_is_reg($get),
                                         "zitat" => $zitat,
                                         "preview" => _preview,
                                         "br1" => "<!--",
@@ -72,21 +59,9 @@ if(defined('_Forum')) {
 
       if($toCheck)
         {
-        if($get['reg'] != 0)
-          {
-          if(empty($_POST['eintrag'])) $error = _empty_eintrag;
-              $form = show("page/editor_regged", array("nick" => common::autor(common::$userid),
-                                                   "von" => _autor));
-          } else {
-          if(!common::$securimage->check($_POST['secure']) && !common::userid()) $error = captcha_mathematic ? _error_invalid_regcode_mathematic : _error_invalid_regcode;
-          elseif(empty($_POST['nick'])) $error = _empty_nick;
-          elseif(empty($_POST['email'])) $error = _empty_email;
-          elseif(!common::check_email($_POST['email'])) $error = _error_invalid_email;
-          elseif(empty($_POST['eintrag']))$error = _empty_eintrag;
-          $form = show("page/editor_notregged", array("nickhead" => _nick,
-                                                      "emailhead" => _email,
-                                                      "hphead" => _hp));
-        }
+
+          if(empty($_POST['eintrag']))
+              $error = _empty_eintrag;
 
         $error = show("errors/errortable", array("error" => $error));
         $dowhat = show(_forum_dowhat_edit_post, array("id" => $_GET['id']));
@@ -96,7 +71,7 @@ if(defined('_Forum')) {
                                           "preview" => _preview,
                                                                             "emailhead" => _email,
                                           "zitat" => $zitat,
-                                          "form" => $form,
+                                          "form" => common::editor_is_reg(array('reg'=>common::$userid)),
                                           "dowhat" => $dowhat,
                                           "security" => _register_confirm,
                                           "what" => _button_value_edit,
@@ -128,35 +103,8 @@ if(defined('_Forum')) {
                        `edited` = '".stringParser::encode($editedby)."'
                    WHERE id = '".(int)($_GET['id'])."'");
 
-      $checkabo = common::$sql['default']->select("SELECT s1.user,s1.fid,s2.nick,s2.id,s2.email FROM {prefix_forum_abo} AS s1
-                        LEFT JOIN `{prefix_users}` AS s2 ON s2.id = s1.user
-                      WHERE s1.fid = '".$getp['sid']."'");
-      foreach($checkabo as $getabo) {
-        if(common::$userid != $getabo['user'])
-        {
-          $gettopic = common::$sql['default']->fetch("SELECT topic FROM `{prefix_forumthreads}` WHERE id = '".$getp['sid']."'");
+          send_forum_abo(false, $getp['sid'],$_POST['eintrag'],true);
 
-            $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ".$getp['sid']);
-
-            if($entrys == "0") $pagenr = "1";
-            else $pagenr = ceil($entrys/settings::get('m_fposts'));
-
-          $subj = show(stringParser::decode(settings::get('eml_fabo_pedit_subj')), array("titel" => $title));
-
-           $message = show(common::bbcode_email(settings::get('eml_fabo_pedit')), array("nick" => stringParser::decode($getabo['nick']),
-                                                               "postuser" => common::fabo_autor(common::$userid),
-                                                            "topic" => $gettopic['topic'],
-                                                            "titel" => $title,
-                                                            "domain" => common::$httphost,
-                                                            "id" => $getp['sid'],
-                                                            "entrys" => $entrys+1,
-                                                            "page" => $pagenr,
-                                                            "text" => bbcode::parse_html($_POST['eintrag']),
-                                                            "clan" => settings::get('clanname')));
-
-            common::sendMail(stringParser::decode($getabo['email']),$subj,$message);
-        }
-      }
         $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ".$getp['sid']);
 
         if($entrys == "0") $pagenr = "1";
@@ -172,7 +120,7 @@ if(defined('_Forum')) {
       $index = common::error(_error_wrong_permissions, 1);
     }
   } elseif($do == "add") {
-    if(settings::get("reg_forum") && !common::$chkMe)
+    if(!common::$chkMe)
     {
       $index = common::error(_error_unregistered,1);
     } else {
@@ -382,16 +330,6 @@ if(defined('_Forum')) {
                                                              "lp" => common::cnt("{prefix_forumposts}", " WHERE sid = '".(int)($_GET['id'])."'")+1));
           }
 
-          if(common::$userid >= 1)
-            {
-                $form = show("page/editor_regged", array("nick" => common::autor(common::$userid),
-                                                     "von" => _autor));
-            } else {
-            $form = show("page/editor_notregged", array("nickhead" => _nick,
-                                                        "emailhead" => _email,
-                                                        "hphead" => _hp));
-          }
-
           $gett = common::$sql['default']->fetch("SELECT `topic` FROM `{prefix_forumthreads}` WHERE kid = '".(int)($_GET['kid'])."' AND id = '".(int)($_GET['id'])."'");
           $where = $where.' - '.stringParser::decode($gett['topic']);
           $index = show($dir."/post", array("titel" => _forum_new_post_head,
@@ -404,7 +342,7 @@ if(defined('_Forum')) {
                                             "preview" => _preview,
                                             "lastpost" => $lastpost,
                                             "bbcodehead" => _bbcode,
-                                            "form" => $form,
+                                            "form" => common::editor_is_reg(array('reg'=>common::$userid)),
                                             "br1" => "",
                                             "security" => _register_confirm,
                                             "ip" => _iplog_info,
@@ -421,7 +359,12 @@ if(defined('_Forum')) {
                                             "posteintrag" => ""));
         }
       } else {
-        $index = common::error(show(_error_flood_post, array("sek" => settings::get('f_forum'))), 1);
+          $smarty->caching = false;
+          $smarty->assign('sek',settings::get('f_forum'));
+          $error = $smarty->fetch('string:'._error_flood_post);
+          $smarty->clearAllAssign();
+          $index = common::error($error);
+          unset($error);
       }
     }
   } elseif($do == "addpost") {
@@ -430,7 +373,7 @@ if(defined('_Forum')) {
         {
             $index = common::error(_id_dont_exist,1);
         } else {
-            if(settings::get("reg_forum") && !common::$chkMe)
+            if(!common::$chkMe)
             {
                 $index = common::error(_error_unregistered,1);
             } else {
@@ -448,21 +391,8 @@ if(defined('_Forum')) {
 
                 if($toCheck)
                 {
-                    if(common::$userid >= 1)
-                    {
-                        if(empty($_POST['eintrag'])) $error = _empty_eintrag;
-                        $form = show("page/editor_regged", array("nick" => common::autor(common::$userid),
-                                                                                                         "von" => _autor));
-                    } else {
-                        if(!common::$securimage->check($_POST['secure'])) $error = captcha_mathematic ? _error_invalid_regcode_mathematic : _error_invalid_regcode;
-                        elseif(empty($_POST['nick'])) $error = _empty_nick;
-                        elseif(empty($_POST['email'])) $error = _empty_email;
-                        elseif(!common::check_email($_POST['email'])) $error = _error_invalid_email;
-                        elseif(empty($_POST['eintrag'])) $error = _empty_eintrag;
-                        $form = show("page/editor_notregged", array("nickhead" => _nick,
-                                                                                                                "emailhead" => _email,
-                                                                                                                "hphead" => _hp));
-                    }
+                    if(empty($_POST['eintrag']))
+                        $error = _empty_eintrag;
 
                     $error = show("errors/errortable", array("error" => $error));
                     $dowhat = show(_forum_dowhat_add_post, array("id" => $_GET['id'],
@@ -636,7 +566,7 @@ if(defined('_Forum')) {
                                                                                         "zitat" => $zitat,
                                                                                         "what" => _button_value_add,
                                                                                         "preview" => _preview,
-                                                                                        "form" => $form,
+                                                                                        "form" => common::editor_is_reg(array('reg'=>common::$userid)),
                                                                                         "br1" => "",
                                                                                         "br2" => "",
                                                                                         "security" => _register_confirm,
@@ -740,36 +670,8 @@ if(defined('_Forum')) {
                                                 SET `forumposts` = forumposts+1
                                                 WHERE `user`       = '".common::$userid."'");
 
-                    $checkabo = common::$sql['default']->select("SELECT s1.user,s1.fid,s2.nick,s2.id,s2.email FROM {prefix_forum_abo} AS s1
-                                    LEFT JOIN `{prefix_users}` AS s2 ON s2.id = s1.user
-                                                    WHERE s1.fid = '".(int)($_GET['id'])."'");
-                    
-                    foreach($checkabo as $getabo) {
-                        if(common::$userid != $getabo['user'])
-                        {
-                            $gettopic = common::$sql['default']->fetch("SELECT topic FROM `{prefix_forumthreads}` WHERE id = '".(int)($_GET['id'])."'");
 
-                            $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ".(int)($_GET['id']));
-
-                            if($entrys == "0") $pagenr = "1";
-                            else $pagenr = ceil($entrys/settings::get('m_fposts'));
-
-                            $subj = show(settings::get('eml_fabo_npost_subj'), array("titel" => $title));
-
-                            $message = show(common::bbcode_email(settings::get('eml_fabo_npost')), array("nick" => stringParser::decode($getabo['nick']),
-                                                                            "postuser" => common::fabo_autor(common::$userid),
-                                                                            "topic" => $gettopic['topic'],
-                                                                            "titel" => $title,
-                                                                            "domain" => common::$httphost,
-                                                                            "id" => (int)($_GET['id']),
-                                                                            "entrys" => $entrys+1,
-                                                                            "page" => $pagenr,
-                                                                            "text" => bbcode::parse_html($_POST['eintrag']),
-                                                                            "clan" => settings::get('clanname')));
-
-                            common::sendMail(stringParser::decode($getabo['email']),$subj,$message);
-                        }
-                    }
+                    send_forum_abo(false, (int)($_GET['id']),$_POST['eintrag']);
 
                     $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ".(int)($_GET['id']));
 

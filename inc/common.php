@@ -205,25 +205,7 @@ class common {
         }
 
         //Smarty Template-system
-        self::$smarty = new Smarty;
-        self::$smarty->force_compile = true;
-        self::$smarty->debugging = false;
-        self::$smarty->caching = false;
-        self::$smarty->cache_lifetime = 120;
-        self::$smarty->allow_php_templates = true;
-
-        self::$smarty->setTemplateDir(basePath.'/inc/_templates_')
-            ->setCompileDir(basePath.'/inc/_templates_c_')
-            ->setCacheDir(basePath.'/inc/_cache_')
-            ->setPluginsDir([basePath.'/inc/plugins',
-                basePath.'/vendor/smarty/libs/plugins'])
-            ->setConfigDir(basePath.'/inc/configs');
-
-        if($folders = self::get_files(basePath.'/inc/_templates_',true)) {
-            foreach($folders as $folder) {
-                self::$smarty->addTemplateDir(basePath.'/inc/_templates_/'.strtolower($folder),strtolower($folder));
-            }
-        }
+        self::$smarty = self::getSmarty(true);
 
         self::check_ip(); // IP Prufung * No IPV6 Support *
 
@@ -412,9 +394,34 @@ class common {
     }
 
     /**
+     * @param bool $new_instance
      * @return null|Smarty
      */
-    public static function getSmarty() {
+    public static function getSmarty(bool $new_instance = false) {
+        if($new_instance) {
+            $smarty = new Smarty;
+            $smarty->force_compile = true;
+            $smarty->debugging = false;
+            $smarty->caching = false;
+            $smarty->cache_lifetime = 120;
+            $smarty->allow_php_templates = true;
+
+            $smarty->setTemplateDir(basePath.'/inc/_templates_')
+                ->setCompileDir(basePath.'/inc/_templates_c_')
+                ->setCacheDir(basePath.'/inc/_cache_')
+                ->setPluginsDir([basePath.'/inc/plugins',
+                    basePath.'/vendor/smarty/libs/plugins'])
+                ->setConfigDir(basePath.'/inc/configs');
+
+            if($folders = self::get_files(basePath.'/inc/_templates_',true)) {
+                foreach($folders as $folder) {
+                    $smarty->addTemplateDir(basePath.'/inc/_templates_/'.strtolower($folder),strtolower($folder));
+                } unset($folders,$folder);
+            }
+
+            return $smarty;
+        }
+
         return self::$smarty;
     }
 
@@ -437,7 +444,7 @@ class common {
      * @return mixed|string
      */
     public static function autor(int $uid=0,string $class="",string $nick="",string $email="",string $cut="",string $add="") {
-        $smarty = self::getSmarty();
+        $smarty = self::getSmarty(true);
         $uid = (!$uid ? self::$userid : $uid);
         if(!$uid) return '* No UserID! *';
         if(!dbc_index::issetIndex('user_'.(int)($uid))) {
@@ -459,6 +466,7 @@ class common {
         $smarty->assign('get',$add);
         $smarty->assign('nick',$nickname);
         $user = $smarty->fetch('file:['.common::$tmpdir.']user/user_link.tpl');
+        $smarty->clearAllAssign();
         return $user;
     }
 
@@ -480,7 +488,7 @@ class common {
 
         $nickname = (!empty($cut)) ? self::cut(stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick')), $cut) : stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick'));
 
-        $smarty = self::getSmarty();
+        $smarty = self::getSmarty(true);
         $smarty->caching = false;
         $smarty->assign('id',$uid);
         $smarty->assign('country',self::flag(self::data('country',$uid)));
@@ -488,6 +496,7 @@ class common {
         $smarty->assign('color',stringParser::decode($get['color']));
         $smarty->assign('nick',$nickname);
         $autor = $smarty->fetch('file:['.common::$tmpdir.']user/user_link_colerd.tpl');
+        $smarty->clearAllAssign();
         return $autor;
     }
 
@@ -500,7 +509,7 @@ class common {
      */
     public static function cleanautor(int $uid=0, $class="", $nick="", $email="") {
         /* TODO: Replace dbc_index */
-        $smarty = self::getSmarty();
+        $smarty = self::getSmarty(true);
 
         if(!dbc_index::issetIndex('user_'.(int)($uid))) {
             $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [(int)($uid)]);
@@ -517,6 +526,7 @@ class common {
         $smarty->assign('class',$class);
         $smarty->assign('nick',stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick')));
         $user = $smarty->fetch('file:['.common::$tmpdir.']user/user_link_preview.tpl');
+        $smarty->clearAllAssign();
         return $user;
     }
 
@@ -632,7 +642,7 @@ class common {
      * @return mixed|string
      */
     public static function error(string $error,int $back=3) {
-        $smarty = self::getSmarty();
+        $smarty = self::getSmarty(true);
         $smarty->caching = false;
         $smarty->assign('error',$error);
         $smarty->assign('back',$back);
@@ -978,7 +988,7 @@ class common {
      * @return string
      */
     public static function dropdown_date(string $day, string $month, string $year) {
-        $smarty = self::getSmarty();
+        $smarty = self::getSmarty(true);
         $smarty->caching = false;
         $smarty->assign('day',$day);
         $smarty->assign('month',$month);
@@ -994,7 +1004,7 @@ class common {
      * @return string
      */
     public static function dropdown_time(string $hour, string $minute) {
-        $smarty = self::getSmarty();
+        $smarty = self::getSmarty(true);
         $smarty->caching = false;
         $smarty->assign('hour',$hour);
         $smarty->assign('minute',$minute);
@@ -1010,18 +1020,14 @@ class common {
      * @return string
      */
     public static function voteanswer(string $what, int $vid) {
-        if(dbc_index::issetIndex('vote_results_'.$vid)) {
-            $data = dbc_index::getIndex('vote_results_'.$vid);
-        } else {
-            $data = self::$sql['default']->select("SELECT `what`,`sel` FROM `{prefix_vote_results}` WHERE `vid` = ?;", [(int)($vid)]);
-            dbc_index::setIndex('vote_results_'.$vid, $data);
-        }
-
+        //TODO: Cache
+        $data = self::$sql['default']->select("SELECT `what`,`sel` FROM `{prefix_vote_results}` WHERE `vid` = ?;", [(int)($vid)]);
         foreach ($data as $value) {
             if(strtolower($value['what']) == strtolower($what)) {
                 return $value['sel'];
             }
         }
+
         return '';
     }
 
@@ -1145,7 +1151,7 @@ class common {
      */
     public static function getButtonEditSingle(int $id=0,string $action='',string $title=_button_title_edit)
     {
-        $smarty = self::getSmarty(); //Use Smarty
+        $smarty = self::getSmarty(true); //Use Smarty
         $smarty->caching = true;
         $smarty->assign('id', $id);
         $smarty->assign('action', $action);
@@ -1454,7 +1460,8 @@ class common {
      * @param int $tid
      * @return string
      */
-    public static function onlinecheck(int $tid) {
+    public static function onlinecheck(int $tid = 0) {
+        $tid = !$tid ? self::$userid : $tid;
         $row = self::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `id` = ? AND (time+1800)>? AND `online` = 1;", [(int)($tid),time()]);
         return $row ? "<img src=\"../inc/images/online.png\" alt=\"\" class=\"icon\" />" : "<img src=\"../inc/images/offline.png\" alt=\"\" class=\"icon\" />";
     }
@@ -1463,7 +1470,8 @@ class common {
      * Session fuer den letzten Besuch setzen
      * @param int $userid
      */
-    public static function set_lastvisit(int $userid) {
+    public static function set_lastvisit(int $userid = 0) {
+        $userid = !$userid ? self::$userid : $userid;
         if(!self::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `id` = ? AND (time+1800)>?;", [(int)($userid),time()])) {
             $_SESSION['lastvisit'] = (int)(self::data("time"));
         }
@@ -1830,7 +1838,7 @@ class common {
      * @return string
      */
     public static function CryptMailto(string $email='',string $template=_emailicon,array $custom= []) {
-        $smarty = self::getSmarty(); //Use Smarty
+        $smarty = self::getSmarty(true); //Use Smarty
         if(empty($template) || empty($email) || !self::permission("editusers")) return '';
         $character_set = '+-.0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz';
         $key = str_shuffle($character_set); $cipher_text = ''; $id = 'e'.rand(1,999999999);
@@ -2084,9 +2092,11 @@ class common {
     public static function check_msg() {
         if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_messages}` WHERE `an` = ? AND `page` = 0;", [(int)($_SESSION['id'])])) {
             self::$sql['default']->update("UPDATE `{prefix_messages}` SET `page` = 1 WHERE `an` = ?;", [(int)($_SESSION['id'])]);
-            $smarty = self::getSmarty();
+            $smarty = self::getSmarty(true);
             $smarty->caching = false;
-            return $smarty->fetch('file:['.common::$tmpdir.']user/msg/new_msg.tpl');
+            $msg = $smarty->fetch('file:['.common::$tmpdir.']user/msg/new_msg.tpl');
+            $smarty->clearAllAssign();
+            return $msg;
         }
 
         return '';
@@ -2190,6 +2200,7 @@ class common {
      * @return bool
      */
     public static function permission(string $check,int $uid=0) {
+        //TODO: Add Live Cache
         if (!$uid) { $uid = self::$userid; }
         if(self::rootAdmin($uid))
             return true;
@@ -2280,7 +2291,7 @@ class common {
             $u['path'] = '';
         }
 
-        $smarty = self::getSmarty();
+        $smarty = self::getSmarty(true);
         $smarty->caching = false;
         $smarty->assign('msg',$msg);
         $smarty->assign('url',$u['path']);
@@ -2389,9 +2400,37 @@ class common {
      * @param string $what
      * @return string
      */
+    public static function editor_is_reg(array $get = array()) {
+        $get['reg'] = (array_key_exists('reg',$get) ? $get['reg'] : array_key_exists('t_reg',$get) ? $get['t_reg'] : 0); //Fix for thread/post
+        $smarty = self::getSmarty(true);
+        $smarty->caching = false;
+        if($get['reg'] != 0) {
+            $smarty->assign('nick',self::autor($get['reg']));
+            $editor = $smarty->fetch('file:['.common::$tmpdir.']page/editor_regged.tpl');
+        } else {
+            if(!array_key_exists('email',$get)) { $get['email'] = array_key_exists('t_email',$get) ? $get['t_email'] : ''; } //Fix for thread/post
+            if(!array_key_exists('hp',$get)) { $get['hp'] = array_key_exists('t_hp',$get) ? $get['t_hp'] : ''; } //Fix for thread/post
+            if(!array_key_exists('nick',$get)) { $get['nick'] = array_key_exists('t_nick',$get) ? $get['t_nick'] : ''; } //Fix for thread/post
+            $smarty->assign('postemail',stringParser::decode($get['email']));
+            $smarty->assign('posthp',stringParser::decode($get['hp']));
+            $smarty->assign('postnick',stringParser::decode($get['nick']));
+            $editor = $smarty->fetch('file:['.common::$tmpdir.']page/editor_notregged.tpl');
+        }
+
+        $smarty->clearAllAssign();
+        return $editor;
+    }
+
+    /**
+     * Generiert die Select-Felder für ein Dropdown Menu
+     * @param string $value
+     * @param bool $is_selected
+     * @param string $what
+     * @return string
+     */
     public static function select_field(string $value,bool $is_selected=false,string $what) {
         $sel = ($is_selected ? ' selected="selected"' : '');
-        $smarty = self::getSmarty();
+        $smarty = self::getSmarty(true);
         $smarty->caching = false;
         $smarty->assign('value',$value);
         $smarty->assign('sel',$sel);
@@ -2409,7 +2448,7 @@ class common {
      * @return string
      */
     public static function button_delete_single(string $id,string $action,string $title=_button_title_del,string $del=_confirm_del_entry) {
-        $smarty = self::getSmarty();
+        $smarty = self::getSmarty(true);
         $smarty->caching = false;
         $smarty->assign('id',$id);
         $smarty->assign('action',$action);
@@ -2676,7 +2715,7 @@ class common {
 
             //init templateswitch
             $tmpldir=""; $tmps = self::get_files(basePath.'/inc/_templates_/',true);
-            $smarty = self::getSmarty();
+            $smarty = self::getSmarty(true);
             foreach ($tmps as $tmp) {
                 $selt = (self::$tmpdir == $tmp ? 'selected="selected"' : '');
                 $smarty->caching = false;
