@@ -30,7 +30,10 @@ switch ($do) {
                 elseif(empty($_POST['a2']))   
                     $error = _empty_votes_answer;
 
-                $error = show("errors/errortable", array("error" => $error));
+                $smarty->caching = false;
+                $smarty->assign('error',$error);
+                $error = $smarty->fetch('file:['.common::$tmpdir.']errors/errortable.tpl');
+                $smarty->clearAllAssign();
             } else {
                 common::$sql['default']->insert("INSERT INTO `{prefix_votes}` SET `datum` = ?, `titel` = ?, `intern` = ?, `von` = ?",
                       array(time(),stringParser::encode($_POST['question']),(int)($_POST['intern']),(int)(common::$userid)));
@@ -48,25 +51,28 @@ switch ($do) {
         }
         
         $intern = (isset($_POST['intern']) ? 'checked="checked"' : '');
-        $show = show($dir."/form_vote", array("head" => _votes_admin_head,
-                                              "value" => _button_value_add,
-                                              "what" => "&amp;do=add",
-                                              "question1" => isset($_POST['question']) ? $_POST['question'] : '',
-                                              "a1" => isset($_POST['a1']) ? $_POST['a1'] : '',
-                                              "closed" => "",
-                                              "br1" => "<!--",
-                                              "br2" => "-->",
-                                              "a2" => isset($_POST['a2']) ? $_POST['a2'] : '',
-                                              "a3" => isset($_POST['a3']) ? $_POST['a3'] : '',
-                                              "a4" => isset($_POST['a4']) ? $_POST['a4'] : '',
-                                              "a5" => isset($_POST['a5']) ? $_POST['a5'] : '',
-                                              "a6" => isset($_POST['a6']) ? $_POST['a6'] : '',
-                                              "a7" => isset($_POST['a7']) ? $_POST['a7'] : '',
-                                              "error" => $error,
-                                              "a8" => isset($_POST['a8']) ? $_POST['a8'] : '',
-                                              "a9" => isset($_POST['a9']) ? $_POST['a9'] : '',
-                                              "a10" => isset($_POST['a10']) ? $_POST['a10'] : '',
-                                              "intern" => $intern));
+        $smarty->caching = false;
+        $smarty->assign('head',_votes_admin_head);
+        $smarty->assign('value',_button_value_add);
+        $smarty->assign('what',"&amp;do=add");
+        $smarty->assign('question1',isset($_POST['question']) ? $_POST['question'] : '');
+        $smarty->assign('a1', isset($_POST['a1']) ? $_POST['a1'] : '');
+        $smarty->assign('closed','');
+        $smarty->assign('br1',"<!--");
+        $smarty->assign('br2', "-->");
+        $smarty->assign('a2',isset($_POST['a2']) ? $_POST['a2'] : '');
+        $smarty->assign('a3',isset($_POST['a3']) ? $_POST['a3'] : '');
+        $smarty->assign('a4',isset($_POST['a4']) ? $_POST['a4'] : '');
+        $smarty->assign('a5',isset($_POST['a5']) ? $_POST['a5'] : '');
+        $smarty->assign('a6',isset($_POST['a6']) ? $_POST['a6'] : '');
+        $smarty->assign('a7',isset($_POST['a7']) ? $_POST['a7'] : '');
+        $smarty->assign('error',$error);
+        $smarty->assign('a8',isset($_POST['a8']) ? $_POST['a8'] : '');
+        $smarty->assign('a9',isset($_POST['a9']) ? $_POST['a9'] : '');
+        $smarty->assign('a10',isset($_POST['a10']) ? $_POST['a10'] : '');
+        $smarty->assign('intern',$intern);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_vote.tpl');
+        $smarty->clearAllAssign();
     break;
     case 'delete':
         common::$sql['default']->delete("DELETE FROM `{prefix_votes}` WHERE `id` = ?;",array((int)($_GET['id'])));
@@ -104,27 +110,30 @@ switch ($do) {
         $isclosed = ($get['intern'] ? 'checked="checked"' : '');
         $what = "&amp;do=editvote&amp;id=".$_GET['id']."";
 
-        $show = show($dir."/form_vote", array("head" => _votes_admin_edit_head,
-                                              "value" => "edit",
-                                              "id" => $_GET['id'],
-                                              "what" => $what,
-                                              "value" => _button_value_edit,
-                                              "br1" => "",
-                                              "br2" => "",
-                                              "question1" => stringParser::decode($get['titel']),
-                                              "a1" => common::voteanswer("a1",$get['id']),
-                                              "a2" => common::voteanswer("a2",$get['id']),
-                                              "a3" => common::voteanswer("a3",$get['id']),
-                                              "a4" => common::voteanswer("a4",$get['id']),
-                                              "a5" => common::voteanswer("a5",$get['id']),
-                                              "a6" => common::voteanswer("a6",$get['id']),
-                                              "a7" => common::voteanswer("a7",$get['id']),
-                                              "error" => "",
-                                              "a8" => common::voteanswer("a8",$get['id']),
-                                              "a9" => common::voteanswer("a9",$get['id']),
-                                              "a10" => common::voteanswer("a10",$get['id']),
-                                              "intern" => $intern,
-                                              "isclosed" => $isclosed));
+        $smarty->caching = false;
+        $smarty->assign('head',_votes_admin_edit_head);
+        $smarty->assign('value', "edit");
+        $smarty->assign('id',  $_GET['id']);
+        $smarty->assign('what',$what);
+        $smarty->assign('value', _button_value_edit);
+        $smarty->assign('br1',"");
+        $smarty->assign('br2', "");
+        $smarty->assign('question1',stringParser::decode($get['titel']));
+        $smarty->assign('a1', stringParser::decode($get['titel']));
+        $smarty->assign('a2',common::voteanswer("a2",$get['id']));
+        $smarty->assign('a3',common::voteanswer("a3",$get['id']));
+        $smarty->assign('a4',common::voteanswer("a4",$get['id']));
+        $smarty->assign('a5',common::voteanswer("a5",$get['id']));
+        $smarty->assign('a6',common::voteanswer("a6",$get['id']));
+        $smarty->assign('a7',common::voteanswer("a7",$get['id']));
+        $smarty->assign('error','');
+        $smarty->assign('a8',common::voteanswer("a8",$get['id']));
+        $smarty->assign('a9',common::voteanswer("a9",$get['id']));
+        $smarty->assign('a10',common::voteanswer("a10",$get['id']));
+        $smarty->assign('intern',$intern);
+        $smarty->assign('isclosed',$isclosed);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_vote.tpl');
+        $smarty->clearAllAssign();
     break;
     case 'menu':
         if(common::$sql['default']->rows("SELECT `intern` FROM `{prefix_votes}` WHERE `id` = ? AND `intern` = 1;",array((int)($_GET['id'])))) {
@@ -150,14 +159,17 @@ switch ($do) {
 
                 $icon = $get['menu'] ? "yes" : "no";
                 $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-                $show .= show($dir."/votes_show", array("date" => date("d.m.Y",$get['datum']),
-                                                         "vote" => stringParser::decode($get['titel']),
-                                                         "class" => $class,
-                                                         "edit" => $edit,
-                                                         "icon" => $icon,
-                                                         "delete" => $delete,
-                                                         "autor" => common::autor($get['von']),
-                                                         "id" => $get['id']));
+                $smarty->caching = false;
+                $smarty->assign('date',date("d.m.Y",$get['datum']));
+                $smarty->assign('vote',stringParser::decode($get['titel']));
+                $smarty->assign('class',$class);
+                $smarty->assign('edit',$edit);
+                $smarty->assign('icon',$icon);
+                $smarty->assign('delete',$delete);
+                $smarty->assign('autor',common::autor($get['von']));
+                $smarty->assign('id',$get['id']);
+                $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/votes_show.tpl');
+                $smarty->clearAllAssign();
             }
         }
 
@@ -167,7 +179,10 @@ switch ($do) {
             $show = $smarty->fetch('string:'._no_entrys_yet);
             $smarty->clearAllAssign();
         }
-        
-        $show = show($dir."/votes", array("show" => $show));
+
+        $smarty->caching = false;
+        $smarty->assign('show',$show);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/votes.tpl');
+        $smarty->clearAllAssign();
     break;
 }
