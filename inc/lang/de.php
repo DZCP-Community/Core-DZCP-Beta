@@ -470,7 +470,7 @@ define('_comments_edit', 'Kommentar editieren');
 define('_forum_post_where_preview', '<a href="javascript:void(0)">[mainkat]</a> <span class="fontBold">Forum:</span> <a href="javascript:void(0)">[wherekat]</a> <span class="fontBold">Thema:</span> <a href="javascript:void(0)">[wherepost]</a>');
 define('_aktiv_icon', '<img src="../inc/images/active.gif" alt="" class="icon" />');
 define('_inaktiv_icon', '<img src="../inc/images/inactive.gif" alt="" class="icon" />');
-define('_pn_write_forum', '<a href="../user/?action=msg&amp;do=pn&amp;id=[id]"><img src="../inc/images/forum_pn.gif" alt="" title="[nick] eine Nachricht schreiben" class="icon" /></a>');
+define('_pn_write_forum', '<a href="../user/?action=msg&amp;do=pn&amp;id={$id}"><img src="{idir}/forum_pn.gif" alt="" title="{$nick} eine Nachricht schreiben" class="icon" /></a>');
 define('_uhr', '&nbsp;Uhr');
 define('_kalender_admin_head', 'Kalender - Ereignisse');
 define('_preview', 'Vorschau');
@@ -560,7 +560,7 @@ define('_member_admin_votesadmin', 'Admin: Umfragen');
 define('_msg_global_all', 'alle Mitglieder');
 define('_pos_empty_kat', 'Du musst eine Rangbezeichnung angeben!');
 define('_forum_lastpost', '<a href="?action=showthread&amp;id={$tid}&amp;page={$page}#p{$id}"><img src="../inc/images/forum_lpost.gif" alt="" title="Zum letzten Eintrag" class="icon" /></a>');
-define('_forum_addpost', '<a href="?action=post&amp;do=add&amp;kid=[kid]&amp;id=[id]"><img src="../inc/images/forum_reply.gif" alt="" title="Neuer Eintrag" class="icon" /></a>');
+define('_forum_addpost', 'Neuer Eintrag');
 define('_pn_write', 'eine Nachricht schreiben');
 //--------------------------------------------\\
 define('_error_invalid_regcode', 'Der eingegebene Sicherheitsscode stimmt nicht mit der in der Grafik angezeigten Zeichenfolge &uuml;berein!');

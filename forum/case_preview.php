@@ -47,7 +47,7 @@ if(defined('_Forum')) {
         $guestCheck = true;
         $pUId = common::$userid;
       }
-      $tID = $_GET['kid'];
+      $tID = $_SESSION['kid'];
     }
 
     $titel = show(_eintrag_titel_forum, array("postid" => "1",
@@ -134,7 +134,6 @@ if(defined('_Forum')) {
                                              "zitat" => _forum_zitat_preview,
                                              "onoff" => $onoff,
                                              "ip" => common::$userip.'<br />'._only_for_admins,
-                                             "top" => _topicon,
                                              "lpost" => $lpost,
                                              "lp" => "",
                                              "add" => "",

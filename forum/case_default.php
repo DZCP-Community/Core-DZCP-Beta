@@ -17,24 +17,25 @@
 
 if(defined('_Forum')) {
     $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forumkats}` ORDER BY `kid` ASC;");
+    $_SESSION['kid'] = 0;
     foreach($qry as $get) {
         $showt = "";
         $qrys = common::$sql['default']->select("SELECT * FROM `{prefix_forumsubkats}` WHERE `sid` = ? ORDER BY pos;",array($get['id']));
         foreach($qrys as $gets) {
             if($get['intern'] == 0 || ($get['intern'] == 1 && common::forum_intern($gets['id']))) {
                 unset($lpost);
-		$getlt = common::$sql['default']->fetch("SELECT `id`,`kid`,`t_date`,`t_nick`,`t_email`,`t_reg`,`lp`,`first`,`topic` "
-                        . "FROM `{prefix_forumthreads}` "
-                        . "WHERE `kid` = ? "
-                        . "ORDER BY `lp` DESC;",
-                        array($gets['id']));
-                
-		$getlp = common::$sql['default']->fetch("SELECT s1.`kid`,s1.`id`,s1.`date`,s1.`nick`,s1.`reg`,s1.`email`,s2.`kid`,s2.`id`,s2.`t_date`,s2.`lp`,s2.`first` "
-                        . "FROM `{prefix_forumposts}` AS `s1` "
-                        . "LEFT JOIN `{prefix_forumthreads}` AS `s2` "
-                        . "ON s2.`lp` = s1.`date` "
-                        . "WHERE s2.`kid` = ? "
-                        . "ORDER BY s1.`date` DESC;",array($gets['id']));
+                $getlt = common::$sql['default']->fetch("SELECT `id`,`kid`,`t_date`,`t_nick`,`t_email`,`t_reg`,`lp`,`first`,`topic` "
+                                . "FROM `{prefix_forumthreads}` "
+                                . "WHERE `kid` = ? "
+                                . "ORDER BY `lp` DESC;",
+                                array($gets['id']));
+
+                $getlp = common::$sql['default']->fetch("SELECT s1.`kid`,s1.`id`,s1.`date`,s1.`nick`,s1.`reg`,s1.`email`,s2.`kid`,s2.`id`,s2.`t_date`,s2.`lp`,s2.`first` "
+                                . "FROM `{prefix_forumposts}` AS `s1` "
+                                . "LEFT JOIN `{prefix_forumthreads}` AS `s2` "
+                                . "ON s2.`lp` = s1.`date` "
+                                . "WHERE s2.`kid` = ? "
+                                . "ORDER BY s1.`date` DESC;",array($gets['id']));
 
                 $lpost = "-"; $lpdate = 0;
                 if(common::cnt('{prefix_forumthreads}', " WHERE `kid` = ?","id",array($gets['id']))) {
@@ -118,8 +119,7 @@ if(defined('_Forum')) {
                 $smarty->assign('subforum',"");
                 $smarty->assign('threads',$threads);
                 $smarty->assign('posts',$posts+$threads);
-                $smarty->assign('kid',$gets['sid']);
-                $smarty->assign('id',$gets['id']);
+                $smarty->assign('kid',$gets['id']);
                 $showt .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/kats_show.tpl');
                 $smarty->clearAllAssign();
             }

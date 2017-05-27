@@ -66,7 +66,7 @@ if(defined('_Forum')) {
                                 . "FROM `{prefix_forumkats}` AS s1 "
                                 . "LEFT JOIN `{prefix_forumsubkats}` AS s2 "
                                 . "ON s2.`sid` = s1.`id` "
-                                . "WHERE s2.`id` = ?;",[(int)($_GET['kid'])]);
+                                . "WHERE s2.`id` = ?;",[$_SESSION['kid']]);
 
                             $validated_vote_data['closed'] = (array_key_exists($validated_vote_data, 'closed') ? $validated_vote_data['closed'] : 0);
                             if (common::$sql['default']->rows("SELECT `id` FROM `{prefix_votes}` WHERE `id` = ?;", [$get['vote']])) {
@@ -146,7 +146,7 @@ if(defined('_Forum')) {
 
                     send_forum_abo(true, $get['id'],$validated_post_data['eintrag']);
 
-                    $index = common::info(_forum_editthread_successful, "?action=showthread&amp;kid=".(int)$_GET['kid']."&amp;id=" . $get['id']);
+                    $index = common::info(_forum_editthread_successful, "?action=showthread&amp;id=" . $get['id']);
                     unset($validated_post_data);
                 } else {
                     DebugConsole::insert_info('forum/case_thread.php',common::$gump->get_readable_errors(true));
@@ -210,7 +210,6 @@ if(defined('_Forum')) {
                     //Forum thread
                     $smarty->caching = false;
                     $smarty->assign('edit', 1);
-                    $smarty->assign('kid', (int)($_GET['kid']));
                     $smarty->assign('id', (int)($_GET['id']));
                     $smarty->assign('form', common::editor_is_reg($get));
                     $smarty->assign('posttopic', stringParser::decode($get['topic']));
@@ -273,7 +272,7 @@ if(defined('_Forum')) {
                             . "FROM `{prefix_forumkats}` AS s1 "
                             . "LEFT JOIN `{prefix_forumsubkats}` AS s2 "
                             . "ON s2.`sid` = s1.`id` "
-                            . "WHERE s2.`id` = ?;",[(int)($_GET['kid'])]);
+                            . "WHERE s2.`id` = ?;",[$_SESSION['kid']]);
 
                         common::$sql['default']->insert("INSERT INTO `{prefix_votes}` SET `datum`  = ?, `titel`  = ?,".
                             ($fgetvote['intern'] ? " `intern` = 1," : " `intern` = ".(int)($validated_vote_data['intern']).",") . " `forum`  = 1, `von` = ?",
@@ -307,12 +306,12 @@ if(defined('_Forum')) {
                     //Insert thread
                     common::$sql['default']->insert("INSERT INTO `{prefix_forumthreads}` SET `kid` = ?, `t_date` = ?,`topic` = ?, `subtopic` = ?, `t_reg` = ?, `t_text` = ?,".
                         "`sticky` = ?, `global` = ?, `ip` = ?, `vote` = ?, `first` = 1;",
-                        [(int)($_GET['kid']),time(),stringParser::encode($validated_post_data['topic']),stringParser::encode($validated_post_data['subtopic']),
+                        [$_SESSION['kid'],time(),stringParser::encode($validated_post_data['topic']),stringParser::encode($validated_post_data['subtopic']),
                             common::$userid,stringParser::encode($validated_post_data['eintrag']),$validated_post_data['sticky'],$validated_post_data['global'],
                             common::$userip,$vid]);
 
                     $thisFID = common::$sql['default']->lastInsertId(); //Get new thread-id
-                    common::setIpcheck("fid(" . (int)($_GET['kid']) . ")");
+                    common::setIpcheck("fid(" . $_SESSION['kid'] . ")");
                     common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `forumthreads` = (forumthreads+1) WHERE `user` = ?;",[common::$userid]);
 
                     $index = common::info(_forum_newthread_successful, "?action=showthread&amp;id=" . $thisFID . "#p1");
@@ -335,7 +334,7 @@ if(defined('_Forum')) {
              */
 
             if(empty($index)) {
-                if (!common::ipcheck("fid(" . (int)$_GET['kid'] . ")", settings::get('f_forum'))) {
+                if (!common::ipcheck("fid(" . $_SESSION['kid'] . ")", settings::get('f_forum'))) {
                     //Admin Options
                     $admin = "";
                     if (common::permission("forum")) {
@@ -350,7 +349,7 @@ if(defined('_Forum')) {
                     //Forum Vote Public/Intern
                     $fget = common::$sql['default']->fetch("SELECT s1.intern,s2.id FROM `{prefix_forumkats}` AS s1
                        LEFT JOIN `{prefix_forumsubkats}` AS s2 ON s2.`sid` = s1.id
-                       WHERE s2.`id` = ?;", array((int)($_GET['kid'])));
+                       WHERE s2.`id` = ?;", [$_SESSION['kid']]);
 
                     //Forum Vote Form
                     $smarty->caching = false;
@@ -371,7 +370,7 @@ if(defined('_Forum')) {
                     $smarty->caching = false;
                     $smarty->assign('edit', 0);
                     $smarty->assign('id', 0);
-                    $smarty->assign('kid', (int)($_GET['kid']));
+                    $smarty->assign('kid', $_SESSION['kid']);
                     $smarty->assign('form', common::editor_is_reg(array('reg' => common::$userid)));
                     $smarty->assign('posttopic', isset($_POST['topic']) ? stringParser::decode($_POST['topic']) : '');
                     $smarty->assign('postsubtopic', isset($_POST['subtopic']) ? stringParser::decode($_POST['subtopic']) : '');

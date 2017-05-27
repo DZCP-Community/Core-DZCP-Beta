@@ -1,7 +1,7 @@
 </table>
 <script language="javascript" type="text/javascript">
     <!-- Preview -->
-    var dowhat = 'addthread&amp;kid={$kid}', prevURL = '../forum/?action=preview&amp;what=thread&amp;do='+dowhat.replace(/&amp;/g,'&');
+    var prevURL = '../forum/?action=preview&amp;what=thread&amp;do=addthread';
 </script>
 <table class="mainContent" cellspacing="0" style="margin-top:0">
 <tr>

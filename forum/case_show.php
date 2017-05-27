@@ -25,7 +25,7 @@ if(defined('_Forum')) {
             . "LEFT JOIN `{prefix_forumsubkats}` AS `s2` "
             . "ON s2.`sid` = s1.`id` "
             . "WHERE s2.`id` = ?;",
-        [$id=(int)($_GET['kid'])]);
+        [$_SESSION['kid']]);
 
     if($kategorie['intern'] == 1 && (!common::permission("intforum") && !common::forum_intern($kategorie['id']))) {
         $index = common::error(_error_no_access, 1);
@@ -78,7 +78,7 @@ if(defined('_Forum')) {
                     . "WHERE `kid` = ? OR `global` = 1 "
                     . "ORDER BY ".$sortby." "
                     . "LIMIT ".(($page - 1)*settings::get('m_fthreads')).",".settings::get('m_fthreads').";",
-                    array($id));
+                    array($_SESSION['kid']));
             
             $_SESSION['search_type'] = "";
             $entrys = common::$sql['default']->rowCount();
@@ -152,7 +152,6 @@ if(defined('_Forum')) {
             //List Threads
             $smarty->caching = false;
             $smarty->assign('new',common::check_new($get['lp']));
-            $smarty->assign('kid',$kategorie['id']);
             $smarty->assign('id',$get['id']);
             $smarty->assign('frompic',$frompic);
             $smarty->assign('hl',(!empty($_POST['suche']) ? '&amp;hl='.$_POST['suche'] : ''));
@@ -169,13 +168,13 @@ if(defined('_Forum')) {
         }
 
         $smarty->caching = false;
-        $smarty->assign('id',$id);
+        $smarty->assign('id',$_SESSION['kid']);
         $smarty->assign('kid',$kategorie['id']);
         $smarty->assign('suchwort',isset($_POST['suche']) ? $_POST['suche'] : '');
         $search = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_skat_search.tpl');
         $smarty->clearAllAssign();
 
-        $nav = common::nav($entrys,settings::get('m_fthreads'),"?action=show&amp;kid=".$kategorie['id']);
+        $nav = common::nav($entrys,settings::get('m_fthreads'),"?action=show");
 
         $smarty->caching = false;
         $smarty->assign('nav',$nav);
@@ -190,7 +189,7 @@ if(defined('_Forum')) {
                          . "FROM `{prefix_forumsubkats}` AS `s1` "
                          . "LEFT JOIN `{prefix_forumkats}` AS `s2` "
                          . "ON s1.`sid` = s2.`id` "
-                         . "WHERE s1.`id` = ?;",array($id));
+                         . "WHERE s1.`id` = ?;",array($_SESSION['kid']));
 
         //Breadcrumbs
         $smarty->caching = false;
@@ -198,7 +197,6 @@ if(defined('_Forum')) {
         $smarty->assign('wherekat',stringParser::decode($kat['kattopic']));
         $smarty->assign('mainkat',stringParser::decode($kategorie['name']));
         $smarty->assign('tid',0);
-        $smarty->assign('kid',$kategorie['id']);
         $wheres = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_subkat_where.tpl');
         $smarty->clearAllAssign();
 

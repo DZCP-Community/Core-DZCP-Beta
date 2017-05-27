@@ -2426,15 +2426,18 @@ class common {
      * @param string $value
      * @param bool $is_selected
      * @param string $what
+     * @param string $class
      * @return string
      */
-    public static function select_field(string $value,bool $is_selected=false,string $what) {
+    public static function select_field(string $value,bool $is_selected=false,string $what,string $class = null) {
         $sel = ($is_selected ? ' selected="selected"' : '');
+        $class = !empty($class) ? ' class="'.$class.'"' : '';
         $smarty = self::getSmarty(true);
         $smarty->caching = false;
         $smarty->assign('value',$value);
         $smarty->assign('sel',$sel);
         $smarty->assign('what',$what);
+        $smarty->assign('class',$class);
         $select_field = $smarty->fetch('file:['.common::$tmpdir.']page/select_field.tpl');
         $smarty->clearAllAssign();
         return $select_field;
@@ -2442,10 +2445,14 @@ class common {
 
     /**
      * Generiert die Select-Felder für ein Dropdown Menu
-     * @param string $value
-     * @param bool $is_selected
-     * @param string $what
+     * @param string $id
+     * @param string $action
+     * @param string $title
+     * @param string $del
      * @return string
+     * @internal param string $value
+     * @internal param bool $is_selected
+     * @internal param string $what
      */
     public static function button_delete_single(string $id,string $action,string $title=_button_title_del,string $del=_confirm_del_entry) {
         $smarty = self::getSmarty(true);
@@ -2717,13 +2724,7 @@ class common {
             $tmpldir=""; $tmps = self::get_files(basePath.'/inc/_templates_/',true);
             $smarty = self::getSmarty(true);
             foreach ($tmps as $tmp) {
-                $selt = (self::$tmpdir == $tmp ? 'selected="selected"' : '');
-                $smarty->caching = false;
-                $smarty->assign('value',"?tmpl_set=".$tmp);
-                $smarty->assign('sel',$selt);
-                $smarty->assign('what',$tmp);
-                $tmpldir .= $smarty->fetch('file:['.common::$tmpdir.']page/select_field.tpl');
-                $smarty->clearAllAssign();
+                $tmpldir .= self::select_field("?tmpl_set=".$tmp,(self::$tmpdir == $tmp),ucfirst($tmp));
             }
 
             //misc vars

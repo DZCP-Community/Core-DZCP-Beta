@@ -77,7 +77,7 @@ if(defined('_Forum')) {
                                           "what" => _button_value_edit,
                                           "ip" => _iplog_info,
                                                                             "id" => $_GET['id'],
-                                          "kid" => $_GET['kid'],
+                                          "kid" => $_SESSION['kid'],
                                           "br1" => "<!--",
                                           "br2" => "-->",
                                                                             "postemail" => stringParser::decode($get['email']),
@@ -124,12 +124,12 @@ if(defined('_Forum')) {
     {
       $index = common::error(_error_unregistered,1);
     } else {
-      if(!common::ipcheck("fid(".$_GET['kid'].")", settings::get('f_forum')))
+      if(!common::ipcheck("fid(".$_SESSION['kid'].")", settings::get('f_forum')))
       {
         $checks = common::$sql['default']->fetch("SELECT s2.id,s1.intern FROM `{prefix_forumkats}` AS s1
                      LEFT JOIN `{prefix_forumsubkats}` AS s2
                      ON s2.sid = s1.id
-                     WHERE s2.id = '".(int)($_GET['kid'])."'");
+                     WHERE s2.id = '".$_SESSION['kid']."'");
         if(forumcheck($_GET['id'], "closed"))
         {
           $index = common::error(_error_forum_closed, 1);
@@ -154,9 +154,9 @@ if(defined('_Forum')) {
                 $nick = common::autor($getzitat['reg']);
 
             $zitat = bbcode::zitat($nick, $getzitat['text']);
-          } elseif(isset($_GET['zitatt'])) {
+          } elseif(isset($_GET['zitat_thread'])) {
             $getzitat = common::$sql['default']->fetch("SELECT `t_nick`,`t_reg`,`t_text` FROM `{prefix_forumthreads}` WHERE `id` = ?;",
-                    array((int)($_GET['zitatt'])));
+                    array((int)($_GET['zitat_thread'])));
 
             if($getzitat['t_reg'] == "0") 
                 $nick = $getzitat['t_nick'];
@@ -168,11 +168,11 @@ if(defined('_Forum')) {
             $zitat = "";
           }
 
-          $dowhat = show(_forum_dowhat_add_post, array("id" => $_GET['id'], "kid" => $_GET['kid']));
+          $dowhat = show(_forum_dowhat_add_post, array("id" => $_GET['id'], "kid" => $_SESSION['kid']));
           $getl = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumposts}` "
                   . "WHERE `kid` = ? AND `sid` = ? "
                   . "ORDER BY `date` DESC;",
-                  array((int)($_GET['kid']),(int)($_GET['id'])));
+                  array($_SESSION['kid'],(int)($_GET['id'])));
           if(common::$sql['default']->rowCount())
           {
             if(common::data("signatur",$getl['reg'])) $sig = _sig.bbcode::parse_html(common::data("signatur",$getl['reg']));
@@ -252,7 +252,7 @@ if(defined('_Forum')) {
                                                              "lp" => common::cnt("{prefix_forumposts}", " WHERE sid = '".(int)($_GET['id'])."'")+1));
           } else {
             $gett = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}`
-                        WHERE kid = '".(int)($_GET['kid'])."'
+                        WHERE kid = '".$_SESSION['kid']."'
                         AND id = '".(int)($_GET['id'])."'");
 
             if(common::data("signatur",$gett['t_reg'])) $sig = _sig.bbcode::parse_html(common::data("signatur",$gett['t_reg']));
@@ -330,13 +330,13 @@ if(defined('_Forum')) {
                                                              "lp" => common::cnt("{prefix_forumposts}", " WHERE sid = '".(int)($_GET['id'])."'")+1));
           }
 
-          $gett = common::$sql['default']->fetch("SELECT `topic` FROM `{prefix_forumthreads}` WHERE kid = '".(int)($_GET['kid'])."' AND id = '".(int)($_GET['id'])."'");
+          $gett = common::$sql['default']->fetch("SELECT `topic` FROM `{prefix_forumthreads}` WHERE kid = '".$_SESSION['kid']."' AND id = '".(int)($_GET['id'])."'");
           $where = $where.' - '.stringParser::decode($gett['topic']);
           $index = show($dir."/post", array("titel" => _forum_new_post_head,
                                             "nickhead" => _nick,
                                             "emailhead" => _email,
                                             "id" => $_GET['id'],
-                                            "kid" => $_GET['kid'],
+                                            "kid" => $_SESSION['kid'],
                                             "zitat" => $zitat,
                                             "last_post" => _forum_lp_head,
                                             "preview" => _preview,
@@ -348,7 +348,7 @@ if(defined('_Forum')) {
                                             "ip" => _iplog_info,
                                             "br2" => "",
                                             "what" => _button_value_add,
-                                            "kid" => $_GET['kid'],
+                                            "kid" => $_SESSION['kid'],
                                             "id" => $_GET['id'],
                                             "dowhat" => $dowhat,
                                             "eintraghead" => _eintrag,
@@ -380,7 +380,7 @@ if(defined('_Forum')) {
                 $checks = common::$sql['default']->fetch("SELECT s2.id,s1.intern FROM `{prefix_forumkats}` AS s1
                                          LEFT JOIN `{prefix_forumsubkats}` AS s2
                                          ON s2.sid = s1.id
-                                         WHERE s2.id = '".(int)($_GET['kid'])."'");
+                                         WHERE s2.id = '".$_SESSION['kid']."'");
 
                 if($checks['intern'] == 1 && !common::permission("intforum") && !common::forum_intern($checks['id'])) {
                     exit();
@@ -575,7 +575,7 @@ if(defined('_Forum')) {
                                                                                         "dowhat" => $dowhat,
                                                                                         "id" => $_GET['id'],
                                                                                         "ip" => _iplog_info,
-                                                                                        "kid" => $_GET['kid'],
+                                                                                        "kid" => $_SESSION['kid'],
                                                                                         "postemail" => $_POST['email'],
                                                                                         "posthp" => $_POST['hp'],
                                                                                         "postnick" => stringParser::decode($_POST['nick']),
@@ -626,7 +626,7 @@ if(defined('_Forum')) {
 
                         common::$sql['default']->update("UPDATE `{prefix_forumthreads}`
                                                                                          SET `lp` = '".time()."'
-                                    WHERE kid = '".(int)($_GET['kid'])."'
+                                    WHERE kid = '".$_SESSION['kid']."'
                                     AND id = '".(int)($_GET['id'])."'");
 
                         common::$sql['default']->update("UPDATE `{prefix_forumposts}`

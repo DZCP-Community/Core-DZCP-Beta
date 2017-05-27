@@ -51,7 +51,6 @@ define('_emailicon_non_mailto', '<a href="[email]"><img src="../inc/images/email
 define('_emailicon_blank', '<img src="../inc/images/email.gif" alt="" class="icon" />');
 define('_zitaticon', '<img src="../inc/images/zitat.gif" alt="" class="icon" />');
 define('_hpicon_blank', '<img src="../inc/images/hp.gif" alt="" class="icon" />');
-define('_topicon', '<img src="../inc/images/top.gif" alt="" class="icon" />');
 define('_mficon_blank', '<img src="../inc/images/mf.gif" alt="" class="icon" />');
 define('_maleicon', '<img src="../inc/images/male.gif" alt="" class="icon" />');
 define('_femaleicon', '<img src="../inc/images/female.gif" alt="" class="icon" />');
@@ -75,8 +74,6 @@ define('_forum_add_lastpost', '?action=showthread&amp;id=[tid]&amp;page=[page]#p
 define('_forum_dowhat_add_post', 'addpost&amp;kid=[kid]&amp;id=[id]');
 define('_forum_avatar', '<img src="../inc/images/uploads/useravatare/[id].[endung]" border="1" width="100" height="100" alt="" />');
 define('_forum_dowhat_edit_post', 'editpost&amp;id=[id]');
-define('_forum_select_field_kat', '<option value="[value]" class="dropdownKat">[what]</option> [skat]');
-define('_forum_select_field_skat', '<option value="[value]">-> [what]</option>');
 define('_forum_select_field_search', '<option value="[value]" [sel]>-> [what]</option>');
 ## Umfragen ##
 define('_votes_titel', '<a href="javascript:DZCP.toggle(\'[vid]\')"><img src="../inc/images/[icon].gif" alt="" id="img[vid]" class="icon" />[intern][titel]</a>');

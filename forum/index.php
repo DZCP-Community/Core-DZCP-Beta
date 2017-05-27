@@ -28,6 +28,10 @@ $dir = "forum";
 define('_Forum', true);
 $smarty = common::getSmarty(); //Use Smarty
 
+if(isset($_GET['kid']) && !empty($_GET['kid'])) {
+    $_SESSION['kid'] = (int)$_GET['kid'];
+}
+
 //-> Prueft sicherheitsrelevante Gegebenheiten im Forum
 function forumcheck($tid, $what) {
     return common::$sql['default']->rows("SELECT `".$what."` FROM `{prefix_forumthreads}` WHERE `id` = ? AND ".$what." = 1;",array((int)($tid))) ? true : false;
