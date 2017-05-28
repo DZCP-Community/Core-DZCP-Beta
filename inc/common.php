@@ -2401,7 +2401,7 @@ class common {
      * @return string
      */
     public static function editor_is_reg(array $get = array()) {
-        $get['reg'] = (array_key_exists('reg',$get) ? $get['reg'] : array_key_exists('t_reg',$get) ? $get['t_reg'] : 0); //Fix for thread/post
+        $get['reg'] = array_key_exists('reg',$get) ? $get['reg'] : array_key_exists('t_reg',$get) ? $get['t_reg'] : self::$userid; //Fix for thread/post
         $smarty = self::getSmarty(true);
         $smarty->caching = false;
         if($get['reg'] != 0) {

@@ -1,0 +1,1 @@
+<center><a href="?action=link&amp;id={$id}" target="_blank"><img src="{$banner}" alt="" /></a></center>

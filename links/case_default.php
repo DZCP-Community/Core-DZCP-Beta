@@ -21,16 +21,25 @@ $qry = common::$sql['default']->select("SELECT * FROM `{prefix_links}` ORDER BY 
 if(common::$sql['default']->rowCount()) {
     foreach($qry as $get) {
         if($get['banner']) {
-            $banner = show(_links_bannerlink, ["id" => $get['id'],
-                                                    "banner" => stringParser::decode($get['text'])]);
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('banner',stringParser::decode($get['text']));
+            $banner = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/links_bannerlink.tpl');
+            $smarty->clearAllAssign();
         } else {
-            $banner = show(_links_textlink, ["id" => $get['id'],
-                                                  "text" => str_replace('http://','',stringParser::decode($get['url']))]);
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('text',str_replace('http://','',stringParser::decode($get['url'])));
+            $banner = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/links_textlink.tpl');
+            $smarty->clearAllAssign();
         }
 
-        $show .= show($dir."/links_show", ["beschreibung" => bbcode::parse_html($get['beschreibung']),
-                                                "hits" => $get['hits'],
-                                                "banner" => $banner]);
+        $smarty->caching = false;
+        $smarty->assign('beschreibung',bbcode::parse_html($get['beschreibung']));
+        $smarty->assign('hits',$get['hits']);
+        $smarty->assign('banner',$banner);
+        $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/links_show.tpl');
+        $smarty->clearAllAssign();
     }
 }
 
@@ -41,4 +50,7 @@ if(empty($show)) {
     $smarty->clearAllAssign();
 }
 
-$index = show($dir."/links", ["show" => $show]);
+$smarty->caching = false;
+$smarty->assign('show',$show);
+$index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/links.tpl');
+$smarty->clearAllAssign();

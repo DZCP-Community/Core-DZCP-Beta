@@ -34,9 +34,10 @@ switch ($do) {
             $smarty->caching = false;
             $smarty->assign('dl',$file);
             $smarty->assign('sel','');
-            $dl .= $smarty->fetch('string:'._downloads_files_exists);
+            $dl .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/downloads_files_exists.tpl');
             $smarty->clearAllAssign();
         }
+
         $smarty->caching = false;
         $smarty->assign('admin_head',_downloads_admin_head);
         $smarty->assign('ddownload','');

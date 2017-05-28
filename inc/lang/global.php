@@ -71,22 +71,12 @@ define('_newsc_delete', '<a href="?action=show&amp;id=[id]&amp;do=delete&cid=[ci
 define('_news_show_link', '<a href="../news/?action=show&amp;id=[id]">[titel]</a>');
 ## Forum ##
 define('_forum_add_lastpost', '?action=showthread&amp;id=[tid]&amp;page=[page]#p[id]');
-define('_forum_dowhat_add_post', 'addpost&amp;kid=[kid]&amp;id=[id]');
 define('_forum_avatar', '<img src="../inc/images/uploads/useravatare/[id].[endung]" border="1" width="100" height="100" alt="" />');
 define('_forum_dowhat_edit_post', 'editpost&amp;id=[id]');
 define('_forum_select_field_search', '<option value="[value]" [sel]>-> [what]</option>');
 ## Umfragen ##
 define('_votes_titel', '<a href="javascript:DZCP.toggle(\'[vid]\')"><img src="../inc/images/[icon].gif" alt="" id="img[vid]" class="icon" />[intern][titel]</a>');
 define('_votes_balken', '<img src="../inc/images/vote.gif" width="[width]%" height="4" alt="[width]%" />');
-## Downloads ##
-define('_downloads_files_exists', '<option value="[dl]" [sel]>[dl]</option>');
-## Links ##
-define('_links_textlink', '<center><a href="?action=link&amp;id=[id]" target="_blank">[text]</a></center>');
-define('_links_bannerlink', '<center><a href="?action=link&amp;id=[id]" target="_blank"><img src="[banner]" alt="" /></a></center>');
-## Squads ##
-define('_member_squad_squadlink', '<a href="javascript:DZCP.toggle(\'[id]\')">[squad]</a>');
-define('_userpic_small_link', '<a href="../user/?action=user&amp;id=[id]"><img src="../inc/images/uploads/userpics/[id].[endung]" width="60" height="80" alt="" /></a>');
-define('_no_userpic_small', '<img src="../inc/images/nopic.gif" width="60" height="80" alt="" />');
 ## Admin ##
 define('_artikel_edit_link', 'editartikel&amp;id=[id]');
 define('_config_delete', '<a href="?admin=[what]&amp;do=delete&amp;id=[id]"><img src="../inc/images/delete.png" alt="" class="icon" /></a>');
@@ -96,27 +86,5 @@ define('_config_newskats_img', '<img src="../inc/images/uploads/newskat/[img]" a
 define('_config_neskats_katbild_upload', '<a href="../upload/?action=newskats">upload</a>');
 define('_config_neskats_katbild_upload_edit', '<a href="../upload/?action=newskats&amp;edit=[id]">upload</a>');
 define('_config_newskats_editid', 'editnewskat&amp;id=[id]');
-define('_icon_edit_news', '<a href="?admin=newsadmin&amp;do=edit&amp;id=[id]"><img alt="" src="../inc/images/edit.png" class="icon" /></a>');
-define('_icon_delete_news', '<a href="?admin=newsadmin&amp;do=delete&amp;id=[id]"><img alt="" src="../inc/images/delete.png" class="icon" /></a>');
-define('_icon_edit_squads', '<a href="?admin=squads&amp;do=edit&amp;id=[id]"><img alt="" src="../inc/images/edit.png" class="icon" /></a>');
-define('_icon_delete_squads', '<a href="?admin=squads&amp;do=delete&amp;id=[id]"><img alt="" src="../inc/images/delete.png" class="icon" /></a>');
-## Userprofile ##
-define('_profil_custom', '
-<tr>
-  <td class="contentMainTop" width="20%"><span class="fontBold">[name]:</span></td>
-  <td class="contentMainFirst" align="center">[value]</td>
-</tr>');
-define('_profil_custom_mail', '
-<tr>
-  <td class="contentMainTop" width="20%"><span class="fontBold">[name]:</span></td>
-  <td class="contentMainFirst" align="center"><img src="../inc/images/mailto.gif" alt="" class="icon" /> [value]</td>
-</tr>');
-## Userprofil editieren ##
-define('_profil_head_cont', '
-<tr>
-  <td class="contentMainTop" colspan="4" align="center"><span class="fontBold">[what]</span></td>
-</tr>');
 ## User ##
-define('_to_buddys', '<option value="[id]" [selected="selected"]>[nick]</option>');
 define('_to_squads', '<option value="[id]" [sel]>-> [name]</option>');
-define('_user_new_msg', '&nbsp;&nbsp;<a href="?action=msg"><span class="fontWichtig">[cnt]</span> [eintrag]</a><br />');

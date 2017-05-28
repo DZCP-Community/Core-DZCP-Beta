@@ -32,11 +32,6 @@ if(isset($_GET['kid']) && !empty($_GET['kid'])) {
     $_SESSION['kid'] = (int)$_GET['kid'];
 }
 
-//-> Prueft sicherheitsrelevante Gegebenheiten im Forum
-function forumcheck($tid, $what) {
-    return common::$sql['default']->rows("SELECT `".$what."` FROM `{prefix_forumthreads}` WHERE `id` = ? AND ".$what." = 1;",array((int)($tid))) ? true : false;
-}
-
 //-> Funktion um Bestimmte Textstellen zu markieren
 function hl($text, $word) {
     if(!empty($_GET['hl']) && $_SESSION['search_type'] == 'text') {

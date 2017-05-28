@@ -154,7 +154,7 @@ if(defined('_Forum')) {
                 $smarty->assign('signatur',$sig);
                 $smarty->assign('zitat',$zitat);
                 $smarty->assign('onoff',$onoff);
-                $smarty->assign('lp',common::cnt("{prefix_forumposts}", " WHERE sid = '".(int)($_GET['id'])."'")+1);
+                $smarty->assign('lp',common::cnt("{prefix_forumposts}", " WHERE `sid` = ?;","id", [(int)($_GET['id'])])+1);
                 $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_posts_show.tpl');
                 $smarty->clearAllAssign();
                 $i++;
