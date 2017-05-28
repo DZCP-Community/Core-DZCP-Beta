@@ -4,7 +4,7 @@
 <tr>
   <td class="contentMainFirst">
     <div style="float:left;margin-right:10px">
-      <span class="fontBold">{$lang_hits}:</span> {$hits}
+      <span class="fontBold">{lang msgID="hits"}:</span> {$hits}
     </div>
      {$beschreibung} 
   </td>
