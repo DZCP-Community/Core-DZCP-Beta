@@ -2527,7 +2527,7 @@ class common {
      * @return int
      */
     public static function cnt(string $db,string $where = "",string $what = "id",array $sql_std= []) {
-        $cnt = self::$sql['default']->fetch("SELECT COUNT(".$what.") AS `cnt` FROM `".$db."` ".$where.";",$sql_std,'cnt');
+        $cnt = self::$sql['default']->fetch("SELECT COUNT(`".$what."`) AS `cnt` FROM `".$db."` ".$where.";",$sql_std,'cnt');
         if(self::$sql['default']->rowCount() >= 1) {
             return $cnt;
         }
@@ -2546,7 +2546,7 @@ class common {
     public static function cnt_multi(string $db, string $where = "", array $whats = ['id'], array $sql_std=[]) {
         $cnt_sql = "";
         foreach ($whats as $what) {
-            $cnt_sql .= "COUNT(".$what.") AS `cnt_".$what."`,";
+            $cnt_sql .= "COUNT(`".$what."`) AS `cnt_".$what."`,";
         }
         $cnt_sql = substr($cnt_sql, 0, -1);
         $cnt = self::$sql['default']->fetch("SELECT ".$cnt_sql." FROM `".$db."` ".$where.";",$sql_std);
@@ -2566,7 +2566,7 @@ class common {
      * @return int
      */
     public static function sum(string $db,string $where = "",string $what = "id",array $sql_std=[]) {
-        $sum = self::$sql['default']->fetch("SELECT SUM(".$what.") AS `sum` FROM `".$db."` ".$where.";",$sql_std,'sum');
+        $sum = self::$sql['default']->fetch("SELECT SUM(`".$what."`) AS `sum` FROM `".$db."` ".$where.";",$sql_std,'sum');
         if(self::$sql['default']->rowCount() >= 1) {
             return $sum;
         }
@@ -2585,7 +2585,7 @@ class common {
     public static function sum_multi(string $db, string $where = "", array $whats = ['id'], array $sql_std=[]) {
         $sum_sql = "";
         foreach ($whats as $what) {
-            $sum_sql .= "SUM(".$what.") AS `sum_".$what."`,";
+            $sum_sql .= "SUM(`".$what."`) AS `sum_".$what."`,";
         }
         $sum_sql = substr($sum_sql, 0, -1);
         $sum = self::$sql['default']->fetch("SELECT ".$sum_sql." FROM `".$db."` ".$where.";",$sql_std);

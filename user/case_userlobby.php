@@ -49,8 +49,8 @@ if(defined('_UserMenu')) {
                     if (common::$sql['default']->rowCount()) {
                         $forumposts_show = '';
                         foreach($qrytopic as $gettopic) {
-                            $count = common::cnt('{prefix_forumposts}', " WHERE `date` > ? AND `sid` = ?",'id',array($lastvisit,$gettopic['id']));
-                            $lp = common::cnt('{prefix_forumposts}', " WHERE `sid` = ?",'id',array($gettopic['id']));
+                            $count = common::cnt('{prefix_forumposts}', " WHERE `date` > ? AND `sid` = ?",'id', [$lastvisit,$gettopic['id']]);
+                            $lp = common::cnt('{prefix_forumposts}', " WHERE `sid` = ?",'id', [$gettopic['id']]);
                             
                             if ($count == 0) {
                                 $cnt = 1;
@@ -102,7 +102,7 @@ if(defined('_UserMenu')) {
                                  . "ORDER BY `id` DESC;");
         $user = '';
         if (!empty($getu) && common::check_new($getu['regdatum'])) {
-            $check = common::cnt('{prefix_users}', " WHERE `regdatum` > ?",'id',array($lastvisit));
+            $check = common::cnt('{prefix_users}', " WHERE `regdatum` > ?",'id', [$lastvisit]);
             if ($check == 1) {
                 $cnt = 1;
                 $eintrag = _new_users_1;
@@ -125,7 +125,7 @@ if(defined('_UserMenu')) {
                                    . "WHERE `an` = ? AND `readed` = 0 AND `see_u` = 0 "
                                    . "ORDER BY `datum` DESC;",
                   array(common::$userid));
-        $check = common::cnt("{prefix_messages}", " WHERE `an` = ? AND `readed` = 0 AND `see_u` = 0",'id',array(common::$userid));
+        $check = common::cnt("{prefix_messages}", " WHERE `an` = ? AND `readed` = 0 AND `see_u` = 0",'id', [common::$userid]);
         if ($check >= 1) {
             $smarty->caching = false;
             $smarty->assign('cnt',$check);
@@ -147,7 +147,7 @@ if(defined('_UserMenu')) {
         if (common::$sql['default']->rowCount()) {
             foreach($qrynews as $getnews) {
                 if (common::check_new($getnews['datum'])) {
-                    $check = common::cnt("{prefix_news}", " WHERE `datum` > ?".(common::$chkMe >= 2 ? '' : ' AND `intern` = 0')." AND `public` = 1",'id',array($lastvisit));
+                    $check = common::cnt("{prefix_news}", " WHERE `datum` > ?".(common::$chkMe >= 2 ? '' : ' AND `intern` = 0')." AND `public` = 1",'id', [$lastvisit]);
                     $cnt = $check == "1" ? "1" : $check;
 
                     $can_erase = true;
@@ -169,7 +169,7 @@ if(defined('_UserMenu')) {
                                              . "ORDER BY `datum` DESC;",
                             array($getcheckn['id']));
                 if (common::check_new($getnewsc['datum'])) {
-                    $check = common::cnt("{prefix_newscomments}", " WHERE `datum` > ? AND `news` = ?",'id',array($lastvisit,$getnewsc['news']));
+                    $check = common::cnt("{prefix_newscomments}", " WHERE `datum` > ? AND `news` = ?",'id', [$lastvisit,$getnewsc['news']]);
                     if ($check == "1") {
                         $cnt = "1";
                         $eintrag = _lobby_new_newsc_1;
@@ -198,7 +198,7 @@ if(defined('_UserMenu')) {
                                     . "ORDER BY `datum` DESC;");
         $newv = '';
         if (!empty($getnewv) && common::check_new($getnewv['datum'])) {
-            $check = common::cnt('{prefix_votes}', " WHERE `datum` > ? AND `forum` = 0",'id',array($lastvisit));
+            $check = common::cnt('{prefix_votes}', " WHERE `datum` > ? AND `forum` = 0",'id', [$lastvisit]);
             if ($check == "1") {
                 $cnt = "1";
                 $eintrag = _new_vote_1;
@@ -247,7 +247,7 @@ if(defined('_UserMenu')) {
         if (common::$sql['default']->rowCount()) {
             foreach($qryart as $getart) {
                 if (common::check_new($getart['datum'])) {
-                    $check = common::cnt('{prefix_artikel}', " WHERE `datum` > ? AND `public` = 1",'id',array($lastvisit));
+                    $check = common::cnt('{prefix_artikel}', " WHERE `datum` > ? AND `public` = 1",'id', [$lastvisit]);
                     if ($check == "1") {
                         $cnt = "1";
                         $eintrag = _lobby_new_art_1;
@@ -279,7 +279,7 @@ if(defined('_UserMenu')) {
                                             . "ORDER BY `datum` DESC;",
                             array($getchecka['id']));
                 if (!empty($getartc) && common::check_new($getartc['datum'])) {
-                    $check = common::cnt('{prefix_acomments}', " WHERE `datum` > ? AND `artikel` = ?",'id',array($lastvisit,$getartc['artikel']));
+                    $check = common::cnt('{prefix_acomments}', " WHERE `datum` > ? AND `artikel` = ?",'id', [$lastvisit,$getartc['artikel']]);
                     if ($check == "1") {
                         $cnt = "1";
                         $eintrag = _lobby_new_artc_1;
@@ -307,7 +307,7 @@ if(defined('_UserMenu')) {
         if (common::$sql['default']->rowCount()) {
             foreach($qryft as $getft) {
                 if (common::forum_intern($getft['kid'])) {
-                    $lp = common::cnt('{prefix_forumposts}', " WHERE `sid` = ?",'id',array($getft['id']));
+                    $lp = common::cnt('{prefix_forumposts}', " WHERE `sid` = ?",'id', [$getft['id']]);
                     $pagenr = ceil($lp / settings::get('m_fposts'));
                     $page = (!$pagenr ? 1 : $pagenr);
                     $getp = common::$sql['default']->fetch("SELECT `text` "

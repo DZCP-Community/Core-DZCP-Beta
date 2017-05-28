@@ -57,7 +57,7 @@ if(defined('_News')) {
             $smarty->assign('titel',stringParser::decode($get['titel']));
             $smarty->assign('kat',$newsimage);
             $smarty->assign('id',$get['id']);
-            $smarty->assign('comments',common::cnt('{prefix_newscomments}', " WHERE `news` = ".(int)($get['id'])));
+            $smarty->assign('comments',common::cnt('{prefix_newscomments}', " WHERE `news` = ?","id",[(int)($get['id'])]));
             $smarty->assign('showmore','');
             $smarty->assign('dp','none');
             $smarty->assign('dir',$designpath);
@@ -116,7 +116,7 @@ if(defined('_News')) {
             $smarty->assign('titel',stringParser::decode($get['titel']));
             $smarty->assign('kat',$newsimage);
             $smarty->assign('id',$get['id']);
-            $smarty->assign('comments',common::cnt('{prefix_newscomments}', " WHERE `news` = ".(int)($get['id'])));
+            $smarty->assign('comments',common::cnt('{prefix_newscomments}', " WHERE `news` = ?","id",[(int)($get['id'])]));
             $smarty->assign('showmore','');
             $smarty->assign('dir',common::$designpath);
             $smarty->assign('intern',boolval($get['intern']));

@@ -98,7 +98,7 @@ if(defined('_Forum')) {
 
         $threads = '';
         foreach($qry as $get) {
-            $cntpage = common::cnt("{prefix_forumposts}", " WHERE sid = ".$get['id']);
+            $cntpage = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[$get['id']]);
             $pagenr = !$cntpage ? '1' : ceil($cntpage/settings::get('m_fposts'));
             $getlp = common::$sql['default']->fetch("SELECT `id`,`sid`,`kid`,`date`,`nick`,`reg`,`email` FROM `{prefix_forumposts}` WHERE `sid` = ? ORDER BY `date` DESC;", [$get['id']]);
             $is_lp = common::$sql['default']->rowCount();
@@ -160,7 +160,7 @@ if(defined('_Forum')) {
             $smarty->assign('topic',stringParser::decode($get['topic']));
             $smarty->assign('subtopic',stringParser::decode(common::cut($get['subtopic'],settings::get('l_forumsubtopic'))));
             $smarty->assign('hits',$get['hits']);
-            $smarty->assign('replys',common::cnt("{prefix_forumposts}", " WHERE sid = '".$get['id']."'"));
+            $smarty->assign('replys',common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[$get['id']]));
             $smarty->assign('lpost',$lpost);
             $smarty->assign('autor',common::autor($get['t_reg'], '', $get['t_nick'], $get['t_email']));
             $threads .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_show_threads.tpl');

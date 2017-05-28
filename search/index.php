@@ -208,7 +208,7 @@ default:
             if($get['closed'] == 1) $closed = _closedicon;
             else $closed = "";
 
-            $cntpage = common::cnt("{prefix_forumposts}", " WHERE sid = ".$get['id']);
+            $cntpage = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[$get['id']]);
             if($cntpage == 0) $pagenr = 1;
             else $pagenr = ceil($cntpage/settings::get('m_ftopics'));
 
@@ -240,7 +240,7 @@ default:
                                                                  "topic" => $threadlink,
                                                                  "subtopic" => common::cut(stringParser::decode($get['subtopic']),settings::get('l_forumsubtopic')),
                                                                  "hits" => $get['hits'],
-                                                                 "replys" => common::cnt("{prefix_forumposts}", " WHERE sid = '".$get['id']."'"),
+                                                                 "replys" => common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id", [$get['id']]),
                                                                  "class" => $class,
                                                                  "lpost" => $lpost,
                                                                  "autor" => common::autor($get['t_reg'], '', $get['t_nick'], $get['t_email'])]);

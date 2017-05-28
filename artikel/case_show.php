@@ -170,7 +170,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                 ."ORDER BY `datum` DESC LIMIT ".($page - 1)*settings::get('m_comments').",".settings::get('m_comments').";",
                 [$artikel_id]);
 
-            $entrys = common::cnt('{prefix_acomments}', " WHERE `artikel` = ".$artikel_id);
+            $entrys = common::cnt('{prefix_acomments}', " WHERE `artikel` = ?","id",[$artikel_id]);
             $i = ($entrys - ($page - 1) * settings::get('m_comments')); $comments = '';
             foreach($qryc as $getc) {
                 $edit = ""; $delete = "";

@@ -33,7 +33,7 @@ if(defined('_Artikel')) {
             $smarty->assign('titel',$titel);
             $smarty->assign('color',$color);
             $smarty->assign('kat',stringParser::decode($getk['kategorie']));
-            $smarty->assign('comments',common::cnt('{prefix_newscomments}'," WHERE `news` = ".$get['id']));
+            $smarty->assign('comments',common::cnt('{prefix_newscomments}'," WHERE `news` = ?","id",[$get['id']]));
             $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/artikel_show.tpl',common::getSmartyCacheHash('artikel_show_'.$get['id']));
             $smarty->clearAllAssign(); $color++;
         }

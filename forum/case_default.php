@@ -197,7 +197,7 @@ if(defined('_Forum')) {
     $qryo = common::$sql['default']->select("SELECT `id` FROM `{prefix_users}` WHERE `whereami` LIKE ? AND (time+1800) > ".time().";",array("%".$where."%"));
        if(common::$sql['default']->rowCount()) {
             $i=0; $check = 1; $nick = '';
-            $cnto = common::cnt('{prefix_users}', " WHERE (time+1800) > ".time()." AND `whereami` LIKE ?;",'id',array("%".$where."%"));
+            $cnto = common::cnt('{prefix_users}', " WHERE (time+1800) > ".time()." AND `whereami` LIKE ?;",'id', ["%".$where."%"]);
             foreach($qryo as $geto) {
                 if($i == 5) {
                     $end = "<br />";

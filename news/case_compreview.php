@@ -31,7 +31,7 @@ if(defined('_News') && common::$chkMe >= 1) {
         $editedby = $smarty->fetch('string:'._edited_by);
         $smarty->clearAllAssign();
     } else { //-> Add new news comment
-        $get_postid = common::cnt('{prefix_newscomments}', " WHERE `news` = ".(int)($_GET['id']))+1;
+        $get_postid = common::cnt('{prefix_newscomments}', " WHERE `news` = ?","id",[(int)($_GET['id'])])+1;
         $get_userid = common::$userid;
         $get_date = time();
         $regCheck = common::$chkMe >= 1 ? true : false;

@@ -198,7 +198,7 @@ if(defined('_Forum')) {
             $smarty->clearAllAssign();
 
             $nav = common::nav($entrys,settings::get('m_fposts'),"?action=showthread&amp;id=".$_GET['id'].$hL);
-            $sig = ($signatur=common::data("signatur",$get['t_reg']) ? _sig.bbcode::parse_html($signatur) : '');
+            $sig = ($signatur=common::data("signatur",$get['t_reg'])) ? _sig.bbcode::parse_html($signatur) : '';
             $edit = $get['t_reg'] == common::$userid || common::permission("forum") ? common::getButtonEditSingle($get['id'],"action=thread&amp;do=edit") : '';
 
             //Admin
@@ -324,7 +324,7 @@ if(defined('_Forum')) {
             $smarty->assign('ip',$posted_ip);
             $smarty->assign('id',$_GET['id']);
             $smarty->assign('lpost',$lpost);
-            $smarty->assign('lp',common::cnt("{prefix_forumposts}", " WHERE sid = '".(int)($_GET['id'])."'")+1);
+            $smarty->assign('lp',common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[(int)($_GET['id'])])+1);
             $smarty->assign('closed',!$get['closed']);
             $smarty->assign('permission',common::permission("forum"));
             $smarty->assign('nav',$nav);

@@ -95,7 +95,7 @@ switch ($do) {
                 }
               }
 
-              if(common::cnt("{prefix_vote_results}", " WHERE vid = '".$get['id']."' AND what = 'a".$i."'") != 0 && empty($_POST['a'.$i.'']))
+              if(common::cnt("{prefix_vote_results}", " WHERE `vid` = ? AND `what` = ?","id",[$get['id'],'a'.$i]) != 0 && empty($_POST['a'.$i.'']))
               {
                   common::$sql['default']->delete("DELETE FROM `{prefix_vote_results}` WHERE vid = '".$get['id']."' AND what = 'a".$i."'");
               }

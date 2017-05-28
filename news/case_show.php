@@ -132,7 +132,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                                 ."ORDER BY `datum` DESC LIMIT ".($page - 1)*settings::get('m_comments').",".settings::get('m_comments').";",
                                 [$news_id]);
             
-            $entrys = common::cnt('{prefix_newscomments}', " WHERE `news` = ".$news_id);
+            $entrys = common::cnt('{prefix_newscomments}', " WHERE `news` = ?","id",[$news_id]);
             $i = ($entrys - ($page - 1) * settings::get('m_comments')); $comments = '';
             foreach($qryc as $getc) {
                 $edit = ""; $delete = "";
@@ -293,7 +293,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
             $smarty->assign('titel',stringParser::decode($get_news['titel']));
             $smarty->assign('kat',$newsimage);
             $smarty->assign('id',$get_news['id']);
-            $smarty->assign('comments',common::cnt('{prefix_newscomments}', " WHERE `news` = ".$get_news['id']));
+            $smarty->assign('comments',common::cnt('{prefix_newscomments}', " WHERE `news` = ?","id",[$get_news['id']]));
             $smarty->assign('sticky','');
             $smarty->assign('intern',$intern);
             $smarty->assign('showmore',$showmore,true); //Comments
