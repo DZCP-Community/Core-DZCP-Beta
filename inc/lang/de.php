@@ -15,6 +15,8 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
+setlocale(LC_ALL, "de_DE.utf8");
+
 ## Allgemein ##
 define('_button_title_del', 'L&ouml;schen');
 define('_button_title_edit', 'Editieren');
@@ -378,7 +380,7 @@ define('_foum_fabo_checkbox', 'Dieses Thema abonnieren und per E-Mail &uuml;ber 
 define('_forum_fabo_do', 'E-Mail Benachrichtigung erfolgreich ge&auml;ndert!');
 define('_forum_vote_del', 'Umfrage l&ouml;schen');
 define('_forum_vote_preview', 'Hier erscheint dann die Umfrage');
-define('_forum_spam_text', '[ltext]<p>&nbsp;</p><p>&nbsp;</p><span class="fontBold">Nachtrag von </span>[autor]:<p>&nbsp;</p>[ntext]');
+define('_forum_spam_text', '{$ltext]<p>&nbsp;</p><p>&nbsp;</p><span class="fontBold">Nachtrag von </span>{$autor}:<p>&nbsp;</p>{$ntext}');
 ####################################################################################
 define('_config_config', 'Allgemeine Einstellungen');
 define('_config_dladmin', 'Downloads');
@@ -1174,9 +1176,6 @@ define('_profil_favospiel', 'Spiel');
 define('_profil_game', 'Spiel');
 define('_profil_favoclan', 'Clan');
 define('_profil_spieler', 'Spieler');
-define('_profil_map', 'Map');
-define('_profil_waffe', 'Waffe');
-define('_profil_rasse', 'Rasse');
 define('_profil_sonst', 'Sonstiges');
 define('_profil_url1', 'Page #1');
 define('_profil_url2', 'Page #2');

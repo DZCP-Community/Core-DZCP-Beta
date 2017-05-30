@@ -168,7 +168,7 @@ if(defined('_UserMenu')) {
                                              . "WHERE `news` = ? "
                                              . "ORDER BY `datum` DESC;",
                             array($getcheckn['id']));
-                if (common::check_new($getnewsc['datum'])) {
+                if (common::check_new((int)$getnewsc['datum'])) {
                     $check = common::cnt("{prefix_newscomments}", " WHERE `datum` > ? AND `news` = ?",'id', [$lastvisit,$getnewsc['news']]);
                     if ($check == "1") {
                         $cnt = "1";

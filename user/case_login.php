@@ -90,7 +90,7 @@ if(defined('_UserMenu')) {
                     $_SESSION['lastvisit'] = $get['time'];
                     $_SESSION['ip'] = common::$userip;
 
-                    common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `logins` = (logins+1) WHERE `user` = ?;", array($get['id']));
+                    common::userstats_increase('logins',$get['id']);
                     common::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ip` = ? WHERE `id` = ?;", array(session_id(), common::$userip, $get['id']));
                     common::setIpcheck("login(" . $get['id'] . ")");
 

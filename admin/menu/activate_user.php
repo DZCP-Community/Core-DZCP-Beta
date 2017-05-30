@@ -54,7 +54,7 @@ switch ($do) {
     case 'resend':
         if(($id = isset($_GET['id']) ? $_GET['id'] : false) != false) {
             $get = common::$sql['default']->fetch("SELECT `user`,`id`,`email` FROM `{prefix_users}` WHERE `id` = ?;", [$id]);
-            common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `akl` = (akl+1) WHERE `user` = ?;", [$get['id']]);
+            common::userstats_increase('akl',$get['id']);
             common::$sql['default']->update("UPDATE `{prefix_users}` SET `actkey` = ? WHERE `id` = ?;", [($guid=common::GenGuid()),$get['id']]);
             $akl_link = 'http://'.common::$httphost.'/user/?action=akl&do=activate&key='.$guid;
             $akl_link_page = 'http://'.common::$httphost.'/user/?action=akl&do=activate';
@@ -82,7 +82,7 @@ switch ($do) {
             $emails = ''; $i = 0;
             foreach($_POST['userid'] as $id) {
                 $get = common::$sql['default']->fetch("SELECT `user`,`id`,`email` FROM `{prefix_users}` WHERE `id` = ?;", [$id]);
-                common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `akl` = (akl+1) WHERE `user` = ?;", [$get['id']]);
+                common::userstats_increase('akl',$get['id']);
                 common::$sql['default']->update("UPDATE `{prefix_users}` SET `actkey` = '".($guid=common::GenGuid())."' WHERE `id` = ?;", [$get['id']]);
                 $akl_link = 'http://'.common::$httphost.'/user/?action=akl&do=activate&key='.$guid;
                 $akl_link_page = 'http://'.common::$httphost.'/user/?action=akl&do=activate';

@@ -80,13 +80,12 @@ function fvote($id, $ajax=false) {
 function send_forum_abo(bool $is_thread = false, int $id,string $eintrag,bool $edit = false) {
     global $title;
     $smarty = common::getSmarty(true);
-    $checkabo = common::$sql['default']->select("SELECT s1.`user`,s1.`fid`,s2.`nick`,s2.`id`,s2.`email` FROM `{prefix_forum_abo}` AS s1
-                        LEFT JOIN `{prefix_users}` AS s2 ON s2.`id` = s1.`user`
-                      WHERE s1.`fid` = ?;",[$id]);
+    $checkabo = common::$sql['default']->select("SELECT s1.`user`,s1.`fid`,s2.`nick`,s2.`id`,s2.`email` FROM `{prefix_forum_abo}` AS s1 ".
+        "LEFT JOIN `{prefix_users}` AS s2 ON s2.`id` = s1.`user` WHERE s1.`fid` = ?;",[$id]);
 
     foreach ($checkabo as $getabo) {
         if (common::$userid != $getabo['user']) {
-            $gettopic = common::$sql['default']->fetch("SELECT `topic` FROM `{prefix_forumthreads}` WHERE `id` = ;", [$id]);
+            $gettopic = common::$sql['default']->fetch("SELECT `topic` FROM `{prefix_forumthreads}` WHERE `id` = ;",[$id]);
             $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?;",'id',[$id]);
 
             $smarty->caching = false;
@@ -122,5 +121,42 @@ function send_forum_abo(bool $is_thread = false, int $id,string $eintrag,bool $e
 
             common::sendMail(stringParser::decode($getabo['email']), $subj, $message);
         }
+    }
+}
+
+/**
+ * Funktion um Bestimmte Textstellen zu markieren
+ * @param string $text
+ * @param string $word
+ * @return mixed
+ */
+function hl(string $text,string $word) {
+    if(!empty($_GET['hl']) && $_SESSION['search_type'] == 'text') {
+        if($_SESSION['search_con'] == 'or') {
+            $words = explode(" ",$word);
+            for($x=0;$x<count($words);$x++)
+                $ret['text'] = preg_replace("#".$words[$x]."#i",'<span class="fontRed" title="'.$words[$x].'">'.$words[$x].'</span>',$text);
+        } else
+            $ret['text'] = preg_replace("#".$word."#i",'<span class="fontRed" title="'.$word.'">'.$word.'</span>',$text);
+
+        if(!preg_match("#<span class=\"fontRed\" title=\"(.*?)\">#", $ret['text']))
+            $ret['class'] = 'class="commentsRight"';
+        else
+            $ret['class'] = 'class="highlightSearchTarget"';
+    } else {
+        $ret['text'] = $text;
+        $ret['class'] = 'class="commentsRight"';
+    }
+
+    return $ret;
+}
+
+function forum_date_tranclate(int $date) {
+    switch ($_SESSION['language']) {
+        case 'de':
+
+            return date("F j, Y, g:i a", $date);
+        default:
+            return date("F j, Y, g:i a", $date);
     }
 }

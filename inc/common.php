@@ -15,6 +15,13 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
+//-> Ladezeit berechen
+function getmicrotime() {
+    list($usec,$sec) = explode(" ",microtime());
+    return((float)$usec+(float)$sec);
+}
+define('start_time',getmicrotime());
+
 if(!defined('is_api')) { define('is_api', false); }
 if(!defined('is_ajax')) { define('is_ajax', false); }
 if(!defined('is_thumbgen')) { define('is_thumbgen', false); }
@@ -84,6 +91,11 @@ class common {
 
     //Private
     private static $menu_index = [];
+
+    //Consts
+    const FORUM_DOUBLE_POST_INSERT = 0;
+    const FORUM_DOUBLE_POST_TH_ADD = 1;
+    const FORUM_DOUBLE_POST_PO_ADD = 2;
 
     //Functions
     /**
@@ -246,7 +258,7 @@ class common {
                             [session_id(),self::$userip,$get['id']]);
 
                         //-> Aktualisiere die User-Statistik
-                        self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `logins` = logins+1 WHERE `user` = ?;", [$get['id']]);
+                        self::userstats_increase('logins',$get['id']);
 
                         //-> Aktualisiere Ip-Count Tabelle
                         foreach(self::$sql['default']->select("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ip` = ? AND `uid` = 0;", [self::$userip]) as $get_ci) {
@@ -389,7 +401,8 @@ class common {
 
         //-> User Hits und Lastvisit aktualisieren
         if(self::$userid >= 1 && !is_ajax && !is_thumbgen && !is_api && isset($_SESSION['lastvisit'])) {
-            self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `hits` = (hits+1), `lastvisit` = ? WHERE `user` = ?;", [(int)($_SESSION['lastvisit']),(int)(self::$userid)]);
+            self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `hits` = (hits+1), `lastvisit` = ? WHERE `user` = ?;",
+                [(int)($_SESSION['lastvisit']),(int)(self::$userid)]);
         }
     }
 
@@ -730,7 +743,7 @@ class common {
         }
 
         if($recall && !$no_recall) {
-            return nav($entrys, $perpage, $urlpart, $recall);
+            return self::nav($entrys, $perpage, $urlpart, $recall);
         }
 
         if ($page == $total_pages) {
@@ -802,11 +815,35 @@ class common {
     public static function userstats(string $what='id',int $tid=0) {
         /*
         TODO: Use PHPFastCache - Cache in Memory
-        TODO: Check is key exists or return 0
-        TODO: Check has user a userstats row? (Create a new stat row)
         */
         if (!$tid) { $tid = self::$userid; }
-        return self::$sql['default']->fetch("SELECT `".$what."` FROM `{prefix_userstats}` WHERE `user` = ?;", [(int)($tid)], $what);
+        $stats = self::$sql['default']->fetch("SELECT `".$what."` FROM `{prefix_userstats}` WHERE `user` = ?;", [(int)($tid)]);
+        if(!common::$sql['default']->rowCount() && $tid >= 1) {
+            self::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?;", [(int)($tid)]);
+            return 0;
+        }
+
+        return $stats[$what];
+    }
+
+    /**
+     * Einzelne Userstatistiken ermitteln
+     * @param string $what
+     * @param int $tid
+     * @return int
+     */
+    public static function userstats_increase(string $what='profilhits',int $tid=0) {
+        /*
+        TODO: Use PHPFastCache - Cache in Memory
+        */
+        if (!$tid) { $tid = self::$userid; }
+        self::$sql['default']->fetch("SELECT `".$what."` FROM `{prefix_userstats}` WHERE `user` = ?;", [(int)($tid)]);
+        if(common::$sql['default']->rowCount() && $tid >= 1) {
+            self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `".$what."` = (".$what."+1) WHERE `user` = ?;", [(int)($tid)]);
+        } else if(!common::$sql['default']->rowCount() && $tid >= 1) {
+            self::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?;", [(int)($tid)]);
+            self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `".$what."` = (".$what."+1) WHERE `user` = ?;", [(int)($tid)]);
+        }
     }
 
     /**
@@ -1119,9 +1156,8 @@ class common {
                 return $iCurrentYear - ($iYear + 1);
             }
         }
-        else {
-            return '-';
-        }
+
+        return '-';
     }
 
     public static function check_msg_emal() {
@@ -1288,7 +1324,7 @@ class common {
         else
             return substr($str, $real_start, $chars[$html_length+$length][1] - $real_start).$dots;
     }
-    
+
     /**
      * Ausgabe der Position des einzelnen Members
      * @param int $tid
@@ -2209,6 +2245,10 @@ class common {
             return true;
         } else {
             if ($uid) {
+                if(!self::$sql['default']->rows("SELECT `id` FROM `{prefix_permissions}` WHERE `user` = ?;", [(int)($uid)]) && $uid >= 1) {
+                    self::$sql['default']->insert("INSERT INTO `{prefix_permissions}` SET `user` = ?;", [(int)($uid)]);
+                }
+
                 // check rank permission
                 if (self::$sql['default']->rows("SELECT s1.`" . $check . "` FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi`"
                     . "WHERE s2.`user` = ? AND s1.`" . $check . "` = 1 AND s2.`posi` != 0;", [(int)($uid)])) {
@@ -2671,6 +2711,18 @@ class common {
     }
 
     /**
+     * Wandelt bytes in eine lesbare Größe.
+     * @param int $bytes
+     * @param int $decimals
+     * @return string
+     */
+    public static function parser_filesize(int $bytes, int $decimals = 2) {
+        $size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
+        $factor = floor((strlen($bytes) - 1) / 3);
+        return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];
+    }
+
+    /**
      * Ausgabe des Indextemplates
      * @param string $index
      * @param string $title
@@ -2799,6 +2851,9 @@ class common {
             //index output
             $index = (file_exists(basePath."/inc/_templates_/".self::$tmpdir."/".$index_templ.".html") ? show($index_templ, $arr) : show("index", $arr));
             cookie::save(); //Save Cookie
+            DebugConsole::insert_info('common::page()','Memory Usage: '.self::parser_filesize(memory_get_usage()));
+            DebugConsole::insert_info('common::page()','Memory-Peak Usage: '.self::parser_filesize(memory_get_peak_usage()));
+            DebugConsole::insert_info('common::page()',sprintf("Page generated in %.8f seconds", (getmicrotime() - start_time)));
             if (debug_save_to_file) {
                 DebugConsole::save_log();
             } //Debug save to file

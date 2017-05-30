@@ -14,21 +14,11 @@ if($get['reg'] == common::$userid || common::permission("forum"))
                  SET `forumposts` = '".(int)($fposts)."'
                  WHERE user = '".$get['reg']."'");
 
-    $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ".$get['sid']);
-
-    if($entrys == "0")
-    {
-        $pagenr = "1";
-        common::$sql['default']->update("UPDATE `{prefix_forumthreads}`
-                      SET `first` = '1'
-                      WHERE kid = '".$get['kid']."'");
-    } else {
-        $pagenr = ceil($entrys/settings::get('m_fposts'));
+    $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[$get['sid']]);
+    if(!$entrys) {
+        common::$sql['default']->update("UPDATE `{prefix_forumthreads}` SET `first` = 1 WHERE `kid` = ?",[$get['kid']]);
     }
 
-    $lpost = show(_forum_add_lastpost, array("id" => $entrys+1,
-        "tid" => $get['sid'],
-        "page" => $pagenr));
-
-    $index = common::info(_forum_delpost_successful, $lpost);
+    $pagenr = !$entrys ? 1 : ceil($entrys/settings::get('m_fposts'));
+    $index = common::info(_forum_delpost_successful, '?action=showthread&amp;id='.$get['sid'].'&amp;page='.$pagenr.'#p'.($entrys+1));
 }

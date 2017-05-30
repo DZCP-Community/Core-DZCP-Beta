@@ -27,7 +27,7 @@ if(!common::$sql['default']->rowCount())
 
             $error = show("errors/errortable", array("error" => $error));
             $getl = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumposts}`
-                                            WHERE kid = '".(int)($get_threadkid['kid'])."'
+                                            WHERE kid = '".$_SESSION['kid']."'
                                             AND sid = '".(int)($_GET['id'])."'
                                             ORDER BY date DESC");
             if(common::$sql['default']->rowCount())
@@ -48,12 +48,16 @@ if(!common::$sql['default']->rowCount())
                 if(common::$chkMe == 4 || common::permission('ipban')) $posted_ip = $getl['ip'];
                 else $posted_ip = _logged;
 
-                $titel = show(_eintrag_titel_forum, array("postid" => (common::cnt("{prefix_forumposts}", " WHERE sid = ".(int)($_GET['id']))+1),
-                    "datum" => date("d.m.Y", $getl['date']),
-                    "zeit" => date("H:i", $getl['date'])._uhr,
-                    "url" => '#',
-                    "edit" => "",
-                    "delete" => ""));
+                //Titel
+                $smarty->caching = false;
+                $smarty->assign('postid', common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[(int)($_GET['id'])])+1);
+                $smarty->assign('datum',date("d.m.Y", $getl['date']));
+                $smarty->assign('zeit',date("H:i", $getl['date']));
+                $smarty->assign('url','#');
+                $smarty->assign('edit',"");
+                $smarty->assign('delete',"");
+                $titel = $smarty->fetch('string:'._eintrag_titel_forum);
+                $smarty->clearAllAssign();
 
                 if($getl['reg'] != 0)
                 {
@@ -108,10 +112,10 @@ if(!common::$sql['default']->rowCount())
                     "zitat" => "",
                     "onoff" => $onoff,
                     "top" => "",
-                    "lp" => common::cnt("{prefix_forumposts}", " WHERE sid = '".(int)($_GET['id'])."'")+1));
+                    "lp" => common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[(int)($_GET['id'])])+1));
             } else {
                 $gett = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}`
-                                                WHERE kid = '".(int)($get_threadkid['kid'])."'
+                                                WHERE kid = '".$_SESSION['kid']."'
                                                 AND id = '".(int)($_GET['id'])."'");
 
                 if(common::data("signatur",$gett['t_reg'])) $sig = _sig.bbcode::parse_html(common::data("signatur",$gett['t_reg']));
@@ -185,7 +189,7 @@ if(!common::$sql['default']->rowCount())
                     "zitat" => "",
                     "onoff" => $onoff,
                     "top" => "",
-                    "lp" => common::cnt("{prefix_forumposts}", " WHERE sid = '".(int)($_GET['id'])."'")+1));
+                    "lp" => common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[(int)($_GET['id'])])+1));
             }
 
             $index = show($dir."/post", array("titel" => _forum_new_post_head,
@@ -212,106 +216,7 @@ if(!common::$sql['default']->rowCount())
                 "error" => $error,
                 "eintraghead" => _eintrag));
         } else {
-            $spam = 0;
-            $getdp = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumposts}`
-                                             WHERE kid = '".(int)($get_threadkid['kid'])."'
-                                             AND sid = '".(int)($_GET['id'])."'
-                                             ORDER BY date DESC
-                                             LIMIT 1");
-            if(common::$sql['default']->rowCount())
-            {
-                if(common::$userid >= 1)
-                {
-                    if(common::$userid == $getdp['reg'] && settings::get('double_post')) $spam = 1;
-                    else $spam = 0;
-                } else {
-                    if($_POST['nick'] == $getdp['nick'] && settings::get('double_post')) $spam = 1;
-                    else $spam = 0;
-                }
-            } else {
 
-                $gettdp = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}`
-                                    WHERE kid = '".(int)($get_threadkid['kid'])."'
-                                    AND id = '".(int)($_GET['id'])."'");
-
-                if(common::$userid >= 1)
-                {
-                    if(common::$userid == $gettdp['t_reg'] && settings::get('double_post')) $spam = 2;
-                    else $spam = 0;
-                } else {
-                    if($_POST['nick'] == $gettdp['t_nick'] && settings::get('double_post')) $spam = 2;
-                    else $spam = 0;
-                }
-            }
-
-            if($spam == 1)
-            {
-                if(common::$userid >= 1) $fautor = common::autor(common::$userid);
-                else $fautor = common::autor('', '', $_POST['nick'], $_POST['email']);
-
-                $text = show(_forum_spam_text, array("autor" => $fautor,
-                    "ltext" => addslashes($getdp['text']),
-                    "ntext" => stringParser::encode($_POST['eintrag'])));
-
-                common::$sql['default']->update("UPDATE `{prefix_forumthreads}`
-                                                                                         SET `lp` = '".time()."'
-                                    WHERE kid = '".$_SESSION['kid']."'
-                                    AND id = '".(int)($_GET['id'])."'");
-
-                common::$sql['default']->update("UPDATE `{prefix_forumposts}`
-                                                 SET `date`   = '".time()."',
-                                                         `text`   = '".$text."'
-                                                 WHERE id = '".$getdp['id']."'");
-            } elseif($spam == 2) {
-                if(common::$userid >= 1) $fautor = common::autor(common::$userid);
-                else $fautor = common::autor('', '', $_POST['nick'], $_POST['email']);
-
-                $text = show(_forum_spam_text, array("autor" => $fautor,
-                    "ltext" => addslashes($gettdp['t_text']),
-                    "ntext" => stringParser::encode($_POST['eintrag'])));
-
-                common::$sql['default']->update("UPDATE `{prefix_forumthreads}`
-                                                 SET `lp`   = '".time()."',
-                                                 `t_text`   = '".$text."',
-                                                 `posts` = (posts+1) 
-                                                 WHERE id = '".$gettdp['id']."'");
-            } else {
-                common::$sql['default']->insert("INSERT INTO `{prefix_forumposts}`
-                                         SET `kid`   = '".(int)($get_threadkid['kid'])."',
-                                                 `sid`   = '".(int)($_GET['id'])."',
-                                                 `date`  = '".time()."',
-                                                 `nick`  = '".stringParser::encode($_POST['nick'])."',
-                                                 `email` = '".stringParser::encode($_POST['email'])."',
-                                                 `reg`   = '".stringParser::encode(common::$userid)."',
-                                                 `text`  = '".stringParser::encode($_POST['eintrag'])."',
-                                                 `ip`    = '".common::$userip."'");
-
-                common::$sql['default']->update("UPDATE `{prefix_forumthreads}`
-                                                SET `lp`    = '".time()."',
-                                                        `first` = '0',
-                                                         `posts` = (posts+1) 
-                                                WHERE id    = '".(int)($_GET['id'])."'");
-            }
-
-            common::setIpcheck("fid(".$get_threadkid['kid'].")");
-
-            common::$sql['default']->update("UPDATE `{prefix_userstats}`
-                                                SET `forumposts` = forumposts+1
-                                                WHERE `user`       = '".common::$userid."'");
-
-
-            send_forum_abo(false, (int)($_GET['id']),$_POST['eintrag']);
-
-            $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ".(int)($_GET['id']));
-
-            if($entrys == "0") $pagenr = "1";
-            else $pagenr = ceil($entrys/settings::get('m_fposts'));
-
-            $lpost = show(_forum_add_lastpost, array("id" => $entrys+1,
-                "tid" => $_GET['id'],
-                "page" => $pagenr));
-
-            $index = common::info(_forum_newpost_successful, $lpost);
         }
     }
 }

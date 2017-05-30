@@ -30,7 +30,7 @@ function can_gzip() {
     return false;
 }
 
-function gz_output($output='') {
+function gz_output(string $output='') {
     if(can_gzip()) {
         ini_set('zlib.output_compression','Off');
         $gzip_compress_level = (!defined('buffer_gzip_compress_level') ? 4 : buffer_gzip_compress_level);

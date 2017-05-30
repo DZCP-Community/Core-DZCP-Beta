@@ -106,7 +106,12 @@ if(defined('_Forum')) {
                 if($getp['reg'] != 0) {
                     $getu = common::$sql['default']->fetch("SELECT nick,hp,email FROM `{prefix_users}` WHERE id = '".$getp['reg']."'");
                     $email = common::CryptMailto(stringParser::decode($getu['email']),_emailicon_forum);
-                    $pn = show(_pn_write_forum, array("id" => $getp['reg'],"nick" => $getu['nick']));
+
+                    $smarty->caching = false;
+                    $smarty->assign('id',$getp['reg']);
+                    $smarty->assign('nick',stringParser::decode($getu['nick']));
+                    $pn = $smarty->fetch('string:'._pn_write_forum);
+                    $smarty->clearAllAssign();
 
                     //Homepage Link
                     $hp = "";
@@ -138,6 +143,7 @@ if(defined('_Forum')) {
 
                 $smarty->caching = false;
                 $smarty->assign('nick',$nick);
+                $smarty->assign('chkme',common::$chkMe);
                 $smarty->assign('postnr',"#".($i+($page-1)*settings::get('m_fposts')));
                 $smarty->assign('p',($i+($page-1)*settings::get('m_fposts')));
                 $smarty->assign('text',$text);
@@ -304,6 +310,7 @@ if(defined('_Forum')) {
             $where = $where.' - '.stringParser::decode($getw['topic']);
             $smarty->caching = false;
             $smarty->assign('where',$wheres);
+            $smarty->assign('chkme',common::$chkMe);
             $smarty->assign('admin',$admin);
             $smarty->assign('nick',$nick);
             $smarty->assign('threadhead',stringParser::decode($getw['topic']));

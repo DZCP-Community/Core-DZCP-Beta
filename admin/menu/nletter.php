@@ -89,9 +89,8 @@ if(_adminMenu != 'true') exit;
               common::sendMail(stringParser::decode($get['email']),$subject,$message);
           }
 
-            common::$sql['default']->update("UPDATE `{prefix_userstats}`
-                         SET `writtenmsg` = writtenmsg+1
-                         WHERE user = ".(int)(common::$userid));
+
+            common::userstats_increase('writtenmsg');
 
               $show = common::info(_msg_reg_answer_done, "?admin=nletter");
 
@@ -104,9 +103,7 @@ if(_adminMenu != 'true') exit;
               common::sendMail(stringParser::decode($get['email']),$subject,$message);
           }
 
-            common::$sql['default']->update("UPDATE `{prefix_userstats}`
-                        SET `writtenmsg` = writtenmsg+1
-                        WHERE user = ".(int)(common::$userid));
+            common::userstats_increase('writtenmsg');
 
               $show = common::info(_msg_member_answer_done, "?admin=nletter");
         } else {
@@ -121,9 +118,7 @@ if(_adminMenu != 'true') exit;
               common::sendMail(stringParser::decode($get['email']),$subject,$message);
           }
 
-            common::$sql['default']->update("UPDATE `{prefix_userstats}`
-                          SET `writtenmsg` = writtenmsg+1
-                          WHERE user = ".(int)(common::$userid));
+            common::userstats_increase('writtenmsg');
 
               $show = common::info(_msg_squad_answer_done, "?admin=nletter");
         }

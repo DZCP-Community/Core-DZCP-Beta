@@ -50,12 +50,17 @@ if(defined('_Forum')) {
       $tID = $_SESSION['kid'];
     }
 
-    $titel = show(_eintrag_titel_forum, array("postid" => "1",
-                                                                            "datum" => date("d.m.Y", $get_datum),
-                                                                              "zeit" => date("H:i", $get_datum)._uhr,
-                                        "url" => '#',
-                                        "edit" => "",
-                                        "delete" => ""));
+      //Titel
+      $smarty->caching = false;
+      $smarty->assign('postid', 1);
+      $smarty->assign('datum',date("d.m.Y", $get_datum));
+      $smarty->assign('zeit',date("H:i", $get_datum));
+      $smarty->assign('url','#');
+      $smarty->assign('edit',"");
+      $smarty->assign('delete',"");
+      $titel = $smarty->fetch('string:'._eintrag_titel_forum);
+      $smarty->clearAllAssign();
+
     if($guestCheck)
     {
       $getu = common::$sql['default']->fetch("SELECT nick,hp,email FROM `{prefix_users}` WHERE id = '".$pUId."'");
@@ -167,15 +172,20 @@ if(defined('_Forum')) {
         $pUId = common::$userid;
       }
       $tID = $_GET['id'];
-      $cnt = common::cnt("{prefix_forumposts}", " WHERE sid = '".(int)($_GET['id'])."'")+2;
+      $cnt = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[(int)($_GET['id'])])+2;
     }
 
-    $titel = show(_eintrag_titel_forum, array("postid" => $cnt,
-                                                                          "datum" => date("d.m.Y",$get_datum),
-                                                                             "zeit" => date("H:i",$get_datum)._uhr,
-                                        "url" => '#',
-                                        "edit" => "",
-                                        "delete" => ""));
+      //Titel
+      $smarty->caching = false;
+      $smarty->assign('postid', $cnt);
+      $smarty->assign('datum',date("d.m.Y", $get_datum));
+      $smarty->assign('zeit',date("H:i", $get_datum));
+      $smarty->assign('url','#');
+      $smarty->assign('edit',"");
+      $smarty->assign('delete',"");
+      $titel = $smarty->fetch('string:'._eintrag_titel_forum);
+      $smarty->clearAllAssign();
+
     if($guestCheck)
     {
       $getu = common::$sql['default']->fetch("SELECT nick,hp,email FROM `{prefix_users}` WHERE id = '".(int)($pUId)."'");

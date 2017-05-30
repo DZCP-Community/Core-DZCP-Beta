@@ -141,7 +141,7 @@ if(defined('_UserMenu')) {
                                . "`nachricht`  = ?,"
                                . "`see`        = 1;",
                     array(common::$userid,(int)$_POST['an'],stringParser::encode($_POST['titel']),stringParser::encode($_POST['eintrag'])));
-                    common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `writtenmsg` = (writtenmsg+1) WHERE `user` = ?;",array(common::$userid));
+                    common::userstats_increase('writtenmsg');
 
                     //benachrichtigungs email senden
                     if(common::data('pnmail',(int)$_POST['an'])) {
@@ -334,7 +334,7 @@ if(defined('_UserMenu')) {
                         common::sendMail(stringParser::decode(common::data('email',(int)$to)), $subj, $message);
                     }
 
-                    common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `writtenmsg` = (writtenmsg+1) WHERE `user` = ?;",array(common::$userid));
+                    common::userstats_increase('writtenmsg');
                     $index = common::info(_msg_answer_done, "?action=msg");
                 }
             break;

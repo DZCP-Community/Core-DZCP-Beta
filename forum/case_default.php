@@ -40,7 +40,7 @@ if(defined('_Forum')) {
                 $lpost = "-"; $lpdate = 0;
                 if(common::cnt('{prefix_forumthreads}', " WHERE `kid` = ?","id",array($gets['id']))) {
                    $lpost = "";
-                   if($getlt['first'] == 1) {
+                   if($getlt['first'] == 1) { //Only Thread
                         //Check Unreaded
                         $iconpic = "icon_topic_latest.gif";
                         if(common::$userid >= 1 && $_SESSION['lastvisit']) {
@@ -55,15 +55,17 @@ if(defined('_Forum')) {
                         $smarty->caching = false;
                         $smarty->assign('nick',_forum_from.' '.common::autor($getlt['t_reg'], '',
                                 stringParser::decode($getlt['t_nick']),
-                                stringParser::decode($getlt['t_email'])).' ');
+                                stringParser::decode($getlt['t_email']),10).' ');
                         $smarty->assign('post_link','?action=showthread&kid='.$getlt['kid'].'&id='.$getlt['id']);
+                        $smarty->assign('page','');
+                        $smarty->assign('post','');
                         $smarty->assign('img',$iconpic);
-                        $smarty->assign('date',date("F j, Y, g:i a", $getlt['t_date']));
+                        $smarty->assign('date',forum_date_tranclate($getlt['t_date']));
                         $lpost .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_thread_lpost.tpl');
                         $smarty->clearAllAssign();
 
                         $lpdate = (int)($getlt['t_date']);
-                   } elseif(!$getlt['first']) {
+                   } elseif(!$getlt['first']) { //With Posts
                         //Check Unreaded
                         $iconpic = "icon_topic_latest.gif";
                         if(common::$userid >= 1 && $_SESSION['lastvisit']) {
@@ -75,13 +77,18 @@ if(defined('_Forum')) {
                             }
                         }
 
+                       $cntpage = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[$getlt['id']]);
+                       $pagenr = !$cntpage ? '1' : ceil($cntpage/settings::get('m_fposts'));
+
                        $smarty->caching = false;
-                       $smarty->assign('nick',_forum_from.' '.common::autor($getlp['reg'], '',
+                       $smarty->assign('nick',_forum_from.' '.common::autor((int)$getlp['reg'], '',
                                stringParser::decode($getlp['nick']),
-                               stringParser::decode($getlp['email'])).' ');
+                               stringParser::decode($getlp['email']),10).' ');
                        $smarty->assign('post_link','?action=showthread&kid='.$getlt['kid'].'&id='.$getlt['id']);
                        $smarty->assign('img',$iconpic);
-                       $smarty->assign('date',date("F j, Y, g:i a", $getlp['date']));
+                       $smarty->assign('page',($pagenr >= 2 ? '&page='.$pagenr : ''));
+                       $smarty->assign('post',($cntpage >= 1 ? '#p'.($cntpage+1) : ''));
+                       $smarty->assign('date',forum_date_tranclate($getlp['date']));
                        $lpost .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_thread_lpost.tpl');
                        $smarty->clearAllAssign();
 
@@ -112,7 +119,7 @@ if(defined('_Forum')) {
 
                 //Show
                 $smarty->caching = false;
-                $smarty->assign('topic',stringParser::decode($gets['kattopic']));
+                $smarty->assign('topic',chunk_split(stringParser::decode($gets['kattopic']),50,"<br>"));
                 $smarty->assign('subtopic',stringParser::decode($gets['subtopic']));
                 $smarty->assign('lpost',$lpost);
                 $smarty->assign('frompic',$frompic);

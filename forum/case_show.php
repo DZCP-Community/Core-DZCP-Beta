@@ -119,8 +119,10 @@ if(defined('_Forum')) {
             $lpost = '-';
             if($is_lp) {
                 $smarty->caching = false;
-                $smarty->assign('nick',common::autor($getlp['reg'], '', $getlp['nick'], stringParser::decode($getlp['email'])));
-                $smarty->assign('post_link','?action=showthread&kid='.$getlp['kid'].'&id='.$getlp['sid']);
+                $smarty->assign('nick',common::autor($getlp['reg'], '', $getlp['nick'], stringParser::decode($getlp['email']), 12));
+                $smarty->assign('post_link','?action=showthread&id='.$getlp['sid']);
+                $smarty->assign('page',($pagenr >= 2 ? '&page='.$pagenr : ''));
+                $smarty->assign('post',($cntpage >= 1 ? '#p'.($cntpage+1) : ''));
                 $smarty->assign('img',$iconpic);
                 $smarty->assign('date',date("F j, Y, g:i a", $getlp['date']));
                 $lpost = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_thread_lpost.tpl');
@@ -155,14 +157,14 @@ if(defined('_Forum')) {
             $smarty->assign('id',$get['id']);
             $smarty->assign('frompic',$frompic);
             $smarty->assign('hl',(!empty($_POST['suche']) ? '&amp;hl='.$_POST['suche'] : ''));
-            $smarty->assign('sticky',$get['sticky']);
-            $smarty->assign('global',$get['global']);
-            $smarty->assign('topic',stringParser::decode($get['topic']));
-            $smarty->assign('subtopic',stringParser::decode(common::cut($get['subtopic'],settings::get('l_forumsubtopic'))));
+            $smarty->assign('sticky',false /*$get['sticky'] */);
+            $smarty->assign('global',false /*$get['global']*/);
+            $smarty->assign('topic',chunk_split(stringParser::decode($get['topic']),32,"<br>"));
+            $smarty->assign('subtopic',common::cut(stringParser::decode($get['subtopic']),settings::get('l_forumsubtopic')));
             $smarty->assign('hits',$get['hits']);
             $smarty->assign('replys',common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[$get['id']]));
             $smarty->assign('lpost',$lpost);
-            $smarty->assign('autor',common::autor($get['t_reg'], '', $get['t_nick'], $get['t_email']));
+            $smarty->assign('autor',common::autor($get['t_reg'], '', stringParser::decode($get['t_nick']), stringParser::decode($get['t_email']), 8));
             $threads .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_show_threads.tpl');
             $smarty->clearAllAssign();
         }

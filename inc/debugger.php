@@ -15,12 +15,6 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-//-> Ladezeit berechen
-function getmicrotime() {
-    list($usec,$sec) = explode(" ",microtime());
-    return((float)$usec+(float)$sec);
-}
-
 ## Check PHP Version ##
 if (version_compare(PHP_VERSION, '5.4.0', 'lt')) {
     die('DZCP required PHP 5.4.0 or newer!<p> Found PHP ' . PHP_VERSION);

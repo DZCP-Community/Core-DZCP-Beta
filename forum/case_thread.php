@@ -312,7 +312,7 @@ if(defined('_Forum')) {
 
                     $thisFID = common::$sql['default']->lastInsertId(); //Get new thread-id
                     common::setIpcheck("fid(" . $_SESSION['kid'] . ")");
-                    common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `forumthreads` = (forumthreads+1) WHERE `user` = ?;",[common::$userid]);
+                    common::userstats_increase('forumthreads');
 
                     $index = common::info(_forum_newthread_successful, "?action=showthread&amp;id=" . $thisFID . "#p1");
                     unset($thisFID,$validated_post_data);

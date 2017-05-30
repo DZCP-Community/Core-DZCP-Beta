@@ -5,12 +5,12 @@
     <script language="javascript" type="text/javascript">
       var prevURL = '../forum/?action=preview&amp;what=post&amp;do=addpost&amp;id={$id}';
     </script>
-    <form id="fpostForm" name="fpostForm" action="?action=post&amp;do=addpost&amp;id={$id}" method="post" onsubmit="return(DZCP.submitButton())">
+    <form id="fpostForm" name="fpostForm" action="?action=post&amp;do=add&amp;id={$id}" method="post" onsubmit="return(DZCP.submitButton())">
     <table class="hperc" cellspacing="1">
       <tr>
         <td class="contentHead" colspan="2" align="center"><span class="fontBold">{lang msgID="forum_new_post_head"}</span></td>
       </tr>
-      {$error}
+      {$notification}
       {$from}
       <tr>
         <td class="contentMainFirst" align="center" colspan="2">

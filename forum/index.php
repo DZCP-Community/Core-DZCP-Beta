@@ -28,33 +28,11 @@ $dir = "forum";
 define('_Forum', true);
 $smarty = common::getSmarty(); //Use Smarty
 
+## SECTIONS
 if(isset($_GET['kid']) && !empty($_GET['kid'])) {
     $_SESSION['kid'] = (int)$_GET['kid'];
 }
 
-//-> Funktion um Bestimmte Textstellen zu markieren
-function hl($text, $word) {
-    if(!empty($_GET['hl']) && $_SESSION['search_type'] == 'text') {
-        if($_SESSION['search_con'] == 'or') {
-            $words = explode(" ",$word);
-            for($x=0;$x<count($words);$x++)
-                $ret['text'] = preg_replace("#".$words[$x]."#i",'<span class="fontRed" title="'.$words[$x].'">'.$words[$x].'</span>',$text);
-        } else
-            $ret['text'] = preg_replace("#".$word."#i",'<span class="fontRed" title="'.$word.'">'.$word.'</span>',$text);
-
-        if(!preg_match("#<span class=\"fontRed\" title=\"(.*?)\">#", $ret['text']))
-            $ret['class'] = 'class="commentsRight"';
-        else
-            $ret['class'] = 'class="highlightSearchTarget"';
-    } else {
-        $ret['text'] = $text;
-        $ret['class'] = 'class="commentsRight"';
-    }
-
-    return $ret;
-}
-
-## SECTIONS
 $action = empty($action) ? 'default' : $action;
 if (file_exists(basePath . "/forum/case_" . $action . ".php")) {
     require_once(basePath . "/forum/case_" . $action . ".php");

@@ -3,7 +3,7 @@
     <table class="hperc">
       <tr>
         <td style="vertical-align:middle"><a name="p{$p}"></a>{$titel}</td>
-        <td style="text-align:right">{$zitat}</td>
+        <td style="text-align:right">{if $chkme >= 1}{$zitat}{/if}</td>
       </tr>
     </table>
   </td>

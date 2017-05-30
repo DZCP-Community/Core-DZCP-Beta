@@ -57,17 +57,10 @@ if($get['reg'] == common::$userid || common::permission("forum"))
 
         send_forum_abo(false, $getp['sid'],$_POST['eintrag'],true);
 
-        $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ".$getp['sid']);
-
-        if($entrys == "0") $pagenr = "1";
-        else $pagenr = ceil($entrys/settings::get('m_fposts'));
-
-        $lpost = show(_forum_add_lastpost, array("id" => $entrys+1,
-            "tid" => $getp['sid'],
-            "page" => $pagenr));
-
-        $index = common::info(_forum_editpost_successful, $lpost);
+        $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[$getp['sid']]);
+        $pagenr = !$entrys ? 1 : ceil($entrys/settings::get('m_fposts'));
+        $index = common::info(_forum_editpost_successful, '?action=showthread&amp;id='.$getp['sid'].'&amp;page='.$pagenr.'#p'.($entrys+1));
     }
 } else {
-    $index = common::error(_error_wrong_permissions, 1);
+    $index = common::error(_error_wrong_permissions, 3);
 }

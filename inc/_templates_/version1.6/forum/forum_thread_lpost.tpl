@@ -1,1 +1,1 @@
-<p class="forumTopic">{$date}</p><p class="forumTopic">{$nick}<a href="{$post_link}" title="{lang msgID="forum_last_post"}"><img src="{dir}/images/forum/{$img}" border="0"></a>
+<p class="forumTopic">{$date}</p><p class="forumTopic">{$nick}<a href="{$post_link}{$page}{$post}" title="{lang msgID="forum_last_post"}"><img src="{dir}/images/forum/{$img}" border="0"></a>

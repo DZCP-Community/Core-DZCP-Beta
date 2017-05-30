@@ -28,8 +28,7 @@ if(defined('_UserMenu')) {
 
             if(common::$sql['default']->rowCount()) {
                 if(!$get['level'] && !empty($get['actkey'])) {
-                    common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `akl` = (akl+1) WHERE `user` = ?;",
-                        array($get['id']));
+                    common::userstats_increase('akl',$get['id']);
                     common::$sql['default']->update("UPDATE `{prefix_users}` SET `actkey` = ? WHERE `id` = ?;",
                             array(stringParser::encode($guid = common::GenGuid()),$get['id']));
                     $akl_link = 'http://'.common::$httphost.'/user/?action=akl&do=activate&key='.$guid;

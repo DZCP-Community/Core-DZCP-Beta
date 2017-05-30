@@ -27,7 +27,7 @@ if(defined('_UserMenu')) {
             $index = common::error(_profile_access_error, 1);
         } else {
             if (common::count_clicks('userprofil', $get['id'])) {
-                common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `profilhits` = (profilhits+1) WHERE `user` = ?;",array($get['id']));
+                common::userstats_increase('profilhits',$get['id']);
             } //Update Userstats
 
             $sex = $get['sex'] == 1 ? _male : ($get['sex'] == 2 ? _female : '-');
