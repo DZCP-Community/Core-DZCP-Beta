@@ -17,7 +17,7 @@
   <td class="contentMainTop"><span class="fontBold">{$fkid}:</span></td>
   <td class="contentMainFirst" align="center">
     <select name="kid" class="dropdown">
-      {$lang_nothing}
+        {lang msgID="nothing"}
       <option value="1">als erstes</option>
       {$positions}
     </select>

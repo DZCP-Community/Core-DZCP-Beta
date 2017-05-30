@@ -26,7 +26,7 @@
   <td class="contentMainTop"><span class="fontBold">{$tposition}:</span></td>
   <td class="contentMainFirst" align="center">
     <select name="order" class="dropdown">
-      {$lang_nothing}
+        {lang msgID="nothing"}
       <option value="1">als erstes</option>
       {$position}
     </select>
