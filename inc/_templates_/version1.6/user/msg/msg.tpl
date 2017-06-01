@@ -29,7 +29,7 @@
   <td class="contentHead" colspan="5"><span class="fontBold">{lang msgID="postausgang"}</span></td>
 </tr>
 <tr>
-  <td class="contentMainTop" width="3%">{lang msgID="yesno"}</td>
+  <td class="contentMainTop" width="3%"><img src="../inc/images/yesno.gif" alt="" class="icon" /></td>
   <td class="contentMainTop" width="37%"><span class="fontBold">{lang msgID="msg_title"}</span></td>
   <td class="contentMainTop" width="25%"><span class="fontBold">{lang msgID="msg_empfaenger"}</span></td>
   <td class="contentMainTop" width="30%"><span class="fontBold">{lang msgID="datum"}</span></td>
@@ -65,7 +65,7 @@
 </tr>
 <tr>
   <td class="contentMainFirst" colspan="5" align="center">{lang msgID="newicon"} = <span class="fontItalic">{lang msgID="legende_msg"}</span>
-    <span class="fontBold">|</span> {lang msgID="yesno"} = <span class="fontItalic">{lang msgID="legende_readed"}</span></td>
+    <span class="fontBold">|</span> <img src="../inc/images/yesno.gif" alt="" class="icon" /> = <span class="fontItalic">{lang msgID="legende_readed"}</span></td>
 </tr>
 </table>
 </td>

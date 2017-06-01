@@ -61,7 +61,7 @@ define('_admin_akl_regist_subj', 'Betreff: Registrierungs Aktivierungs-eMail');
 define('_admin_akl_regist', 'Registrierungs Aktivierungs-eMail Template');
 define('_reg_akl_invalid', 'Dieser Aktivierungslink ist nicht mehr g&uuml;ltig');
 define('_reg_akl_valid', 'Dein Account wurde aktiviert');
-define('_reg_akl_sended', 'Dein Aktivierungslink wurde an "[email]" versandt, schau bitte in dein E-Mail Postfach');
+define('_reg_akl_sended', 'Dein Aktivierungslink wurde an "{$email}" versandt, schau bitte in dein E-Mail Postfach');
 define('_reg_akl_email_nf', 'Es existiert kein Account mit dieser E-Mail Addresse');
 define('_reg_akl_locked', 'Der Account ist gesperrt und kann nicht mehr aktiviert werden');
 define('_reg_akl_activated', 'Dein Account ist bereits aktiviert');

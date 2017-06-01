@@ -77,22 +77,22 @@ if(_adminMenu != 'true') exit;
         if(empty($_POST['name']) || empty($_POST['link']) || empty($_POST['beschreibung']))
         {
           if(empty($_POST['beschreibung']))
-              $smarty->caching = false;
+          {$smarty->caching = false;
             $smarty->assign('error',_sponsors_empty_beschreibung);
             $error = $smarty->fetch('file:['.common::$tmpdir.']errors/errortable.tpl');
-            $smarty->clearAllAssign();
+            $smarty->clearAllAssign();}
 
               if(empty($_POST['link']))
-                  $smarty->caching = false;
+              { $smarty->caching = false;
                 $smarty->assign('error',_sponsors_empty_link);
                 $error = $smarty->fetch('file:['.common::$tmpdir.']errors/errortable.tpl');
-                $smarty->clearAllAssign();
+                $smarty->clearAllAssign();}
 
               if(empty($_POST['name']))
-                  $smarty->caching = false;
+              { $smarty->caching = false;
                 $smarty->assign('error',_sponsors_empty_name);
                 $error = $smarty->fetch('file:['.common::$tmpdir.']errors/errortable.tpl');
-                $smarty->clearAllAssign();
+                $smarty->clearAllAssign();}
 
 
           $pos = common::$sql['default']->select("SELECT pos,name FROM `{prefix_sponsoren}` ORDER BY pos");

@@ -22,5 +22,5 @@
   <td class="contentHead" colspan="6" style="text-align:left"><span class="fontBold">{lang msgID="legende"}:</span></td>
 </tr>
 <tr>
-  <td class="contentMainFirst" colspan="6" align="center">{lang msgID="yesno"} = <span class="fontItalic">{lang msgID="vote_legendemenu"}</span></td>
+  <td class="contentMainFirst" colspan="6" align="center"><img src="../inc/images/yesno.gif" alt="" class="icon" /> = <span class="fontItalic">{lang msgID="vote_legendemenu"}</span></td>
 </tr>

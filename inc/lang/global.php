@@ -55,7 +55,6 @@ define('_mficon_blank', '<img src="../inc/images/mf.gif" alt="" class="icon" />'
 define('_maleicon', '<img src="../inc/images/male.gif" alt="" class="icon" />');
 define('_femaleicon', '<img src="../inc/images/female.gif" alt="" class="icon" />');
 define('_pnicon_blank', '<img src="../inc/images/pn.gif" alt="" class="icon" />');
-define('_yesno', '<img src="../inc/images/yesno.gif" alt="" class="icon" />');
 define('_yesicon', '<img src="../inc/images/yes.gif" alt="" class="icon" />');
 define('_noicon', '<img src="../inc/images/no.gif" alt="" class="icon" />');
 define('_newicon', '<img src="../inc/images/forum_newpost.gif" alt="" class="icon" />');
