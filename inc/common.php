@@ -88,6 +88,7 @@ class common {
     public static $tmpdir = NULL;
     public static $chkMe = 0;
     public static $CrawlerDetect = NULL;
+    public static $less = NULL;
 
     //Private
     private static $menu_index = [];
@@ -183,6 +184,10 @@ class common {
             self::$httphost = self::GetServerVars('HTTP_HOST') . (empty($subfolder) ? '' : '/' . $subfolder);
             unset($subfolder);
         }
+
+        //Less Parser
+        $options = array( 'compress' => true, 'sourceMap' => false );
+        self::$less = new Less_Parser($options);
 
         //Set User IP & einzelne Definitionen
         self::$userip = self::visitorIp();
@@ -404,6 +409,12 @@ class common {
             self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `hits` = (hits+1), `lastvisit` = ? WHERE `user` = ?;",
                 [(int)($_SESSION['lastvisit']),(int)(self::$userid)]);
         }
+
+
+        //dev
+        if(isset($_GET['dev']))
+        die(self::less());
+
     }
 
     /**
@@ -2431,6 +2442,26 @@ class common {
                 }
             }
         }
+    }
+
+    public static function less() {
+        //TODO: Use Cache
+        $main_dir = basePath . "/inc/_templates_/" . self::$sdir."/_less";
+        $auto_imports = array();
+        if($auto_import = common::get_files(basePath . "/inc/_templates_/" . self::$sdir."/_less/auto_imports/",false,true, ['php'])) {
+            foreach($auto_import AS $dir)
+            {
+                $auto_imports[basePath.'/inc/_templates_/'.self::$sdir.'/_less/auto_imports/'.$dir.'/'] = '/inc/_templates_/'.self::$sdir.'/_less/auto_imports/'.$dir.'/';
+            }
+            unset($auto_import,$dir);
+        }
+
+        if(count($auto_imports) >= 1) {
+            self::$less->SetImportDirs($auto_imports);
+        }
+
+        self::$less->parseFile( $main_dir.'/theme.less', "/inc/_templates_/" . self::$sdir."/_less/");
+        return self::$less->getCss();
     }
 
     /**
