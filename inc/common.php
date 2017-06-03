@@ -788,7 +788,22 @@ class common {
      * @return string
      */
     public static function links(string $hp) {
-        return !empty($hp) ? 'http://'.str_replace("http://","",$hp) : $hp;
+        if(!empty($hp)) {
+            //SSL
+            $count = 0;
+            $hp = str_replace("https://", "", $hp, $count);
+            if ($count >= 1) {
+                return 'https://' . $hp;
+            }
+
+            $count = 0;
+            $hp = str_replace("http://", "", $hp, $count);
+            if ($count >= 1) {
+                return 'http://' . $hp;
+            }
+        }
+
+        return $hp;
     }
 
     /**
@@ -2472,7 +2487,7 @@ class common {
      * @return string
      */
     public static function editor_is_reg(array $get = array()) {
-        $get['reg'] = array_key_exists('reg',$get) ? $get['reg'] : array_key_exists('t_reg',$get) ? $get['t_reg'] : self::$userid; //Fix for thread/post
+        $get['reg'] = (array_key_exists('reg',$get) ? $get['reg'] : (array_key_exists('t_reg',$get) ? $get['t_reg'] : self::$userid)); //Fix for thread/post
         $smarty = self::getSmarty(true);
         $smarty->caching = false;
         if($get['reg'] != 0) {
