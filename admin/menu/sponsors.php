@@ -190,7 +190,7 @@ if(_adminMenu != 'true') exit;
 
             common::$sql['default']->insert("INSERT INTO `{prefix_sponsoren}`
                      SET `name`         = '".stringParser::encode($_POST['name'])."',
-                                     `link`         = '".common::links($_POST['link'])."',
+                                     `link`         = '".stringParser::encode(common::links($_POST['link']))."',
                                      `beschreibung` = '".stringParser::encode($_POST['beschreibung'])."',
                                      `site`         = '".(int)($_POST['site'])."',
                                      `slink`        = '".$_POST['slink']."',
@@ -525,7 +525,7 @@ if(_adminMenu != 'true') exit;
 
           common::$sql['default']->update("UPDATE `{prefix_sponsoren}`
                        SET      `name`         = '".stringParser::encode($_POST['name'])."',
-                             `link`         = '".common::links($_POST['link'])."',
+                             `link`         = '".stringParser::encode(common::links($_POST['link']))."',
                              `beschreibung` = '".stringParser::encode($_POST['beschreibung'])."',
                              `site`         = '".(int)($_POST['site'])."',
                              `slink`        = '".$_POST['slink']."',
