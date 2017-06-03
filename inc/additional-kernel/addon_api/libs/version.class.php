@@ -93,17 +93,22 @@ class dzcp_version extends dzcp_event
                         break;
                     case 'jsonp':
                     default:
-                        $output = json_encode([
-                                'dzcp' => [
-                                    'version' => stringParser::decode($get['version']),
-                                    'release' => stringParser::decode($get['release']),
-                                    'build' => stringParser::decode($get['build']),
-                                    'edition' => stringParser::decode($get['edition'])
-                                ]
-                        ]);
+                    common::$gump->validation_rules(array('dzcp' => 'required|min_len,1'));
+                    common::$gump->filter_rules(array('dzcp' => 'json_encode'));
+                    $output = [
+                        'dzcp' => [
+                            'version' => stringParser::decode($get['version']),
+                            'release' => stringParser::decode($get['release']),
+                            'build' => stringParser::decode($get['build']),
+                            'edition' => stringParser::decode($get['edition'])
+                        ]
+                    ];
 
-                        echo $output;
-                        break;
+                    $validated_data = common::$gump->run($output);
+                    if ($validated_data !== false) {
+                        echo $validated_data;
+                    }
+                    break;
                 }
             }
     }
