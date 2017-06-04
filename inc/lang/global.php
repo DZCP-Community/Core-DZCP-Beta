@@ -69,8 +69,6 @@ define('_newsc_delete', '<a href="?action=show&amp;id=[id]&amp;do=delete&cid=[ci
 ## News ##
 define('_news_show_link', '<a href="../news/?action=show&amp;id=[id]">[titel]</a>');
 ## Forum ##
-define('_forum_avatar', '<img src="../inc/images/uploads/useravatare/[id].[endung]" border="1" width="100" height="100" alt="" />');
-define('_forum_dowhat_edit_post', 'editpost&amp;id=[id]');
 define('_forum_select_field_search', '<option value="[value]" [sel]>-> [what]</option>');
 ## Umfragen ##
 define('_votes_titel', '<a href="javascript:DZCP.toggle(\'[vid]\')"><img src="../inc/images/[icon].gif" alt="" id="img[vid]" class="icon" />[intern][titel]</a>');
