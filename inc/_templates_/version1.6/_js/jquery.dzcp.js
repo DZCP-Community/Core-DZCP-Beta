@@ -488,7 +488,7 @@ var DZCP = {
         if(!DZCP.jQueryCheck(false)) return false;
         DZCP.DebugLogger('Ajax Preview -> Tag: \'' + form + '\'');
         $('#previewDIV').html('<div style="width:100%;text-align:center">'
-            + ' <img src="../inc/images/admin/loading.gif" alt="" />'
+            + ' <img src="../inc/images/ajax-loader-bar.gif" alt="" />'
             + '</div>');
 
         var url = prevURL;

@@ -880,7 +880,7 @@ define('_forum_admin_delete' , 'Delete thread?');
 define('_forum_admin_close' , 'Thread is closed');
 define('_forum_admin_moveto' , 'Move thread to:');
 define('_forum_admin_thread_deleted' , 'The thread was successfully deleted!');
-define('_forum_admin_do_move' , 'The thread was successfully edited<br />and moved into the category <span class="fontWichtig">[kat]</span>!');
+define('_forum_admin_do_move' , 'The thread was successfully edited<br />and moved into the category <span class="fontWichtig">{$kat}</span>!');
 define('_forum_admin_modded' , 'The thread was successfully edited!');
 define('_forum_search_what' , 'Search for');
 define('_forum_search_kat' , 'in category');

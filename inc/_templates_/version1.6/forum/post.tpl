@@ -1,10 +1,11 @@
 </table>
+<script language="javascript" type="text/javascript">
+    <!-- Preview -->
+    var prevURL = '../forum/?action=preview&what=post&do={if $is_edit}editpost{else}addpost{/if}{if $id >= 1}&id={$id}{/if}';
+</script>
 <table class="mainContent" cellspacing="0" style="margin-top:0">
 <tr>
   <td>
-    <script language="javascript" type="text/javascript">
-      var prevURL = '../forum/?action=preview&amp;what=post&amp;do=addpost&amp;id={$id}';
-    </script>
     <form id="fpostForm" name="fpostForm" action="?action=post&amp;do={if $is_edit}edit{else}add{/if}&amp;id={$id}" method="post" onsubmit="return(DZCP.submitButton())">
     <table class="hperc" cellspacing="1">
       <tr>

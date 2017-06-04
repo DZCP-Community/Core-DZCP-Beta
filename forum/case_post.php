@@ -371,7 +371,13 @@ if(defined('_Forum')) {
                                     if ($get['t_reg'] != 0) {
                                         $getu = common::$sql['default']->fetch("SELECT `nick`,`hp`,`email` FROM `{prefix_users}` WHERE `id` = ?;", [$get['t_reg']]);
                                         $email = common::CryptMailto(stringParser::decode($getu['email']), _emailicon_forum);
-                                        $pn = show(_pn_write_forum, array("id" => $get['t_reg'], "nick" => $getu['nick']));
+
+                                        //PM Link
+                                        $smarty->caching = false;
+                                        $smarty->assign('id',$get['t_reg']);
+                                        $smarty->assign('nick',stringParser::decode($getu['nick']));
+                                        $pn = $smarty->fetch('string:'._pn_write_forum);
+                                        $smarty->clearAllAssign();
 
                                         //-> Homepage Link
                                         $hp = "";

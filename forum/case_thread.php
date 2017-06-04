@@ -209,7 +209,8 @@ if(defined('_Forum')) {
 
                     //Forum thread
                     $smarty->caching = false;
-                    $smarty->assign('edit', 1);
+                    $smarty->assign('is_edit',true);
+                    $smarty->assign('kid',$_SESSION['kid']);
                     $smarty->assign('id', (int)($_GET['id']));
                     $smarty->assign('form', common::editor_is_reg($get));
                     $smarty->assign('posttopic', stringParser::decode($get['topic']));
@@ -368,7 +369,7 @@ if(defined('_Forum')) {
 
                     //Forum thread
                     $smarty->caching = false;
-                    $smarty->assign('edit', 0);
+                    $smarty->assign('is_edit',false);
                     $smarty->assign('id', 0);
                     $smarty->assign('kid', $_SESSION['kid']);
                     $smarty->assign('form', common::editor_is_reg(array('reg' => common::$userid)));

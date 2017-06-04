@@ -863,7 +863,7 @@ define('_forum_admin_delete', 'Thema l&ouml;schen?');
 define('_forum_admin_close', 'Thema ist geschlossen');
 define('_forum_admin_moveto', 'Thema verschieben nach:');
 define('_forum_admin_thread_deleted', 'Das Thema wurde erfolgreich gel&ouml;scht!');
-define('_forum_admin_do_move', 'Das Thema wurde erfolgreich bearbeitet<br />und in die Kategorie <span class="fontWichtig">[kat]</span> verschoben!');
+define('_forum_admin_do_move', 'Das Thema wurde erfolgreich bearbeitet<br />und in die Kategorie <span class="fontWichtig">{$kat}</span> verschoben!');
 define('_forum_admin_modded', 'Das Thema wurde erfolgreich bearbeitet!');
 define('_forum_search_what', 'Suchen nach');
 define('_forum_search_kat', 'in Kategorie');

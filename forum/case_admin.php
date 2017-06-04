@@ -110,7 +110,11 @@ if(defined('_Forum')) {
                       ON s1.kid = s2.id
                       WHERE s1.id = '".(int)($_GET['id'])."'");
 
-          $i_move = show(_forum_admin_do_move, array("kat" => stringParser::decode($getm['kattopic'])));
+          $smarty->caching = false;
+          $smarty->assign('kat',stringParser::decode($getm['kattopic']));
+          $i_move = $smarty->fetch('string:'._forum_admin_do_move);
+          $smarty->clearAllAssign();
+
           $index = common::info($i_move, "?action=showthread&amp;id=".$_GET['id']."");
         }
       }
