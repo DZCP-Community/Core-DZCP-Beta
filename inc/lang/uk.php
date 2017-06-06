@@ -21,10 +21,10 @@ setlocale(LC_ALL, "en_US.utf8");
 define('_button_title_del' , 'Delete');
 define('_button_title_edit' , 'Edit');
 define('_button_title_zitat' , 'Quote this entry');
-define('_button_title_comment' , 'Commentate this entry');
+define('_button_title_comment' , 'Comment this entry');
 define('_button_title_menu' , 'Set to menu');
 define('_button_value_add' , 'Insert');
-define('_button_value_addto' , 'Insert');
+define('_button_value_addto' , 'Add');
 define('_button_value_edit' , 'Edit');
 define('_button_value_search' , 'Search');
 define('_button_value_search1' , 'Start search');
@@ -36,7 +36,7 @@ define('_button_value_send' , 'Send');
 define('_button_value_reg' , 'Register');
 define('_button_value_msg' , 'Send message');
 define('_button_value_nletter' , 'Send newsletter');
-define('_button_value_config' , 'Store configuration');
+define('_button_value_config' , 'Save configuration');
 define('_button_value_clear' , 'Clear database');
 define('_button_value_save' , 'Save');
 define('_editor_from' , 'From');
@@ -47,8 +47,8 @@ define('_lang_de', 'German');
 define('_lang_uk', 'English');
 
 ## Lost Password ##
-define('_admin_lpwd_subj', 'Betreff: Passwort zur&uuml;cksetzen');
-define('_admin_lpwd', 'Passwort zur&uuml;cksetzen template');
+define('_admin_lpwd_subj', 'Subject: Reset password');
+define('_admin_lpwd', 'Reset password template');
 
 ## ADDED / REDEFINED FOR 1.7.0
 define('_years', 'Years');
@@ -67,11 +67,11 @@ define('_seconds', 'Seconds');
 define('_second', 'Second');
 
 define('_server_ip', 'Server-IP');
-define('_aktion', 'Aktion');
-define('_config_activate_user', 'User aktivieren');
-define('_profil_admin_locked', 'Account ist nicht aktiviert');
-define('_profil_locked', 'Der Account ist noch nicht aktiviert, <a href="?index=user&amp;action=akl&do=send" target="_self">&lt; Aktivierungs-Mail senden &gt;</a>');
-define('_profil_closed', 'Der Account ist gesperrt');
+define('_aktion', 'Action');
+define('_config_activate_user', 'Activate User');
+define('_profil_admin_locked', 'Account isn`t activated' );
+define('_profil_locked', 'Your account isn`t activated, <a href="?index=user&amp;action=akl&do=send" target="_self">&lt; send activation mail &gt;</a>');
+define('_profil_closed', 'Your account is barred.');
 define('_admin_akl_regist_subj', 'Betreff: Registrierungs Aktivierungs-eMail');
 define('_admin_akl_regist', 'Registrierungs Aktivierungs-eMail Template');
 define('_reg_akl_invalid', 'Dieser Aktivierungslink ist nicht mehr g&uuml;ltig!');
