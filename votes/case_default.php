@@ -47,20 +47,29 @@ if(defined('_Votes')) {
             if($ipcheck || cookie::get('vid_'.$get['id']) != false || $get['closed']) {
                 $percent = @round($getv['stimmen']/$stimmen*100,2);
                 $rawpercent = @round($getv['stimmen']/$stimmen*100,0);
-                $balken = show(_votes_balken, ["width" => $rawpercent]);
+                $smarty->caching = false;
+                $smarty->assign('width',$rawpercent);
+                $balken = $smarty->fetch('string:'._votes_balken);
+                $smarty->clearAllAssign();
                 $result_head = _votes_results_head;
                 $votebutton = "";
-                $results .= show($dir."/votes_results", ["answer" => stringParser::decode($getv['sel']),
-                                                              "percent" => $percent,
-                                                              "class" => $class,
-                                                              "stimmen" => $getv['stimmen'],
-                                                              "balken" => $balken]);
+                $smarty->caching = false;
+                $smarty->assign('answer',stringParser::decode($getv['sel']));
+                $smarty->assign('percent',$percent);
+                $smarty->assign('class',$class);
+                $smarty->assign('stimmen',$getv['stimmen']);
+                $smarty->assign('balken',$balken);
+                $results .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/votes_results.tpl');
+                $smarty->clearAllAssign();
             } else {
                 $result_head = _votes_results_head_vote;
                 $votebutton = '<input id="voteSubmit_'.$get['id'].'" type="submit" value="'._button_value_vote.'" class="submit" />';
-                $results .= show($dir."/votes_vote", ["id" => $getv['id'],
-                                                           "answer" => stringParser::decode($getv['sel']),
-                                                           "class" => $class]);
+                $smarty->caching = false;
+                $smarty->assign('id',$getv['id']);
+                $smarty->assign('answer',stringParser::decode($getv['sel']));
+                $smarty->assign('class',$class);
+                $results .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/votes_vote.tpl');
+                $smarty->clearAllAssign();
             }
         }
 
@@ -79,25 +88,31 @@ if(defined('_Votes')) {
         }
 
         $ftitel = $get['forum'] ? stringParser::decode($get['titel']).' (Forum)' : stringParser::decode($get['titel']);
-        $titel = show(_votes_titel, ["titel" => $ftitel,
-                                          "vid" => $get['id'],
-                                          "icon" => $moreicon,
-                                          "intern" => $intern]);
+        $smarty->caching = false;
+        $smarty->assign('titel',$ftitel);
+        $smarty->assign('vid',$get['id']);
+        $smarty->assign('icon',$moreicon);
+        $smarty->assign('intern',$intern);
+        $titel = $smarty->fetch('string:'._votes_titel);
+        $smarty->clearAllAssign();
 
         $closed = $get['closed'] ? _closedicon_votes : '';
         $class = ($color2 % 2) ? "contentMainSecond" : "contentMainFirst"; $color2++;
-        $show .= show($dir."/votes_show", ["datum" => date("d.m.Y", $get['datum']),
-                                                "titel" => $titel,
-                                                "vid" => $get['id'],
-                                                "display" => $display,
-                                                "result_head" => $result_head,
-                                                "results" => $results,
-                                                "show" => $showVoted,
-                                                "closed" => $closed,
-                                                "autor" => common::autor($get['von']),
-                                                "class" => $class,
-                                                "votebutton" => $votebutton,
-                                                "stimmen" => $stimmen]);
+        $smarty->caching = false;
+        $smarty->assign('datum',date("d.m.Y", $get['datum']));
+        $smarty->assign('titel',$titel);
+        $smarty->assign('vid',$get['id']);
+        $smarty->assign('display',$display);
+        $smarty->assign('result_head',$result_head);
+        $smarty->assign('results',$results);
+        $smarty->assign('show',$showVoted);
+        $smarty->assign('closed',$closed);
+        $smarty->assign('autor', common::autor($get['von']));
+        $smarty->assign('class',$class);
+        $smarty->assign('votebutton',$votebutton);
+        $smarty->assign('stimmen',$stimmen);
+        $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/votes_show.tpl');
+        $smarty->clearAllAssign();
     }
 
     if(empty($show)) {
@@ -106,10 +121,13 @@ if(defined('_Votes')) {
         $show = $smarty->fetch('string:'._no_entrys_yet);
         $smarty->clearAllAssign();
     }
-    
-    $index = show($dir."/votes", ["show" => $show,
-                                       "order_titel" => common::orderby('titel'),
-                                       "order_autor" => common::orderby('von'),
-                                       "order_datum" => common::orderby('datum'),
-                                       "order_stimmen" => common::orderby('ges_stimmen')]);
+
+    $smarty->caching = false;
+    $smarty->assign('show',$show);
+    $smarty->assign('order_titel',common::orderby('titel'));
+    $smarty->assign('order_autor',common::orderby('von'));
+    $smarty->assign('order_datum', common::orderby('datum'));
+    $smarty->assign('order_stimmen',common::orderby('ges_stimmen'));
+    $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/votes.tpl');
+    $smarty->clearAllAssign();
 }

@@ -23,9 +23,12 @@ if(defined('_Votes')) {
                 . "WHERE `user_id` = ? AND `what` = ?;", [common::$userid,'vid_'.$get['id']])) {
             foreach ($qryv as $getv) {
                 $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-                $show .= show($dir."/voted_show", ["user" => $getv['user_id'] ? common::autor($getv['user_id']) : _gast,
-                                                        "date" => date("d.m.y H:i",$getv['created'])._uhr,
-                                                        "class" => $class]);
+                $smarty->caching = false;
+                $smarty->assign('user',$getv['user_id'] ? common::autor($getv['user_id']) : _gast);
+                $smarty->assign('date', date("d.m.y H:i",$getv['created'])._uhr);
+                $smarty->assign('class',$class);
+                $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/voted_show.tpl');
+                $smarty->clearAllAssign();
             }
         }
 
@@ -36,7 +39,10 @@ if(defined('_Votes')) {
             $smarty->clearAllAssign();
         }
 
-        $index = show($dir."/voted", ["show" => $show]);
+        $smarty->caching = false;
+        $smarty->assign('show',$show);
+        $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/voted.tpl');
+        $smarty->clearAllAssign();
     } else
         $index = common::error(_error_vote_show,1);
 }
