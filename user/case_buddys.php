@@ -15,6 +15,7 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
+//TODO: Zu langsam!!! Optimierung!
 if(defined('_UserMenu')) {
     $where = _site_user_buddys;
     if(!common::$chkMe) {

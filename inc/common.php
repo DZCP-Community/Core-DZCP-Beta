@@ -925,84 +925,6 @@ class common {
     }
 
     /**
-     * Ersetzt Platzhalter im HTML Code
-     * @param string $tpl
-     * @param string $dir
-     * @param array $array
-     * @param array $array_lang_constant
-     * @param array $array_block
-     * @return mixed|string
-     * @internal param bool $addon
-     */
-    public static function show_runner(string $tpl="", string $dir="", array $array= [], array $array_lang_constant= [], array $array_block= []) {
-        if(!empty($tpl) && $tpl != null) {
-            $template = basePath."/".$dir.$tpl;
-            if(file_exists($template.".html") && is_file($template.".html")) {
-                $tpl = file_get_contents($template.".html");
-                if (substr($tpl, 0, 3) === pack("CCC", 0xef, 0xbb, 0xbf)) {
-                    $tpl = substr($tpl, 3);
-                }
-            }
-
-            //put placeholders in array
-            $array['dir'] = '../inc/_templates_/'.self::$tmpdir;
-            $array['idir'] = '../inc/images'; //Image DIR [idir]
-
-            $pholder = explode("^",self::pholderreplace($tpl));
-            for($i=0;$i<=count($pholder)-1;$i++) {
-                if (in_array($pholder[$i], $array_block) || array_key_exists($pholder[$i], $array) ||
-                    (!strstr($pholder[$i], 'lang_') && !strstr($pholder[$i], 'func_'))) {
-                    continue;
-                }
-
-                if (defined(substr($pholder[$i], 4))) {
-                    $array[$pholder[$i]] = (count($array_lang_constant) >= 1 ? show(constant(substr($pholder[$i], 4)), $array_lang_constant) : constant(substr($pholder[$i], 4)));
-                    continue;
-                }
-
-                if (function_exists(substr($pholder[$i], 5))) {
-                    $function = substr($pholder[$i], 5);
-                    $array[$pholder[$i]] = $function();
-                }
-            }
-
-            unset($pholder);
-
-            $tpl = (!self::$chkMe ? preg_replace("|<logged_in>.*?</logged_in>|is", "", $tpl) : preg_replace("|<logged_out>.*?</logged_out>|is", "", $tpl));
-            $tpl = str_ireplace(["<logged_in>","</logged_in>","<logged_out>","</logged_out>"], '', $tpl);
-
-            if(count($array) >= 1) {
-                foreach($array as $value => $code)
-                { $tpl = str_replace('['.$value.']', $code, $tpl); }
-            }
-        }
-
-        return $tpl;
-    }
-
-    /**
-     * filter placeholders
-     * @param $pholder
-     * @return mixed
-     */
-    public static function pholderreplace(string $pholder) {
-        $search = ['@<script[^>]*?>.*?</script>@si','@<style[^>]*?>.*?</style>@siU','@<[\/\!][^<>]*?>@si','@<![\s\S]*?--[ \t\n\r]*>@'];
-        $pholder = preg_replace("#<script(.*?)</script>#is","",$pholder);
-        $pholder = preg_replace("#<style(.*?)</style>#is","",$pholder);
-        $pholder = preg_replace($search, '', $pholder);
-        $pholder = str_replace(" ","",$pholder);
-        $pholder = preg_replace("#&(.*?);#s","",$pholder);
-        $pholder = str_replace("\r","",$pholder);
-        $pholder = str_replace("\n","",$pholder);
-        $pholder = preg_replace("#\](.*?)\[#is","][",$pholder);
-        $pholder = str_replace("][","^",$pholder);
-        $pholder = preg_replace("#^(.*?)\[#s","",$pholder);
-        $pholder = preg_replace("#\](.*?)$#s","",$pholder);
-        $pholder = str_replace("[","",$pholder);
-        return str_replace("]","",$pholder);
-    }
-
-    /**
      * Userpic ausgeben
      * @param $userid
      * @param int $width
@@ -2930,20 +2852,6 @@ class common {
         $output = view_error_reporting || DebugConsole::get_warning_enable() ? DebugConsole::show_logs().$index : $index; //Debug Console + Index Out
         gz_output($output); // OUTPUT BUFFER END
     }
-}
-
-//###########################
-//OLD CODE
-//###########################
-/**
- * @param string $tpl
- * @param array $array
- * @param array $array_lang_constant
- * @param array $array_block
- * @return mixed|string
- */
-function show(string $tpl="", array $array= [], array $array_lang_constant= [], array $array_block= []) {
-    return common::show($tpl,$array,$array_lang_constant,$array_block);
 }
 
 /**
