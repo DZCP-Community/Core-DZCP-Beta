@@ -23,7 +23,7 @@ include(basePath."/inc/common.php");
 
 ## SETTINGS ##
 $dir = "search";
-$where = /*_search_head*/_forum_search_head;
+$where = _forum_search_head;
 $smarty = common::getSmarty(); //Use Smarty
 
 ## SECTIONS ##
@@ -218,44 +218,56 @@ default:
                          ORDER BY date DESC");
             if(common::$sql['default']->rowCount())
             {
-              $lpost = show(_forum_thread_lpost, ["nick" => common::autor($getlp['reg'], '', $getlp['nick'], stringParser::decode($getlp['email'])),
-                                                       "date" => date("d.m.y H:i", $getlp['date'])._uhr]);
+                //TODO: FIX
+                $smarty->caching = false;
+                $smarty->assign('nick',common::autor($getlp['reg'], '', $getlp['nick'], stringParser::decode($getlp['email'])));
+                $smarty->assign('date',date("d.m.y H:i", $getlp['date']));
+                $smarty->assign('post_link','');
+                $smarty->assign('page','');
+                $smarty->assign('post','');
+                $smarty->assign('img','');
+                $lpost = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_thread_lpost.tpl');
+                $smarty->clearAllAssign();
+
               $lpdate = $getlp['date'];
             } else {
               $lpost = "-";
               $lpdate = "";
             }
 
-            $threadlink = show(_forum_thread_search_link, ["topic" => common::cut(stringParser::decode($get['topic']),settings::get('l_forumtopic')),
-                                                                "id" => $get['id'],
-                                                                "sticky" => $sticky,
-                                                                "hl" => $_GET['search'],
-                                                                "closed" => $closed,
-                                                                "lpid" => $cntpage+1,
-                                                                "page" => $pagenr]);
+              $smarty->caching = false;
+              $smarty->assign('topic',common::cut(stringParser::decode($get['topic']),settings::get('l_forumtopic')));
+              $smarty->assign('id',$get['id']);
+              $smarty->assign('sticky',$sticky);
+              $smarty->assign('hl',$_GET['search']);
+              $smarty->assign('closed',$closed);
+              $smarty->assign('lpid',$cntpage+1);
+              $smarty->assign('page',$pagenr);
+              $threadlink = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_thread_search_link.tpl');
+              $smarty->clearAllAssign();
 
-            $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
+                $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
 
-            $results .= show($dir."/forum_search_results", ["new" => common::check_new($get['lp']),
-                                                                 "topic" => $threadlink,
-                                                                 "subtopic" => common::cut(stringParser::decode($get['subtopic']),settings::get('l_forumsubtopic')),
-                                                                 "hits" => $get['hits'],
-                                                                 "replys" => common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id", [$get['id']]),
-                                                                 "class" => $class,
-                                                                 "lpost" => $lpost,
-                                                                 "autor" => common::autor($get['t_reg'], '', $get['t_nick'], $get['t_email'])]);
+              $smarty->caching = false;
+              $smarty->assign('new',common::check_new($get['lp']));
+              $smarty->assign('topic',$threadlink);
+              $smarty->assign('subtopic',common::cut(stringParser::decode($get['subtopic']),settings::get('l_forumsubtopic')));
+              $smarty->assign('hits',$get['hits']);
+              $smarty->assign('replys',common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id", [$get['id']]));
+              $smarty->assign('class',$class);
+              $smarty->assign('lpost',$lpost);
+              $smarty->assign('autor',common::autor($get['t_reg'], '', $get['t_nick'], $get['t_email']));
+              $results .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_search_results.tpl');
+              $smarty->clearAllAssign();
           }
         }
 
         $nav = common::nav($entrys,$maxfsearch,$getstr);
-        $show = show($dir."/forum_search_show", ["head" => _forum_search_results,
-                                                      "autor" => _autor,
-                                                      "thread" => _forum_thread,
-                                                      "lpost" => _forum_lpost,
-                                                      "nav" => $nav,
-                                                      "results" => $results,
-                                                      "replys" => _forum_replys,
-                                                      "hits" => _hits]);
+        $smarty->caching = false;
+        $smarty->assign('nav',$nav);
+        $smarty->assign('results',$results);
+        $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_search_show.tpl');
+        $smarty->clearAllAssign();
     }
   }
 //Diverse Abfragen
@@ -273,60 +285,51 @@ default:
     $all_board = 'checked="checked"';
   }
 
-  $index = show($dir."/search", ["head" => /*_search_head*/_forum_search_head,
-                                      "searchwords" => _search_word,
-                                      "board" => _forum,
-                                      "fkats" => $fkats,
-                                      "show" => $show,
-                                      "search" => $_GET['search'],
-                                      "searchin" => _search_in,
-                                      "onclick" => $onclick,
-                                      "img" => $img,
-                                      "con_and" => _search_con_and,
-                                      "con_or" => _search_con_or,
-                                      "chkcon" => $chk_con,
-                                      "style" => $style,
-                                      "si_board" => $si_board,
-                                      "all_board" => $all_board,
-                                      "acheck1" => $acheck1,
-                                      "acheck2" => $acheck2,
-                                      "tcheck1" => $tcheck1,
-                                      "tcheck2" => $tcheck2,
-                                      "value" => _button_value_search1,
-                                      "autor" => _search_type_autor,
-                                      "searcharea" => _search_for_area,
-                                      "text" => _search_type_text,
-                                      "type" => _search_type,
-                                      "hint" => _search_forum_hint,
-                                      "all" => _search_forum_all,
-                                      "full" => _search_type_full,
-                                      "intitle" => _search_type_title,
-  ]);
+        $smarty->caching = false;
+        $smarty->assign('fkats',$fkats);
+        $smarty->assign('show',$show);
+        $smarty->assign('search',$_GET['search']);
+        $smarty->assign('onclick',$onclick);
+        $smarty->assign('img',$img);
+        $smarty->assign('chkcon',$chk_con);
+        $smarty->assign('style',$style);
+        $smarty->assign('si_board',$si_board);
+        $smarty->assign('all_board',$all_board);
+        $smarty->assign('acheck1',$acheck1);
+        $smarty->assign('acheck2',$acheck2);
+        $smarty->assign('tcheck1',$tcheck1);
+        $smarty->assign('tcheck2',$tcheck2);
+        $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/search.tpl');
+        $smarty->clearAllAssign();
 break;
 case 'site';
     $qry = common::$sql['default']->select("SELECT * FROM `{prefix_news}`
              WHERE (titel LIKE '%".stringParser::encode($_GET['searchword'])."%' AND titel != '') OR (text LIKE '%".stringParser::encode($_GET['searchword'])."%' AND `text` != '')
              ORDER BY titel ASC");
     foreach($qry as $get) {
-    $class = ($color % 2) ? "contentMainFirst" : "contentMainSecond"; $color++;
-    $shownews .= show($dir."/search_show", ["class" => $class,
-                                               "type" => 'news',
-                                               "href" => '../news/index.php?action=show&amp;id='.$get['id'],
-                                               "titel" => stringParser::decode($get['titel'])
-    ]);
-  }
+        $class = ($color % 2) ? "contentMainFirst" : "contentMainSecond"; $color++;
+        $smarty->caching = false;
+        $smarty->assign('class',$class);
+        $smarty->assign('type','news');
+        $smarty->assign('href','../news/index.php?action=show&amp;id='.$get['id']);
+        $smarty->assign('titel',stringParser::decode($get['titel']));
+        $shownews .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/search_show.tpl');
+        $smarty->clearAllAssign();
+    }
 
   unset($class);
   $qry = common::$sql['default']->select("SELECT * FROM `{prefix_artikel}`
              WHERE (titel LIKE '%".stringParser::encode($_GET['searchword'])."%' AND titel != '') OR (text LIKE '%".stringParser::encode($_GET['searchword'])."%' AND `text` != '')
              ORDER BY titel ASC");
     foreach($qry as $get) {
-    $class = ($color % 2) ? "contentMainFirst" : "contentMainSecond"; $color++;
-    $showartikel .= show($dir."/search_show", [
-                                               "href" => '../artikel/index.php?action=show&amp;id='.$get['id'],
-                                               "class" => $class,
-                                               "type" => 'artikel',
-                                               "titel" => stringParser::decode($get['titel'])]);
+        $class = ($color % 2) ? "contentMainFirst" : "contentMainSecond"; $color++;
+        $smarty->caching = false;
+        $smarty->assign('class',$class);
+        $smarty->assign('type','artikel');
+        $smarty->assign('href','../news/index.php?action=show&amp;id='.$get['id']);
+        $smarty->assign('titel',stringParser::decode($get['titel']));
+        $showartikel .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/search_show.tpl');
+        $smarty->clearAllAssign();
   }
 
   unset($class);
@@ -334,24 +337,26 @@ case 'site';
              WHERE (titel LIKE '%".stringParser::encode($_GET['searchword'])."%' AND titel != '') OR (text LIKE '%".stringParser::encode($_GET['searchword'])."%' AND `text` != '')
              ORDER BY titel ASC");
   foreach($qry as $get) {
-    $class = ($color % 2) ? "contentMainFirst" : "contentMainSecond"; $color++;
-    $showsites .= show($dir."/search_show", [
-                                               "href" => '../sites/?show='.$get['id'],
-                                               "class" => $class,
-                                               "type" => 'site',
-                                               "titel" => stringParser::decode($get['titel'])
-    ]);
+        $class = ($color % 2) ? "contentMainFirst" : "contentMainSecond"; $color++;
+      $smarty->caching = false;
+      $smarty->assign('class',$class);
+      $smarty->assign('type','site');
+      $smarty->assign('href','../sites/?show='.$get['id']);
+      $smarty->assign('titel',stringParser::decode($get['titel']));
+      $showsites .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/search_show.tpl');
+      $smarty->clearAllAssign();
   }
 
-  if(!empty($shownews)) $shownews = '<tr><td class="contentMainTop"><b>'._news.'</b></td></tr>'.$shownews;
-  if(!empty($showartikel)) $showartikel = '<tr><td class="contentMainTop"><b>'._artikel.'</b></td></tr>'.$showartikel;
-  if(!empty($showsites)) $showsites = '<tr><td class="contentMainTop"><b>'._search_sites.'</b></td></tr>'.$showsites;
+      if(!empty($shownews)) $shownews = '<tr><td class="contentMainTop"><b>'._news.'</b></td></tr>'.$shownews;
+      if(!empty($showartikel)) $showartikel = '<tr><td class="contentMainTop"><b>'._artikel.'</b></td></tr>'.$showartikel;
+      if(!empty($showsites)) $showsites = '<tr><td class="contentMainTop"><b>'._search_sites.'</b></td></tr>'.$showsites;
 
-  $index = show($dir."/search_global", ["shownews" => $shownews,
-                                             "showartikel" => $showartikel,
-                                             "showsites" => $showsites,
-                                             "results" => _search_results,
-  ]);
+    $smarty->caching = false;
+    $smarty->assign('shownews',$shownews);
+    $smarty->assign('showartikel',$showartikel);
+    $smarty->assign('showsites',$showsites);
+    $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/search_global.tpl');
+    $smarty->clearAllAssign();
 break;
 endswitch;
 

@@ -1058,7 +1058,7 @@ class common {
                 $smarty->caching = false;
                 $smarty->assign('width',$width);
                 $smarty->assign('height',$height);
-                $pic = $smarty->fetch('file:['.common::$tmpdir.']page/userava_link.tpl');
+                $pic = $smarty->fetch('file:['.common::$tmpdir.']page/no_userava.tpl');
                 $smarty->clearAllAssign();
             }
         }
@@ -1209,6 +1209,7 @@ class common {
     }
 
     public static function check_msg_emal() {
+        $smarty = self::getSmarty(true);
         if(!is_ajax && !is_thumbgen && !is_api && !self::$CrawlerDetect->isCrawler() && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;", [session_id()])) {
             $qry = self::$sql['default']->select("SELECT s1.`an`,s1.`page`,s1.`titel`,s1.`sendmail`,s1.`id` AS `mid`, "
                 . "s2.`id`,s2.`nick`,s2.`email`,s2.`pnmail` FROM `{prefix_messages}` AS `s1` "
@@ -1217,8 +1218,20 @@ class common {
                 foreach($qry as $get) {
                     if($get['pnmail']) {
                         self::$sql['default']->update("UPDATE `{prefix_messages}` SET `sendmail` = 1 WHERE `id` = ?;", [$get['mid']]);
-                        $subj = show(settings::get('eml_pn_subj'), ["domain" => self::$httphost]);
-                        $message = show(self::bbcode_email(settings::get('eml_pn')), ["nick" => stringParser::decode($get['nick']), "domain" => self::$httphost, "titel" => $get['titel'], "clan" => settings::get('clanname')]);
+
+                        $smarty->caching = false;
+                        $smarty->assign('domain',self::$httphost);
+                        $subj = $smarty->fetch('string:'.stringParser::decode(settings::get('eml_pn_subj')));
+                        $smarty->clearAllAssign();
+
+                        $smarty->caching = false;
+                        $smarty->assign('nick',stringParser::decode($get['nick']));
+                        $smarty->assign('domain',self::$httphost);
+                        $smarty->assign('titel',stringParser::decode($get['titel']));
+                        $smarty->assign('clan',stringParser::decode(settings::get('clanname')));
+                        $message = $smarty->fetch('string:'.self::bbcode_email(settings::get('eml_pn')));
+                        $smarty->clearAllAssign();
+
                         self::sendMail(stringParser::decode($get['email']), $subj, $message);
                     }
                 }
@@ -2790,6 +2803,41 @@ class common {
     }
 
     /**
+     * Gibt den Wartungsmodus aus.
+     * @param string $title
+     * @return mixed|string
+     */
+    public static function wmodus(string $title) {
+        $smarty = self::getSmarty(true);
+
+        // JS-Dateine einbinden * json *
+        $java_vars = '<script language="javascript" type="text/javascript">var json=\''.javascript::encode().'\',dzcp_config=JSON&&JSON.parse(json)||$.parseJSON(json);</script>'."\n";
+
+        //Sicherheitsscode
+        $secure='';
+        if(settings::get('securelogin')) {
+            $smarty->caching = false;
+            $secure = $smarty->fetch('file:['.common::$tmpdir.']user/access/secure.tpl');
+        }
+
+        $smarty->caching = false;
+        $smarty->assign('secure',$secure);
+        $login = $smarty->fetch('file:['.common::$tmpdir.']errors/wmodus_login.tpl');
+        $smarty->clearAllAssign();
+
+        cookie::save(); //Save Cookie
+
+        $smarty->caching = false;
+        $smarty->assign('java_vars',$java_vars);
+        $smarty->assign('title',strip_tags(stringParser::decode($title)));
+        $smarty->assign('login',$login);
+        $wmodus = $smarty->fetch('file:['.common::$tmpdir.']errors/wmodus.tpl');
+        $smarty->clearAllAssign();
+
+        return $wmodus;
+    }
+
+    /**
      * Ausgabe des Indextemplates
      * @param string $index
      * @param string $title
@@ -2799,6 +2847,7 @@ class common {
     public static final function page(string $index='',string $title='',string $where='',string $index_templ='index') {
         global $dir;
 
+        //JS SetOptions
         javascript::set('lng',($_SESSION['language']=='deutsch'?'de':'en'));
         javascript::set('maxW',settings::get('maxwidth'));
         javascript::set('autoRefresh',1);  // Enable Auto-Refresh for Ajax
@@ -2808,25 +2857,18 @@ class common {
         javascript::set('dialog_button_01',_no);
         javascript::set('onlyBBCode',true); // nur BBCode Verwenden
 
-        // JS-Dateine einbinden * json *
-        $java_vars = '<script language="javascript" type="text/javascript">var json=\''.javascript::encode().'\',dzcp_config=JSON&&JSON.parse(json)||$.parseJSON(json);</script>'."\n";
-        $java_vars .= '<script language="javascript" type="text/javascript" src="../vendor/ckeditor/ckeditor/ckeditor.js"></script>'."\n";
-        $java_vars .= '<script language="javascript" type="text/javascript" src="../vendor/ckeditor/ckeditor/adapters/jquery.js"></script>'."\n";
-
         if(settings::get("wmodus") && self::$chkMe != 4) {
-            $login = show("errors/wmodus_login", ["secure" => settings::get('securelogin') ? show("user/secure") : '']);
-            cookie::save(); //Save Cookie
-            echo show("errors/wmodus", ["tmpdir" => self::$tmpdir,
-                "java_vars" => $java_vars,
-                "dir" => self::$designpath,
-                "sid" => (float)rand()/(float)getrandmax(),
-                "title" => strip_tags(stringParser::decode($title)),
-                "login" => $login]);
+            echo wmodus($title);
         } else {
             if(!self::$CrawlerDetect->isCrawler()) {
                 self::updateCounter();
                 self::update_maxonline();
             }
+
+            // JS-Dateine einbinden * json *
+            $java_vars = '<script language="javascript" type="text/javascript">var json=\''.javascript::encode().'\',dzcp_config=JSON&&JSON.parse(json)||$.parseJSON(json);</script>'."\n";
+            $java_vars .= '<script language="javascript" type="text/javascript" src="../vendor/ckeditor/ckeditor/ckeditor.js"></script>'."\n";
+            $java_vars .= '<script language="javascript" type="text/javascript" src="../vendor/ckeditor/ckeditor/adapters/jquery.js"></script>'."\n";
 
             //check permissions
             if(!self::$chkMe) {
@@ -2921,6 +2963,10 @@ class common {
             DebugConsole::insert_info('common::page()','Memory Usage: '.self::parser_filesize(memory_get_usage()));
             DebugConsole::insert_info('common::page()','Memory-Peak Usage: '.self::parser_filesize(memory_get_peak_usage()));
             DebugConsole::insert_info('common::page()',sprintf("Page generated in %.8f seconds", (getmicrotime() - start_time)));
+
+            $index = (!self::$chkMe ? preg_replace("|<logged_in>.*?</logged_in>|is", "", $index) : preg_replace("|<logged_out>.*?</logged_out>|is", "", $index));
+            $index = str_ireplace(["<logged_in>","</logged_in>","<logged_out>","</logged_out>"], '', $index);
+
             if (debug_save_to_file) {
                 DebugConsole::save_log();
             } //Debug save to file

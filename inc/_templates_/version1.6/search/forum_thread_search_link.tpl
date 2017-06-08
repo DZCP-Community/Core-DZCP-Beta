@@ -1,0 +1,1 @@
+{$sticky} <a href="../forum/?action=showthread&amp;id={$id}&amp;hl={$hl}">{$topic}</a> {$closed}

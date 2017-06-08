@@ -29,8 +29,6 @@ define('_hpicon_forum', '<a href="{$hp}" target="_blank"><img src="../inc/images
 define('_emailicon_forum', '<a href=\\"mailto:"+d+"\\"><img src=\\"../inc/images/forum_email.gif\\" title="+d+" class=\\"icon\\" /></a>');
 define('_forum_pn_preview', '<img src="../inc/images/forum_pn.gif" alt="" class="icon" style="cursor:pointer" />');
 define('_forum_zitat_preview', '<img src="../inc/images/zitat.gif" alt="" class="icon" style="cursor:pointer" />');
-//Edited for DZCP 1.4
-define('_forum_thread_search_link', '[sticky] <a href="../forum/?action=showthread&amp;id=[id]&amp;hl=[hl]">[topic]</a> [closed]');
 ////////////////////
 ## Allgemein ##
 define('_user_link_noreg', '<a class=\\"[class]\\" href=\\"mailto:"+d+"\\">[nick]</a>');
