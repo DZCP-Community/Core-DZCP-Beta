@@ -1553,7 +1553,6 @@ define('_empty_user' , 'You have to indicate a loginname!');
 define('_empty_to' , 'You have to indicate a receiver!');
 define('_empty_url' , 'You have to indicate an url!');
 define('_empty_datum' , 'You have to indicate a date!');
-define('_index_headtitle' , '[clanname]');
 define('_site_sponsor' , 'Sponsors');
 define('_site_user' , 'User');
 define('_site_online' , 'Visitors online');

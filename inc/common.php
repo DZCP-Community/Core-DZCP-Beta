@@ -2857,6 +2857,7 @@ class common {
         javascript::set('dialog_button_01',_no);
         javascript::set('onlyBBCode',true); // nur BBCode Verwenden
 
+        //Check Wartungsmodus
         if(settings::get("wmodus") && self::$chkMe != 4) {
             echo wmodus($title);
         } else {
@@ -2871,33 +2872,13 @@ class common {
             $java_vars .= '<script language="javascript" type="text/javascript" src="../vendor/ckeditor/ckeditor/adapters/jquery.js"></script>'."\n";
 
             //check permissions
-            if(!self::$chkMe) {
-                $secure = settings::get('securelogin') ? show("menu/secure") : '';
-                $login = show("menu/login", ["secure" => $secure]);
-                $check_msg = '';
-            } else {
+            $check_msg = '';
+            if(self::$chkMe) {
                 $check_msg = self::check_msg();
                 self::set_lastvisit(self::$userid);
-                $login = "";
             }
 
-            //init templateswitch
-            $tmpldir=""; $tmps = self::get_files(basePath.'/inc/_templates_/',true);
-            $smarty = self::getSmarty(true);
-            foreach ($tmps as $tmp) {
-                $tmpldir .= self::select_field("?tmpl_set=".$tmp,(self::$tmpdir == $tmp),ucfirst($tmp));
-            }
-
-            //misc vars
-            $lang = $_SESSION['language'];
-
-            $smarty->caching = false;
-            $smarty->assign('templates',$tmpldir);
-            $template_switch = $smarty->fetch('file:['.common::$tmpdir.']page/template_switch.tpl');
-            $smarty->clearAllAssign();
-
-            $clanname =stringParser::decode(settings::get("clanname"));
-            $headtitle = show(_index_headtitle, ["clanname" => $clanname]);
+            $headtitle =stringParser::decode(settings::get("clanname"));
             $title =stringParser::decode(strip_tags($title));
 
             if (self::check_internal_url()) {
@@ -2910,13 +2891,13 @@ class common {
 
             //template index autodetect
             $index_templ = ($index_templ == 'index' && file_exists(self::$designpath.'/index_'.$dir.'.html') ? 'index_'.$dir : $index_templ);
+
             //check if placeholders are given
             $pholder = file_get_contents(self::$designpath."/".$index_templ.".html");
 
             //filter placeholders
             $dir = self::$designpath; //after template index autodetect!!!
-            $blArr = ["[clanname]","[title]","[java_vars]","[template_switch]","[headtitle]",
-                "[index]","[dir]","[where]","[lang]"];
+            $blArr = ["[clanname]","[title]","[java_vars]","[headtitle]", "[index]","[dir]","[where]"];
             $pholdervars = '';
             for($i=0;$i<=count($blArr)-1;$i++) {
                 if (preg_match("#" . $blArr[$i] . "#", $pholder)) {

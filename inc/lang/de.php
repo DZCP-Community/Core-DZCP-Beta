@@ -1538,7 +1538,6 @@ define('_empty_user', 'Du musst einen Loginnamen angeben!');
 define('_empty_to', 'Du musst einen Empf&auml;nger  angeben!');
 define('_empty_url', 'Du musst eine URL angeben!');
 define('_empty_datum', 'Du musst ein Datum angeben!');
-define('_index_headtitle', '[clanname]');
 define('_site_sponsor', 'Sponsoren');
 define('_site_user', 'User');
 define('_site_online', 'Besucher online');
