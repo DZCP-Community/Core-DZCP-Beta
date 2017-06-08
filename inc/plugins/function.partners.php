@@ -15,25 +15,31 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function partners() {
-    $smarty = common::getSmarty(); //Use Smarty
+/**
+ * Usage {idir}
+ * @param $params
+ * @param $smarty
+ * @return string
+ */
+function smarty_function_partners($params, &$smarty) {
+    $smarty_partners = common::getSmarty(true); //Use Smarty
     $qry = common::$sql['default']->select("SELECT `textlink`,`link`,`banner` FROM `{prefix_partners}` ORDER BY `textlink` ASC;");
     $partners = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qry as $get) {
             if($get['textlink']) {
-                $smarty->caching = false;
-                $smarty->assign('link',stringParser::decode($get['link']));
-                $smarty->assign('name',stringParser::decode($get['banner']));
-                $partners .= $smarty->fetch('file:['.common::$tmpdir.']menu/partners/partners_textlink.tpl');
-                $smarty->clearAllAssign();
+                $smarty_partners->caching = false;
+                $smarty_partners->assign('link',stringParser::decode($get['link']));
+                $smarty_partners->assign('name',stringParser::decode($get['banner']));
+                $partners .= $smarty_partners->fetch('file:['.common::$tmpdir.']menu/partners/partners_textlink.tpl');
+                $smarty_partners->clearAllAssign();
             } else {
-                $smarty->caching = false;
-                $smarty->assign('link',stringParser::decode($get['link']));
-                $smarty->assign('title',htmlspecialchars(str_replace('http://', '', stringParser::decode($get['link']))));
-                $smarty->assign('banner',stringParser::decode($get['banner']));
-                $partners .= $smarty->fetch('file:['.common::$tmpdir.']menu/partners/partners.tpl');
-                $smarty->clearAllAssign();
+                $smarty_partners->caching = false;
+                $smarty_partners->assign('link',stringParser::decode($get['link']));
+                $smarty_partners->assign('title',htmlspecialchars(str_replace('http://', '', stringParser::decode($get['link']))));
+                $smarty_partners->assign('banner',stringParser::decode($get['banner']));
+                $partners .= $smarty_partners->fetch('file:['.common::$tmpdir.']menu/partners/partners.tpl');
+                $smarty_partners->clearAllAssign();
             }
 
             $table = strstr($partners, '<tr>') ? true : false;

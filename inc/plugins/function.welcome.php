@@ -15,9 +15,8 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function welcome() {
+function smarty_function_welcome($params, &$smarty) {
     $return = "<script language=\"javascript\" type=\"text/javascript\">
-               <!--
                  date = new Date();
                  hour = date.getHours();
                  if(hour>=18)      document.write('"._welcome_18."');
@@ -25,9 +24,8 @@ function welcome() {
                  else if(hour>=11) document.write('"._welcome_11."');
                  else if(hour>=5)  document.write('"._welcome_5."');
                  else if(hour>=0)  document.write('"._welcome_0."');
-               //-->
              </script>";
-    
+
     if(!common::$chkMe)
         return $return.' '._welcome_guest;
 

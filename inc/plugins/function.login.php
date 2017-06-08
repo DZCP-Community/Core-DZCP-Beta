@@ -15,15 +15,25 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function avatar() {
-    $smarty = common::getSmarty(); //Use Smarty
-    $avatar = '';
-    if(common::$chkMe >= 1) {
-        $smarty->caching = false;
-        $smarty->assign('avatar_show', common::useravatar(0, 70, 70));
-        $avatar = $smarty->fetch('file:[' . common::$tmpdir . ']menu/avatar/avatars.tpl');
-        $smarty->clearAllAssign();
+/**
+ * Usage {idir}
+ * @param $params
+ * @param $smarty
+ * @return string
+ */
+function smarty_function_login($params, &$smarty) {
+    $login = '';
+    if(!common::$chkMe) {
+        $smarty_login = common::getSmarty(true); //Use Smarty
+
+        $smarty_login->caching = false;
+        $secure = $smarty_login->fetch('file:[' . common::$tmpdir . ']menu/login/secure.tpl');
+
+        $smarty_login->caching = false;
+        $smarty_login->assign('secure', $secure);
+        $login = $smarty_login->fetch('file:[' . common::$tmpdir . ']menu/login/login.tpl');
+        $smarty_login->clearAllAssign();
     }
 
-    return $avatar;
+    return $login;
 }

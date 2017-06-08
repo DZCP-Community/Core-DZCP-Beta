@@ -22,17 +22,17 @@
  * @return string
  */
 function smarty_function_rotationsbanner($params, &$smarty) {
-    $smarty = common::getSmarty(); //Use Smarty
+    $smarty_rotationsbanner = common::getSmarty(true); //Use Smarty
     $qry = common::$sql['default']->select("SELECT `id`,`link`,`bend`,`blink` FROM `{prefix_sponsoren}` WHERE `banner` = 1 ORDER BY RAND() LIMIT 1;");
     $rotationbanner = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qry as $get) {
-            $smarty->caching = false;
-            $smarty->assign('id',$get['id']);
-            $smarty->assign('title',htmlspecialchars(str_replace('http://', '', stringParser::decode($get['link']))));
-            $smarty->assign('banner',(empty($get['blink']) ? "../banner/sponsors/banner_".$get['id'].".".$get['bend'] : stringParser::decode($get['blink'])));
-            $rotationbanner .= $smarty->fetch('file:['.common::$tmpdir.']sponsors/sponsors_bannerlink.tpl');
-            $smarty->clearAllAssign();
+            $smarty_rotationsbanner->caching = false;
+            $smarty_rotationsbanner->assign('id',$get['id']);
+            $smarty_rotationsbanner->assign('title',htmlspecialchars(str_replace('http://', '', stringParser::decode($get['link']))));
+            $smarty_rotationsbanner->assign('banner',(empty($get['blink']) ? "../banner/sponsors/banner_".$get['id'].".".$get['bend'] : stringParser::decode($get['blink'])));
+            $rotationbanner .= $smarty_rotationsbanner->fetch('file:['.common::$tmpdir.']sponsors/sponsors_bannerlink.tpl');
+            $smarty_rotationsbanner->clearAllAssign();
         }
     }
 

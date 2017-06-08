@@ -15,23 +15,23 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function sponsors() {
-    $smarty = common::getSmarty(); //Use Smarty
+function smarty_function_sponsors($params, &$smarty) {
+    $smarty_sponsors = common::getSmarty(true); //Use Smarty
     $qry = common::$sql['default']->select("SELECT `id`,`xlink`,`xend`,`link` FROM `{prefix_sponsoren}` WHERE `box` = 1 ORDER BY `pos`;");
     $sponsors = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qry as $get) {
-            $smarty->caching = false;
-            $smarty->assign('id',$get['id']);
-            $smarty->assign('title',htmlspecialchars(str_replace('http://', '', stringParser::decode($get['link']))));
-            $smarty->assign('banner',(empty($get['xlink']) ? "../banner/sponsors/box_".$get['id'].".".$get['xend'] : stringParser::decode($get['xlink'])));
-            $banner = $smarty->fetch('file:['.common::$tmpdir.']menu/sponsors/sponsors_bannerlink.tpl');
-            $smarty->clearAllAssign();
+            $smarty_sponsors->caching = false;
+            $smarty_sponsors->assign('id',$get['id']);
+            $smarty_sponsors->assign('title',htmlspecialchars(str_replace('http://', '', stringParser::decode($get['link']))));
+            $smarty_sponsors->assign('banner',(empty($get['xlink']) ? "../banner/sponsors/box_".$get['id'].".".$get['xend'] : stringParser::decode($get['xlink'])));
+            $banner = $smarty_sponsors->fetch('file:['.common::$tmpdir.']menu/sponsors/sponsors_bannerlink.tpl');
+            $smarty_sponsors->clearAllAssign();
 
-            $smarty->caching = false;
-            $smarty->assign('banner',$banner);
-            $sponsors .= $smarty->fetch('file:['.common::$tmpdir.']menu/sponsors/sponsors.tpl');
-            $smarty->clearAllAssign();
+            $smarty_sponsors->caching = false;
+            $smarty_sponsors->assign('banner',$banner);
+            $sponsors .= $smarty_sponsors->fetch('file:['.common::$tmpdir.']menu/sponsors/sponsors.tpl');
+            $smarty_sponsors->clearAllAssign();
         }
     }
 

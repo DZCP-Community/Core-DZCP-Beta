@@ -15,12 +15,18 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function l_artikel() {
-    $smarty = common::getSmarty(); //Use Smarty
+/**
+ * Usage {idir}
+ * @param $params
+ * @param $smarty
+ * @return string
+ */
+function smarty_function_l_artikel($params, &$smarty) {
+    $smarty_lartikel = common::getSmarty(true); //Use Smarty
     $qry = common::$sql['default']->select("SELECT `id`,`titel`,`text`,`autor`,`datum`,`kat`,`public` "
-            . "FROM `{prefix_artikel}` "
-            . "WHERE `public` = 1 "
-            . "ORDER BY `id` DESC LIMIT ".settings::get('m_lartikel').";");
+        . "FROM `{prefix_artikel}` "
+        . "WHERE `public` = 1 "
+        . "ORDER BY `id` DESC LIMIT ".settings::get('m_lartikel').";");
 
     $l_articles = '';
     if(common::$sql['default']->rowCount()) {
@@ -28,18 +34,18 @@ function l_artikel() {
             $getkat = common::$sql['default']->fetch("SELECT `kategorie` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get['kat']]);
             $text = strip_tags(stringParser::decode($get['text']));
             $info = 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['titel'])).'\', \''._datum.';'.
-                    _autor.';'._news_admin_kat.';'._comments_head.'\', \''.date("d.m.Y H:i", $get['datum'])._uhr.';'.
+                _autor.';'._news_admin_kat.';'._comments_head.'\', \''.date("d.m.Y H:i", $get['datum'])._uhr.';'.
                 common::fabo_autor($get['autor']).';'.common::jsconvert(stringParser::decode($getkat['kategorie'])).';'.
                 common::cnt('{prefix_acomments}',"WHERE `artikel` = ?","id", [$get['id']]).'\')" onmouseout="DZCP.hideInfo()"';
 
-            $smarty->caching = false;
-            $smarty->assign('id',$get['id']);
-            $smarty->assign('titel',common::cut(stringParser::decode($get['titel']),settings::get('l_lartikel')));
-            $smarty->assign('text',common::cut(bbcode::parse_html($text),260));
-            $smarty->assign('datum',date("d.m.Y", $get['datum']));
-            $smarty->assign('info',$info);
-            $l_articles .= $smarty->fetch('file:['.common::$tmpdir.']menu/l_artikel/last_artikel.tpl');
-            $smarty->clearAllAssign();
+            $smarty_lartikel->caching = false;
+            $smarty_lartikel->assign('id',$get['id']);
+            $smarty_lartikel->assign('titel',common::cut(stringParser::decode($get['titel']),settings::get('l_lartikel')));
+            $smarty_lartikel->assign('text',common::cut(bbcode::parse_html($text),260));
+            $smarty_lartikel->assign('datum',date("d.m.Y", $get['datum']));
+            $smarty_lartikel->assign('info',$info);
+            $l_articles .= $smarty_lartikel->fetch('file:['.common::$tmpdir.']menu/l_artikel/last_artikel.tpl');
+            $smarty_lartikel->clearAllAssign();
         }
     }
 

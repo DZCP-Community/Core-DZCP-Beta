@@ -2817,12 +2817,12 @@ class common {
         $secure='';
         if(settings::get('securelogin')) {
             $smarty->caching = false;
-            $secure = $smarty->fetch('file:['.common::$tmpdir.']user/access/secure.tpl');
+            $secure = $smarty->fetch('file:['.self::$tmpdir.']user/access/secure.tpl');
         }
 
         $smarty->caching = false;
         $smarty->assign('secure',$secure);
-        $login = $smarty->fetch('file:['.common::$tmpdir.']errors/wmodus_login.tpl');
+        $login = $smarty->fetch('file:['.self::$tmpdir.']errors/wmodus_login.tpl');
         $smarty->clearAllAssign();
 
         cookie::save(); //Save Cookie
@@ -2844,7 +2844,7 @@ class common {
      * @param string $where
      * @param string $index_templ
      */
-    public static final function page(string $index='',string $title='',string $where='',string $index_templ='index') {
+    public static final function page(string $index='',string $title='',string $where='',string $template='index') {
         global $dir;
 
         //JS SetOptions
@@ -2859,11 +2859,16 @@ class common {
 
         //Check Wartungsmodus
         if(settings::get("wmodus") && self::$chkMe != 4) {
-            echo wmodus($title);
+            $output = wmodus($title);
         } else {
+            $where = preg_replace_callback("#autor_(.*?)$#",
+                create_function('$id', 'return stringParser::decode(common::data("nick","$id[1]"));'),
+                $where);
+
             if(!self::$CrawlerDetect->isCrawler()) {
                 self::updateCounter();
                 self::update_maxonline();
+                self::update_online($where);
             }
 
             // JS-Dateine einbinden * json *
@@ -2878,82 +2883,52 @@ class common {
                 self::set_lastvisit(self::$userid);
             }
 
-            $headtitle =stringParser::decode(settings::get("clanname"));
-            $title =stringParser::decode(strip_tags($title));
-
+            //Check internal_url
             if (self::check_internal_url()) {
-                $index = self::error(_error_have_to_be_logged, 1);
+                $index = self::error(_error_have_to_be_logged);
             }
 
-            $where = preg_replace_callback("#autor_(.*?)$#",create_function('$id', 'return stringParser::decode(common::data("nick","$id[1]"));'),$where);
-            $index = empty($index) ? '' : (!$check_msg ? '' : $check_msg).'<table class="mainContent" cellspacing="1">'.$index.'</table>';
-            self::update_online($where); //Update Stats
-
-            //template index autodetect
-            $index_templ = ($index_templ == 'index' && file_exists(self::$designpath.'/index_'.$dir.'.html') ? 'index_'.$dir : $index_templ);
-
-            //check if placeholders are given
-            $pholder = file_get_contents(self::$designpath."/".$index_templ.".html");
-
-            //filter placeholders
-            $dir = self::$designpath; //after template index autodetect!!!
-            $blArr = ["[clanname]","[title]","[java_vars]","[headtitle]", "[index]","[dir]","[where]"];
-            $pholdervars = '';
-            for($i=0;$i<=count($blArr)-1;$i++) {
-                if (preg_match("#" . $blArr[$i] . "#", $pholder)) {
-                    $pholdervars .= $blArr[$i];
-                }
+            $smarty = self::getSmarty(true);
+            $smarty->caching = false;
+            $smarty->assign('check_msg',empty($check_msg) ? '' : $check_msg);
+            $smarty->assign('index','<table class="mainContent" cellspacing="1">'.$index.'</table>');
+            $smarty->assign('clanname',stringParser::decode(settings::get("clanname")));
+            $smarty->assign('title',strip_tags($title));
+            $smarty->assign('java_vars',$java_vars);
+            $smarty->assign('rss','');
+            $smarty->assign('vote','');
+            $smarty->assign('top_dl','');
+            $smarty->assign('partners','');
+            $smarty->assign('where','');
+            $smarty->assign('search','');
+            $smarty->assign('l_news','');
+            $smarty->assign('l_artikel','');
+            $smarty->assign('ftopics','');
+            $smarty->assign('counter','');
+            $smarty->assign('kalender','');
+            $smarty->assign('events','');
+            if($template != 'index' && file_exists(self::$designpath.'/'.$template.'.tpl')) {
+                $index = $smarty->fetch('file:['.common::$tmpdir.']'.$template.'.tpl');
+            } else {
+                $index = $smarty->fetch('file:['.common::$tmpdir.']index.tpl');
             }
-
-            for ($i = 0; $i <= count($blArr) - 1; $i++) {
-                $pholder = str_replace($blArr[$i], "", $pholder);
-            }
-
-            $pholder = self::pholderreplace($pholder);
-            $pholdervars = self::pholderreplace($pholdervars);
-
-            //put placeholders in array
-            $arr = [];
-            $pholder = explode("^",$pholder);
-            for($i=0;$i<=count($pholder)-1;$i++) {
-                if (strstr($pholder[$i], 'nav_')) {
-                    $arr[$pholder[$i]] = navi($pholder[$i]);
-                } else {
-                    if (array_key_exists($pholder[$i], self::$menu_index) && self::$menu_index[$pholder[$i]]) {
-                        require_once(basePath . '/inc/menu-functions/' . $pholder[$i] . '.php');
-                    }
-
-                    if (function_exists($pholder[$i])) {
-                        $arr[$pholder[$i]] = $pholder[$i]();
-                    }
-                }
-            }
-
-
-            $pholdervars = explode("^",$pholdervars);
-            foreach ($pholdervars as $pholdervar) {
-                /** @noinspection PhpVariableVariableInspection */
-                $arr[$pholdervar] = $$pholdervar;
-            }
-
-            $arr['sid'] = self::$sid; //Math.random() like
-
-            //index output
-            $index = (file_exists(basePath."/inc/_templates_/".self::$tmpdir."/".$index_templ.".html") ? show($index_templ, $arr) : show("index", $arr));
-            cookie::save(); //Save Cookie
-            DebugConsole::insert_info('common::page()','Memory Usage: '.self::parser_filesize(memory_get_usage()));
-            DebugConsole::insert_info('common::page()','Memory-Peak Usage: '.self::parser_filesize(memory_get_peak_usage()));
-            DebugConsole::insert_info('common::page()',sprintf("Page generated in %.8f seconds", (getmicrotime() - start_time)));
-
-            $index = (!self::$chkMe ? preg_replace("|<logged_in>.*?</logged_in>|is", "", $index) : preg_replace("|<logged_out>.*?</logged_out>|is", "", $index));
-            $index = str_ireplace(["<logged_in>","</logged_in>","<logged_out>","</logged_out>"], '', $index);
-
-            if (debug_save_to_file) {
-                DebugConsole::save_log();
-            } //Debug save to file
-            $output = view_error_reporting || DebugConsole::get_warning_enable() ? DebugConsole::show_logs().$index : $index; //Debug Console + Index Out
-            gz_output($output); // OUTPUT BUFFER END
+            $smarty->clearAllAssign();
         }
+
+        //index output
+        cookie::save(); //Save Cookie
+        DebugConsole::insert_info('common::page()','Memory Usage: '.self::parser_filesize(memory_get_usage()));
+        DebugConsole::insert_info('common::page()','Memory-Peak Usage: '.self::parser_filesize(memory_get_peak_usage()));
+        DebugConsole::insert_info('common::page()',sprintf("Page generated in %.8f seconds", (getmicrotime() - start_time)));
+
+        $index = (!self::$chkMe ? preg_replace("|<logged_in>.*?</logged_in>|is", "", $index) : preg_replace("|<logged_out>.*?</logged_out>|is", "", $index));
+        $index = str_ireplace(["<logged_in>","</logged_in>","<logged_out>","</logged_out>"], '', $index);
+
+        if (debug_save_to_file) {
+            DebugConsole::save_log();
+        } //Debug save to file
+        $output = view_error_reporting || DebugConsole::get_warning_enable() ? DebugConsole::show_logs().$index : $index; //Debug Console + Index Out
+        gz_output($output); // OUTPUT BUFFER END
     }
 }
 
