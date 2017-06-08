@@ -95,7 +95,33 @@ switch ($do) {
                 $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
             
             $action = "?admin=ipban&amp;do=enable&amp;id=".$get['id']."&amp;ub_side=".(isset($_GET['ub_side']) ? $_GET['ub_side'] : 1)."&amp;sfs_side=".(isset($_GET['sfs_side']) ? $_GET['sfs_side'] : 1);
-            $unban = ($get['enable'] ? show(_ipban_menu_icon_enable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_disable_ipban,array('ip'=>$get['ip'])))) : show(_ipban_menu_icon_disable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_enable_ipban,array('ip'=>$get['ip'])))));
+
+            if($get['enable']) {
+                $smarty->caching = false;
+                $smarty->assign('ip',$get['ip']);
+                $info = $smarty->fetch('string:'._confirm_disable_ipban);
+                $smarty->clearAllAssign();
+
+                $smarty->caching = false;
+                $smarty->assign('id',$get['id']);
+                $smarty->assign('action',$action);
+                $smarty->assign('info',$info);
+                $unban = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/ipban_menu_icon_enable.tpl');
+                $smarty->clearAllAssign();
+            } else {
+                $smarty->caching = false;
+                $smarty->assign('ip',$get['ip']);
+                $info = $smarty->fetch('string:'._confirm_enable_ipban);
+                $smarty->clearAllAssign();
+
+                $smarty->caching = false;
+                $smarty->assign('id',$get['id']);
+                $smarty->assign('action',$action);
+                $smarty->assign('info',$info);
+                $unban = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/ipban_menu_icon_disable.tpl');
+                $smarty->clearAllAssign();
+            }
+
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_ipban);
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             $smarty->caching = false;
@@ -148,7 +174,33 @@ switch ($do) {
                 $data_array = unserialize($get['data']);
                 $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_ipban);
                 $action = "?admin=ipban&amp;do=enable&amp;id=".$get['id']."&amp;sfs_side=".($site)."&amp;ub_side=".(isset($_GET['ub_side']) ? $_GET['ub_side'] : 1);
-                $unban = ($get['enable'] ? show(_ipban_menu_icon_enable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_disable_ipban,array('ip'=>$get['ip'])))) : show(_ipban_menu_icon_disable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_enable_ipban,array('ip'=>$get['ip'])))));
+
+                if($get['enable']) {
+                    $smarty->caching = false;
+                    $smarty->assign('ip',$get['ip']);
+                    $info = $smarty->fetch('string:'._confirm_disable_ipban);
+                    $smarty->clearAllAssign();
+
+                    $smarty->caching = false;
+                    $smarty->assign('id',$get['id']);
+                    $smarty->assign('action',$action);
+                    $smarty->assign('info',$info);
+                    $unban = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/ipban_menu_icon_enable.tpl');
+                    $smarty->clearAllAssign();
+                } else {
+                    $smarty->caching = false;
+                    $smarty->assign('ip',$get['ip']);
+                    $info = $smarty->fetch('string:'._confirm_enable_ipban);
+                    $smarty->clearAllAssign();
+
+                    $smarty->caching = false;
+                    $smarty->assign('id',$get['id']);
+                    $smarty->assign('action',$action);
+                    $smarty->assign('info',$info);
+                    $unban = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/ipban_menu_icon_disable.tpl');
+                    $smarty->clearAllAssign();
+                }
+
                 $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
                 $smarty->caching = false;
                 $smarty->assign('ip',stringParser::decode($get['ip']));
@@ -195,7 +247,33 @@ switch ($do) {
                 $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
                 $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_ipban);
                 $action = "?admin=ipban&amp;do=enable&amp;id=".$get['id']."&amp;ub_side=".($site)."&amp;sfs_side=".(isset($_GET['sfs_side']) ? $_GET['sfs_side'] : 1);
-                $unban = ($get['enable'] ? show(_ipban_menu_icon_enable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_disable_ipban,array('ip'=>$get['ip'])))) : show(_ipban_menu_icon_disable, array("id" => $get['id'], "action" => $action, "info" => show(_confirm_enable_ipban,array('ip'=>$get['ip'])))));
+
+                if($get['enable']) {
+                    $smarty->caching = false;
+                    $smarty->assign('ip',$get['ip']);
+                    $info = $smarty->fetch('string:'._confirm_disable_ipban);
+                    $smarty->clearAllAssign();
+
+                    $smarty->caching = false;
+                    $smarty->assign('id',$get['id']);
+                    $smarty->assign('action',$action);
+                    $smarty->assign('info',$info);
+                    $unban = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/ipban_menu_icon_enable.tpl');
+                    $smarty->clearAllAssign();
+                } else {
+                    $smarty->caching = false;
+                    $smarty->assign('ip',$get['ip']);
+                    $info = $smarty->fetch('string:'._confirm_enable_ipban);
+                    $smarty->clearAllAssign();
+
+                    $smarty->caching = false;
+                    $smarty->assign('id',$get['id']);
+                    $smarty->assign('action',$action);
+                    $smarty->assign('info',$info);
+                    $unban = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/ipban_menu_icon_disable.tpl');
+                    $smarty->clearAllAssign();
+                }
+
                 $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
                 $smarty->caching = false;
                 $smarty->assign('ip',stringParser::decode($get['ip']));

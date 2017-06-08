@@ -29,8 +29,12 @@ function vote($ajax = false) {
                     if($ipcheck || cookie::get('vid_'.$get['id']) != false || $get['closed']) {
                         $percent = round($getv['stimmen']/$stimmen*100,1);
                         $rawpercent = round($getv['stimmen']/$stimmen*100,0);
-                        $balken = show(_votes_balken, ["width" => $rawpercent]);
                         $votebutton = "";
+
+                        $smarty->caching = false;
+                        $smarty->assign('width',$rawpercent);
+                        $balken = $smarty->fetch('string:'._votes_balken);
+                        $smarty->clearAllAssign();
 
                         $smarty->caching = false;
                         $smarty->assign('answer',stringParser::decode($getv['sel']));

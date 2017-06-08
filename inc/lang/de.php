@@ -194,8 +194,8 @@ define('_admin_startpage_add', 'Neue Startseite hinzuf&uuml;gen');
 define('_ipban_admin_head', 'IP Blocker');
 define('_config_ipban', 'IP Blocker');
 define('_confirm_del_ipban', 'Eintrag l&ouml;schen');
-define('_confirm_enable_ipban', 'Soll die IP-Sperrung f&uuml;r [ip] wieder aktiviert werden');
-define('_confirm_disable_ipban', 'Soll die Sperrung der IP: [ip] deaktiviert werden');
+define('_confirm_enable_ipban', 'Soll die IP-Sperrung f&uuml;r {$ip} wieder aktiviert werden');
+define('_confirm_disable_ipban', 'Soll die Sperrung der IP: {$ip} deaktiviert werden');
 define('_ipban_admin_deleted', 'Der IP Ban wurde erfolgreich gel&ouml;scht!');
 define('_ipban_new_head', 'Neuen IP Ban hinzuf&uuml;gen');
 define('_ipban_admin_added', 'Der neue IP Bann wurde erfolgreich hinzugef&uuml;gt!');
@@ -783,7 +783,6 @@ define('_ulist_acc_banned', 'Gesperrte Accounts');
 ## Navigation: Kalender ##
 define('_kal_birthday', 'Geburtstag von ');
 define('_kal_event', 'Event: ');
-## Linkus ##
 //-> Allgemein
 define('_years', 'Jahre');
 define('_year', 'Jahr');

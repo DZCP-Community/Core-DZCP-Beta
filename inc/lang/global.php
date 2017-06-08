@@ -17,8 +17,6 @@
 
 ## ADDED / REDEFINED FOR 1.7.0
 define('_user_mailto_texttop', '<img src=\\"../inc/images/mailto.gif\\" align=\\"texttop\\"> <a href=\\"mailto:"+d+"\\" target=\\"_blank\\">"+d+"</a>');
-define('_ipban_menu_icon_enable', '<a href="[action]" title="[lang_ipban_disable]" rel="[info]" class="confirm"><img src="../inc/images/admin_lock_closed.jpg" alt="" class="icon" /></a>');
-define('_ipban_menu_icon_disable', '<a href="[action]" title="[lang_ipban_enable]" rel="[info]" class="confirm"><img src="../inc/images/admin_lock_open.jpg" alt="" class="icon" /></a>');
 define('_elevel_startpage_select', '<option value="1" [selu]>[lang_status_user]</option><option value="2" [selt]>[lang_status_trial]</option><option value="3" [selm]>[lang_status_member]</option><option value="4" [sela]>[lang_status_admin]</option>');
 ## ADDED / REDEFINED FOR 1.5.2
 define('_dropdown_date_ts', '<select id="t_[nr]" name="t_[nr]" class="dropdown">[day]</select> <select id="m_[nr]" name="m_[nr]" class="dropdown">[month]</select> <select id="j_[nr]" name="j_[nr]" class="dropdown">[year]</select>');
@@ -37,14 +35,9 @@ define('_forum_thread_search_link', '[sticky] <a href="../forum/?action=showthre
 ## Allgemein ##
 define('_user_link_noreg', '<a class=\\"[class]\\" href=\\"mailto:"+d+"\\">[nick]</a>');
 define('_link_mailto', '<a href=\\"mailto:"+d+"\\">{$nick}</a>');
-define('_link_hp', '<a href="[hp]"><img src="../inc/images/hp.gif" alt="" title="[hp]" class="icon" /></a>');
-define('_userava_link', '<img src="../inc/images/uploads/useravatare/[id].[endung]" width="[width]" height="[height]" alt="" />');
-define('_no_userava', '<img src="../inc/images/noavatar.gif" width="[width]" height="[height]" alt="" />');
-define('_userpic_link', '<img src="../inc/images/uploads/userpics/[id].[endung]" width="[width]" height="[height]" alt="" />');
-define('_no_userpic', '<img src="../inc/images/nopic.gif" width="[width]" height="[height]" alt="" />');
 ## Icons ##
 define('_closedicon', '<img src="../inc/images/closed.png" alt="" class="icon" />');
-define('_hpicon', '<a href="[hp]" target="_blank"><img src="../inc/images/hp.gif" alt="" title="[hp]" class="icon" /></a>');
+define('_hpicon', '<a href="{$hp}" target="_blank"><img src="../inc/images/hp.gif" alt="" title="{$hp}" class="icon" /></a>');
 define('_email_mailto', '<a href="mailto:[email]">[email]</a>');
 define('_emailicon', '<a href=\\"mailto:"+d+"\\"><img src=\\"../inc/images/email.gif\\" title="+d+" class=\\"icon\\" /></a>');
 define('_emailicon_non_mailto', '<a href="[email]"><img src="../inc/images/email.gif" alt="" class="icon" /></a>');
@@ -72,7 +65,7 @@ define('_news_show_link', '<a href="../news/?action=show&amp;id=[id]">[titel]</a
 define('_forum_select_field_search', '<option value="[value]" [sel]>-> [what]</option>');
 ## Umfragen ##
 define('_votes_titel', '<a href="javascript:DZCP.toggle(\'[vid]\')"><img src="../inc/images/[icon].gif" alt="" id="img[vid]" class="icon" />[intern][titel]</a>');
-define('_votes_balken', '<img src="../inc/images/vote.gif" width="[width]%" height="4" alt="[width]%" />');
+define('_votes_balken', '<img src="../inc/images/vote.gif" width="{$width}%" height="4" alt="{$width}%" />');
 ## Admin ##
 define('_artikel_edit_link', 'editartikel&amp;id=[id]');
 define('_config_delete', '<a href="?admin=[what]&amp;do=delete&amp;id=[id]"><img src="../inc/images/delete.png" alt="" class="icon" /></a>');

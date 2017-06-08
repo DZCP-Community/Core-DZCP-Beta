@@ -81,13 +81,16 @@ if(_adminMenu != 'true') exit;
           } else {
         if($_POST['to'] == "reg")
         {
-                  $message = show(common::bbcode_email(settings::get('eml_nletter')), array("text" => bbcode_nletter($_POST['eintrag'])));
-                  $subject =stringParser::decode(settings::get('eml_nletter_subj'));
+            $smarty->caching = false;
+            $smarty->assign('text', bbcode_nletter($_POST['eintrag']));
+            $message = $smarty->fetch('string:'.common::bbcode_email(settings::get('eml_nletter')));
+            $smarty->clearAllAssign();
+            $subject =stringParser::decode(settings::get('eml_nletter_subj'));
 
-          $qry = common::$sql['default']->select("SELECT email FROM `{prefix_users}` WHERE nletter = 1");
-          foreach($qry as $get) {
-              common::sendMail(stringParser::decode($get['email']),$subject,$message);
-          }
+              $qry = common::$sql['default']->select("SELECT email FROM `{prefix_users}` WHERE nletter = 1");
+              foreach($qry as $get) {
+                  common::sendMail(stringParser::decode($get['email']),$subject,$message);
+              }
 
 
             common::userstats_increase('writtenmsg');
@@ -95,8 +98,12 @@ if(_adminMenu != 'true') exit;
               $show = common::info(_msg_reg_answer_done, "?admin=nletter");
 
         } elseif($_POST['to'] == "member") {
-          $message = show(common::bbcode_email(settings::get('eml_nletter')), array("text" => bbcode_nletter($_POST['eintrag'])));
-                  $subject =stringParser::decode(settings::get('eml_nletter_subj'));
+            $smarty->caching = false;
+            $smarty->assign('text', bbcode_nletter($_POST['eintrag']));
+            $message = $smarty->fetch('string:'.common::bbcode_email(settings::get('eml_nletter')));
+            $smarty->clearAllAssign();
+
+            $subject =stringParser::decode(settings::get('eml_nletter_subj'));
 
           $qry = common::$sql['default']->select("SELECT email FROM `{prefix_users}` WHERE level >= 2");
           foreach($qry as $get) {
@@ -107,8 +114,12 @@ if(_adminMenu != 'true') exit;
 
               $show = common::info(_msg_member_answer_done, "?admin=nletter");
         } else {
-          $message = show(common::bbcode_email(settings::get('eml_nletter')), array("text" => bbcode_nletter($_POST['eintrag'])));
-                  $subject =stringParser::decode(settings::get('eml_nletter_subj'));
+            $smarty->caching = false;
+            $smarty->assign('text', bbcode_nletter($_POST['eintrag']));
+            $message = $smarty->fetch('string:'.common::bbcode_email(settings::get('eml_nletter')));
+            $smarty->clearAllAssign();
+
+            $subject =stringParser::decode(settings::get('eml_nletter_subj'));
 
           $qry = common::$sql['default']->select("SELECT s2.email FROM `{prefix_groupuser}` AS s1
                      LEFT JOIN `{prefix_users}` AS s2

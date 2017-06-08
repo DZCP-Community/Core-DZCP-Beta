@@ -92,7 +92,14 @@ if(defined('_UserMenu')) {
 
     $userliste = '';
     foreach($qry as $get) {
-        $hp = empty($get['hp']) ? "-" : show(_hpicon, array("hp" => $get['hp']));
+        $hp = '-';
+        if(!empty($get['hp'])) {
+            $smarty->caching = false;
+            $smarty->assign('hp', common::links(stringParser::decode($get['hp'])));
+            $hp = $smarty->fetch('string:' . _hpicon);
+            $smarty->clearAllAssign();
+        }
+
         common::$sql['default']->fetch("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = 1;");
         $edit = ""; $delete = ""; $full_delete = "";
         if(common::permission("editusers")) {

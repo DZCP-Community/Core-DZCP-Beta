@@ -1011,12 +1011,23 @@ class common {
      */
     public static function userpic(int $userid,int $width=170,int $height=210) {
         /* TODO: Use PHPFastCache */
+        $smarty = self::getSmarty(true);
         foreach(["jpg", "gif", "png"] as $endung) {
             if (file_exists(basePath . "/inc/images/uploads/userpics/" . $userid . "." . $endung)) {
-                $pic = show(_userpic_link, ["id" => $userid, "endung" => $endung, "width" => $width, "height" => $height]);
+                $smarty->caching = false;
+                $smarty->assign('id',$userid);
+                $smarty->assign('endung',$endung);
+                $smarty->assign('width',$width);
+                $smarty->assign('height',$height);
+                $pic = $smarty->fetch('file:['.common::$tmpdir.']page/userpic_link.tpl');
+                $smarty->clearAllAssign();
                 break;
             } else {
-                $pic = show(_no_userpic, ["width" => $width, "height" => $height]);
+                $smarty->caching = false;
+                $smarty->assign('width',$width);
+                $smarty->assign('height',$height);
+                $pic = $smarty->fetch('file:['.common::$tmpdir.']page/no_userpic.tpl');
+                $smarty->clearAllAssign();
             }
         }
 
@@ -1031,13 +1042,24 @@ class common {
      * @return mixed|string
      */
     public static function useravatar(int $uid=0, int $width=100,int $height=100) {
+        $smarty = self::getSmarty(true);
         $uid = ($uid == 0 ? self::$userid : $uid);
         foreach(["jpg", "gif", "png"] as $endung) {
             if (file_exists(basePath . "/inc/images/uploads/useravatare/" . $uid . "." . $endung)) {
-                $pic = show(_userava_link, ["id" => $uid, "endung" => $endung, "width" => $width, "height" => $height]);
+                $smarty->caching = false;
+                $smarty->assign('id',$uid);
+                $smarty->assign('endung',$endung);
+                $smarty->assign('width',$width);
+                $smarty->assign('height',$height);
+                $pic = $smarty->fetch('file:['.common::$tmpdir.']page/userava_link.tpl');
+                $smarty->clearAllAssign();
                 break;
             } else {
-                $pic = show(_no_userava, ["width" => $width, "height" => $height]);
+                $smarty->caching = false;
+                $smarty->assign('width',$width);
+                $smarty->assign('height',$height);
+                $pic = $smarty->fetch('file:['.common::$tmpdir.']page/userava_link.tpl');
+                $smarty->clearAllAssign();
             }
         }
 
@@ -1211,8 +1233,7 @@ class common {
      * @param string $title
      * @return string
      */
-    public static function getButtonEditSingle(int $id=0,string $action='',string $title=_button_title_edit)
-    {
+    public static function getButtonEditSingle(int $id=0,string $action='',string $title=_button_title_edit) {
         $smarty = self::getSmarty(true); //Use Smarty
         $smarty->caching = true;
         $smarty->assign('id', $id);

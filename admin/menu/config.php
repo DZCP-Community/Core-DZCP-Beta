@@ -109,19 +109,21 @@ foreach($tmps as $tmp) {
 }
 unset($tmps,$tmp,$selt);
 
-$pwde_options = show('<option '.(!settings::get('default_pwd_encoder') ? 'selected="selected"' : '').' value="0">MD5 [lang_pwd_encoder_algorithm]</option>'
-. '<option '.(settings::get('default_pwd_encoder') == 1 ? 'selected="selected"' : '').' value="1">SHA1 [lang_pwd_encoder_algorithm]</option>'
-. '<option '.(settings::get('default_pwd_encoder') == 2 ? 'selected="selected"' : '').' value="2">SHA256 [lang_pwd_encoder_algorithm]</option>'
-. '<option '.(settings::get('default_pwd_encoder') == 3 ? 'selected="selected"' : '').' value="3">SHA512 [lang_pwd_encoder_algorithm]</option>');
+$smarty->caching = false;
+$pwde_options = $smarty->fetch('string:<option '.(!settings::get('default_pwd_encoder') ? 'selected="selected"' : '').' value="0">MD5 [lang_pwd_encoder_algorithm]</option>'
+    . '<option '.(settings::get('default_pwd_encoder') == 1 ? 'selected="selected"' : '').' value="1">SHA1 [lang_pwd_encoder_algorithm]</option>'
+    . '<option '.(settings::get('default_pwd_encoder') == 2 ? 'selected="selected"' : '').' value="2">SHA256 [lang_pwd_encoder_algorithm]</option>'
+    . '<option '.(settings::get('default_pwd_encoder') == 3 ? 'selected="selected"' : '').' value="3">SHA512 [lang_pwd_encoder_algorithm]</option>');
 
-$mail_options = show('<option '.(settings::get('mail_extension') == 'mail' ? 'selected="selected"' : '').' value="mail">'._default.'</option>'
-. '<option '.(settings::get('mail_extension') == 'sendmail' ? 'selected="selected"' : '').' value="sendmail">Sendmail</option>'
-. '<option '.(settings::get('mail_extension') == 'smtp' ? 'selected="selected"' : '').' value="smtp">SMTP</option>');
+$smarty->caching = false;
+$mail_options = $smarty->fetch('string:<option '.(settings::get('mail_extension') == 'mail' ? 'selected="selected"' : '').' value="mail">'._default.'</option>'
+    . '<option '.(settings::get('mail_extension') == 'sendmail' ? 'selected="selected"' : '').' value="sendmail">Sendmail</option>'
+    . '<option '.(settings::get('mail_extension') == 'smtp' ? 'selected="selected"' : '').' value="smtp">SMTP</option>');
 
-$smtp_secure_options = show('<option '.(!settings::get('smtp_tls_ssl') ? 'selected="selected"' : '').' value="0">[lang_default]</option>'
-. '<option '.(settings::get('smtp_tls_ssl') == 1 ? 'selected="selected"' : '').' value="1">TLS</option>'
-. '<option '.(settings::get('smtp_tls_ssl') == 2 ? 'selected="selected"' : '').' value="2">SSL</option>');
-
+$smarty->caching = false;
+$smtp_secure_options = $smarty->fetch('string:<option '.(!settings::get('smtp_tls_ssl') ? 'selected="selected"' : '').' value="0">[lang_default]</option>'
+    . '<option '.(settings::get('smtp_tls_ssl') == 1 ? 'selected="selected"' : '').' value="1">TLS</option>'
+    . '<option '.(settings::get('smtp_tls_ssl') == 2 ? 'selected="selected"' : '').' value="2">SSL</option>');
 
 $smarty->caching = false;
 $smarty->assign('main_info',_main_info);

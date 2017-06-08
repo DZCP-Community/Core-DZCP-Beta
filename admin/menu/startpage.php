@@ -54,6 +54,13 @@ switch ($do) {
             $elevel = $smarty->fetch('string:'._elevel_startpage_select);
             $smarty->clearAllAssign();
 
+            $errortable='';
+            if(!empty($error)) {
+                $smarty->caching = false;
+                $smarty->assign('error', $error);
+                $errortable = $smarty->fetch('file:['.common::$tmpdir.']errors/errortable.tpl');
+                $smarty->clearAllAssign();
+            }
 
             $smarty->caching = false;
             $smarty->assign('head',_admin_startpage_edit);
@@ -62,7 +69,7 @@ switch ($do) {
             $smarty->assign('url',(isset($_POST['url']) ? $_POST['url'] : stringParser::decode($get['url'])));
             $smarty->assign('level',$elevel);
             $smarty->assign('what',_button_value_edit);
-            $smarty->assign('error',(!empty($error) ? show("errors/errortable", array("error" => $error)) : ""));
+            $smarty->assign('error',$errortable);
             $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/startpage_form.tpl');
             $smarty->clearAllAssign();
         }
@@ -94,6 +101,14 @@ switch ($do) {
             $elevel = $smarty->fetch('string:'._elevel_startpage_select);
             $smarty->clearAllAssign();
 
+            $errortable='';
+            if(!empty($error)) {
+                $smarty->caching = false;
+                $smarty->assign('error', $error);
+                $errortable = $smarty->fetch('file:['.common::$tmpdir.']errors/errortable.tpl');
+                $smarty->clearAllAssign();
+            }
+
             $smarty->caching = false;
             $smarty->assign('head',_admin_startpage_add_head);
             $smarty->assign('do',"new");
@@ -101,7 +116,7 @@ switch ($do) {
             $smarty->assign('url',(isset($_POST['url']) ? $_POST['url'] : ''));
             $smarty->assign('level',$elevel);
             $smarty->assign('what',_button_value_add);
-            $smarty->assign('error',(!empty($error) ? show("errors/errortable", array("error" => $error)) : ""));
+            $smarty->assign('error',$errortable);
             $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/startpage_form.tpl');
             $smarty->clearAllAssign();
         }

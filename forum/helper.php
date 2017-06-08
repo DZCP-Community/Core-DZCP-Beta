@@ -35,6 +35,7 @@ function fvote_question(array $answers = array()) {
 }
 
 function fvote($id, $ajax=false) {
+    $smarty = common::getSmarty(true);
     $get = common::$sql['default']->fetch("SELECT `id`,`closed`,`titel` FROM `{prefix_votes}` WHERE `id` = ? ".(common::permission("votes") ? ";" : " AND `intern` = 0;"), [(int)($id)]);
     if(common::$sql['default']->rowCount()) {
         $results = ''; $votebutton = '';
@@ -46,32 +47,51 @@ function fvote($id, $ajax=false) {
                     if(common::ipcheck("vid_".$get['id']) || cookie::get('vid_'.$get['id']) != false || $get['closed']) {
                         $percent = round($getv['stimmen']/$stimmen*100,1);
                         $rawpercent = round($getv['stimmen']/$stimmen*100,0);
-                        $balken = show(_votes_balken, ["width" => $rawpercent]);
-
                         $votebutton = "";
-                        $results .= show("forum/vote_results", ["answer" => stringParser::decode($getv['sel']),
-                            "percent" => $percent,
-                            "stimmen" => $getv['stimmen'],
-                            "balken" => $balken]);
+
+                        $smarty->caching = false;
+                        $smarty->assign('width',$rawpercent);
+                        $balken = $smarty->fetch('string:'._votes_balken);
+                        $smarty->clearAllAssign();
+
+                        $smarty->caching = false;
+                        $smarty->assign('answer',stringParser::decode($getv['sel']));
+                        $smarty->assign('percent',$percent);
+                        $smarty->assign('stimmen',$getv['stimmen']);
+                        $smarty->assign('balken',$balken);
+                        $results .= $smarty->fetch('file:['.common::$tmpdir.']forum/vote_results.tpl');
+                        $smarty->clearAllAssign();
                     } else {
                         $votebutton = '<input id="contentSubmitFVote" type="submit" value="'._button_value_vote.'" class="voteSubmit" />';
-                        $results .= show("forum/vote_vote", ["id" => $getv['id'], "answer" => stringParser::decode($getv['sel'])]);
+                        $smarty->caching = false;
+                        $smarty->assign('id',$getv['id']);
+                        $smarty->assign('answer',stringParser::decode($getv['sel']));
+                        $results .= $smarty->fetch('file:['.common::$tmpdir.']forum/vote_vote.tpl');
+                        $smarty->clearAllAssign();
                     }
                 } else {
                     $votebutton = '<input id="contentSubmitFVote" type="submit" value="'._button_value_vote.'" class="voteSubmit" />';
-                    $results .= show("forum/vote_vote", ["id" => $getv['id'], "answer" => stringParser::decode($getv['sel'])]);
+                    $smarty->caching = false;
+                    $smarty->assign('id',$getv['id']);
+                    $smarty->assign('answer',stringParser::decode($getv['sel']));
+                    $results .= $smarty->fetch('file:['.common::$tmpdir.']forum/vote_vote.tpl');
+                    $smarty->clearAllAssign();
                 }
             }
         }
 
         $getf = common::$sql['default']->fetch("SELECT `id`,`kid` FROM `{prefix_forumthreads}` WHERE `vote` = ?;", [$get['id']]);
-        $vote = show("forum/vote", ["titel" => stringParser::decode($get['titel']),
-            "vid" => $get['id'],
-            "fid" => $getf['id'],
-            "kid" => $getf['kid'],
-            "results" => $results,
-            "votebutton" => $votebutton,
-            "stimmen" => $stimmen]);
+
+        $smarty->caching = false;
+        $smarty->assign('titel',stringParser::decode($get['titel']));
+        $smarty->assign('vid',$get['id']);
+        $smarty->assign('fid',$getf['id']);
+        $smarty->assign('kid',$getf['kid']);
+        $smarty->assign('results',$results);
+        $smarty->assign('votebutton',$votebutton);
+        $smarty->assign('stimmen',$stimmen);
+        $vote = $smarty->fetch('file:['.common::$tmpdir.']forum/vote_vote.tpl');
+        $smarty->clearAllAssign();
     }
 
     return empty($vote) ? '<div style="margin:2px 0;text-align:center;">'._no_entrys.'</div>' : ($ajax ? $vote : '<div id="navFVote">'.$vote.'</div>');

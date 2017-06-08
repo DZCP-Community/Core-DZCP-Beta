@@ -85,7 +85,10 @@ if(defined('_Forum')) {
                     $sig = "";
 
                 $onoff = common::onlinecheck(common::$userid);
-                $userposts = show(_forum_user_posts, array("posts" => common::userstats("forumposts",$pUId)+1));
+                $smarty->caching = false;
+                $smarty->assign('posts',common::userstats("forumposts",$pUId)+1);
+                $userposts = $smarty->fetch('string:'._forum_user_posts);
+                $smarty->clearAllAssign();
             } else {
                 $pn = "";
                 $email = common::CryptMailto($_POST['email'],_emailicon_forum);
@@ -159,23 +162,30 @@ if(defined('_Forum')) {
             {
                 $get = common::$sql['default']->fetch("SELECT `date`,`reg`,`sid` FROM `{prefix_forumposts}` WHERE `id` = ?;",[(int)($_GET['id'])]);
 
-                if($get['reg'] == 0) $guestCheck = false;
+                if($get['reg'] == 0)
+                    $guestCheck = false;
                 else {
                     $guestCheck = true;
                     $pUId = $get['reg'];
                 }
-                $editedby = show(_edited_by, array("autor" => common::cleanautor($userid),
-                    "time" => date("d.m.Y H:i", time())._uhr));
+
+                $smarty->caching = false;
+                $smarty->assign('autor',common::cleanautor($userid));
+                $smarty->assign('time',date("d.m.Y H:i", time()));
+                $editedby = $smarty->fetch('string:'._edited_by);
+                $smarty->clearAllAssign();
+
                 $tID = $get['sid'];
                 $cnt = "?";
             } else {
                 $get['date'] = time();
-
-                if(!common::$chkMe) $guestCheck = false;
+                if(!common::$chkMe)
+                    $guestCheck = false;
                 else {
                     $guestCheck = true;
                     $pUId = common::$userid;
                 }
+
                 $tID = $_GET['id'];
                 $cnt = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[(int)($_GET['id'])])+2;
             }
