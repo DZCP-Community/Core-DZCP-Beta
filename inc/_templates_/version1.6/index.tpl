@@ -18,7 +18,7 @@
             <link rel="stylesheet" type="text/css" href="{dir}/_css/magnific-popup.css" media="screen" />
             <link rel="stylesheet" type="text/css" href="{dir}/_css/highlighter.css" />
             <link rel="stylesheet" type="text/css" href="{dir}/_css/icons.php" media="screen" />
-            <link rel="alternate" type="application/rss+xml" href="../rss.xml" title="{$rss} RSS-Feed" />
+            <link rel="alternate" type="application/rss+xml" href="../rss.xml" title="{$clanname} RSS-Feed" />
             <link rel="icon" href="{dir}/favicon.ico" />
             <link rel="home" href="/" title="Home" />
             <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.js"></script>

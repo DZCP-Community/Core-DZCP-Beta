@@ -2761,8 +2761,6 @@ class common {
      * @param string $index_templ
      */
     public static final function page(string $index='',string $title='',string $where='',string $template='index') {
-        global $dir;
-
         //JS SetOptions
         javascript::set('lng',($_SESSION['language']=='deutsch'?'de':'en'));
         javascript::set('maxW',settings::get('maxwidth'));
@@ -2811,18 +2809,7 @@ class common {
             $smarty->assign('clanname',stringParser::decode(settings::get("clanname")));
             $smarty->assign('title',strip_tags($title));
             $smarty->assign('java_vars',$java_vars);
-            $smarty->assign('rss','');
-            $smarty->assign('vote','');
-            $smarty->assign('top_dl','');
-            $smarty->assign('partners','');
-            $smarty->assign('where','');
-            $smarty->assign('search','');
-            $smarty->assign('l_news','');
-            $smarty->assign('l_artikel','');
-            $smarty->assign('ftopics','');
-            $smarty->assign('counter','');
-            $smarty->assign('kalender','');
-            $smarty->assign('events','');
+            $smarty->assign('where',$where);
             if($template != 'index' && file_exists(self::$designpath.'/'.$template.'.tpl')) {
                 $index = $smarty->fetch('file:['.common::$tmpdir.']'.$template.'.tpl');
             } else {
@@ -2837,7 +2824,8 @@ class common {
         DebugConsole::insert_info('common::page()','Memory-Peak Usage: '.self::parser_filesize(memory_get_peak_usage()));
         DebugConsole::insert_info('common::page()',sprintf("Page generated in %.8f seconds", (getmicrotime() - start_time)));
 
-        $index = (!self::$chkMe ? preg_replace("|<logged_in>.*?</logged_in>|is", "", $index) : preg_replace("|<logged_out>.*?</logged_out>|is", "", $index));
+        $index = (!self::$chkMe ? preg_replace("|<logged_in>.*?</logged_in>|is", "", $index) :
+            preg_replace("|<logged_out>.*?</logged_out>|is", "", $index));
         $index = str_ireplace(["<logged_in>","</logged_in>","<logged_out>","</logged_out>"], '', $index);
 
         if (debug_save_to_file) {
