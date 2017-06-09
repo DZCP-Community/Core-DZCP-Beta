@@ -837,7 +837,8 @@ define('_forum_cnt_posts', '<span class="fontBold">Anzahl der Posts:</span> [pos
 define('_forum_admin_head', 'Admin');
 define('_forum_admin_addsticky', 'als <span class="fontWichtig">wichtig</span> markieren?');
 define('_forum_katname_intern', '<span class="fontWichtig">Intern:</span> {$katname}');
-define('_forum_sticky', '<span class="fontWichtig">Wichtig:</span>');
+define('_forum_sticky', 'Wichtig');
+define('_forum_sticky_global', 'Global und Wichtig');
 define('_forum_head_skat_search', 'In dieser Kategorie suchen');
 define('_forum_head_threads', 'Themen');
 define('_forum_replys', 'Antworten');
@@ -877,8 +878,6 @@ define('_forum_admin_closed', 'Umfrage schlie&szlig;en');
 ## Kalender ##
 //-> Allgemein
 define('_kalender_head', 'Kalender');
-define('_kalender_month_select', '<option value="[i]" [sel]>[month]</option>');
-define('_kalender_year_select', '<option value="[i]" [sel]>[year]</option>');
 define('_montag', 'Montag');
 define('_dienstag', 'Dienstag');
 define('_mittwoch', 'Mittwoch');
@@ -888,7 +887,7 @@ define('_samstag', 'Samstag');
 define('_sonntag', 'Sonntag');
 
 //-> Events
-define('_kalender_events_head', 'Ereignisse am [datum]');
+define('_kalender_events_head', 'Ereignisse am {$datum}');
 define('_kalender_uhrzeit', 'Uhrzeit');
 
 //-> Admin
@@ -973,11 +972,6 @@ define('_dl_loaded', 'bisherige Downloads');
 define('_dl_date', 'Uploaddatum');
 define('_dl_wait', 'Download der Datei: ');
 
-## Teams ##
-define('_member_squad_head', 'Teams');
-define('_member_squad_no_entrys', '<tr><td align="center"><span class="fontBold">Keine eingetragenen Member</span></td></tr>');
-define('_member_squad_weare', 'Wir sind insgesamt <span class="fontBold">[cm] Member</span> und besitzen <span class="fontBold">[cs] Team(s)</span>');
-
 ## User ##
 define('_profil_head', '<span class="fontBold">Userprofil von {$nick}</span> [{$profilhits} mal angesehen]');
 define('_user_noposi', '<option value="lazy" class="dropdownKat">keine Position</option>');
@@ -1023,7 +1017,6 @@ define('_female', 'weiblich');
 define('_profil_ppic', 'Profilfoto');
 define('_profil_gamestuff', 'Gamestuff');
 define('_profil_userstats', 'Userstats');
-define('_profil_navi_profil', '<a href="?action=user&amp;id=[id]">Profil</a>');
 define('_profil_profilhits', 'Profilhits');
 define('_profil_forenposts', 'Forenposts');
 define('_profil_votes', 'teilgenommene Votes');
@@ -1160,21 +1153,6 @@ define('_userlobby_kal_today', 'N&auml;chster Event ist');
 define('_userlobby_kal_not_today', 'N&auml;chstes Event ist am');
 define('_profil_country', 'Land');
 define('_profil_favos', 'Favoriten');
-define('_profil_drink', 'Drink');
-define('_profil_essen', 'Essen');
-define('_profil_film', 'Film');
-define('_profil_musik', 'Musik');
-define('_profil_song', 'Song');
-define('_profil_buch', 'Buch');
-define('_profil_autor', 'Autor');
-define('_profil_person', 'Person');
-define('_profil_sport', 'Sport');
-define('_profil_sportler', 'Sportler');
-define('_profil_auto', 'Auto');
-define('_profil_favospiel', 'Spiel');
-define('_profil_game', 'Spiel');
-define('_profil_favoclan', 'Clan');
-define('_profil_spieler', 'Spieler');
 define('_profil_sonst', 'Sonstiges');
 define('_profil_url1', 'Page #1');
 define('_profil_url2', 'Page #2');
@@ -1217,21 +1195,15 @@ define('_lobby_new_art_1', 'neuer Artikel');
 define('_lobby_new_art_2', 'neue Artikel');
 define('_lobby_new_artc_1', 'neuer Artikelkommentar');
 define('_lobby_new_artc_2', 'neue Artikelkommentare');
-define('_page', '<span class="fontBold">[num]</span>  ');
 define('_profil_nletter', 'Newsletter empfangen?');
 define('_forum_admin_addglobal', '<span class="fontWichtig">Globaler</span> Eintrag? (In allen Foren und Subforen)');
 define('_forum_admin_global', '<span class="fontWichtig">Globaler</span> Eintrag?');
-define('_forum_global', '<span class="fontWichtig">Global:</span>');
+define('_forum_global', 'Global');
 define('_admin_config_badword', 'Badword-Filter');
 define('_admin_config_badword_info', 'Hier kannst du W&ouml;rter angeben, die bei Eingabe mit **** versehen werden. Die W&ouml;rter m&uuml;ssen mit Komma getrennt werden!');
 define('_iplog_info', '<span class="fontBold">Hinweis:</span> Aus Sicherheitsgr&uuml;nden wird deine IP geloggt!');
 define('_logged', 'IP gespeichert');
 define('_info_ip', 'IP-Adresse');
-define('_info_browser', 'Browser');
-define('_info_res', 'Aufl&ouml;sung');
-define('_unknown_browser', 'unbekannter Browser');
-define('_unknown_system', 'unbekanntes System');
-define('_info_sys', 'System');
 define('_nav_montag', 'Mo');
 define('_nav_dienstag', 'Di');
 define('_nav_mittwoch', 'Mi');
@@ -1244,7 +1216,7 @@ define('_error_empty_age', 'Du musst dein aktuelles Alter angeben!');
 define('_member_admin_intforums', 'interne Forumauthorisierungen');
 define('_access', 'Authorisierung');
 define('_error_no_access', 'Du hast nicht die n&ouml;tigen Rechte um diesen Bereich betreten zu d&uuml;rfen!');
-define('_artikel_show_link', '<a href="../artikel/?action=show&amp;id=[id]">[titel]</a>');
+define('_artikel_show_link', '<a href="../artikel/?action=show&amp;id={$id}">{$titel}</a>');
 define('_ulist_bday', 'Geburtstag');
 define('_ulist_last_login', 'Letzter Login');
 
@@ -1300,9 +1272,9 @@ define('_config_set', 'Die Einstellungen wurden erfolgreich &uuml;bernommen!');
 define('_config_forum_status', 'Status');
 define('_config_forum_head', 'Forenkategorien');
 define('_config_forum_mainkat', 'Hauptkategorie');
-define('_config_forum_subkathead', 'Unterkategorien von <span class="fontUnder">[kat]</span>');
+define('_config_forum_subkathead', 'Unterkategorien von <span class="fontUnder">{$kat}</span>');
 define('_config_forum_subkat', 'Unterkategorie');
-define('_config_forum_subkats', '<span class="fontBold">[topic]</span><br /><span class="fontItalic">[subtopic]</span>');
+define('_config_forum_subkats', '<span class="fontBold">{$topic}</span><br /><span class="fontItalic">{$subtopic}</span>');
 define('_config_forum_kat_head', 'neue Kategorie hinzuf&uuml;gen');
 define('_config_forum_public', '&ouml;ffentlich');
 define('_config_forum_intern', 'Intern');
@@ -1439,7 +1411,6 @@ define('_partners_head', 'Partnerbuttons');
 define('_partners_button', 'Button');
 define('_partners_add_head', 'Neuen Partnerbutton hinzuf&uuml;gen');
 define('_partners_edit_head', 'Partnerbutton editieren');
-define('_partners_select_icons', '<option value="[icon]" [sel]>[icon]</option>');
 define('_partners_added', 'Der Partnerbutton wurde erfolgreich hinzugef&uuml;gt!');
 define('_partners_edited', 'Der Partnerbutton wurde erfolgreich editiert!');
 define('_partners_deleted', 'Der Partnerbutton wurde erfolgreich gel&ouml;scht!');
@@ -1450,15 +1421,11 @@ define('_clear_forum_info', 'Forumeintr&auml;ge, die als <span class="fontWichti
 define('_clear_misc', 'Sonstiges mit einbeziehen (empfohlen)?');
 define('_clear_days', 'Eintr&auml;ge l&ouml;schen, die &auml;lter sind als');
 define('_clear_what', 'Tage');
-define('_clear_deleted', 'Es wurden [deleted] Eintr&auml;ge gel&ouml;scht!');
+define('_clear_deleted', 'Es wurden {$deleted} Eintr&auml;ge gel&ouml;scht!');
 define('_clear_error_days', 'Du musst die Tage angeben, ab wann etwas gel&ouml;scht werden soll!');
-define('_admin_status', 'Live-Status');
 define('_error_unregistered', 'Du musst registriert sein um diese Funktion Nutzen zu k&ouml;nnen!');
 define('_seiten', 'Seite:');
-define('_user_admin_contact', 'Kontakt empfangen?');
-define('_user_admin_formulare', 'Formulare');
 define('_head_waehrung', 'W&auml;hrung');
-define('_dl_version', 'downloadbare Version');
 define('_admin_artikel_add', '<a href="?admin=artikel&amp;do=add">Artikel hinzuf&uuml;gen</a>');
 define('_artikel_add', 'Artikel hinzuf&uuml;gen');
 define('_artikel_added', 'Der Artikel wurde erfolgreich hinzugef&uuml;gt');
@@ -1473,14 +1440,11 @@ define('_config_c_madminartikel', 'Artikel-Admin');
 define('_reg_artikel', 'Artikelkommentare');
 define('_on', 'eingeschaltet');
 define('_off', 'ausgeschaltet');
-define('_pers_info_info', 'Zeigt eine Infobox im Header mit pers&ouml;nlichen Informationen wie IP, Browser, Aufl&ouml;sung etc');
-define('_pers_info', 'Infobox');
 define('_config_lreg', 'Men&uuml;: Last reg. User');
 define('_config_mailfrom', 'E-Mail Absender');
 define('_config_mailfrom_info', 'Diese Emailadresse wird bei versendeten Emails wie Newsletter, Registrierung, etc als Absender angezeigt!');
 define('_profile_del_confirm', 'Achtung, es gehen alle Usereingaben f&uuml;r dieses Feld verloren. Willst du es wirklich l&ouml;schen?');
 define('_profile_about', '&Uuml;ber mich');
-define('_profile_clan', 'Clan');
 define('_profile_contact', 'Kontakt');
 define('_profile_favos', 'Favoriten');
 define('_profile_hardware', 'Hardware');
@@ -1490,22 +1454,23 @@ define('_profile_kat', 'Kategorie');
 define('_profile_head', 'Profilfelderverwaltung');
 define('_profile_edit_head', 'Profilfeld editieren');
 define('_profile_shown', 'Sichtbar');
-define('_profile_type_1', 'Textfeld');
-define('_profile_type_2', 'URL');
-define('_profile_type_3', 'Email-Adresse');
+
 define('_profile_shown_dropdown','
 <option value="1">Zeigen</option>
 <option value="2">Verstecken</option>');
+
 define('_profile_kat_dropdown', '
 <option value="1">&Uuml;ber mich</option>
 <option value="2">Clan</option>
 <option value="3">Kontakt</option>
 <option value="4">Favoriten</option>
 <option value="5">Hardware</option>');
+
 define('_profile_type_dropdown', '
 <option value="1">Textfeld</option>
 <option value="2">URL</option>
 <option value="3">Email-Adresse</option>');
+
 define('_profile_add_head', 'Profilfeld hinzuf&uuml;gen');
 define('_profile_added', 'Das Profilfeld wurde erfolgreich hinzugef&uuml;gt!');
 define('_profil_no_name', 'Du musst einen Feldnamen angeben!');
@@ -1546,8 +1511,6 @@ define('_site_forum', 'Forum');
 define('_site_links', 'Links');
 define('_site_dl', 'Downloads');
 define('_site_news', 'News');
-define('_site_messerjocke', 'Messerjocke');
-define('_site_banned', 'Bannliste');
 define('_site_upload', 'Upload');
 define('_site_ulist', 'Userliste');
 define('_site_msg', 'Nachrichten');
@@ -1632,8 +1595,7 @@ define('_titel', 'Titel');
 define('_answer', 'Antwort');
 define('_eintrag', 'Eintrag');
 define('_weiter', 'weiter');
-define('_site_msg_new', 'Du hast neue Nachrichten!<br />
-                         Klicke <a href="../user/?action=msg">hier</a> um ins Nachrichtenmenu zu gelangen!');
+define('_site_msg_new', 'Du hast neue Nachrichten!<br /> Klicke <a href="../user/?action=msg">hier</a> um ins Nachrichtenmenu zu gelangen!');
 define('_site_kalender', 'Kalender');
 define('_login_permanent', ' Autologin');
 define('_msg_del', 'markierte l&ouml;schen');
@@ -1658,4 +1620,3 @@ define('_error_unregistered_nc', '
 </tr>');
 define('_upload_partners_head', 'Partnerbuttons');
 define('_upload_partners_info', 'Nur jpg, gif oder png Dateien. Empfohlene Gr&ouml;e: 88px * 31px');
-define('_select_field_ranking_add', '<option value="[value]" [sel]>[what]</option>');

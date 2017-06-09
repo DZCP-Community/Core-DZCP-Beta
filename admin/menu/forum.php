@@ -128,8 +128,6 @@ switch ($do) {
             $smarty->assign('value',$get['pos']+1);
             $positions .= $smarty->fetch('string:'._select_field);
             $smarty->clearAllAssign();
-            "what" => _nach.' '.stringParser::decode($get['kattopic']),
-            "sel" => ""));
         }
 
         $smarty->caching = false;

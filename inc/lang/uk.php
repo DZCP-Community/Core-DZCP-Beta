@@ -598,21 +598,7 @@ define('_welcome_guest' , ' <img src="../inc/images/flaggen/nocountry.gif" alt="
 define('_online_head' , 'User online');
 define('_online_whereami' , 'Area');
 define('_back' , '<a href="javascript: history.go(-1)" class="files">back</a>');
-define('_contact_text_fightus' , '
-Someone filled out the fightus contactform!<br />
-Each clanwar admin received this message!<br /><br />
-<span class="fontBold">Team:</span> [squad]<br /><br />
-<span class="fontUnder"><span class="fontBold">Contact:</span></span><br />
-<span class="fontBold">Nick:</span> [nick]<br />
-<span class="fontBold">Email:</span> [email]<br />
-<span class="fontBold"><span class="fontUnder">Clandata:</span></span><br />
-<span class="fontBold">Clan name:</span> [clan]<br />
-<span class="fontBold">Homepage:</span> [hp]<br />
-<span class="fontBold">Game:</span> [game]<br />
-<span class="fontBold">XonX:</span> [us] vs. [to]<br />
-<span class="fontBold">Our Map:</span> [map]<br />
-<span class="fontBold">Date:</span> [date]<br /><span class="fontUnder">
-<span class="fontBold">Comment:</span></span><br />[text]');
+
 ## EDITED/ADDED FOR v 1.3.3
 define('_level_info' , 'By set the level "admin", the level can be unset by root admin only! (the one who installed the clanportal)!<br />Furthermore the owner this level has <span class="fontUnder">unrestricted</span> access to all administrative areas!');
 
@@ -854,7 +840,8 @@ define('_forum_cnt_posts' , '<span class="fontBold">Amount of Posts:</span> [pos
 define('_forum_admin_head' , 'Admin');
 define('_forum_admin_addsticky' , 'mark as <span class="fontWichtig">important</span>?');
 define('_forum_katname_intern' , '<span class="fontWichtig">Internal:</span> {$katname}');
-define('_forum_sticky' , '<span class="fontWichtig">Important:</span>');
+define('_forum_sticky' , 'Important');
+define('_forum_sticky_global', 'Global and Important');
 define('_forum_head_skat_search' , 'Search in this category');
 define('_forum_head_threads' , 'Threads');
 define('_forum_replys' , 'Answers');
@@ -894,8 +881,6 @@ define('_forum_nobody_is_online' , 'Right now no user is browsing the board!');
 ## Kalender ##
 //-> Allgemein
 define('_kalender_head' , 'Calendar');
-define('_kalender_month_select' , '<option value="[i]" [sel]>[month]</option>');
-define('_kalender_year_select' , '<option value="[i]" [sel]>[year]</option>');
 define('_montag' , 'Monday');
 define('_dienstag' , 'Tuesday');
 define('_mittwoch' , 'Wednesday');
@@ -905,7 +890,7 @@ define('_samstag' , 'Saturday');
 define('_sonntag' , 'Sunday');
 
 //-> Events
-define('_kalender_events_head' , 'Events at [datum]');
+define('_kalender_events_head' , 'Events at {$datum}');
 define('_kalender_uhrzeit' , 'Time');
 
 //-> Admin
@@ -978,6 +963,7 @@ define('_downloads_empty_beschreibung' , 'You have to indicate a description!');
 define('_downloads_added' , 'The download was successfully registered!');
 define('_downloads_edited' , 'The download was successfully edited!');
 define('_downloads_deleted' , 'The download was successfully deleted!');
+
 define('_dl_info' , 'Download informations');
 define('_dl_file' , 'File');
 define('_dl_files' , 'Files');
@@ -990,20 +976,8 @@ define('_dl_loaded' , 'Downloaded');
 define('_dl_date' , 'Upload date');
 define('_dl_wait' , 'Download of file: ');
 
-## Teams ##
-define('_member_squad_head' , 'Teams');
-define('_member_squad_no_entrys' , '<tr><td align="center"><span class="fontBold">No registered members</span></td></tr>');
-define('_member_squad_weare' , 'Alltogether we are <span class="fontBold">[cm] members</span>, seperated in <span class="fontBold">[cs] team(s)</span>');
-
 define('_contact_pflichtfeld' , '<span class="fontWichtig">*</span> = Required field');
-define('_contact_nachricht' , 'Message');
-define('_contact_sended' , 'Your message was successfully sent to the site`s admin!');
-define('_contact_title' , 'Contact form');
-define('_contact_text' , '
-Somebody filled out the contact form!<br /><br />
-<span class="fontBold">Nick:</span> [nick]<br />
-<span class="fontBold">Email:</span> [email]<br /><br />
-<span class="fontUnder"><span class="fontBold">Message:</span></span><br />[text]');
+
 ## User ##
 define('_profil_head' , '<span class="fontBold">Userprofile from {$nick}</span> [{$profilhits} times viewed]');
 define('_login_head' , 'Login');
@@ -1048,7 +1022,6 @@ define('_female' , 'female');
 define('_profil_ppic' , 'Profile picture');
 define('_profil_gamestuff' , 'Gamestuff');
 define('_profil_userstats' , 'Userstats');
-define('_profil_navi_profil' , '<a href="?action=user&amp;id=[id]">Profile</a>');
 define('_profil_profilhits' , 'Profile hits');
 define('_profil_forenposts' , 'Posts in board');
 define('_profil_votes' , 'participated votes');
@@ -1184,26 +1157,14 @@ define('_userlobby_kal_today' , 'Next event is');
 define('_userlobby_kal_not_today' , 'Next event is at');
 define('_profil_country' , 'Country');
 define('_profil_favos' , 'Favorites');
-define('_profil_drink' , 'Drink');
-define('_profil_essen' , 'Meal');
-define('_profil_film' , 'Film');
-define('_profil_musik' , 'Music');
-define('_profil_song' , 'Song');
-define('_profil_buch' , 'Book');
 define('_profil_autor' , 'Author');
 define('_profil_person' , 'Person');
-define('_profil_sport' , 'Sport');
-define('_profil_sportler' , 'Sportsman');
-define('_profil_auto' , 'Car');
-define('_profil_favospiel' , 'Game');
-define('_profil_game' , 'Game');
-define('_profil_favoclan' , 'Clan');
-define('_profil_spieler' , 'Player');
 define('_profil_sonst' , 'Misc');
 define('_profil_url1' , 'Page #1');
 define('_profil_url2' , 'Page #2');
 define('_profil_url3' , 'Page #3');
 define('_profil_ich' , 'Description');
+
 ## Upload ##
 define('_upload_ext_error' , 'Only jpg, gif or png files!');
 define('_upload_wrong_size' , 'The uploaded file is bigger than allowed!!');
@@ -1226,34 +1187,24 @@ define('_config_maxwidth' , 'Resize pictures automatically');
 define('_config_maxwidth_info' , 'Here you can adjust at which width a picture will be resized!');
 define('_forum_top_posts' , 'Top 5 poster');
 define('_user_cant_delete_admin' , 'You can`t delete members or admins!');
-define('_no_entrys_yet' , '
-<tr>
-  <td class="contentMainFirst" colspan="{$colspan}" align="center">No entry yetn!</td>
-</tr>');
+define('_no_entrys_yet' , '<tr><td class="contentMainFirst" colspan="{$colspan}" align="center">No entry yetn!</td></tr>');
 define('_nav_no_ftopics' , 'No entry yet!');
 define('_fopen' , 'The webhoster of this site does not allow the function fopen() which is needed!');
 define('_and' , 'and');
 define('_lobby_artikelc' , 'Article comments');
 define('_lobby_new_art_1' , 'new article');
 define('_lobby_new_art_2' , 'new article');
-define('_user_new_art' , '&nbsp;&nbsp;<a href="../artikel/"><span class="fontWichtig">[cnt]</span> [eintrag]</span><br />');
 define('_lobby_new_artc_1' , 'new comment');
 define('_lobby_new_artc_2' , 'new comments');
-define('_page' , '<span class="fontBold">[num]</span>  ');
 define('_profil_nletter' , 'Receive newsletter?');
 define('_forum_admin_addglobal' , '<span class="fontWichtig">Global</span> entry? (In all boards and subboards)');
 define('_forum_admin_global' , '<span class="fontWichtig">Global</span> entry?');
-define('_forum_global' , '<span class="fontWichtig">global:</span>');
+define('_forum_global' , 'Global');
 define('_admin_config_badword' , 'Badwordfilter');
 define('_admin_config_badword_info' , 'Here you can indicate the words, which will be filter and replaced with ***. The words have to be seperated with a comma!');
 define('_iplog_info' , '<span class="fontBold">Note:</span> In case of security reasons your ip will be logged!');
 define('_logged' , 'IP saved');
 define('_info_ip' , 'IP Address');
-define('_info_browser' , 'Browser');
-define('_info_res' , 'Solution');
-define('_unknown_browser' , 'unknown browser');
-define('_unknown_system' , 'unknown system');
-define('_info_sys' , 'System');
 define('_nav_montag' , 'Mo');
 define('_nav_dienstag' , 'Tu');
 define('_nav_mittwoch' , 'We');
@@ -1266,7 +1217,7 @@ define('_error_empty_age' , 'You have to indicate your actual age!');
 define('_member_admin_intforums' , 'internal board authorisation');
 define('_access' , 'Authorisation');
 define('_error_no_access' , 'You don`t have the rights to enter this area!');
-define('_artikel_show_link' , '<a href="../artikel/?action=show&amp;id=[id]">[titel]</a>');
+define('_artikel_show_link' , '<a href="../artikel/?action=show&amp;id={$id}">{$titel}</a>');
 define('_ulist_bday' , 'Birthday');
 define('_ulist_last_login' , 'Last login');
 
@@ -1316,9 +1267,9 @@ define('_config_set' , 'The attitudes were successfully saved!');
 define('_config_forum_status' , 'Status');
 define('_config_forum_head' , 'Board categories');
 define('_config_forum_mainkat' , 'Main category');
-define('_config_forum_subkathead' , 'Sub categories from <span class="fontUnder">[kat]</span>');
+define('_config_forum_subkathead' , 'Sub categories from <span class="fontUnder">{$kat}</span>');
 define('_config_forum_subkat' , 'Sub  category');
-define('_config_forum_subkats' , '<span class="fontBold">[topic]</span><br /><span class="fontItalic">[subtopic]</span>');
+define('_config_forum_subkats' , '<span class="fontBold">{$topic}</span><br /><span class="fontItalic">{$subtopic}</span>');
 define('_config_forum_kat_head' , 'Insert category');
 define('_config_forum_public' , 'public');
 define('_config_forum_intern' , 'internal');
@@ -1359,13 +1310,11 @@ define('_news_edited' , 'The news was successfully edited!');
 define('_news_deleted' , 'The news was successfully deleted!');
 define('_member_admin_header' , 'Teamarea');
 define('_member_admin_squad' , 'Group');
-define('_member_admin_game' , 'Game');
 define('_member_admin_icon' , 'Icon');
 define('_member_admin_add' , '<a href="?admin=squads&amp;do=add">Insert team</a>');
 define('_admin_squad_deleted' , 'The team was successfully deleted!');
 define('_member_admin_add_header' , 'Insert team');
 define('_admin_squad_no_squad' , 'You have to indicate a team`s name!');
-define('_admin_squad_no_game' , 'You have to indicate the game which the team plays!');
 define('_admin_squad_add_successful' , 'The team was successfully registered!');
 define('_admin_squad_edit_successful' , 'The team was successfully edited!');
 define('_member_admin_edit_header' , 'Edit team');
@@ -1456,7 +1405,6 @@ define('_partners_head' , 'Partnerbuttons');
 define('_partners_button' , 'Button');
 define('_partners_add_head' , 'Insert partnerbutton');
 define('_partners_edit_head' , 'Edit partnerbutton');
-define('_partners_select_icons' , '<option value="[icon]" [sel]>[icon]</option>');
 define('_partners_added' , 'The partnerbutton was successfully registered!');
 define('_partners_edited' , 'The partnerbutton was successfully edited!');
 define('_partners_deleted' , 'The partnerbutton was successfully deleted!');
@@ -1468,13 +1416,9 @@ define('_clear_days' , 'Delete entrys which are older than');
 define('_clear_what' , 'days');
 define('_clear_deleted' , 'The database was successfully cleared up!');
 define('_clear_error_days' , 'You have to indicate the days when something is supposed to be deleted!');
-define('_admin_status' , 'Livestatus');
 define('_error_unregistered' , 'You have to be registered to use this function!');
 define('_seiten' , 'Site:');
-define('_user_admin_contact' , 'Receive contact?');
-define('_user_admin_formulare' , 'Forms');
 define('_head_waehrung' , 'Currency');
-define('_dl_version' , 'downloadable Version');
 define('_admin_artikel_add' , '<a href="?admin=artikel&amp;do=add">insert article</a>');
 define('_artikel_add' , 'Insert article');
 define('_artikel_added' , 'The article was successfully registered');
@@ -1489,14 +1433,11 @@ define('_config_c_madminartikel' , 'Articleadmin');
 define('_reg_artikel' , 'Articlecomments');
 define('_on' , 'on');
 define('_off' , 'off');
-define('_pers_info_info' , 'Shows an infobox in the header with personal Informations like ip, browser, solution, etc');
-define('_pers_info' , 'Infobox');
 define('_config_lreg' , 'Menu: Last reg. user');
 define('_config_mailfrom' , 'Email mailfrom');
 define('_config_mailfrom_info' , 'This email address will be used for sent emails like newsletter, registration, etc!');
 define('_profile_del_confirm' , 'Caution! All user`s entrys for this field will be lost. Do you really want to delete this field?');
 define('_profile_about' , 'About me');
-define('_profile_clan' , 'Clan');
 define('_profile_contact' , 'Contact');
 define('_profile_favos' , 'Favorites');
 define('_profile_hardware' , 'Hardware');
@@ -1506,27 +1447,29 @@ define('_profile_kat' , 'Category');
 define('_profile_head' , 'Profile field administration');
 define('_profile_edit_head' , 'Edit profile field');
 define('_profile_shown' , 'Visible');
-define('_profile_type_1' , 'Textfield');
-define('_profile_type_2' , 'URL');
-define('_profile_type_3' , 'Email address');
+
 define('_profile_shown_dropdown' , '
 <option value="1">Show</option>
 <option value="2">Hide</option>');
+
 define('_profile_kat_dropdown' , '
 <option value="1">About me</option>
 <option value="2">Clan</option>
 <option value="3">Contact</option>
 <option value="4">Favorites</option>
 <option value="5">Hardware</option>');
+
 define('_profile_type_dropdown' , '
 <option value="1">Textfield</option>
 <option value="2">URL</option>
 <option value="3">Email-Adresse</option>');
+
 define('_profile_add_head' , 'Insert profile field');
 define('_profile_added' , 'The profile field was successfully registered!');
 define('_profil_no_name' , 'You have to indicate the field`s name!');
 define('_profil_deleted' , 'The profile field was successfully deleted!');
 define('_profile_edited' , 'The profile field was successfully edited!');
+
 ## Misc ##
 define('_error_have_to_be_logged' , 'You havet to be logged in to use this feature!');
 define('_error_invalid_email' , 'The indicated email address is invalid!');
@@ -1561,8 +1504,6 @@ define('_site_forum' , 'Board');
 define('_site_links' , 'Links');
 define('_site_dl' , 'Downloads');
 define('_site_news' , 'News');
-define('_site_messerjocke' , 'Messerjocke');
-define('_site_banned' , 'Banlist');
 define('_site_upload' , 'Upload');
 define('_site_ulist' , 'Userlist');
 define('_site_msg' , 'Messages');
@@ -1674,4 +1615,3 @@ define('_error_unregistered_nc' , '
 </tr>');
 define('_upload_partners_head' , 'Partnerbuttons');
 define('_upload_partners_info' , 'Only jpg, gif or png files. Recommended dimensions: 88px * 31px');
-define('_select_field_ranking_add' , '<option value="[value]" [sel]>[what]</option>');

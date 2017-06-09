@@ -24,7 +24,9 @@
                         {$sorts_options_orderby}
                     </select>&nbsp;
                     <input class="submit" id="contentSubmit" type="submit" name="sort" value="{lang msgID="forum_go"}">
-                    <input class="submit" id="newPostSubmit" type="button" value="{lang msgID="forum_new_thread"}" onclick="DZCP.goTo('../forum/?action=thread&do=add&kid={$kid}')">
+                    {if $show_new_thread}
+                        <input class="submit" id="newPostSubmit" type="button" value="{lang msgID="forum_new_thread"}" onclick="DZCP.goTo('../forum/?action=thread&do=add&kid={$kid}')">
+                    {/if}
                 </form>
             </td>
         </tr>

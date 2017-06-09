@@ -409,12 +409,6 @@ class common {
             self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `hits` = (hits+1), `lastvisit` = ? WHERE `user` = ?;",
                 [(int)($_SESSION['lastvisit']),(int)(self::$userid)]);
         }
-
-
-        //dev
-        if(isset($_GET['dev']))
-        die(self::less());
-
     }
 
     /**

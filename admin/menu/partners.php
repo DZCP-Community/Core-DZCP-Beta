@@ -26,7 +26,7 @@ $where = $where.': '._partners_head;
             $smarty->caching = false;
             $smarty->assign('icon',$files[$i]);
             $smarty->assign('sel','');
-            $banners .= $smarty->fetch('string:'._partners_select_icons);
+            $banners .= $smarty->fetch('string:<option value="{$icon}" {$sel}>{$icon}</option>');
             $smarty->clearAllAssign();
         }
 
@@ -66,7 +66,7 @@ $where = $where.': '._partners_head;
             $smarty->caching = false;
             $smarty->assign('icon',$files[$i]);
             $smarty->assign('sel',$sel);
-            $banners .= $smarty->fetch('string:'._partners_select_icons);
+            $banners .= $smarty->fetch('string:<option value="{$icon}" {$sel}>{$icon}</option>');
             $smarty->clearAllAssign();
         }
           $smarty->caching = false;
@@ -85,7 +85,7 @@ $where = $where.': '._partners_head;
           $smarty->clearAllAssign();
       } elseif($do == "editbutton") {
         if(empty($_POST['link'])) {
-          $show = common::error(_empty_url, 1);
+          $show = common::error(_empty_url);
         } else {
           common::$sql['default']->update("UPDATE `{prefix_partners}` SET `link` = ?, `banner` = ?, `textlink` = ? WHERE `id` = ?;",
                   array(stringParser::encode(common::links($_POST['link'])),

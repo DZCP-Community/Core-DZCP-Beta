@@ -157,9 +157,10 @@ if(defined('_Forum')) {
             $smarty->assign('id',$get['id']);
             $smarty->assign('frompic',$frompic);
             $smarty->assign('hl',(!empty($_POST['suche']) ? '&amp;hl='.$_POST['suche'] : ''));
-            $smarty->assign('sticky',false /*$get['sticky'] */);
-            $smarty->assign('global',false /*$get['global']*/);
-            $smarty->assign('topic',chunk_split(stringParser::decode($get['topic']),32,"<br>"));
+            $smarty->assign('sticky',$get['sticky']);
+            $smarty->assign('global',$get['global']);
+            $smarty->assign('topic',$topic_title=chunk_split(stringParser::decode($get['topic']),32,"<br>"));
+            $smarty->assign('topic_title',strip_tags($topic_title));
             $smarty->assign('subtopic',common::cut(stringParser::decode($get['subtopic']),settings::get('l_forumsubtopic')));
             $smarty->assign('hits',$get['hits']);
             $smarty->assign('replys',common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[$get['id']]));
@@ -184,6 +185,7 @@ if(defined('_Forum')) {
         $smarty->assign('kid',$kategorie['id']);
         $smarty->assign('sorts_options_sortby',$sorts_options_sortby);
         $smarty->assign('sorts_options_orderby',$sorts_options_orderby);
+        $smarty->assign('show_new_thread',(common::$userid && common::$chkMe >= 1));
         $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_show_thread.tpl');
         $smarty->clearAllAssign();
 
