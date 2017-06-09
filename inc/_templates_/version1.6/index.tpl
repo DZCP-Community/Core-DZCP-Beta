@@ -59,13 +59,13 @@
 		      <!-- Vote Box Start -->
 		      <div class="box corner">
 		        <h2 class="headline">{lang msgID="txt_vote"}</h2>
-		        {$vote}
+		        {vote}
 		      </div>
 		      <!-- Vote Box Ende -->
 		      <!-- Top Downloads Box Start -->
 		      <div class="box corner">
 		        <h2 class="headline">{lang msgID="txt_top_dl"}</h2>
-		        {$top_dl}
+		        {top_dl}
 		      </div>
 		      <!-- Top Downloads Box Ende -->
 		      <!-- Switchbox Sponsors/Partners Start -->
@@ -91,7 +91,7 @@
 		        <!-- Wo bin ich & Suche Start -->
 		        <div id="brackets">
 		          {$where}
-		          <div id="search">{$search}</div>
+		          <div id="search">{search}</div>
 		        </div>
 		        <!-- Wo bin ich $ Suche Ende -->
 		        <!-- Main Content Frame Start -->
@@ -124,13 +124,13 @@
 		      <!-- Ftopics Box Start -->
 		      <div class="box corner">
 		        <h2 class="headline">{lang msgID="txt_ftopics"}</h2>
-		        {$ftopics}
+		        {ftopics}
 		      </div>
 		      <!-- Ftopics Box Ende -->
 				<!-- Counter Box Start -->
 				<div class="box corner">
 					<h2 class="headline">{lang msgID="txt_counter"}</h2>
-					{$counter}
+					{counter}
 				</div>
 				<!-- Counter Box Ende -->
 		      <!-- Switchbox Kalender/Events Start -->
@@ -139,7 +139,7 @@
 		          <span class="tabright">{lang msgID="txt_kalender"}</span>
 		          <span class="tableft">{lang msgID="txt_events"}</span>
 		        </h2>
-		        <div class="switchs">{$kalender}</div>
+		        <div class="switchs">{kalender}</div>
 		        <div class="switchs">{events}</div>
 		      </div>
 		      <!-- Switchbox Kalender/Events Ende -->

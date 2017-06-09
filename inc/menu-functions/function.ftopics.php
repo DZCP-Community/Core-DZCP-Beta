@@ -15,14 +15,14 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function ftopics() {
-    $smarty = common::getSmarty(); //Use Smarty
+function smarty_function_ftopics($params, &$smarty) {
     $qry = common::$sql['default']->select("SELECT s1.*,s2.`kattopic`,s2.`id` as `subid` "
-            . "FROM `{prefix_forumthreads}` as `s1`, `{prefix_forumsubkats}` as `s2`, {prefix_forumkats} as `s3` "
-            . "WHERE s1.`kid` = s2.`id` AND s2.`sid` = s3.`id` ORDER BY s1.`lp` DESC LIMIT 100;");
+        . "FROM `{prefix_forumthreads}` as `s1`, `{prefix_forumsubkats}` as `s2`, {prefix_forumkats} as `s3` "
+        . "WHERE s1.`kid` = s2.`id` AND s2.`sid` = s3.`id` ORDER BY s1.`lp` DESC LIMIT 100;");
 
     $f = 0; $ftopics = '';
     if(common::$sql['default']->rowCount()) {
+        $smarty_ftopics = common::getSmarty(true); //Use Smarty
         foreach($qry as $get) {
             if($f == settings::get('m_ftopics')) { break; }
             if(common::forum_intern($get['kid'])) {
@@ -30,18 +30,18 @@ function ftopics() {
                 $pagenr = ceil($lp/settings::get('m_fposts'));
                 $page = !$pagenr ? 1 : $pagenr;
                 $info = 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['topic'])).'\', \''.
-                        _forum_kat.';'._forum_posts.';'._forum_lpost.'\', \''.stringParser::decode($get['kattopic']).';'.++$lp.';'.
-                        date("d.m.Y H:i", $get['lp'])._uhr.'\')" onmouseout="DZCP.hideInfo()"';
+                    _forum_kat.';'._forum_posts.';'._forum_lpost.'\', \''.stringParser::decode($get['kattopic']).';'.++$lp.';'.
+                    date("d.m.Y H:i", $get['lp'])._uhr.'\')" onmouseout="DZCP.hideInfo()"';
 
-                $smarty->caching = false;
-                $smarty->assign('id',$get['id']);
-                $smarty->assign('pagenr',$page);
-                $smarty->assign('p',$lp);
-                $smarty->assign('titel',common::cut(stringParser::decode($get['topic']),settings::get('l_ftopics')));
-                $smarty->assign('info',$info);
-                $smarty->assign('kid',$get['kid']);
-                $ftopics .= $smarty->fetch('file:['.common::$tmpdir.']menu/forum/forum_topics.tpl');
-                $smarty->clearAllAssign();
+                $smarty_ftopics->caching = false;
+                $smarty_ftopics->assign('id',$get['id']);
+                $smarty_ftopics->assign('pagenr',$page);
+                $smarty_ftopics->assign('p',$lp);
+                $smarty_ftopics->assign('titel',common::cut(stringParser::decode($get['topic']),settings::get('l_ftopics')));
+                $smarty_ftopics->assign('info',$info);
+                $smarty_ftopics->assign('kid',$get['kid']);
+                $ftopics .= $smarty_ftopics->fetch('file:['.common::$tmpdir.']menu/forum/forum_topics.tpl');
+                $smarty_ftopics->clearAllAssign();
                 $f++;
             }
         }

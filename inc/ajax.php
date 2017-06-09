@@ -40,14 +40,14 @@ ob_implicit_flush(false);
 
     switch ($mod):
         case 'kalender':
-            require_once(basePath."/inc/menu-functions/kalender.php");
+            require_once(basePath . "/inc/menu-functions/function.kalender.php");
             $month = (isset($_GET['month']) ? $_GET['month'] : '');
             $year = (isset($_GET['year']) ? $_GET['year'] : '');
-            echo kalender($month,$year,true);
+            echo smarty_function_kalender(['js' => false,'month' => $month,'year' => $year],common::getSmarty());
         break;
         case 'counter':
-            require_once(basePath."/inc/menu-functions/counter.php");
-            echo counter(true); 
+            require_once(basePath . "/inc/menu-functions/function.counter.php");
+            echo smarty_function_counter(['js' => false],common::getSmarty());
         break;
         case 'conjob':
             $version = new dzcp_version(false);

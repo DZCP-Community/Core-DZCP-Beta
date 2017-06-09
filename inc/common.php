@@ -433,7 +433,7 @@ class common {
             $smarty->setTemplateDir(basePath.'/inc/_templates_')
                 ->setCompileDir(basePath.'/inc/_templates_c_')
                 ->setCacheDir(basePath.'/inc/_cache_')
-                ->setPluginsDir([basePath.'/inc/plugins',
+                ->setPluginsDir([basePath.'/inc/menu-functions',
                     basePath.'/vendor/smarty/libs/plugins'])
                 ->setConfigDir(basePath.'/inc/configs');
 
