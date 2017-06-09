@@ -15,6 +15,10 @@
     "smarty/smarty": "v3.1.31",
     "suin/php-rss-writer": "1.5.0",
     "jaybizzle/crawler-detect": "v1.2.40",
-    "oyejorge/less.php": "v1.7.0.14"
+    "oyejorge/less.php": "v1.7.0.14",
+    "wixel/gump": "1.4",
+    "potaka/bbcode": "0.2.1",
+    "pherum/snoopy": "2.0",
+    "tan-tan-kanarek/github-php-client": "1.0.0"
   }
 }
