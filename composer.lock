@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "92c958fdac3851f3b8d1d25a27f2b2af",
+    "content-hash": "e48f0daf9db29f9299aba666fbf2a400",
     "packages": [
         {
             "name": "ckeditor/ckeditor",
@@ -96,70 +96,6 @@
             "time": "2017-04-20T18:58:25+00:00"
         },
         {
-            "name": "nette/utils",
-            "version": "v2.4.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nette/utils.git",
-                "reference": "28ad4e2a6dcf143c23bde969a825f10a5d513602"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nette/utils/zipball/28ad4e2a6dcf143c23bde969a825f10a5d513602",
-                "reference": "28ad4e2a6dcf143c23bde969a825f10a5d513602",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.6.0"
-            },
-            "conflict": {
-                "nette/nette": "<2.2"
-            },
-            "require-dev": {
-                "nette/tester": "~2.0",
-                "tracy/tracy": "^2.3"
-            },
-            "suggest": {
-                "ext-gd": "to use Image",
-                "ext-iconv": "to use Strings::webalize() and toAscii()",
-                "ext-intl": "for script transliteration in Strings::webalize() and toAscii()",
-                "ext-json": "to use Nette\\Utils\\Json",
-                "ext-mbstring": "to use Strings::lower() etc...",
-                "ext-xml": "to use Strings::length() etc. when mbstring is not available",
-                "https://nette.org/donate": "\u001b[1;37;42m Please consider supporting Nette via a donation \u001b[0m"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.4-dev"
-                }
-            },
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause",
-                "GPL-2.0",
-                "GPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "David Grudl",
-                    "homepage": "https://davidgrudl.com"
-                },
-                {
-                    "name": "Nette Community",
-                    "homepage": "https://nette.org/contributors"
-                }
-            ],
-            "description": "Nette Utility Classes",
-            "homepage": "https://nette.org",
-            "time": "2017-03-29T16:55:54+00:00"
-        },
-        {
             "name": "oyejorge/less.php",
             "version": "v1.7.0.14",
             "source": {
@@ -220,6 +156,41 @@
                 "stylesheet"
             ],
             "time": "2017-03-28T22:19:25+00:00"
+        },
+        {
+            "name": "pherum/snoopy",
+            "version": "2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PheRum/snoopy.git",
+                "reference": "660134bc1cfd52c00ded91928320dd4e775ff4d9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PheRum/snoopy/zipball/660134bc1cfd52c00ded91928320dd4e775ff4d9",
+                "reference": "660134bc1cfd52c00ded91928320dd4e775ff4d9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Snoopy\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPLv2"
+            ],
+            "authors": [
+                {
+                    "name": "Andrei Zmievski"
+                }
+            ],
+            "description": "snoopy",
+            "time": "2015-07-25T20:02:14+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
@@ -298,40 +269,6 @@
             "time": "2017-03-15T19:32:56+00:00"
         },
         {
-            "name": "potaka/bbcode",
-            "version": "0.2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/angelk/bbCode.git",
-                "reference": "526bfe8211fb917da20f377d407531437de60a93"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/angelk/bbCode/zipball/526bfe8211fb917da20f377d407531437de60a93",
-                "reference": "526bfe8211fb917da20f377d407531437de60a93",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.0",
-                "tekstove/url-video-parser": "^1.0.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "5.6.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Potaka": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "php parser for bb code",
-            "time": "2017-02-24T19:18:34+00:00"
-        },
-        {
             "name": "smarty/smarty",
             "version": "v3.1.31",
             "source": {
@@ -383,41 +320,6 @@
                 "templating"
             ],
             "time": "2016-12-14T21:57:25+00:00"
-        },
-        {
-            "name": "snoopy/snoopy",
-            "version": "2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/PheRum/snoopy.git",
-                "reference": "660134bc1cfd52c00ded91928320dd4e775ff4d9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/PheRum/snoopy/zipball/660134bc1cfd52c00ded91928320dd4e775ff4d9",
-                "reference": "660134bc1cfd52c00ded91928320dd4e775ff4d9",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Snoopy\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPLv2"
-            ],
-            "authors": [
-                {
-                    "name": "Andrei Zmievski"
-                }
-            ],
-            "description": "snoopy",
-            "time": "2015-07-25T20:02:14+00:00"
         },
         {
             "name": "suin/php-rss-writer",
@@ -494,39 +396,6 @@
             ],
             "description": "PHP client for the Github API",
             "time": "2015-11-16T08:36:41+00:00"
-        },
-        {
-            "name": "tekstove/url-video-parser",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Tekstove/UrlVideoParser.git",
-                "reference": "65740d014b953905463c227ab3460443409121e8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Tekstove/UrlVideoParser/zipball/65740d014b953905463c227ab3460443409121e8",
-                "reference": "65740d014b953905463c227ab3460443409121e8",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.6.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^5.6"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Tekstove": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "parse video links",
-            "time": "2016-11-23T20:25:07+00:00"
         },
         {
             "name": "wixel/gump",
