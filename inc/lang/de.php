@@ -18,6 +18,7 @@
 setlocale(LC_ALL, "de_DE.utf8");
 
 ## Allgemein ##
+define('_error_no_html5_vid' , 'Ihr Browser unterst&uuml;tzt das Video-Tag nicht.');
 define('_button_title_del', 'L&ouml;schen');
 define('_button_title_edit', 'Editieren');
 define('_button_title_zitat', 'Diesen Beitrag zitieren');

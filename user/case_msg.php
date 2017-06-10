@@ -56,7 +56,7 @@ if(defined('_UserMenu')) {
                     $smarty->caching = false;
                     $smarty->assign('answermsg',$answermsg);
                     $smarty->assign('titel',stringParser::decode($get['titel']));
-                    $smarty->assign('nachricht',bbcode::parse_html($get['nachricht']));
+                    $smarty->assign('nachricht',bbcode_old::parse_html($get['nachricht']));
                     $smarty->assign('answer',$answer);
                     $smarty->assign('delete',$delete);
                     $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/msg/msg_show.tpl');
@@ -83,7 +83,7 @@ if(defined('_UserMenu')) {
                     $smarty->caching = false;
                     $smarty->assign('answermsg',$answermsg);
                     $smarty->assign('titel',stringParser::decode($get['titel']));
-                    $smarty->assign('nachricht',bbcode::parse_html($get['nachricht']));
+                    $smarty->assign('nachricht',bbcode_old::parse_html($get['nachricht']));
                     $smarty->assign('answer',$answer);
                     $smarty->assign('delete',$delete);
                     $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/msg/msg_show.tpl');
@@ -99,7 +99,7 @@ if(defined('_UserMenu')) {
                     $smarty->assign('an',$get['von']);
                     $smarty->assign('titel',$titel);
                     $smarty->assign('nick',common::autor($get['von']));
-                    $smarty->assign('zitat',bbcode::zitat(common::autor($get['von']),stringParser::decode($get['nachricht'])));
+                    $smarty->assign('zitat',bbcode_old::zitat(common::autor($get['von']),stringParser::decode($get['nachricht'])));
                     $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/msg/answer.tpl');
                     $smarty->clearAllAssign();
                 }

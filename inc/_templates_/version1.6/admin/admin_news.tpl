@@ -1,5 +1,5 @@
 <tr>
-  <td class="contentHead" colspan="6" align="center"><span class="fontBold">{$head}</span></td>
+  <td class="contentHead" colspan="6" align="center"><span class="fontBold">{lang msgID="news_admin_head"}</span></td>
 </tr>
 <tr>
   <td class="contentMainTop" colspan="6" style="text-align:center">{$nav}</td>
@@ -12,10 +12,8 @@
 {$show}
 <tr>
   <td class="contentBottom" colspan="6">
-    <form action="" method="get" onsubmit="return(DZCP.submitButton())">
-      <input type="hidden" name="admin" value="{$val}" />
-      <input type="hidden" name="do" value="add" />
-      <input id="contentSubmit" type="submit" class="submit" value="{$add}" />
+    <form action="?admin=newsadmin&do=add" method="post">
+      <input id="contentSubmit" type="submit" class="submit" value="{lang msgID="admin_news_head"}" />
     </form>
   </td>
 </tr>

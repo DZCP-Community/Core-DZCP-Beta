@@ -68,7 +68,7 @@ default:
         } else {
             $where = stringParser::decode($get['titel']);
             if($get['html']) {
-                $inhalt = bbcode::parse_html(stringParser::encode(phpParser(stringParser::decode($get['text']),$get['php'])));
+                $inhalt = bbcode_old::parse_html(stringParser::encode(phpParser(stringParser::decode($get['text']),$get['php'])));
             } else { 
                 $inhalt = phpParser(stringParser::decode($get['text']),$get['php']);
             }
@@ -86,7 +86,7 @@ break;
 case 'preview';
     header("Content-type: text/html; charset=utf-8");
     if(isset($_POST['html'])) {
-        $inhalt = bbcode::parse_html(stringParser::encode(phpParser(stringParser::decode($_POST['inhalt']),(isset($_POST['php']) && common::permission('phpexecute')))));
+        $inhalt = bbcode_old::parse_html(stringParser::encode(phpParser(stringParser::decode($_POST['inhalt']),(isset($_POST['php']) && common::permission('phpexecute')))));
     } else {
         $inhalt = phpParser(stringParser::decode($_POST['inhalt']),(isset($_POST['php']) && common::permission('phpexecute')));
     }

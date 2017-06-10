@@ -63,9 +63,9 @@ if(defined('_News')) {
             $smarty->assign('dir',$designpath);
             $smarty->assign('intern',boolval($get['intern']));
             $smarty->assign('sticky',_news_sticky);
-            $smarty->assign('more',bbcode::parse_html($get['klapptext']));
+            $smarty->assign('more',bbcode_old::parse_html($get['klapptext']));
             $smarty->assign('viewed',$viewed);
-            $smarty->assign('text',bbcode::parse_html($get['text']));
+            $smarty->assign('text',bbcode_old::parse_html($get['text']));
             $smarty->assign('datum',date("d.m.y H:i", $get['datum']));
             $smarty->assign('links',$links);
             $smarty->assign('autor',common::autor($get['autor']));
@@ -121,9 +121,9 @@ if(defined('_News')) {
             $smarty->assign('dir',common::$designpath);
             $smarty->assign('intern',boolval($get['intern']));
             $smarty->assign('sticky','');
-            $smarty->assign('more',bbcode::parse_html($get['more']));
+            $smarty->assign('more',bbcode_old::parse_html($get['more']));
             $smarty->assign('viewed',$viewed);
-            $smarty->assign('text',bbcode::parse_html($get['text']));
+            $smarty->assign('text',bbcode_old::parse_html($get['text']));
             $smarty->assign('datum',date("d.m.y H:i", $get['datum']));
             $smarty->assign('autor',common::autor($get['autor']));
             $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/news_show.tpl',common::getSmartyCacheHash('news_'.$get['id']));

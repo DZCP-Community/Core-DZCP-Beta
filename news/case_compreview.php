@@ -60,10 +60,10 @@ if(defined('_News') && common::$chkMe >= 1) {
     //-> Post Index
     $smarty->caching = false;
     $smarty->assign('titel',$titel);
-    $smarty->assign('comment',bbcode::parse_html($_POST['comment']));
+    $smarty->assign('comment',bbcode_old::parse_html($_POST['comment']));
     $smarty->assign('nick',common::cleanautor($get_userid));
     $smarty->assign('hp',$hp);
-    $smarty->assign('editby',bbcode::parse_html($editedby));
+    $smarty->assign('editby',bbcode_old::parse_html($editedby));
     $smarty->assign('avatar',common::useravatar($get_userid));
     $smarty->assign('onoff',common::onlinecheck($get_userid));
     $smarty->assign('rank',common::getrank($get_userid));

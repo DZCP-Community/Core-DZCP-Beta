@@ -89,6 +89,46 @@ if(defined('_News')) {
         $newsimage = '../inc/images/uploads/newskat/'.stringParser::decode($katimg);
     }
 
+    //Test
+    $input = <<< EOI
+    
+[video height=400 width=600 autoplay=1]http://hammermaps.de/videoplayback.mp4[/video]    
+    
+[divx]http://hammermaps.de/videoplayback.mp4[/divx]
+
+[divx height=200 width=300]http://hammermaps.de/videoplayback.mp4[/divx]
+    
+[divx autoplay=1]http://hammermaps.de/videoplayback.mp4[/divx]
+
+[vimeo height=200 width=300]192417650[/vimeo]
+    
+From [url=http://www.ushistory.org/Declaration/document/index.htm]ushistory.org[/url]:
+
+[center][b][size=5]In CONGRESS, July 4, 1776[/size]
+The unanimous Declaration of the thirteen united States of America[/b][/center]
+
+[b][size=6]W[/size][/b]hen in the Course of human events it becomes necessary for one people to dissolve the political bands which have connected them with another and to assume among the powers of the earth, the separate and equal station to which the Laws of Nature and of Nature's God entitle them, a decent respect to the opinions of mankind requires that they should declare the causes which impel them to the separation.
+
+[right][color=green][i]--- written by Thomas Jefferson[/i][/color][/right]
+
+[border color=red size=3]This text is in a medium red border![/border]
+[border size=10]This text is in a fat blue border![/border]
+[border color=green]This text is in a normal green border![/border]
+
+[quote]Test[/quote]
+
+
+[code]if(\$xxxx) { echo "test"; }[/code]
+
+[Youtube height=200 width=300]mUcDzTGBEFM[/youtube]
+
+[Youtube]mUcDzTGBEFM[/youtube]
+
+[u]Underline a misspelled word[/u]
+
+[s]dddddddddddddddd[/s]
+EOI;
+
     //-> News Preview
     $smarty->caching = false;
     $smarty->assign('titel',stringParser::decode($_POST['titel']));
@@ -100,8 +140,8 @@ if(defined('_News')) {
     $smarty->assign('notification_page','');
     $smarty->assign('sticky',$sticky);
     $smarty->assign('intern',$intern);
-    $smarty->assign('more',bbcode::parse_html($_POST['morenews']));
-    $smarty->assign('text',bbcode::parse_html($_POST['newstext']));
+    $smarty->assign('more',common::$bbcode->Parse($input));
+    $smarty->assign('text',common::$bbcode->Parse($_POST['newstext']));
     $smarty->assign('datum',date("j.m.y H:i", time()));
     $smarty->assign('links',$links);
     $smarty->assign('autor',common::autor());

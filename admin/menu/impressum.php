@@ -27,7 +27,7 @@ if($do == "update") {
 } else {
     $smarty->caching = false;
     $smarty->assign('domain',stringParser::decode(settings::get('i_domain')));
-    $smarty->assign('bbcode',bbcode::parse_html("seitenautor"));
+    $smarty->assign('bbcode',bbcode_old::parse_html("seitenautor"));
     $smarty->assign('postautor',stringParser::decode(settings::get('i_autor')));
     $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_impressum.tpl');
     $smarty->clearAllAssign();

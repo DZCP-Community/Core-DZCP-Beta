@@ -18,6 +18,7 @@
 setlocale(LC_ALL, "en_US.utf8");
 
 ## Allgemein ##
+define('_error_no_html5_vid' , 'Your browser does not support the video tag.');
 define('_button_title_del' , 'Delete');
 define('_button_title_edit' , 'Edit');
 define('_button_title_zitat' , 'Quote this entry');

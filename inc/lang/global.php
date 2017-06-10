@@ -57,8 +57,6 @@ define('_admin_ck_edit', '<a href="?action=admin&amp;do=paycheck&amp;id=[id]"><i
 define('_msg_delete_sended', '<a href="?action=msg&amp;do=deletesended&amp;id=[id]"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
 define('_forum_delete', '<a href="?action=post&amp;do=delete&amp;id=[id]"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
 define('_newsc_delete', '<a href="?action=show&amp;id=[id]&amp;do=delete&cid=[cid]"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
-## News ##
-define('_news_show_link', '<a href="../news/?action=show&amp;id=[id]">[titel]</a>');
 ## Forum ##
 define('_forum_select_field_search', '<option value="[value]" [sel]>-> [what]</option>');
 ## Umfragen ##

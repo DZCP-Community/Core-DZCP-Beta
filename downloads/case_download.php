@@ -93,7 +93,7 @@ else {
             $smarty->assign('speed_dsl6016',$speed_dsl6016);
             $smarty->assign('speed_dsl16128',$speed_dsl16128);
             $smarty->assign('size',$dlsize);
-            $smarty->assign('besch',bbcode::parse_html($get['beschreibung']));
+            $smarty->assign('besch',bbcode_old::parse_html($get['beschreibung']));
             $smarty->assign('file',$rawfile);
             $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/info.tpl');
             $smarty->clearAllAssign();

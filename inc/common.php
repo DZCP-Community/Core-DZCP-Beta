@@ -28,7 +28,7 @@ if(!defined('is_thumbgen')) { define('is_thumbgen', false); }
 
 ## INCLUDES ##
 require_once(basePath."/vendor/autoload.php");
-//require_once(basePath."/vendor/nbbc/nbbc.php");
+require_once(basePath."/vendor/nbbc/nbbc.php");
 require_once(basePath."/inc/debugger.php");
 require_once(basePath."/inc/configs/config.php");
 require_once(basePath."/inc/database.php");
@@ -89,6 +89,7 @@ class common {
     public static $chkMe = 0;
     public static $CrawlerDetect = NULL;
     public static $less = NULL;
+    public static $bbcode = NULL;
 
     //Private
     private static $menu_index = [];
@@ -225,6 +226,11 @@ class common {
         self::$smarty = self::getSmarty(true);
 
         self::check_ip(); // IP Prufung * No IPV6 Support *
+
+        //Init new BBCode
+        $bbcode = new bbcode_base();
+        self::$bbcode = $bbcode->getInstance();
+        unset($bbcode);
 
         //-> Auslesen der Cookies und automatisch anmelden
         if(!is_api && cookie::get('id') != false && cookie::get('pkey') != false && empty($_SESSION['id']) && !self::checkme()) {
@@ -418,7 +424,7 @@ class common {
     public static function getSmarty(bool $new_instance = false) {
         if($new_instance) {
             $smarty = new Smarty;
-            $smarty->force_compile = true;
+            $smarty->force_compile = false;
             $smarty->debugging = false;
             $smarty->caching = false;
             $smarty->cache_lifetime = 120;
@@ -2011,7 +2017,29 @@ class common {
 
         return $i_forum;
     }
-    
+
+    /**
+     * Generate a globally unique identifier (GUID)
+     * @return string
+     */
+    public static function guid() {
+        if (function_exists('com_create_guid')){
+            return com_create_guid();
+        } else {
+            mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
+            $charid = strtoupper(md5(uniqid(rand(), true)));
+            $hyphen = chr(45);// "-"
+            $uuid = substr($charid, 0, 8).$hyphen
+                .substr($charid, 8, 4).$hyphen
+                .substr($charid,12, 4).$hyphen
+                .substr($charid,16, 4).$hyphen
+                .substr($charid,20,12);
+            return $uuid;
+        }
+
+        return '';
+    }
+
     /**
      * Adminberechtigungen ueberpruefen
      * @param int $userid
@@ -2661,7 +2689,7 @@ class common {
      */
     public static function bbcode_email(string $txt) {
         return str_replace(["&#91;","&#93;"],
-            ["[","]"],bbcode::parse_html($txt));
+            ["[","]"],bbcode_old::parse_html($txt));
     }
 
     /**
@@ -2773,7 +2801,7 @@ class common {
 
         //Check Wartungsmodus
         if(settings::get("wmodus") && self::$chkMe != 4) {
-            $output = wmodus($title);
+            $index = wmodus($title);
         } else {
             $where = preg_replace_callback("#autor_(.*?)$#",
                 create_function('$id', 'return stringParser::decode(common::data("nick","$id[1]"));'),

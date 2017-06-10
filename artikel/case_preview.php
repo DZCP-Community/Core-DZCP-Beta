@@ -77,7 +77,7 @@ if(defined('_Artikel')) {
     $smarty->assign('comments',_news_comments_prev);
     $smarty->assign('notification_page','');
     $smarty->assign('intern',$intern);
-    $smarty->assign('text',bbcode::parse_html($_POST['artikel']));
+    $smarty->assign('text',bbcode_old::parse_html($_POST['artikel']));
     $smarty->assign('datum',date("j.m.y H:i", time()));
     $smarty->assign('links',$links);
     $smarty->assign('autor',common::autor());

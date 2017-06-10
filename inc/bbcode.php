@@ -16,150 +16,204 @@
  */
 
 /**
- * BBCode to HTML converter
- *
- * Created by Kai Mallea (kmallea@gmail.com)
- *
- * Licensed under the MIT license: http://www.opensource.org/licenses/mit-license.php
+ * BBCodeParser Class expanded the NBBC: The New BBCode Parser
  */
-class BBCode_TEST {
-    protected $bbcode_table = [];
+class bbcode_base
+{
+    static $BBCode = null;
 
-    public function __construct () {
+    public function __construct() {
+        self::$BBCode = new BBCode();
 
-        // Replace [quote]...[/quote] with <blockquote><p>...</p></blockquote>
-        $this->bbcode_table["/\[quote\](.*?)\[\/quote\]/is"] = function ($match) {
-            return "<blockquote><strong>$match[1]</strong></blockquote>";
-        };
+        //Add new BBCodes
+        self::$BBCode->AddRule('border', [
+            'mode' => BBCODE_MODE_ENHANCED,
+            'template' => '<div style="border: {$size}px solid {$color}">{$_content}</div>',
+            'allow' => [
+                'color' => '/^#[0-9a-fA-F]+|[a-zA-Z]+$/',
+                'size' => '/^[1-9][0-9]*$/',
+            ],
+            'default' => [
+                'color' => 'blue',
+                'size' => '1',
+            ],
+            'class' => 'block',
+            'allow_in' => ['listitem', 'block', 'columns'],
+        ]);
 
-        // Replace [quote="person"]...[/quote] with <blockquote><p>...</p></blockquote>
-        $this->bbcode_table["/\[quote=\"([^\"]+)\"\](.*?)\[\/quote\]/is"] = function ($match) {
-            return "$match[1] wrote: <blockquote><strong>$match[2]</strong></blockquote>";
-        };
+        //Youtube
+        self::$BBCode->AddRule('youtube', Array(
+            'mode' => BBCODE_MODE_CALLBACK,
+            'method' => 'bbcode_base::callback_youtube',
+            'class' => 'block',
+            'allow_in' => Array('listitem', 'block', 'columns'),
+        ));
 
-        // Replace [size=30]...[/size] with <span style="font-size:30%">...</span>
-        $this->bbcode_table["/\[size=(\d+)\](.*?)\[\/size\]/is"] = function ($match) {
-            return "<span style=\"font-size:$match[1]%\">$match[2]</span>";
-        };
+        //DivX Player
+        self::$BBCode->AddRule('divx', Array(
+            'mode' => BBCODE_MODE_CALLBACK,
+            'method' => 'bbcode_base::callback_divx',
+            'class' => 'block',
+            'allow_in' => Array('listitem', 'block', 'columns'),
+        ));
 
+        //DivX Player
+        self::$BBCode->AddRule('video', Array(
+            'mode' => BBCODE_MODE_CALLBACK,
+            'method' => 'bbcode_base::callback_video',
+            'class' => 'block',
+            'allow_in' => Array('listitem', 'block', 'columns'),
+        ));
 
-        // Replace [s] with <del>
-        $this->bbcode_table["/\[s\](.*?)\[\/s\]/is"] = function ($match) {
-            return "<del>$match[1]</del>";
-        };
-
-
-        // Replace [u]...[/u] with <span style="text-decoration:underline;">...</span>
-        $this->bbcode_table["/\[u\](.*?)\[\/u\]/is"] = function ($match) {
-            return '<span style="text-decoration:underline;">' . $match[1] . '</span>';
-        };
-
-
-        // Replace [center]...[/center] with <div style="text-align:center;">...</div>
-        $this->bbcode_table["/\[center\](.*?)\[\/center\]/is"] = function ($match) {
-            return '<div style="text-align:center;">' . $match[1] . '</div>';
-        };
-
-
-        // Replace [color=somecolor]...[/color] with <span style="color:somecolor">...</span>
-        $this->bbcode_table["/\[color=([#a-z0-9]+)\](.*?)\[\/color\]/is"] = function ($match) {
-            return '<span style="color:'. $match[1] . ';">' . $match[2] . '</span>';
-        };
-
-
-        // Replace [email]...[/email] with <a href="mailto:...">...</a>
-        $this->bbcode_table["/\[email\](.*?)\[\/email\]/is"] = function ($match) {
-            return "<a href=\"mailto:$match[1]\">$match[1]</a>";
-        };
-
-
-        // Replace [email=someone@somewhere.com]An e-mail link[/email] with <a href="mailto:someone@somewhere.com">An e-mail link</a>
-        $this->bbcode_table["/\[email=(.*?)\](.*?)\[\/email\]/is"] = function ($match) {
-            return "<a href=\"mailto:$match[1]\">$match[2]</a>";
-        };
-
-
-        // Replace [url]...[/url] with <a href="...">...</a>
-        $this->bbcode_table["/\[url\](.*?)\[\/url\]/is"] = function ($match) {
-            return "<a href=\"$match[1]\">$match[1]</a>";
-        };
-
-
-        // Replace [url=http://www.google.com/]A link to google[/url] with <a href="http://www.google.com/">A link to google</a>
-        $this->bbcode_table["/\[url=(.*?)\](.*?)\[\/url\]/is"] = function ($match) {
-            return "<a href=\"$match[1]\">$match[2]</a>";
-        };
-
-
-        // Replace [img]...[/img] with <img src="..."/>
-        $this->bbcode_table["/\[img\](.*?)\[\/img\]/is"] = function ($match) {
-            return "<img src=\"$match[1]\"/>";
-        };
-
-
-        // Replace [list]...[/list] with <ul><li>...</li></ul>
-        $this->bbcode_table["/\[list\](.*?)\[\/list\]/is"] = function ($match) {
-            $match[1] = preg_replace_callback("/\[\*\]([^\[\*\]]*)/is", function ($submatch) {
-                return "<li>" . preg_replace("/[\n\r?]$/", "", $submatch[1]) . "</li>";
-            }, $match[1]);
-
-            return "<ul>" . preg_replace("/[\n\r?]/", "", $match[1]) . "</ul>";
-        };
-
-
-        // Replace [list=1|a]...[/list] with <ul|ol><li>...</li></ul|ol>
-        $this->bbcode_table["/\[list=(1|a)\](.*?)\[\/list\]/is"] = function ($match) {
-            if ($match[1] == '1') {
-                $list_type = '<ol>';
-            } else if ($match[1] == 'a') {
-                $list_type = '<ol style="list-style-type: lower-alpha">';
-            } else {
-                $list_type = '<ol>';
-            }
-
-            $match[2] = preg_replace_callback("/\[\*\]([^\[\*\]]*)/is", function ($submatch) {
-                return "<li>" . preg_replace("/[\n\r?]$/", "", $submatch[1]) . "</li>";
-            }, $match[2]);
-
-            return $list_type . preg_replace("/[\n\r?]/", "", $match[2]) . "</ol>";
-        };
-
-
-        // Replace [youtube]...[/youtube] with <iframe src="..."></iframe>
-        $this->bbcode_table["/\[youtube\](?:http?:\/\/)?(?:www\.)?youtu(?:\.be\/|be\.com\/watch\?v=)([A-Z0-9\-_]+)(?:&(.*?))?\[\/youtube\]/i"] = function ($match) {
-            return "<iframe class=\"youtube-player\" type=\"text/html\" width=\"640\" height=\"385\" src=\"http://www.youtube.com/embed/$match[1]\" frameborder=\"0\"></iframe>";
-        };
+        //Vimeo Player
+        self::$BBCode->AddRule('vimeo', Array(
+            'mode' => BBCODE_MODE_CALLBACK,
+            'method' => 'bbcode_base::callback_vimeo',
+            'class' => 'block',
+            'allow_in' => Array('listitem', 'block', 'columns'),
+        ));
     }
 
-    public function toHTML ($str, $escapeHTML=false, $nr2br=false) {
-        if (!$str) {
-            return "";
+    //Youtube BBCode
+    public static function callback_youtube($bbcode, $action, $name, $default, $params, $content) {
+        if($name == 'youtube') {
+            if ($action == BBCODE_CHECK) {
+                if (isset($params['height'])
+                    && !preg_match('/^[1-9][0-9]*$/', $params['height'])
+                )
+                    return false;
+
+                if (isset($params['width'])
+                    && !preg_match('/^[1-9][0-9]*$/', $params['width'])
+                )
+                    return false;
+
+                return true;
+            }
+
+            $width = isset($params['width']) ? $params['width'] : 640;
+            $height = isset($params['height']) ? $params['height'] : 385;
+            return '<iframe class="youtube-player" type="text/html" width="' . $width . '" height="' .
+                $height . '" src="http://www.youtube.com/embed/' . $content . '" frameborder="0"></iframe>';
         }
 
-        if ($escapeHTML) {
-            $str = htmlspecialchars($str);
+        return $content;
+    }
+
+    //DivX BBCode
+    public static function callback_divx($bbcode, $action, $name, $default, $params, $content) {
+        if($name == 'divx') {
+            if ($action == BBCODE_CHECK) {
+                if (isset($params['height']) && !preg_match('/^[1-9][0-9]*$/', $params['height']))
+                    return false;
+
+                if (isset($params['width']) && !preg_match('/^[1-9][0-9]*$/', $params['width']))
+                    return false;
+
+                if (isset($params['autoplay']) && !preg_match('/^[0-1]*$/', $params['autoplay']))
+                    return false;
+
+                return true;
+            }
+
+            $width = isset($params['width']) ? $params['width'] : 640;
+            $height = isset($params['height']) ? $params['height'] : 385;
+            $autoplay = isset($params['autoplay']) ? $params['autoplay'] : 0;
+
+            return '<object classid="clsid:'.common::guid().'" width="' . $width . '" height="' . $height . '" wmode="opaque" codebase="http://go.divx.com/plugin/DivXBrowserPlugin.cab">'
+            . '<param name="custommode" value="none" /><param name="autoPlay" value="'.($autoplay ? 'true' : 'false').'" /><param name="src" value="'.$content.'" />'
+            . '<embed type="video/divx" src="'.$content.'" custommode="none" width="' . $width . '" height="' . $height . '" autoPlay="'.($autoplay ? 'true' : 'false')
+                .'" pluginspage="http://go.divx.com/plugin/download/"></embed></object>';
         }
 
-        foreach($this->bbcode_table as $key => $val) {
-            $str = preg_replace_callback($key, $val, $str);
+        return $content;
+    }
+
+    //Video BBCode HTML 5
+    public static function callback_video($bbcode, $action, $name, $default, $params, $content) {
+        if($name == 'video') {
+            if ($action == BBCODE_CHECK) {
+                if (isset($params['height']) && !preg_match('/^[1-9][0-9]*$/', $params['height']))
+                    return false;
+
+                if (isset($params['width']) && !preg_match('/^[1-9][0-9]*$/', $params['width']))
+                    return false;
+
+                if (isset($params['autoplay']) && !preg_match('/^[0-1]*$/', $params['autoplay']))
+                    return false;
+
+                return true;
+            }
+
+            $width = isset($params['width']) ? $params['width'] : 320;
+            $height = isset($params['height']) ? $params['height'] : 240;
+            $autoplay = isset($params['autoplay']) ? $params['autoplay'] : 0;
+
+            return '<video width="'.$width.'" height="'.$height.'" controls preload="metadata"'.($autoplay ? ' autoplay' : '')
+                .'><source src="'.$content.'" type="video/mp4">'._error_no_html5_vid.'</video>';
         }
 
-        if ($nr2br) {
-            $str = preg_replace_callback("/\n\r?/", function ($match) { return "<br/>"; }, $str);
+        return $content;
+    }
+
+    //Video BBCode HTML 5
+    public static function callback_vimeo($bbcode, $action, $name, $default, $params, $content) {
+        if($name == 'vimeo') {
+            if ($action == BBCODE_CHECK) {
+                if (isset($params['height']) && !preg_match('/^[1-9][0-9]*$/', $params['height']))
+                    return false;
+
+                if (isset($params['width']) && !preg_match('/^[1-9][0-9]*$/', $params['width']))
+                    return false;
+
+                if (isset($params['autoplay']) && !preg_match('/^[0-1]*$/', $params['autoplay']))
+                    return false;
+
+                return true;
+            }
+
+            $width = isset($params['width']) ? $params['width'] : 640;
+            $height = isset($params['height']) ? $params['height'] : 297;
+            $autoplay = isset($params['autoplay']) ? $params['autoplay'] : 0;
+
+            return '<iframe src="https://player.vimeo.com/video/'.$content.'?autoplay='.
+                ($autoplay ? '1' : '0').'&color=ffffff" width="'.$width.'" height="'.$height.
+                '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
         }
 
-        return $str;
+        return $content;
+    }
+
+    /*
+     * ##################################
+     * Side Functions
+     * ##################################
+     */
+
+    //Badword Filter
+    private static function badword_filter() {
+        $words = trim(stringParser::decode(settings::get('badwords')));
+        if(empty($words)) return;
+        $words = explode(",",$words);
+        if(count($words) >= 1) {
+            foreach($words as $word) {
+                self::$string = preg_replace_callback("#".$word."#i",create_function('$matches','return str_repeat("*", strlen($matches[0]));'),self::$string);
+            }
+        }
+    }
+
+    //Get Instance
+    public final function getInstance() {
+        return self::$BBCode;
     }
 }
 
 //###################################
 //BBCodeParser Class
 //###################################
-class bbcode {
+class bbcode_old {
     private static $string = '';
     private static $vid_count = 0;
-    private static $gl_words = array();
-    private static $gl_desc = array();
     private static $simple_search = array(
       '/\[b\](.*?)\[\/b\]/is',
       '/\[i\](.*?)\[\/i\]/is',

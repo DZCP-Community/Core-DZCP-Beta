@@ -128,7 +128,7 @@ function send_forum_abo(bool $is_thread = false, int $id,string $eintrag,bool $e
             $smarty->assign('id',$id);
             $smarty->assign('entrys',!$entrys ? 1 : $entrys);
             $smarty->assign('page',!$entrys ? 1 : ceil($entrys/settings::get('m_fposts')));
-            $smarty->assign('text',bbcode::parse_html($eintrag));
+            $smarty->assign('text',bbcode_old::parse_html($eintrag));
             $smarty->assign('clan',settings::get('clanname'));
             if($is_thread && !$edit) {
                 $message = $smarty->fetch('string:'.common::bbcode_email(settings::get('eml_fabo_tedit')));

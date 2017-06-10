@@ -95,13 +95,7 @@ switch ($do) {
         //Show
         $qryk = common::$sql['default']->select("SELECT id,kategorie FROM `{prefix_newskat}`"); $kat = '';
         foreach($qryk as $getk) {
-            $sel = (isset($_POST['kat']) && $_POST['kat'] == $getk['id'] ? 'selected="selected"' : '');
-            $smarty->caching = false;
-            $smarty->assign('value',$getk['id']);
-            $smarty->assign('sel',$sel);
-            $smarty->assign('what',stringParser::decode($getk['kategorie']));
-            $kat .= $smarty->fetch('string:'._select_field);
-            $smarty->clearAllAssign();
+            $kat .= common::select_field($getk['id'],(isset($_POST['kat']) && $_POST['kat'] == $getk['id']),stringParser::decode($getk['kategorie']));
         }
 
         $dropdown_date = common::dropdown_date(common::dropdown("day",isset($_POST['t']) ? (int)($_POST['t']) : date("d")),
@@ -429,16 +423,10 @@ switch ($do) {
     default:
         $entrys = common::cnt('{prefix_news}'); $show_ = '';
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_news}` ".common::orderby_sql(array("titel","datum","autor"), 'ORDER BY `public` ASC, `datum` DESC')."
-                   LIMIT ".($page - 1)*settings::get('m_adminnews').",".settings::get('m_adminnews')."");
+                   LIMIT ".($page - 1)*settings::get('m_adminnews').",".settings::get('m_adminnews').";");
         foreach($qry as $get) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_news);
-            $smarty->caching = false;
-            $smarty->assign('titel',stringParser::decode(common::cut($get['titel'],settings::get('l_newsadmin'))));
-            $smarty->assign('id', $get['id']);
-            $titel = $smarty->fetch('string:'._news_show_link);
-            $smarty->clearAllAssign();
-
 
             $intern = ($get['intern'] ? _votes_intern : '');
             $sticky = ($get['sticky'] ? _news_sticky : '');
@@ -448,8 +436,9 @@ switch ($do) {
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
             $smarty->assign('date',$datum);
-            $smarty->assign('titel',$titel);
+            $smarty->assign('titel',stringParser::decode(common::cut($get['titel'],settings::get('l_newsadmin'))));
             $smarty->assign('class',$class);
             $smarty->assign('autor',common::autor($get['autor']));
             $smarty->assign('intnews',$intern);
@@ -467,19 +456,11 @@ switch ($do) {
         $nav = common::nav($entrys,settings::get('m_adminnews'),"?admin=newsadmin".(isset($_GET['show']) ? $_GET['show'].common::orderby_nav() : common::orderby_nav()));
 
         $smarty->caching = false;
-        $smarty->assign('head',_news_admin_head);
         $smarty->assign('nav',$nav);
-        $smarty->assign('autor',_autor);
-        $smarty->assign('titel',_titel);
-        $smarty->assign('val', "newsadmin");
-        $smarty->assign('date',_datum);
         $smarty->assign('show',$show);
         $smarty->assign('order_autor',common::orderby('autor'));
         $smarty->assign('order_date',common::orderby('datum'));
         $smarty->assign('order_titel',common::orderby('titel'));
-        $smarty->assign('edit',_editicon_blank);
-        $smarty->assign('delete',_deleteicon_blank);
-        $smarty->assign('add',_admin_news_head);
         $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin_news.tpl');
         $smarty->clearAllAssign();
     break;

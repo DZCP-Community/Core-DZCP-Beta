@@ -60,7 +60,7 @@ if(defined('_Forum')) {
                 //User Signatur ausgeben
                 $signatur = common::data("signatur",$getp['reg']); $sig = '';
                 if(!empty($signatur)) {
-                    $sig = sprintf('%s%s',_sig,bbcode::parse_html($signatur));
+                    $sig = sprintf('%s%s',_sig,bbcode_old::parse_html($signatur));
                 } unset($signatur);
 
                 //User Posts ( Uber Avatar )
@@ -89,7 +89,7 @@ if(defined('_Forum')) {
                 }
 
                 $ftxt = hl($getp['text'], (isset($_GET['hl']) ? $_GET['hl'] : ''));
-                $text = isset($_GET['hl']) ? bbcode::parse_html($ftxt['text']) : bbcode::parse_html($getp['text']);
+                $text = isset($_GET['hl']) ? bbcode_old::parse_html($ftxt['text']) : bbcode_old::parse_html($getp['text']);
                 $posted_ip = (common::$chkMe == 4 || common::permission('ipban') ? $getp['ip'] : _logged);
 
                 //Titel
@@ -204,7 +204,7 @@ if(defined('_Forum')) {
             $smarty->clearAllAssign();
 
             $nav = common::nav($entrys,settings::get('m_fposts'),"?action=showthread&amp;id=".$_GET['id'].$hL);
-            $sig = ($signatur=common::data("signatur",$get['t_reg'])) ? _sig.bbcode::parse_html($signatur) : '';
+            $sig = ($signatur=common::data("signatur",$get['t_reg'])) ? _sig.bbcode_old::parse_html($signatur) : '';
             $edit = $get['t_reg'] == common::$userid || common::permission("forum") ? common::getButtonEditSingle($get['id'],"action=thread&amp;do=edit") : '';
 
             //Admin
@@ -242,7 +242,7 @@ if(defined('_Forum')) {
             if(isset($_GET['hl']))
                 $text = stringParser::decode($ftxt['text']);
             else
-                $text = bbcode::parse_html($get['t_text']);
+                $text = bbcode_old::parse_html($get['t_text']);
 
             //User IP
             $posted_ip = (common::$chkMe == 4 || common::permission('ipban') ? $get['ip'] : _logged);

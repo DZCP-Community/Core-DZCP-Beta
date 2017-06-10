@@ -80,7 +80,7 @@ if(defined('_Forum')) {
                 }
 
                 if(common::data("signatur",$pUId))
-                    $sig = _sig.bbcode::parse_html(common::data("signatur",$pUId),true);
+                    $sig = _sig.bbcode_old::parse_html(common::data("signatur",$pUId),true);
                 else
                     $sig = "";
 
@@ -132,7 +132,7 @@ if(defined('_Forum')) {
             $smarty->assign('hp',$hp);
             $smarty->assign('email',$email);
             $smarty->assign('posts',$userposts);
-            $smarty->assign('text',bbcode::parse_html(stringParser::decode($_POST['eintrag'])).$editedby);
+            $smarty->assign('text',bbcode_old::parse_html(stringParser::decode($_POST['eintrag'])).$editedby);
             $smarty->assign('status',common::getrank($pUId));
             $smarty->assign('avatar',common::useravatar($pUId));
             $smarty->assign('edited',stringParser::decode($get['edited']));
@@ -215,7 +215,7 @@ if(defined('_Forum')) {
                     $smarty->clearAllAssign();
                 }
 
-                if(common::data("signatur",$pUId)) $sig = _sig.bbcode::parse_html(common::data("signatur",$pUId),true);
+                if(common::data("signatur",$pUId)) $sig = _sig.bbcode_old::parse_html(common::data("signatur",$pUId),true);
                 else $sig = "";
             } else {
                 $pn = "";
@@ -236,7 +236,7 @@ if(defined('_Forum')) {
             $smarty->assign('chkme', common::$chkMe);
             $smarty->assign('postnr', "#".($i+($page-1)*settings::get('m_fposts')));
             $smarty->assign('p', ($i+($page-1)*settings::get('m_fposts')));
-            $smarty->assign('text', bbcode::parse_html($_POST['eintrag'],false).$editedby);
+            $smarty->assign('text', bbcode_old::parse_html($_POST['eintrag'],false).$editedby);
             $smarty->assign('class', 'class="commentsRight"');
             $smarty->assign('pn', $pn);
             $smarty->assign('hp', $hp);

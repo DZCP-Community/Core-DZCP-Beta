@@ -43,7 +43,7 @@ foreach($qry as $get) {
     $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
     $smarty->caching = true;
     $smarty->assign('class',$class);
-    $smarty->assign('beschreibung',bbcode::parse_html($get['beschreibung']));
+    $smarty->assign('beschreibung',bbcode_old::parse_html($get['beschreibung']));
     $smarty->assign('hits',$get['hits'],true);
     $smarty->assign('banner',$banner);
     $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/sponsors_show.tpl');

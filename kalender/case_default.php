@@ -71,13 +71,16 @@ while($i <= 31 && checkdate($monat, $i, $jahr)) {
         if($wday != $iw) {
             $data .= '<td class="calDay"></td>';
         } else {
+
             //User Birthday 
             $infoBday = ''; $bdays = ""; $CountBday = 0;
             $qry = common::$sql['default']->select("SELECT `id`,`bday`,`nick` FROM `{prefix_users}` WHERE `bday` != 0;");
             foreach($qry as $get) {
-                if(date("d.m",$get['bday']) == common::cal($i).".".$monat) {
-                    $infoBday .='&lt;img src=../inc/images/bday.gif class=icon alt= /&gt;'.'&nbsp;'.common::jsconvert(_kal_birthday.common::rawautor($get['id'])).'<br />';
-                    $CountBday++;
+                if((int)$get['bday'] >= 1) {
+                    if (date("d.m", $get['bday']) == common::cal($i) . "." . $monat) {
+                        $infoBday .= '&lt;img src=../inc/images/bday.gif class=icon alt= /&gt;' . '&nbsp;' . common::jsconvert(_kal_birthday . common::rawautor($get['id'])) . '<br />';
+                        $CountBday++;
+                    }
                 }
             }
 
@@ -123,11 +126,11 @@ while($i <= 31 && checkdate($monat, $i, $jahr)) {
                 $data .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/day.tpl');
                 $smarty->clearAllAssign();
             }
-            
+
             $i++;
         }
     }
-    
+
     $show .= "<tr>".$data."</tr>";
 }
 
