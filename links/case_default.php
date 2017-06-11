@@ -35,7 +35,7 @@ if(common::$sql['default']->rowCount()) {
         }
 
         $smarty->caching = false;
-        $smarty->assign('beschreibung',bbcode_old::parse_html($get['beschreibung']));
+        $smarty->assign('beschreibung',bbcode_base::parse_html((string)$get['beschreibung']));
         $smarty->assign('hits',$get['hits']);
         $smarty->assign('banner',$banner);
         $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/links_show.tpl');

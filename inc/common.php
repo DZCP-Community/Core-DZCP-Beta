@@ -28,7 +28,7 @@ if(!defined('is_thumbgen')) { define('is_thumbgen', false); }
 
 ## INCLUDES ##
 require_once(basePath."/vendor/autoload.php");
-require_once(basePath."/vendor/nbbc/nbbc.php");
+require_once(basePath."/vendor/nbbc/src/nbbc_main.php");
 require_once(basePath."/inc/debugger.php");
 require_once(basePath."/inc/configs/config.php");
 require_once(basePath."/inc/database.php");
@@ -89,7 +89,6 @@ class common {
     public static $chkMe = 0;
     public static $CrawlerDetect = NULL;
     public static $less = NULL;
-    public static $bbcode = NULL;
 
     //Private
     private static $menu_index = [];
@@ -226,11 +225,6 @@ class common {
         self::$smarty = self::getSmarty(true);
 
         self::check_ip(); // IP Prufung * No IPV6 Support *
-
-        //Init new BBCode
-        $bbcode = new bbcode_base();
-        self::$bbcode = $bbcode->getInstance();
-        unset($bbcode);
 
         //-> Auslesen der Cookies und automatisch anmelden
         if(!is_api && cookie::get('id') != false && cookie::get('pkey') != false && empty($_SESSION['id']) && !self::checkme()) {
@@ -409,6 +403,11 @@ class common {
         unset($files);
 
         self::$designpath = '../inc/_templates_/'.self::$tmpdir;
+
+        //Init new BBCode
+        $bbcode = new bbcode_base();
+        $bbcode->getInstance();
+        unset($bbcode);
 
         //-> User Hits und Lastvisit aktualisieren
         if(self::$userid >= 1 && !is_ajax && !is_thumbgen && !is_api && isset($_SESSION['lastvisit'])) {
@@ -2681,15 +2680,6 @@ class common {
             if($var_==$var) return true;
         }
         return false;
-    }
-
-    /**
-     * @param string $txt
-     * @return mixed
-     */
-    public static function bbcode_email(string $txt) {
-        return str_replace(["&#91;","&#93;"],
-            ["[","]"],bbcode_old::parse_html($txt));
     }
 
     /**

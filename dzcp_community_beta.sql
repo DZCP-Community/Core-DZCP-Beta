@@ -1249,7 +1249,7 @@ CREATE TABLE `dzcp_users` (
   KEY `pwd` (`pwd`) USING BTREE,
   KEY `time` (`time`) USING BTREE,
   KEY `bday` (`bday`) USING BTREE
-) ENGINE=Aria AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0 TRANSACTIONAL=0;
+) ENGINE=Aria AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0 TRANSACTIONAL=0;
 
 -- ----------------------------
 -- Records of dzcp_users

@@ -23,7 +23,7 @@ class settings extends common {
      * @param string $what
      * @return string|int|boolean
      */
-    public final static function get($what='') {
+    public final static function get(string $what='',bool $decode=false) {
         $what = utf8_encode(strtolower($what));
         $get = self::$sql['default']->fetch("SELECT `value` FROM `{prefix_settings}` WHERE `key` = ? LIMIT 1;",array($what));
         if(!self::$sql['default']->rowCount()) {
@@ -31,7 +31,7 @@ class settings extends common {
                 DebugConsole::insert_error('settings::get()', 'Setting "' . $what . '" not found in ' . self::$sql['default']->rep_prefix('{prefix_settings}'));
             }
         } else {
-            return utf8_decode($get['value']);
+            return ($decode ? stringParser::decode(utf8_decode($get['value'])) : utf8_decode($get['value']));
         }
 
         return false;

@@ -92,7 +92,7 @@ if(defined('_News')) {
     //Test
     $input = <<< EOI
     
-[video height=400 width=600 autoplay=1]http://hammermaps.de/videoplayback.mp4[/video]    
+[video height=400 width=600 autoplay=0]http://hammermaps.de/videoplayback.mp4[/video]    
     
 [divx]http://hammermaps.de/videoplayback.mp4[/divx]
 
@@ -101,6 +101,12 @@ if(defined('_News')) {
 [divx autoplay=1]http://hammermaps.de/videoplayback.mp4[/divx]
 
 [vimeo height=200 width=300]192417650[/vimeo]
+
+[golem]19024[/golem]
+
+[golem height=200 width=300]19024[/golem]
+
+[golem autoplay=0]19024[/golem]
     
 From [url=http://www.ushistory.org/Declaration/document/index.htm]ushistory.org[/url]:
 
@@ -127,7 +133,24 @@ The unanimous Declaration of the thirteen united States of America[/b][/center]
 [u]Underline a misspelled word[/u]
 
 [s]dddddddddddddddd[/s]
+
+[hide]show this on level 1[/hide]
+
+[hide level=2]show this on level 2[/hide]
+
+[hide level=3]show this on level 3[/hide]
+
+[hide level=4]show this on level 4[/hide]
+
+
 EOI;
+
+    //Smileys Test
+    $test = bbcode_base::getInstance();
+    foreach ($test->GetSmileys() as $tag => $Smiley) {
+        echo bbcode_base::parse_html((string)$tag).'<p>';
+    }
+    die();
 
     //-> News Preview
     $smarty->caching = false;
@@ -140,8 +163,8 @@ EOI;
     $smarty->assign('notification_page','');
     $smarty->assign('sticky',$sticky);
     $smarty->assign('intern',$intern);
-    $smarty->assign('more',common::$bbcode->Parse($input));
-    $smarty->assign('text',common::$bbcode->Parse($_POST['newstext']));
+    $smarty->assign('more',bbcode_base::parse_html((string)$input));
+    $smarty->assign('text',bbcode_base::parse_html((string)$_POST['newstext']));
     $smarty->assign('datum',date("j.m.y H:i", time()));
     $smarty->assign('links',$links);
     $smarty->assign('autor',common::autor());

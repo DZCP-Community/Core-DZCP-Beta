@@ -88,8 +88,8 @@ if(defined('_Artikel')) {
 
     $smarty->caching = false;
     $smarty->assign('titel',$titel);
-    $smarty->assign('comment',bbcode_old::parse_html($_POST['comment']));
-    $smarty->assign('nick',bbcode_old::parse_html($editedby));
+    $smarty->assign('comment',bbcode_base::parse_html((string)$_POST['comment']));
+    $smarty->assign('nick',bbcode_base::parse_html((string)$editedby));
     $smarty->assign('editby',$email);
     $smarty->assign('email',$hp);
     $smarty->assign('hp',$hp);

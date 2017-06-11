@@ -79,7 +79,7 @@ if(defined('_UserMenu')) {
 
             $rlname = $get['rlname'] ? stringParser::decode($get['rlname']) : "-";
             $city = stringParser::decode($get['city']);
-            $beschreibung = bbcode_old::parse_html($get['beschreibung']);
+            $beschreibung = bbcode_base::parse_html((string)$get['beschreibung']);
 
             //User Profil
             $smarty->caching = false;

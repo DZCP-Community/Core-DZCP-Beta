@@ -260,13 +260,7 @@ switch ($do) {
         
         $qryk = common::$sql['default']->select("SELECT id,kategorie FROM `{prefix_newskat}`"); $kat = '';
         foreach($qryk as $getk) {
-            $sel = ($get['kat'] == $getk['id'] ? 'selected="selected"' : '');
-            $smarty->caching = false;
-            $smarty->assign('value',$getk['id']);
-            $smarty->assign('sel',$sel);
-            $smarty->assign('what',stringParser::decode($getk['kategorie']));
-            $kat .= $smarty->fetch('string:'._select_field);
-            $smarty->clearAllAssign();
+            $kat .= common::select_field($getk['id'],($get['kat'] == $getk['id']),stringParser::decode($getk['kategorie']));
         }
 
         $int = ($get['intern'] ? 'checked="checked"' : '');
@@ -277,14 +271,14 @@ switch ($do) {
         $smarty->assign('day',common::dropdown("day",date("d")));
         $smarty->assign('month',common::dropdown("month",date("m")));
         $smarty->assign('year',common::dropdown("year",date("Y")));
-        $dropdown_date = $smarty->fetch('string:'._dropdown_date);
+        $dropdown_date = $smarty->fetch('string:'._dropdown_date_ts);
         $smarty->clearAllAssign();
 
         $smarty->caching = false;
         $smarty->assign('hour', common::dropdown("hour",date("H")));
         $smarty->assign('minute',common::dropdown("minute",date("i")));
         $smarty->assign('uhr',_uhr);
-        $dropdown_time = $smarty->fetch('string:'._dropdown_time);
+        $dropdown_time = $smarty->fetch('string:'._dropdown_time_ts);
         $smarty->clearAllAssign();
 
         if($get['sticky']) {

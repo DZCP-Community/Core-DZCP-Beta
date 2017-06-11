@@ -229,10 +229,10 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                 $posted_ip = (common::$chkMe == 4 || common::permission('ipban') ? $getc['ip'] : _logged);
                 $smarty->caching = true;
                 $smarty->assign('titel',$titel);
-                $smarty->assign('comment',bbcode_old::parse_html($getc['comment']));
+                $smarty->assign('comment',bbcode_base::parse_html((string)$getc['comment']));
                 $smarty->assign('nick',$nick);
                 $smarty->assign('hp',$hp);
-                $smarty->assign('editby',bbcode_old::parse_html($getc['editby']));
+                $smarty->assign('editby',bbcode_base::parse_html((string)$getc['editby']));
                 $smarty->assign('email',$email);
                 $smarty->assign('avatar',common::useravatar($getc['reg']));
                 $smarty->assign('onoff',$onoff);
@@ -300,7 +300,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
             $smarty->assign('notification_page',notification::get());
             $smarty->assign('showmore',$showmore,true); //Comments
             $smarty->assign('viewed',$get_artikel['viewed']); //Comments
-            $smarty->assign('text',bbcode_old::parse_html($get_artikel['text']));
+            $smarty->assign('text',bbcode_base::parse_html((string)$get_artikel['text']));
             $smarty->assign('datum',date("j.m.y H:i", (empty($get_artikel['datum']) ? time() : $get_artikel['datum'])));
             $smarty->assign('links',$links);
             $smarty->assign('autor',common::autor($get_artikel['autor']));

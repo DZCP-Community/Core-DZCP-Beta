@@ -130,7 +130,7 @@ if(defined('_UserMenu')) {
                     $smarty->assign('link_page','<a href="'.$akl_link_page.'" target="_blank">'.$akl_link_page.'</a>');
                     $smarty->assign('guid',$guid);
                     $smarty->assign('link','<a href="'.$akl_link.'" target="_blank">Link</a>');
-                    $message = $smarty->fetch('string:'.common::bbcode_email(stringParser::decode(settings::get('eml_akl_register'))));
+                    $message = $smarty->fetch('string:'.bbcode_base::bbcode_email(stringParser::decode(settings::get('eml_akl_register'))));
                     $smarty->clearAllAssign();
 
                     common::sendMail(trim($_POST['email']),stringParser::decode(settings::get('eml_akl_register_subj')),$message);
@@ -139,7 +139,7 @@ if(defined('_UserMenu')) {
                 $smarty->caching = false;
                 $smarty->assign('user',trim($_POST['user']));
                 $smarty->assign('pwd',$mkpwd);
-                $message = $smarty->fetch('string:'.common::bbcode_email(stringParser::decode(settings::get('eml_reg'))));
+                $message = $smarty->fetch('string:'.bbcode_base::bbcode_email(stringParser::decode(settings::get('eml_reg'))));
                 $smarty->clearAllAssign();
 
                 common::sendMail(trim($_POST['email']),stringParser::decode(settings::get('eml_reg_subj')),$message);

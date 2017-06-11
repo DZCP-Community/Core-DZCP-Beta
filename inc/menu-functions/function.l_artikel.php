@@ -41,7 +41,7 @@ function smarty_function_l_artikel($params, &$smarty) {
             $smarty_lartikel->caching = false;
             $smarty_lartikel->assign('id',$get['id']);
             $smarty_lartikel->assign('titel',common::cut(stringParser::decode($get['titel']),settings::get('l_lartikel')));
-            $smarty_lartikel->assign('text',common::cut(bbcode_old::parse_html($text),260));
+            $smarty_lartikel->assign('text',common::cut(bbcode_base::parse_html($text),260));
             $smarty_lartikel->assign('datum',date("d.m.Y", $get['datum']));
             $smarty_lartikel->assign('info',$info);
             $l_articles .= $smarty_lartikel->fetch('file:['.common::$tmpdir.']menu/l_artikel/last_artikel.tpl');

@@ -20,6 +20,6 @@ class conjob
     }
 
     function getOutput() {
-
+        return true;
     }
 }

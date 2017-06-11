@@ -29,7 +29,7 @@ if(defined('_UserMenu')) {
                 $smarty->caching = false;
                 $smarty->assign('nick',stringParser::decode($get['nick']));
                 $smarty->assign('link','<a href="'.$lpwd_link.'" target="_blank">Link</a>');
-                $message = $smarty->fetch('string:'.common::bbcode_email(stringParser::decode(settings::get('eml_lpwd_key'))));
+                $message = $smarty->fetch('string:'.bbcode_base::bbcode_email(stringParser::decode(settings::get('eml_lpwd_key'))));
                 $smarty->clearAllAssign();
 
                 common::sendMail(stringParser::decode($get['email']), stringParser::decode(settings::get('eml_lpwd_key_subj')), $message);
@@ -56,7 +56,7 @@ if(defined('_UserMenu')) {
                 $smarty->assign('nick',stringParser::decode($get['nick']));
                 $smarty->assign('user',stringParser::decode($get['user']));
                 $smarty->assign('pwd',$pwd);
-                $message = $smarty->fetch('string:'.common::bbcode_email(stringParser::decode(settings::get('eml_pwd'))));
+                $message = $smarty->fetch('string:'.bbcode_base::bbcode_email(stringParser::decode(settings::get('eml_pwd'))));
                 $smarty->clearAllAssign();
 
                 common::sendMail($get['email'],stringParser::decode(settings::get('eml_pwd_subj')), $message);
