@@ -376,33 +376,7 @@ class common {
         }
 
         //-> Templateswitch
-        $files = self::get_files(basePath.'/inc/_templates_/',true);
-        if(isset($_GET['tmpl_set'])) {
-            foreach ($files as $templ) {
-                if($templ == $_GET['tmpl_set']) {
-                    cookie::put('tmpdir', $templ);
-                    cookie::save();
-                    header("Location: ".self::GetServerVars('HTTP_REFERER'));
-                }
-            }
-        }
-
-        if(cookie::get('tmpdir') != false && cookie::get('tmpdir') != NULL) {
-            if (file_exists(basePath . "/inc/_templates_/" . cookie::get('tmpdir'))) {
-                self::$tmpdir = cookie::get('tmpdir');
-            } else {
-                self::$tmpdir = $files[0];
-            }
-        } else {
-            if (file_exists(basePath . "/inc/_templates_/" . self::$sdir)) {
-                self::$tmpdir = self::$sdir;
-            } else {
-                self::$tmpdir = $files[0];
-            }
-        }
-        unset($files);
-
-        self::$designpath = '../inc/_templates_/'.self::$tmpdir;
+        self::sysTemplateswitch();
 
         //Init new BBCode
         $bbcode = new bbcode_base();
@@ -414,6 +388,67 @@ class common {
             self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `hits` = (hits+1), `lastvisit` = ? WHERE `user` = ?;",
                 [(int)($_SESSION['lastvisit']),(int)(self::$userid)]);
         }
+    }
+
+    /**
+     * Setzt das aktive Template
+     */
+    private static function sysTemplateswitch() {
+        //-> Templateswitch
+        $files = self::get_files(basePath.'/inc/_templates_/',true);
+        if(isset($_GET['tmpl_set'])) {
+            foreach ($files as $templ) {
+                $xml = simplexml_load_file(basePath.'/inc/_templates_/'.$templ.'/template.xml');
+                if(!empty((string)$xml->permissions) && (string)$xml->permissions != 'null') {
+                    if(common::permission((string)$xml->permissions) || ((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level)) {
+                        if($templ == $_GET['tmpl_set']) {
+                            cookie::put('tmpdir', $templ);
+                            cookie::save();
+                            header("Location: ".self::GetServerVars('HTTP_REFERER'));
+                        }
+                    }
+                } else if((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level) {
+                    if($templ == $_GET['tmpl_set']) {
+                        cookie::put('tmpdir', $templ);
+                        cookie::save();
+                        header("Location: ".self::GetServerVars('HTTP_REFERER'));
+                    }
+                } else if(!(int)$xml->level){
+                    if($templ == $_GET['tmpl_set']) {
+                        cookie::put('tmpdir', $templ);
+                        cookie::save();
+                        header("Location: ".self::GetServerVars('HTTP_REFERER'));
+                    }
+                }
+            }
+
+            unset($xml,$templ,$files);
+        }
+
+        if(cookie::get('tmpdir') != false && cookie::get('tmpdir') != NULL) {
+            if (file_exists(basePath . "/inc/_templates_/" . cookie::get('tmpdir'))) {
+                $xml = simplexml_load_file(basePath.'/inc/_templates_/'.cookie::get('tmpdir').'/template.xml');
+                if(!empty((string)$xml->permissions) && (string)$xml->permissions != 'null') {
+                    if(common::permission((string)$xml->permissions) || ((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level)) {
+                        self::$tmpdir = cookie::get('tmpdir');
+                    }
+                } else if((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level) {
+                    self::$tmpdir = cookie::get('tmpdir');
+                } else if(!(int)$xml->level) {
+                    self::$tmpdir = cookie::get('tmpdir');
+                }
+            } else {
+                self::$tmpdir = $files[0];
+            }
+        } else {
+            if (file_exists(basePath . "/inc/_templates_/" . self::$sdir)) {
+                self::$tmpdir = self::$sdir;
+            } else {
+                self::$tmpdir = $files[0];
+            }
+        }
+
+        self::$designpath = '../inc/_templates_/'.self::$tmpdir; //Set designpath
     }
 
     /**

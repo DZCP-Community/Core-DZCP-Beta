@@ -19,10 +19,21 @@ function smarty_function_templateswitch($params, &$smarty) {
     $tmpldir="";
     $tmps = common::get_files(basePath.'/inc/_templates_/',true);
     foreach ($tmps as $tmp) {
-          $tmpldir .= common::select_field("?tmpl_set=".$tmp,(common::$tmpdir == $tmp),ucfirst($tmp));
+        if(file_exists(basePath.'/inc/_templates_/'.$tmp.'/template.xml')) {
+            $xml = simplexml_load_file(basePath.'/inc/_templates_/'.$tmp.'/template.xml');
+            if(!empty((string)$xml->permissions)) {
+                if(common::permission((string)$xml->permissions) || ((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level)) {
+                    $tmpldir .= common::select_field("?tmpl_set=".$tmp,(common::$tmpdir == $tmp),(string)$xml->name);
+                }
+            } else if((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level) {
+                $tmpldir .= common::select_field("?tmpl_set=".$tmp,(common::$tmpdir == $tmp),(string)$xml->name);
+            } else if (!(int)$xml->level){
+                $tmpldir .= common::select_field("?tmpl_set=".$tmp,(common::$tmpdir == $tmp),(string)$xml->name);
+            }
+        }
     }
 
-    $smarty->assign('templates',$tmpldir);
-    $template_switch = $smarty->fetch('file:['.common::$tmpdir.']page/template_switch.tpl');
+    $smarty->assign('templates', $tmpldir);
+    $template_switch = $smarty->fetch('file:[' . common::$tmpdir . ']page/template_switch.tpl');
     return $template_switch;
 }
