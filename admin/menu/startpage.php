@@ -41,18 +41,6 @@ switch ($do) {
             if(notification::has()) {
                 javascript::set('AnchorMove', 'notification-box');
             }
-            
-            $selu = $get['level'] == 1 ? 'selected="selected"' : '';
-            $selt = $get['level'] == 2 ? 'selected="selected"' : '';
-            $selm = $get['level'] == 3 ? 'selected="selected"' : '';
-            $sela = $get['level'] == 4 ? 'selected="selected"' : '';
-            $smarty->caching = false;
-            $smarty->assign('selu',$selu);
-            $smarty->assign('selt',$selt);
-            $smarty->assign('selm',$selm);
-            $smarty->assign('sela',$sela);
-            $elevel = $smarty->fetch('string:'._elevel_startpage_select);
-            $smarty->clearAllAssign();
 
             $errortable='';
             if(!empty($error)) {
@@ -67,7 +55,7 @@ switch ($do) {
             $smarty->assign('do', "edit&amp;id=".$_GET['id']);
             $smarty->assign('name',(isset($_POST['name']) && !empty($_POST['name']) ? $_POST['name'] : stringParser::decode($get['name'])));
             $smarty->assign('url',(isset($_POST['url']) ? $_POST['url'] : stringParser::decode($get['url'])));
-            $smarty->assign('level',$elevel);
+            $smarty->assign('level',common::level_select($get['level']));
             $smarty->assign('what',_button_value_edit);
             $smarty->assign('error',$errortable);
             $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/startpage_form.tpl');
@@ -93,14 +81,6 @@ switch ($do) {
                 javascript::set('AnchorMove', 'notification-box');
             }
 
-            $smarty->caching = false;
-            $smarty->assign('selu','');
-            $smarty->assign('selt','');
-            $smarty->assign('selm','');
-            $smarty->assign('sela','');
-            $elevel = $smarty->fetch('string:'._elevel_startpage_select);
-            $smarty->clearAllAssign();
-
             $errortable='';
             if(!empty($error)) {
                 $smarty->caching = false;
@@ -114,7 +94,7 @@ switch ($do) {
             $smarty->assign('do',"new");
             $smarty->assign('name',(isset($_POST['name']) ? $_POST['name'] : ''));
             $smarty->assign('url',(isset($_POST['url']) ? $_POST['url'] : ''));
-            $smarty->assign('level',$elevel);
+            $smarty->assign('level',common::level_select());
             $smarty->assign('what',_button_value_add);
             $smarty->assign('error',$errortable);
             $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/startpage_form.tpl');

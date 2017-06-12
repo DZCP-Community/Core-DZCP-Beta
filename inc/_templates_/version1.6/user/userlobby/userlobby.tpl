@@ -5,17 +5,17 @@
   <td colspan="2" id="uInfo" class="contentMainSecond">
     <table class="hperc" cellspacing="1">
       <tr>
-        <td style="width:1%">[func_useravatar]</td>
+        <td style="width:1%">{useravatar}</td>
         <td style="width:12px"></td>
         <td>
           <table class="hperc" cellspacing="1">
             <tr>
               <td><span class="fontBold">{lang msgID="user"}:</span></td>
-              <td>[func_autor]</td>
+              <td>{autor}</td>
             </tr>
             <tr>
               <td><span class="fontBold">{lang msgID="admin_user_level"}/{lang msgID="profil_position"}:</span></td>
-              <td>{$mylevel} / [func_getrank]</td>
+              <td>{$mylevel} / {getrank}</td>
             </tr>
             <tr>
               <td>&nbsp;</td>

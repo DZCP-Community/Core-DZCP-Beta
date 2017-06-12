@@ -131,10 +131,6 @@ switch($do) {
                 $delartikelpic = '<a href="?admin=artikel&do=delartikelpic&id='.$_GET['id'].'">'._artikelpic_del.'</a><br /><br />';
             }
         }
-        $smarty->caching = false;
-        $smarty->assign('id', $_GET['id']);
-        $do = $smarty->fetch('string:'._artikel_edit_link);
-        $smarty->clearAllAssign();
 
         $smarty->caching = false;
         $smarty->assign('head',_artikel_edit);
@@ -143,7 +139,7 @@ switch($do) {
         $smarty->assign('nkat',_news_admin_kat);
         $smarty->assign('preview',_preview);
         $smarty->assign('kat',$kat);
-        $smarty->assign('do',$do);
+        $smarty->assign('do','editartikel&amp;id='.$_GET['id']);
         $smarty->assign('ntitel',_titel);
         $smarty->assign('titel',stringParser::decode($get['titel']));
         $smarty->assign('artikeltext',stringParser::decode($get['text']));

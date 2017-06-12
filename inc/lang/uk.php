@@ -437,11 +437,6 @@ define('_config_forum_subkats_add' , '
 define('_msg_answer' , 'Answer');
 define('_user_new_erase' , '<form method="post" action="?action=userlobby"><input type="hidden" name="erase" value="1" /><input id="contentSubmit" type="submit" name="submit" class="submit" value="Mark all as readed" /></form>');
 define('_target' , 'New window');
-define('_profile_add' , '<form action="" method="get" onsubmit="return(DZCP.submitButton())">
-      <input type="hidden" name="admin" value="profile" />
-      <input type="hidden" name="do" value="add" />
-      <input id="contentSubmit" type="submit" class="submit" value="Insert profile field" />
-    </form>');
 define('_config_c_floods_what' , 'Here you can adjust the time in secontds which a user have to wait<br />to write something new in this area');
 
 ## ADDED FOR 1.4.3
@@ -1424,7 +1419,6 @@ define('_clear_deleted' , 'The database was successfully cleared up!');
 define('_clear_error_days' , 'You have to indicate the days when something is supposed to be deleted!');
 define('_error_unregistered' , 'You have to be registered to use this function!');
 define('_seiten' , 'Site:');
-define('_head_waehrung' , 'Currency');
 define('_admin_artikel_add' , '<a href="?admin=artikel&amp;do=add">insert article</a>');
 define('_artikel_add' , 'Insert article');
 define('_artikel_added' , 'The article was successfully registered');
@@ -1442,39 +1436,6 @@ define('_off' , 'off');
 define('_config_lreg' , 'Menu: Last reg. user');
 define('_config_mailfrom' , 'Email mailfrom');
 define('_config_mailfrom_info' , 'This email address will be used for sent emails like newsletter, registration, etc!');
-define('_profile_del_confirm' , 'Caution! All user`s entrys for this field will be lost. Do you really want to delete this field?');
-define('_profile_about' , 'About me');
-define('_profile_contact' , 'Contact');
-define('_profile_favos' , 'Favorites');
-define('_profile_hardware' , 'Hardware');
-define('_profile_name' , 'Field`s name');
-define('_profile_type' , 'Field`s type');
-define('_profile_kat' , 'Category');
-define('_profile_head' , 'Profile field administration');
-define('_profile_edit_head' , 'Edit profile field');
-define('_profile_shown' , 'Visible');
-
-define('_profile_shown_dropdown' , '
-<option value="1">Show</option>
-<option value="2">Hide</option>');
-
-define('_profile_kat_dropdown' , '
-<option value="1">About me</option>
-<option value="2">Clan</option>
-<option value="3">Contact</option>
-<option value="4">Favorites</option>
-<option value="5">Hardware</option>');
-
-define('_profile_type_dropdown' , '
-<option value="1">Textfield</option>
-<option value="2">URL</option>
-<option value="3">Email-Adresse</option>');
-
-define('_profile_add_head' , 'Insert profile field');
-define('_profile_added' , 'The profile field was successfully registered!');
-define('_profil_no_name' , 'You have to indicate the field`s name!');
-define('_profil_deleted' , 'The profile field was successfully deleted!');
-define('_profile_edited' , 'The profile field was successfully edited!');
 
 ## Misc ##
 define('_error_have_to_be_logged' , 'You havet to be logged in to use this feature!');

@@ -32,7 +32,9 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                         } else {
                             if (!common::ipcheck("artid(" . $_GET['id'] . ")", settings::get('f_artikelcom'))) {
                                 if (empty($_POST['comment'])) {
-                                    javascript::set('AnchorMove', 'startpage');
+                                    if(notification::has()) {
+                                        javascript::set('AnchorMove', 'startpage');
+                                    }
                                     if (empty($_POST['eintrag'])) {
                                         notification::add_error(_empty_eintrag,'artikel');
                                     }
@@ -41,7 +43,9 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                                     [$artikel_id,time(),(isset($_POST['nick']) && !common::$userid ? stringParser::encode($_POST['nick']) : common::data('nick')),(isset($_POST['email']) && !common::$userid ? stringParser::encode($_POST['email']) : common::data('email')),
                                     (isset($_POST['hp']) && !common::$userid ? stringParser::encode(common::links($_POST['hp'])) : stringParser::encode(common::links(stringParser::decode(common::data('hp'))))),(int)(common::$userid),stringParser::encode($_POST['comment']),common::$userip]);
                                     common::setIpcheck("artid(" . $artikel_id . ")");
-                                    javascript::set('AnchorMove', 'notification-box');
+                                    if(notification::has()) {
+                                        javascript::set('AnchorMove', 'notification-box');
+                                    }
                                     $_POST = []; //Clear Post
                                     notification::add_success(_comment_added);
                                 }
@@ -59,7 +63,9 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                     }
                     break;
                 case 'delete':
-                    javascript::set('AnchorMove', 'notification-box');
+                    if(notification::has()) {
+                        javascript::set('AnchorMove', 'notification-box');
+                    }
                     $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_acomments}` WHERE `id` = ?;", [($cid = (int)($_GET['cid']))],'reg');
                     if ($reg == common::$userid || common::permission('artikel')) {
                         common::$sql['default']->delete("DELETE FROM `{prefix_acomments}` WHERE `id` = ?;", [$cid]);
@@ -69,7 +75,9 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                     }
                     break;
                 case 'editcom':
-                    javascript::set('AnchorMove', 'notification-box');
+                    if(notification::has()) {
+                        javascript::set('AnchorMove', 'notification-box');
+                    }
                     $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_acomments}` WHERE `id` = ?;", [($cid = (int)($_GET['cid']))],'reg');
                     if (common::$sql['default']->rowCount() && !empty($_POST['comment'])) {
                         if ($reg == common::$userid || common::permission('artikel')) {
@@ -99,7 +107,9 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                 case 'edit':
                     $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`comment` FROM `{prefix_acomments}` WHERE `id` = ?;", [(int)($_GET['cid'])]);
                     if (common::$userid >= 1 && ($get['reg'] == common::$userid || common::permission('artikel'))) {
-                        javascript::set('AnchorMove', 'comForm');
+                        if(notification::has()) {
+                            javascript::set('AnchorMove', 'comForm');
+                        }
 
                         $smarty->caching = false;
                         $smarty->assign('nick',common::autor($get['reg']));
@@ -111,7 +121,9 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                         $add = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/comments_edit.tpl');
                         $smarty->clearAllAssign();
                     } else {
-                        javascript::set('AnchorMove', 'notification-box');
+                        if(notification::has()) {
+                            javascript::set('AnchorMove', 'notification-box');
+                        }
                         notification::add_error(_error_edit_post,'artikel');
                     }
                     break;

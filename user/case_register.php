@@ -72,7 +72,9 @@ if(defined('_UserMenu')) {
                     notification::add_error(_error_user_exists);
                 }
 
-                javascript::set('AnchorMove', 'notification-box');
+                if(notification::has()) {
+                    javascript::set('AnchorMove', 'notification-box');
+                }
             } else {
                 if(empty($_POST['pwd'])) {
                     $mkpwd = common::mkpwd();

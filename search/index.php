@@ -205,9 +205,6 @@ default:
             if($get['sticky'] == 1) $sticky = _forum_sticky;
             else $sticky = "";
 
-            if($get['closed'] == 1) $closed = _closedicon;
-            else $closed = "";
-
             $cntpage = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[$get['id']]);
             if($cntpage == 0) $pagenr = 1;
             else $pagenr = ceil($cntpage/settings::get('m_ftopics'));
@@ -240,7 +237,7 @@ default:
               $smarty->assign('id',$get['id']);
               $smarty->assign('sticky',$sticky);
               $smarty->assign('hl',$_GET['search']);
-              $smarty->assign('closed',$closed);
+              $smarty->assign('closed',$get['closed']);
               $smarty->assign('lpid',$cntpage+1);
               $smarty->assign('page',$pagenr);
               $threadlink = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_thread_search_link.tpl');

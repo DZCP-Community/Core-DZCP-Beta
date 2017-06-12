@@ -89,9 +89,9 @@ if(defined('_Artikel')) {
     $smarty->caching = false;
     $smarty->assign('titel',$titel);
     $smarty->assign('comment',bbcode_base::parse_html((string)$_POST['comment']));
-    $smarty->assign('nick',bbcode_base::parse_html((string)$editedby));
-    $smarty->assign('editby',$email);
-    $smarty->assign('email',$hp);
+    $smarty->assign('nick',common::autor($get_userid));
+    $smarty->assign('editby',bbcode_base::parse_html((string)$editedby));
+    $smarty->assign('email',$email);
     $smarty->assign('hp',$hp);
     $smarty->assign('avatar',common::useravatar($get_userid));
     $smarty->assign('onoff',$onoff);

@@ -375,7 +375,7 @@ class common {
             unset($get_sb,$get_sb_array);
         }
 
-//-> Templateswitch
+        //-> Templateswitch
         $files = self::get_files(basePath.'/inc/_templates_/',true);
         if(isset($_GET['tmpl_set'])) {
             foreach ($files as $templ) {
@@ -423,7 +423,7 @@ class common {
     public static function getSmarty(bool $new_instance = false) {
         if($new_instance) {
             $smarty = new Smarty;
-            $smarty->force_compile = true;
+            $smarty->force_compile = false;
             $smarty->debugging = false;
             $smarty->caching = false;
             $smarty->cache_lifetime = 120;
@@ -480,7 +480,8 @@ class common {
             }
         }
 
-        $nickname = (!empty($cut)) ? self::cut(stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick')), $cut) :stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick'));
+        $nickname = (!empty($cut)) ? self::cut(stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick')), $cut) :
+            stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick'));
 
         $smarty->caching = false;
         $smarty->assign('id',$uid);
@@ -2667,7 +2668,22 @@ class common {
      * @return string
      */
     public static function wrap(string $str,int $width = 75,string $break = "\n",bool $cut = true) {
-        return strtr(str_replace(htmlentities($break), $break, htmlentities(wordwrap(html_entity_decode($str), $width, $break, $cut), ENT_QUOTES)), array_flip(get_html_translation_table(HTML_SPECIALCHARS, ENT_COMPAT)));
+        return strtr(str_replace(htmlentities($break), $break, htmlentities(wordwrap(html_entity_decode($str), $width, $break, $cut), ENT_QUOTES)),
+            array_flip(get_html_translation_table(HTML_SPECIALCHARS, ENT_COMPAT)));
+    }
+
+    /**
+     * @param int $level
+     * @return string
+     */
+    public static function level_select(int $level = 1) {
+        $elevel = '';
+        $levels = [1 => _status_user, 2 => _status_trial, 3 => _status_member, 4 => _status_admin];
+        foreach ($levels as $id => $var) {
+            $elevel .= self::select_field($id, ($level == $id),$var);
+        }
+
+        return $elevel;
     }
 
     /**

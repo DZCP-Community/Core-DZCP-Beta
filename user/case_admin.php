@@ -17,7 +17,7 @@
 
 if(defined('_UserMenu')) {
     if (!common::permission("editusers")) {
-        $index = common::error(_error_wrong_permissions, 1);
+        $index = common::error(_error_wrong_permissions);
     } elseif (isset($_GET['edit']) && $_GET['edit'] == common::$userid) {
         $qrySquads = common::$sql['default']->select("SELECT `id`,`name` FROM `{prefix_groups}` ORDER BY `id`;");
         $esquads = '';
@@ -163,7 +163,7 @@ if(defined('_UserMenu')) {
             common::$sql['default']->delete("DELETE FROM `{prefix_groupuser}` WHERE `user` = ?;",array(common::$userid));
             common::$sql['default']->delete("DELETE FROM `{prefix_userposis}` WHERE `user` = ?;",array(common::$userid));
 
-            $squads = $sql->select("SELECT `id` FROM `{prefix_groups}`;");
+            $squads = common::$sql['default']->select("SELECT `id` FROM `{prefix_groups}`;");
             foreach($squads as $getsq) {
                 if (isset($_POST['squad' . $getsq['id']])) {
                     common::$sql['default']->insert("INSERT INTO `{prefix_groupuser}` SET `user`  = ?, `group` = ?;",

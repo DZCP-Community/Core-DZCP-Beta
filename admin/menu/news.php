@@ -79,16 +79,11 @@ switch($do) {
         $smarty->clearAllAssign();
 
         $smarty->caching = false;
-        $smarty->assign('id',$_GET['id']);
-        $do = $smarty->fetch('string:'._config_newskats_editid);
-        $smarty->clearAllAssign();
-
-        $smarty->caching = false;
         $smarty->assign('head',_config_newskats_edit_head);
         $smarty->assign('kat',stringParser::decode($get['kategorie']));
         $smarty->assign('value',_button_value_edit);
         $smarty->assign('id',(int)($_GET['id']));
-        $smarty->assign('do',$do);
+        $smarty->assign('do','editnewskat&amp;id='.$_GET['id']);
         $smarty->assign('upload',$upload);
         $smarty->assign('img',$img);
         $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/newskatform.tpl');

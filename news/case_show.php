@@ -32,7 +32,9 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                         } else {
                             if (!common::ipcheck("ncid(" . $news_id . ")", settings::get('f_newscom'))) {
                                 if (empty($_POST['comment'])) {
-                                    javascript::set('AnchorMove', 'comForm');
+                                    if(notification::has()) {
+                                        javascript::set('AnchorMove', 'comForm');
+                                    }
                                     if (empty($_POST['eintrag'])) {
                                         notification::add_error(_empty_eintrag,'news_tr');
                                     }
@@ -42,7 +44,9 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                                         (isset($_POST['hp']) && !common::$userid ? common::links($_POST['hp']) : common::links(common::data('hp'))),
                                         (int)(common::$userid),stringParser::encode($_POST['comment']),common::$userip]);
                                     common::setIpcheck("ncid(" . $news_id . ")");
-                                    javascript::set('AnchorMove', 'notification-box');
+                                    if(notification::has()) {
+                                        javascript::set('AnchorMove', 'notification-box');
+                                    }
                                     $_POST = []; //Clear Post
                                     notification::add_success(_comment_added,'news');
                                 }
@@ -60,7 +64,9 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                     }
                     break;
                 case 'delete':
-                    javascript::set('AnchorMove', 'notification-box');
+                    if(notification::has()) {
+                        javascript::set('AnchorMove', 'notification-box');
+                    }
                     $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_newscomments}` WHERE `id` = ?;", [($cid = (int)($_GET['cid']))],'reg');
                     if (common::$userid >= 1 && ($reg == common::$userid || common::permission('news'))) {
                         common::$sql['default']->delete("DELETE FROM `{prefix_newscomments}` WHERE `id` = ?;", [$cid]);
@@ -70,7 +76,9 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                     }
                     break;
                 case 'editcom':
-                    javascript::set('AnchorMove', 'notification-box');
+                    if(notification::has()) {
+                        javascript::set('AnchorMove', 'notification-box');
+                    }
                     $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_newscomments}` WHERE `id` = ?;", [($cid = (int)($_GET['cid']))],'reg');
                     if (common::$sql['default']->rowCount() && !empty($_POST['comment'])) {
                         if (common::$userid >= 1 && ($reg == common::$userid || common::permission('news'))) {
@@ -100,7 +108,9 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                 case 'edit':
                     $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`comment` FROM `{prefix_newscomments}` WHERE `id` = ?;", [(int)($_GET['cid'])]);
                     if (common::$userid >= 1 && ($get['reg'] == common::$userid || common::permission('news'))) {
-                        javascript::set('AnchorMove', 'comForm');
+                        if(notification::has()) {
+                            javascript::set('AnchorMove', 'comForm');
+                        }
 
                         $smarty->caching = false;
                         $smarty->assign('nick',common::autor($get['reg']));
@@ -112,7 +122,9 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                         $add = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/comments_edit.tpl');
                         $smarty->clearAllAssign();
                     } else {
-                        javascript::set('AnchorMove', 'notification-box');
+                        if(notification::has()) {
+                            javascript::set('AnchorMove', 'notification-box');
+                        }
                         notification::add_error(_error_edit_post,'news');
                     }
 

@@ -292,7 +292,7 @@ define('_menukat_updated', 'Die Menu Kategorie wurde erfolgreich editiert!');
 define('_menukat_inserted', 'Die Menu Kategorie wurde erfolgreich hinzugef&uuml;gt!');
 define('_menukat_deleted', 'Die Menu Kategorie wurde erfolgreich gel&ouml;scht!');
 define('_menu_visible', 'sichtbar f&uuml;r Status');
-define('_menu_kat_info', 'Die CSS-Klassen f&uuml;r die Links werden automatisch vom Template Platzhalter abgeleitet.<br />z.B. f&uuml;r den Platzhalter <i>[nav_main]</i> lautet die CSS-Klasse <i>a.navMain</i>');
+define('_menu_kat_info', 'Die CSS-Klassen f&uuml;r die Links werden automatisch vom Template Platzhalter abgeleitet.<br />z.B. f&uuml;r den Platzhalter <i>{nav_main}</i> lautet die CSS-Klasse <i>a.navMain</i>');
 define('_admin_sqauds_roster', 'Team-Roster');
 define('_admin_squads_nav_info', 'Hiermit wird ein Direktlink in die Navigation gesetzt, welcher zur Vollansicht des Teams f&uuml;hrt.');
 define('_admin_squads_teams', 'Team-Show');
@@ -372,7 +372,7 @@ define('_msg_leader', "Squad-Leader");
 define('_pos_nletter', 'Diese Position in Newsletter an Squadleader und Co-Leader mit einbeziehen');
 define('_pwd2', 'Passwort wiederhohlen');
 define('_wrong_pwd', 'Die eingegebenen Passw&ouml;rter stimmen nicht &uuml;berein');
-define('_info_reg_valid_pwd', 'Du hast dich erfolgreich registriert und kannst dich nun mit deinen Zugangsdaten einloggen!<br /><br />Deine Zugangsdaten wurden dir zur Sicherheit noch an die Emailadresse [email] gesendet.');
+define('_info_reg_valid_pwd', 'Du hast dich erfolgreich registriert und kannst dich nun mit deinen Zugangsdaten einloggen!<br /><br />Deine Zugangsdaten wurden dir zur Sicherheit noch an die Emailadresse {$email} gesendet.');
 define('_profil_pnmail', 'Email bei neuen Nachrichten');
 define('_admin_pn_subj', 'Betreff: PN-Email');
 define('_admin_pn', 'PN-Email Template');
@@ -399,17 +399,12 @@ define('_config_forum_subkats_add', '
     <form action="" method="get" onsubmit="DZCP.submitButton()">
       <input type="hidden" name="admin" value="forum" />
       <input type="hidden" name="do" value="newskat" />
-      <input type="hidden" name="id" value="[id]" />
+      <input type="hidden" name="id" value="{$id}" />
       <input id="contentSubmit" type="submit" class="submit" value="Neue Unterkategorie hinzuf&uuml;gen" />
     </form>
 ');
 define('_msg_answer', 'Antworten');
 define('_user_new_erase', '<form method="post" action="?action=userlobby"><input type="hidden" name="erase" value="1" /><input id="contentSubmit" type="submit" name="submit" class="submit" value="tempor&auml;re Neuerungen l&ouml;schen" /></form>');
-define('_profile_add', '<form action="" method="get" onsubmit="return(DZCP.submitButton())">
-      <input type="hidden" name="admin" value="profile" />
-      <input type="hidden" name="do" value="add" />
-      <input id="contentSubmit" type="submit" class="submit" value="Neues Profilfeld hinzuf&uuml;gen" />
-    </form>');
 define('_admin_reg_info', 'Hier kannst du einstellen, ob sich jemand f&uuml;r einen der Bereiche registrieren muss um dort etwas tun zu k&ouml;nnen (Beitr&auml;ge schreiben, einen Download herunterladen, etc)');
 define('_config_c_floods_what', 'Hier kannst du die Zeit in Sekunden einstellen die ein User warten muss, bis er im jeweiligen Bereich was neues posten darf');
 
@@ -475,7 +470,7 @@ define('_show_who_voted', 'Zeige User, die bereits abgestimmt haben');
 define('_no_live_status', 'Keine Liveabfrage');
 define('_comment_edited', 'Der Kommentar wurde erfolgreich editiert!');
 define('_comments_edit', 'Kommentar editieren');
-define('_forum_post_where_preview', '<a href="javascript:void(0)">[mainkat]</a> <span class="fontBold">Forum:</span> <a href="javascript:void(0)">[wherekat]</a> <span class="fontBold">Thema:</span> <a href="javascript:void(0)">[wherepost]</a>');
+define('_forum_post_where_preview', '<a href="javascript:void(0)">{$mainkat}</a> <span class="fontBold">Forum:</span> <a href="javascript:void(0)">{$wherekat}</a> <span class="fontBold">Thema:</span> <a href="javascript:void(0)">{$wherepost}</a>');
 define('_aktiv_icon', '<img src="../inc/images/active.gif" alt="" class="icon" />');
 define('_inaktiv_icon', '<img src="../inc/images/inactive.gif" alt="" class="icon" />');
 define('_pn_write_forum', '<a href="../user/?action=msg&amp;do=pn&amp;id={$id}"><img src="{idir}/forum_pn.gif" alt="" title="{$nick} eine Nachricht schreiben" class="icon" /></a>');
@@ -559,7 +554,7 @@ define('_profil_sig', 'Foren Signatur');
 define('_akt_version', 'DZCP Version');
 define('_forum_searchlink', '- <a href="../search/">Forensuche</a> -');
 define('_msg_deleted', 'Die Nachricht wurde erfolgreich gel&ouml;scht!');
-define('_info_reg_valid', 'Du hast dich erfolgreich registriert!<br />Dein Passwort wurde dir an die Emailadresse [email] gesendet.');
+define('_info_reg_valid', 'Du hast dich erfolgreich registriert!<br />Dein Passwort wurde dir an die Emailadresse {$email} gesendet.');
 define('_edited_by', '<br /><br /><i>zuletzt editiert von {$autor} am {$time} &nbsp;Uhr</i>');
 define('_linkus_empty_text', 'Du musst eine Banner-URL angeben!');
 define('_empty_news_title', 'Du musst einen Newstitel angeben!');
@@ -838,8 +833,8 @@ define('_forum_lpost', 'Letzter Beitrag');
 define('_forum_threads', 'Themen');
 define('_forum_thread', 'Thema');
 define('_forum_posts', 'Beitr&auml;ge');
-define('_forum_cnt_threads', '<span class="fontBold">Anzahl der Themen:</span> [threads]');
-define('_forum_cnt_posts', '<span class="fontBold">Anzahl der Posts:</span> [posts]');
+define('_forum_cnt_threads', '<span class="fontBold">Anzahl der Themen:</span> {$threads}');
+define('_forum_cnt_posts', '<span class="fontBold">Anzahl der Posts:</span> {$posts}');
 define('_forum_admin_head', 'Admin');
 define('_forum_admin_addsticky', 'als <span class="fontWichtig">wichtig</span> markieren?');
 define('_forum_katname_intern', '<span class="fontWichtig">Intern:</span> {$katname}');
@@ -1431,7 +1426,6 @@ define('_clear_deleted', 'Es wurden {$deleted} Eintr&auml;ge gel&ouml;scht!');
 define('_clear_error_days', 'Du musst die Tage angeben, ab wann etwas gel&ouml;scht werden soll!');
 define('_error_unregistered', 'Du musst registriert sein um diese Funktion Nutzen zu k&ouml;nnen!');
 define('_seiten', 'Seite:');
-define('_head_waehrung', 'W&auml;hrung');
 define('_admin_artikel_add', '<a href="?admin=artikel&amp;do=add">Artikel hinzuf&uuml;gen</a>');
 define('_artikel_add', 'Artikel hinzuf&uuml;gen');
 define('_artikel_added', 'Der Artikel wurde erfolgreich hinzugef&uuml;gt');
@@ -1449,39 +1443,6 @@ define('_off', 'ausgeschaltet');
 define('_config_lreg', 'Men&uuml;: Last reg. User');
 define('_config_mailfrom', 'E-Mail Absender');
 define('_config_mailfrom_info', 'Diese Emailadresse wird bei versendeten Emails wie Newsletter, Registrierung, etc als Absender angezeigt!');
-define('_profile_del_confirm', 'Achtung, es gehen alle Usereingaben f&uuml;r dieses Feld verloren. Willst du es wirklich l&ouml;schen?');
-define('_profile_about', '&Uuml;ber mich');
-define('_profile_contact', 'Kontakt');
-define('_profile_favos', 'Favoriten');
-define('_profile_hardware', 'Hardware');
-define('_profile_name', 'Feldname');
-define('_profile_type', 'Feldtyp');
-define('_profile_kat', 'Kategorie');
-define('_profile_head', 'Profilfelderverwaltung');
-define('_profile_edit_head', 'Profilfeld editieren');
-define('_profile_shown', 'Sichtbar');
-
-define('_profile_shown_dropdown','
-<option value="1">Zeigen</option>
-<option value="2">Verstecken</option>');
-
-define('_profile_kat_dropdown', '
-<option value="1">&Uuml;ber mich</option>
-<option value="2">Clan</option>
-<option value="3">Kontakt</option>
-<option value="4">Favoriten</option>
-<option value="5">Hardware</option>');
-
-define('_profile_type_dropdown', '
-<option value="1">Textfeld</option>
-<option value="2">URL</option>
-<option value="3">Email-Adresse</option>');
-
-define('_profile_add_head', 'Profilfeld hinzuf&uuml;gen');
-define('_profile_added', 'Das Profilfeld wurde erfolgreich hinzugef&uuml;gt!');
-define('_profil_no_name', 'Du musst einen Feldnamen angeben!');
-define('_profil_deleted', 'Das Profilfeld wurde erfolgreich gel&ouml;scht!');
-define('_profile_edited', 'Das Profilfeld wurde erfolgreich editiert!');
 
 ## Misc ##
 define('_error_have_to_be_logged', 'Du musst eingeloggt sein um diese Funktion Nutzen zu k&ouml;nnen!');

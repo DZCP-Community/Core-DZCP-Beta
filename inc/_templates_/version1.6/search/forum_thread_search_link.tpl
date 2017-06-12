@@ -1,1 +1,1 @@
-{$sticky} <a href="../forum/?action=showthread&amp;id={$id}&amp;hl={$hl}">{$topic}</a> {$closed}
+{$sticky} <a href="../forum/?action=showthread&amp;id={$id}&amp;hl={$hl}">{$topic}</a> {if $closed}<img src="../inc/images/closed.png" alt="" class="icon" />{/if}

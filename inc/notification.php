@@ -71,6 +71,10 @@ class notification {
         return self::$notification_success;
     }
 
+    public static function has() {
+        return (count(self::$notification_index) >= 1);
+    }
+
     //Private
     private static function import($status, $msg, $link, $time, $index) {
         $data = array('status' => strtolower($status), 'msg' => $msg, 'link' => $link, 'time' => $time);

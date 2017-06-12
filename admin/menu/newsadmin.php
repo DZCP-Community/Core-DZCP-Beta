@@ -31,8 +31,10 @@ switch ($do) {
                 if(empty($_POST['titel'])) {
                     notification::add_error(_empty_news_title);
                 }
-                
-                javascript::set('AnchorMove', 'notification-box');
+
+                if(notification::has()) {
+                    javascript::set('AnchorMove', 'notification-box');
+                }
             } else {
                 $timeshift = ''; $public = ''; $datum = ''; $params = array();
                 $stickytime = isset($_POST['sticky']) ? mktime($_POST['h'],$_POST['min'],0,$_POST['m'],$_POST['t'],$_POST['j']) : '0';
@@ -83,11 +85,15 @@ switch ($do) {
                 }
 
                 if(!$picUploadError) {
-                    javascript::set('AnchorMove', 'notification-box');
+                    if(notification::has()) {
+                        javascript::set('AnchorMove', 'notification-box');
+                    }
                     notification::add_success(_news_sended, "?admin=newsadmin",2);
                     $saved = true;
                 } else {
-                    javascript::set('AnchorMove', 'notification-box');
+                    if(notification::has()) {
+                        javascript::set('AnchorMove', 'notification-box');
+                    }
                 }
             }
         }
@@ -167,8 +173,10 @@ switch ($do) {
                 if(empty($_POST['titel'])) {
                     notification::add_error(_empty_news_title);
                 }
-                
-                javascript::set('AnchorMove', 'notification-box');
+
+                if(notification::has()) {
+                    javascript::set('AnchorMove', 'notification-box');
+                }
             } else {
                 $timeshift = ''; $public = ''; $datum = ''; $params = array();
                 $stickytime = isset($_POST['sticky']) ? mktime($_POST['h'],$_POST['min'],0,$_POST['m'],$_POST['t'],$_POST['j']) : '0';
@@ -249,11 +257,15 @@ switch ($do) {
                         WHERE id = ".$get['id'].";");
                     
                     $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_news}` WHERE id = ".$get['id'].";");
-                    javascript::set('AnchorMove', 'notification-box');
+                    if(notification::has()) {
+                        javascript::set('AnchorMove', 'notification-box');
+                    }
                     notification::add_success(_news_edited, "?admin=newsadmin",2);
                     $saved = true;
                 } else {
-                    javascript::set('AnchorMove', 'notification-box');
+                    if(notification::has()) {
+                        javascript::set('AnchorMove', 'notification-box');
+                    }
                 }
             }
         }
