@@ -2277,6 +2277,7 @@ class common {
      */
     public static function permission(string $check,int $uid=0) {
         //TODO: Add Live Cache
+        //TODO: Check and create new permission key when keyis missing
         if (!$uid) { $uid = self::$userid; }
         if(self::rootAdmin($uid))
             return true;
