@@ -19,7 +19,7 @@ function smarty_function_templateswitch($params, &$smarty) {
     $tmpldir="";
     $tmps = common::get_files(basePath.'/inc/_templates_/',true);
     foreach ($tmps as $tmp) {
-        if(file_exists(basePath.'/inc/_templates_/'.$tmp.'/template.xml')) {
+        if(file_exists(basePath.'/inc/_templates_/'.$tmp.'/template.xml')) { //TODO: Add xml to Memcache
             $xml = simplexml_load_file(basePath.'/inc/_templates_/'.$tmp.'/template.xml');
             if(!empty((string)$xml->permissions)) {
                 if(common::permission((string)$xml->permissions) || ((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level)) {

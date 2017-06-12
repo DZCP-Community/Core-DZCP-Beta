@@ -394,7 +394,7 @@ class common {
      * Setzt das aktive Template
      */
     private static function sysTemplateswitch() {
-        //-> Templateswitch
+        //TODO: Add xml to Memcache
         $files = self::get_files(basePath.'/inc/_templates_/',true);
         if(isset($_GET['tmpl_set'])) {
             foreach ($files as $templ) {
@@ -1442,6 +1442,7 @@ class common {
      * @return array
      */
     public static function get_files(string $dir=null, bool $only_dir=false, bool $only_files=false, array $file_ext= [], bool $preg_match=false, array $blacklist= [], bool $blacklist_word=false) {
+        //TODO: Add List to Memcache
         $files = [];
         if(!file_exists($dir) && !is_dir($dir)) return $files;
         if($handle = @opendir($dir)) {
