@@ -17,6 +17,10 @@
 
 setlocale(LC_ALL, "de_DE.utf8");
 
+## DEV ##
+define('_config_test_menu_addon','Test in Addons Menu');
+define('_config_test_menu_template','Test in Template Menu');
+
 ## Allgemein ##
 define('_error_no_html5_vid' , 'Ihr Browser unterst&uuml;tzt das Video-Tag nicht.');
 define('_button_title_del', 'L&ouml;schen');
@@ -46,6 +50,7 @@ define('_comments_head', 'Kommentare');
 define('_click_close', 'schlie&szlig;en');
 define('_lang_de', 'Deutsch');
 define('_lang_uk', 'Englisch');
+define('_template', 'Design');
 
 ## Lost Password ##
 define('_admin_lpwd_subj', 'Betreff: Passwort zur&uuml;cksetzen');

@@ -17,6 +17,10 @@
 
 setlocale(LC_ALL, "en_US.utf8");
 
+## DEV ##
+define('_config_test_menu_addon','Test in Addons Menu');
+define('_config_test_menu_template','Test in Template Menu');
+
 ## Allgemein ##
 define('_error_no_html5_vid' , 'Your browser does not support the video tag.');
 define('_button_title_del' , 'Delete');
@@ -46,6 +50,7 @@ define('_comments_head' , 'Comments');
 define('_click_close' , 'close');
 define('_lang_de', 'German');
 define('_lang_uk', 'English');
+define('_template', 'Template');
 
 ## Lost Password ##
 define('_admin_lpwd_subj', 'Subject: Reset password');

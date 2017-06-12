@@ -28,6 +28,7 @@ $dir = "admin";
 $rootmenu = null;
 $settingsmenu = null;
 $contentmenu = null;
+$templatemenu = null;
 $addonsmenu = null;
 $amenu = [];
 $smarty = common::getSmarty(); //Use Smarty
@@ -122,6 +123,13 @@ if (!isset($_SESSION['id']) || empty($_SESSION['id']) || !common::admin_perms($_
         $cdminc2 = '*/';
     }
 
+    $template1 = '';
+    $template2 = '';
+    if (empty($templatemenu)) {
+        $template1 = '/*';
+        $template2 = '*/';
+    }
+
     $addons1 = '';
     $addons2 = '';
     if (empty($addonsmenu)) {
@@ -140,12 +148,15 @@ if (!isset($_SESSION['id']) || empty($_SESSION['id']) || !common::admin_perms($_
     $smarty->assign('settingsmenu',$settingsmenu);
     $smarty->assign('contentmenu',$contentmenu);
     $smarty->assign('addonsmenu',$addonsmenu);
+    $smarty->assign('templatemenu',$templatemenu);
     $smarty->assign('radmin1',$radmin1);
     $smarty->assign('radmin2',$radmin2);
     $smarty->assign('adminc1',$adminc1);
     $smarty->assign('adminc2',$adminc2);
     $smarty->assign('cdminc1',$cdminc1);
     $smarty->assign('cdminc2',$cdminc2);
+    $smarty->assign('template1',$template1);
+    $smarty->assign('template2',$template2);
     $smarty->assign('addons1',$addons1);
     $smarty->assign('addons2',$addons2);
     $smarty->assign('show',$show);

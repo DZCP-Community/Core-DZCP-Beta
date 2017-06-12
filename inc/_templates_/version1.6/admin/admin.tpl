@@ -30,6 +30,11 @@
           {$contentmenu}
         ],
           {$cdminc2}
+          {$template1}
+        ['{lang msgID="template"}',null,null,
+          {$templatemenu}
+        ],
+          {$template2}
           {$addons1}
         ['{lang msgID="addons"}',null,null,
             {$addonsmenu}
