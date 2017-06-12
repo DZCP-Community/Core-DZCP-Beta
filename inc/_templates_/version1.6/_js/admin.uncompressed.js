@@ -4,7 +4,7 @@
 */
 
 var POS = [{
-	'height': 20,
+	'height': 21,
 	'width': 110,
 	'block_top': 0,
 	'block_left': 0,
