@@ -129,55 +129,55 @@ class Cache extends CacheManager
     }
 
     //Public
-    public function FileGet($key) {
+    public function FileGet(string $key) {
         return $this->Get('file',$key);
     }
 
-    public function FileExists($key) {
+    public function FileExists(string $key) {
         return $this->Exists('file',$key);
     }
 
-    public function FileSet($key,$var,$ttl=600) {
+    public function FileSet(string $key,$var,int $ttl=600) {
         return $this->Set('file',$key,$var,$ttl);
     }
 
-    public function FileDelete($key) {
+    public function FileDelete(string $key) {
         return $this->Delete('file',$key);
     }
 
-    public function MemGet($key) {
+    public function MemGet(string $key) {
         return $this->Get('memory',$key);
     }
 
-    public function MemExists($key) {
+    public function MemExists(string $key) {
         return $this->Exists('memory',$key);
     }
 
-    public function MemSet($key,$var,$ttl=600) {
+    public function MemSet(string $key,$var,int $ttl=600) {
         return $this->Set('memory',$key,$var,$ttl);
     }
 
-    public function MemDelete($key) {
+    public function MemDelete(string $key) {
         return $this->Delete('memory',$key);
     }
 
-    public function NetGet($key) {
+    public function NetGet(string $key) {
         return $this->Get('net',$key);
     }
 
-    public function NetExists($key) {
+    public function NetExists(string $key) {
         return $this->Exists('net',$key);
     }
 
-    public function NetSet($key,$var,$ttl=600) {
+    public function NetSet(string $key,$var,int $ttl=600) {
         return $this->Set('net',$key,$var,$ttl);
     }
 
-    public function NetDelete($key) {
+    public function NetDelete(string $key) {
         return $this->Delete('net',$key);
     }
 
-    public function AutoMemGet($key) {
+    public function AutoMemGet(string $key) {
         if($this->cache_index['net'] != null) {
             return $this->Get('net',$key);
         }
@@ -185,7 +185,7 @@ class Cache extends CacheManager
         return $this->Get('memory',$key);
     }
 
-    public function AutoMemExists($key) {
+    public function AutoMemExists(string $key) {
         if($this->cache_index['net'] != null) {
             return $this->Exists('net', $key);
         }
@@ -193,7 +193,7 @@ class Cache extends CacheManager
         return $this->Exists('memory', $key);
     }
 
-    public function AutoMemSet($key,$var,$ttl=600) {
+    public function AutoMemSet(string $key,$var,int $ttl=600) {
         if($this->cache_index['net'] != null) {
             return $this->Set('net',$key,$var,$ttl);
         }
@@ -201,7 +201,7 @@ class Cache extends CacheManager
         return $this->Set('memory',$key,$var,$ttl);
     }
 
-    public function AutoDelete($key) {
+    public function AutoDelete(string $key) {
         if($this->cache_index['net'] != null) {
             return $this->Delete('net', $key);
         }

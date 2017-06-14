@@ -976,25 +976,32 @@ class common {
      * @return mixed|string
      */
     public static function userpic(int $userid,int $width=170,int $height=210) {
-        /* TODO: Use PHPFastCache */
-        $smarty = self::getSmarty(true);
-        foreach(["jpg", "gif", "png"] as $endung) {
-            if (file_exists(basePath . "/inc/images/uploads/userpics/" . $userid . "." . $endung)) {
-                $smarty->caching = false;
-                $smarty->assign('id',$userid);
-                $smarty->assign('endung',$endung);
-                $smarty->assign('width',$width);
-                $smarty->assign('height',$height);
-                $pic = $smarty->fetch('file:['.common::$tmpdir.']page/userpic_link.tpl');
-                $smarty->clearAllAssign();
-                break;
-            } else {
-                $smarty->caching = false;
-                $smarty->assign('width',$width);
-                $smarty->assign('height',$height);
-                $pic = $smarty->fetch('file:['.common::$tmpdir.']page/no_userpic.tpl');
-                $smarty->clearAllAssign();
+        $cache_hash = md5($userid,$width,$height);
+        if(self::$cache->MemExists($cache_hash) || !config::$use_system_cache) {
+            $smarty = self::getSmarty(true);
+            foreach (["jpg", "gif", "png"] as $endung) {
+                if (file_exists(basePath . "/inc/images/uploads/userpics/" . $userid . "." . $endung)) {
+                    $smarty->caching = false;
+                    $smarty->assign('id', $userid);
+                    $smarty->assign('endung', $endung);
+                    $smarty->assign('width', $width);
+                    $smarty->assign('height', $height);
+                    $pic = $smarty->fetch('file:[' . common::$tmpdir . ']page/userpic_link.tpl');
+                    if(config::$use_system_cache) {
+                        self::$cache->MemSet($cache_hash, $pic, 30);
+                    }
+                    $smarty->clearAllAssign();
+                    break;
+                } else {
+                    $smarty->caching = false;
+                    $smarty->assign('width', $width);
+                    $smarty->assign('height', $height);
+                    $pic = $smarty->fetch('file:[' . common::$tmpdir . ']page/no_userpic.tpl');
+                    $smarty->clearAllAssign();
+                }
             }
+        } else {
+            $pic = self::$cache->MemGet($cache_hash);
         }
 
         return $pic;
@@ -1451,62 +1458,80 @@ class common {
      * @return array
      */
     public static function get_files(string $dir=null, bool $only_dir=false, bool $only_files=false, array $file_ext= [], bool $preg_match=false, array $blacklist= [], bool $blacklist_word=false) {
-        //TODO: Add List to Memcache
-        $files = [];
-        if(!file_exists($dir) && !is_dir($dir)) return $files;
-        if($handle = @opendir($dir)) {
-            if($only_dir) {
-                while(false !== ($file = readdir($handle))) {
-                    if($file != '.' && $file != '..' && !is_file($dir.'/'.$file)) {
-                        if(!count($blacklist) && (!$blacklist_word || strpos(strtolower($file), $blacklist_word) === false) && ($preg_match ? preg_match($preg_match,$file) : true))
-                            $files[] = $file;
-                        else {
-                            if(!in_array($file, $blacklist) && (!$blacklist_word || strpos(strtolower($file), $blacklist_word) === false) && ($preg_match ? preg_match($preg_match,$file) : true))
-                                $files[] = $file;
-                        }
-                    }
-                } //while end
-            } else if($only_files) {
-                while(false !== ($file = readdir($handle))) {
-                    if($file != '.' && $file != '..' && is_file($dir.'/'.$file)) {
-                        if(!in_array($file, $blacklist) && (!$blacklist_word || strpos(strtolower($file), $blacklist_word) === false) && !count($file_ext) && ($preg_match ? preg_match($preg_match,$file) : true))
-                            $files[] = $file;
-                        else {
-                            ## Extension Filter ##
-                            $exp_string = array_reverse(explode(".", $file));
-                            if(!in_array($file, $blacklist) && (!$blacklist_word || strpos(strtolower($file), $blacklist_word) === false) && in_array(strtolower($exp_string[0]), $file_ext) && ($preg_match ? preg_match($preg_match,$file) : true))
-                                $files[] = $file;
-                        }
-                    }
-                } //while end
-            } else {
-                while(false !== ($file = readdir($handle))) {
-                    if($file != '.' && $file != '..' && is_file($dir.'/'.$file)) {
-                        if(!in_array($file, $blacklist) && (!$blacklist_word || strpos(strtolower($file), $blacklist_word) === false) && !count($file_ext) && ($preg_match ? preg_match($preg_match,$file) : true))
-                            $files[] = $file;
-                        else {
-                            ## Extension Filter ##
-                            $exp_string = array_reverse(explode(".", $file));
-                            if(!in_array($file, $blacklist) && (!$blacklist_word || strpos(strtolower($file), $blacklist_word) === false) && in_array(strtolower($exp_string[0]), $file_ext) && ($preg_match ? preg_match($preg_match,$file) : true))
-                                $files[] = $file;
-                        }
-                    } else {
-                        if(!in_array($file, $blacklist) && (!$blacklist_word || strpos(strtolower($file), $blacklist_word) === false) && $file != '.' && $file != '..' && ($preg_match ? preg_match($preg_match,$file) : true))
-                            $files[] = $file;
-                    }
-                } //while end
-            }
-
-            if(is_resource($handle))
-                closedir($handle);
-
-            if(!count($files))
-                return false;
-
-            return $files;
+        /* CACHE */
+        $ext_cache = '';
+        foreach ($file_ext as $ext) {
+            $ext_cache .= $ext;
         }
-        else
-            return false;
+
+        $cache_hash = md5($dir.$only_dir.$only_files.$ext_cache.$preg_match.$blacklist_word);
+        unset($ext_cache,$ext);
+        /* CACHE */
+
+        $files = [];
+        if (!file_exists($dir) && !is_dir($dir))
+            return $files;
+
+        if(!self::$cache->MemExists($cache_hash) || !config::$use_system_cache) {
+            if ($handle = @opendir($dir)) {
+                if ($only_dir) {
+                    while (false !== ($file = readdir($handle))) {
+                        if ($file != '.' && $file != '..' && !is_file($dir . '/' . $file)) {
+                            if (!count($blacklist) && (!$blacklist_word || strpos(strtolower($file), $blacklist_word) === false) && ($preg_match ? preg_match($preg_match, $file) : true))
+                                $files[] = $file;
+                            else {
+                                if (!in_array($file, $blacklist) && (!$blacklist_word || strpos(strtolower($file), $blacklist_word) === false) && ($preg_match ? preg_match($preg_match, $file) : true))
+                                    $files[] = $file;
+                            }
+                        }
+                    } //while end
+                } else if ($only_files) {
+                    while (false !== ($file = readdir($handle))) {
+                        if ($file != '.' && $file != '..' && is_file($dir . '/' . $file)) {
+                            if (!in_array($file, $blacklist) && (!$blacklist_word || strpos(strtolower($file), $blacklist_word) === false) && !count($file_ext) && ($preg_match ? preg_match($preg_match, $file) : true))
+                                $files[] = $file;
+                            else {
+                                ## Extension Filter ##
+                                $exp_string = array_reverse(explode(".", $file));
+                                if (!in_array($file, $blacklist) && (!$blacklist_word || strpos(strtolower($file), $blacklist_word) === false) && in_array(strtolower($exp_string[0]), $file_ext) && ($preg_match ? preg_match($preg_match, $file) : true))
+                                    $files[] = $file;
+                            }
+                        }
+                    } //while end
+                } else {
+                    while (false !== ($file = readdir($handle))) {
+                        if ($file != '.' && $file != '..' && is_file($dir . '/' . $file)) {
+                            if (!in_array($file, $blacklist) && (!$blacklist_word || strpos(strtolower($file), $blacklist_word) === false) && !count($file_ext) && ($preg_match ? preg_match($preg_match, $file) : true))
+                                $files[] = $file;
+                            else {
+                                ## Extension Filter ##
+                                $exp_string = array_reverse(explode(".", $file));
+                                if (!in_array($file, $blacklist) && (!$blacklist_word || strpos(strtolower($file), $blacklist_word) === false) && in_array(strtolower($exp_string[0]), $file_ext) && ($preg_match ? preg_match($preg_match, $file) : true))
+                                    $files[] = $file;
+                            }
+                        } else {
+                            if (!in_array($file, $blacklist) && (!$blacklist_word || strpos(strtolower($file), $blacklist_word) === false) && $file != '.' && $file != '..' && ($preg_match ? preg_match($preg_match, $file) : true))
+                                $files[] = $file;
+                        }
+                    } //while end
+                }
+
+                if (is_resource($handle))
+                    closedir($handle);
+
+                if (!count($files))
+                    return false;
+
+                if(config::$use_system_cache) {
+                    self::$cache->MemSet($cache_hash, $files, 10);
+                }
+
+                return $files;
+            } else
+                return false;
+        } else {
+            return self::$cache->MemGet($cache_hash);
+        }
     }
 
     /**
