@@ -1,12 +1,22 @@
 {
   "name": "dzcp/mainpage",
-  "description": "description_text",
+  "description": "Hauptseite von DZCP.de",
   "minimum-stability": "stable",
+  "version": "v1.7.1.0",
+  "version_normalized": "1.7.1.0",
   "license": "proprietary",
   "authors": [
     {
-      "name": "author's name",
-      "email": "email@example.com"
+      "name": "Codedesigns",
+      "email": "lbrucksch@codedesigns.de"
+    },
+    {
+      "name": "CodeKing",
+      "email": "info@web-customs.com"
+    },
+    {
+      "name": "my-STARMEDIA",
+      "email": "info@web-customs.com"
     }
   ],
   "require": {
@@ -17,8 +27,9 @@
     "jaybizzle/crawler-detect": "v1.2.40",
     "oyejorge/less.php": "v1.7.0.14",
     "wixel/gump": "1.4",
-    "potaka/bbcode": "0.2.1",
     "pherum/snoopy": "2.0",
-    "tan-tan-kanarek/github-php-client": "1.0.0"
+    "tan-tan-kanarek/github-php-client": "1.0.0",
+    "mobiledetect/mobiledetectlib": "2.8.25",
+    "phpfastcache/phpfastcache": "6.0.1"
   }
 }
