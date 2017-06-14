@@ -144,16 +144,16 @@ class common {
         }
 
         //->Crawler Detect
-        self::$CrawlerDetect = new CrawlerDetect;
+        self::$CrawlerDetect = new CrawlerDetect();
 
         //->Init-Database
         self::$gump = new GUMP();
 
         //->Init-Mobile_Detect
-        self::$mobile = new Mobile_Detect;
+        self::$mobile = new Mobile_Detect();
 
         //->Init-CacheManager
-        self::sysInitCache();
+        self::$cache = new Cache();
 
         //->Init-Database
         self::$database = new database();
@@ -458,10 +458,6 @@ class common {
         }
 
         self::$designpath = '../inc/_templates_/'.self::$tmpdir; //Set designpath
-    }
-
-    private static function sysInitCache() {
-        self::$cache = new Cache();
     }
 
     /**
