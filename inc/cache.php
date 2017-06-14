@@ -18,11 +18,6 @@
 use phpFastCache\CacheManager;
 use phpFastCache\Util;
 
-/* block attempts to directly run this script */
-if (getcwd() == dirname(__FILE__)) {
-    die('block directly run');
-}
-
 class Cache extends CacheManager
 {
     //Public Indexes
