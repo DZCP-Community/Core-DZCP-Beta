@@ -976,8 +976,8 @@ class common {
      * @return mixed|string
      */
     public static function userpic(int $userid,int $width=170,int $height=210) {
-        $cache_hash = md5($userid,$width,$height);
-        if(self::$cache->MemExists($cache_hash) || !config::$use_system_cache) {
+        $cache_hash = md5($userid.$width.$height);
+        if(!self::$cache->MemExists($cache_hash) || !config::$use_system_cache) {
             $smarty = self::getSmarty(true);
             foreach (["jpg", "gif", "png"] as $endung) {
                 if (file_exists(basePath . "/inc/images/uploads/userpics/" . $userid . "." . $endung)) {
