@@ -15,6 +15,11 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
+/* block attempts to directly run this script */
+if (getcwd() == dirname(__FILE__)) {
+    die('block directly run');
+}
+
 //-> Codiert Text zur Speicherung
 final class stringParser {
     /**

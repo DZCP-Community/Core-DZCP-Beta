@@ -15,6 +15,11 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
+/* block attempts to directly run this script */
+if (getcwd() == dirname(__FILE__)) {
+    die('block directly run');
+}
+
 class sfs extends common {
     private static $endpoint = 'http://www.stopforumspam.com/';
     private static $url = '';

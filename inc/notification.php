@@ -15,6 +15,11 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
+/* block attempts to directly run this script */
+if (getcwd() == dirname(__FILE__)) {
+    die('block directly run');
+}
+
 //-> Generiert die Infobox bei Fehlern oder Erfolg etc. / neuer Ersatz fur function info() & error()
 class notification {
     static public $notification_index = array('global' => array());
