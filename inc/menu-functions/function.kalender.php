@@ -81,7 +81,10 @@ function smarty_function_kalender($params, &$smarty) {
                         $titleev .= '&lt;img src=../inc/images/event.png class=icon alt= /&gt;'.'&nbsp;'.common::jsconvert(_kal_event.stringParser::decode($get['title'])).'&lt;br />';
                     }
 
-                    $info = 'onmouseover="DZCP.showInfo(\''.common::cal($i).'.'.$monat.'.'.$jahr.'\', \''.$titlebd.$titleev.'\')" onmouseout="DZCP.hideInfo()"';
+                    $info = '';
+                    if(!common::$mobile->isMobile() || common::$mobile->isTablet()) {
+                        $info = 'onmouseover="DZCP.showInfo(\'' . common::cal($i) . '.' . $monat . '.' . $jahr . '\', \'' . $titlebd . $titleev . '\')" onmouseout="DZCP.hideInfo()"';
+                    }
 
                     if($event == "set" || $bdays == "set")
                         $day = '<a class="navKal" href="../kalender/?m='.$monat.'&amp;y='.$jahr.'&amp;hl='.$i.'" '.$info.'>'.common::cal($i).'</a>';

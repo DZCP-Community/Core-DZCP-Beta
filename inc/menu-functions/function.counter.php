@@ -59,7 +59,10 @@ function smarty_function_counter($params, &$smarty) {
                     }
                 }
 
-                $info = 'onmouseover="DZCP.showInfo(\''._online_head.'\', \''.$kats.'\', \''.$text.'\')" onmouseout="DZCP.hideInfo()"';
+                $info = '';
+                if(!common::$mobile->isMobile() || common::$mobile->isTablet()) {
+                    $info = 'onmouseover="DZCP.showInfo(\'' . _online_head . '\', \'' . $kats . '\', \'' . $text . '\')" onmouseout="DZCP.hideInfo()"';
+                }
             }
 
             if(empty($where)) {

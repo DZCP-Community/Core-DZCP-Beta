@@ -24,9 +24,12 @@ function smarty_function_events($params, &$smarty) {
     $eventbox = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qry as $get) {
-            $info = 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['title'])).'\', \''._kalender_uhrzeit.';'.
-                _datum.'\', \''.date("H:i", $get['datum'])._uhr.';'.
-                date("d.m.Y", $get['datum']).'\')" onmouseout="DZCP.hideInfo()"';
+            $info = '';
+            if(!common::$mobile->isMobile() || common::$mobile->isTablet()) {
+                $info = 'onmouseover="DZCP.showInfo(\'' . common::jsconvert(stringParser::decode($get['title'])) . '\', \'' . _kalender_uhrzeit . ';' .
+                    _datum . '\', \'' . date("H:i", $get['datum']) . _uhr . ';' .
+                    date("d.m.Y", $get['datum']) . '\')" onmouseout="DZCP.hideInfo()"';
+            }
 
             $smarty_events->caching = false;
             $smarty_events->assign('datum',date("d.m.",$get['datum']));

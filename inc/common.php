@@ -15,6 +15,11 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
+/* block attempts to directly run this script */
+if (getcwd() == dirname(__FILE__)) {
+    die('block directly run');
+}
+
 //-> Ladezeit berechen
 function getmicrotime() {
     list($usec,$sec) = explode(" ",microtime());
@@ -41,6 +46,7 @@ require_once(basePath."/inc/javascript.php");
 require_once(basePath."/inc/stringParser.php");
 require_once(basePath."/inc/sfs.php");
 require_once(basePath."/inc/bbcode.php");
+require_once(basePath."/inc/cache.php");
 
 if(!is_api) {
     require_once(basePath . '/inc/securimage/securimage_color.php');
@@ -89,6 +95,8 @@ class common {
     public static $chkMe = 0;
     public static $CrawlerDetect = NULL;
     public static $less = NULL;
+    public static $mobile = NULL;
+    public static $cache = NULL;
 
     //Private
     private static $menu_index = [];
@@ -145,6 +153,12 @@ class common {
 
         //->Init-Database
         self::$gump = new GUMP();
+
+        //->Init-Mobile_Detect
+        self::$mobile = new Mobile_Detect;
+
+        //->Init-CacheManager
+        self::sysInitCache();
 
         //->Init-Database
         self::$database = new database();
@@ -449,6 +463,10 @@ class common {
         }
 
         self::$designpath = '../inc/_templates_/'.self::$tmpdir; //Set designpath
+    }
+
+    private static function sysInitCache() {
+        self::$cache = new Cache();
     }
 
     /**

@@ -85,7 +85,10 @@ while($i <= 31 && checkdate($monat, $i, $jahr)) {
             }
 
             if($CountBday >= 1) {
-                $info = ' onmouseover="DZCP.showInfo(\''.$infoBday.'\')" onmouseout="DZCP.hideInfo()"';
+                $info = '';
+                if(!common::$mobile->isMobile() || common::$mobile->isTablet()) {
+                    $info = ' onmouseover="DZCP.showInfo(\'' . $infoBday . '\')" onmouseout="DZCP.hideInfo()"';
+                }
                 $bdays = '<a href="../user/?action=userlist&amp;show=bday&amp;time='.$datum.'"'.$info.'><img src="../inc/images/bday.gif" alt="" /></a>';
             }
 
@@ -98,7 +101,10 @@ while($i <= 31 && checkdate($monat, $i, $jahr)) {
                     $infoEvent .='&lt;img src=../inc/images/event.png class=icon alt= /&gt;'.'&nbsp;'.common::jsconvert(_kal_event.stringParser::decode($get['title'])).'<br />';
                 }
 
-                $info = ' onmouseover="DZCP.showInfo(\''.$infoEvent.'\')" onmouseout="DZCP.hideInfo()"';
+                $info = '';
+                if(!common::$mobile->isMobile() || common::$mobile->isTablet()) {
+                    $info = ' onmouseover="DZCP.showInfo(\'' . $infoEvent . '\')" onmouseout="DZCP.hideInfo()"';
+                }
                 $event = '<a href="?action=show&amp;time='.$datum.'"'.$info.'><img src="../inc/images/event.png" alt="" /></a>';
             }
 

@@ -24,8 +24,13 @@ function smarty_function_top_dl($params, &$smarty) {
         $smarty_top_dl = common::getSmarty(true); //Use Smarty
         foreach($qry as $get) {
             $getkat = common::$sql['default']->fetch("SELECT `name` FROM `{prefix_download_kat}` WHERE `id` = ?;", [$get['kat']]);
-            $info = 'onmouseover="DZCP.showInfo(\''.common::jsconvert(stringParser::decode($get['download'])).'\', \''._datum.';'._dl_dlkat.';'._hits.'\', \''.date("d.m.Y H:i", $get['date'])._uhr.';'.
-                common::jsconvert(stringParser::decode($getkat['name'])).';'.$get['hits'].'\')" onmouseout="DZCP.hideInfo()"';
+
+            $info = '';
+            if(!common::$mobile->isMobile() || common::$mobile->isTablet()) {
+                $info = 'onmouseover="DZCP.showInfo(\'' . common::jsconvert(stringParser::decode($get['download'])) . '\', \'' . _datum . ';' . _dl_dlkat . ';' . _hits . '\', \'' . date("d.m.Y H:i", $get['date']) . _uhr . ';' .
+                    common::jsconvert(stringParser::decode($getkat['name'])) . ';' . $get['hits'] . '\')" onmouseout="DZCP.hideInfo()"';
+            }
+
             $smarty_top_dl->caching = false;
             $smarty_top_dl->assign('id',$get['id']);
             $smarty_top_dl->assign('titel',common::cut(stringParser::decode($get['download']),settings::get('l_topdl')));
