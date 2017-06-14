@@ -15,11 +15,6 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-/* block attempts to directly run this script */
-if (getcwd() == dirname(__FILE__)) {
-    die('block directly run');
-}
-
 //-> Speichert Ruckgaben der MySQL Datenbank zwischen um SQL-Queries einzusparen
 final class dbc_index {
     private static $index = array();

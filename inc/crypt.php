@@ -1,9 +1,4 @@
 <?php
-/* block attempts to directly run this script */
-if (getcwd() == dirname(__FILE__)) {
-    die('block directly run');
-}
-
 /* Mode constants */ 
 define('CRYPT_MODE_BINARY'     , 0); 
 define('CRYPT_MODE_BASE64'     , 1); 
