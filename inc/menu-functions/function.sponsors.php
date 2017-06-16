@@ -16,22 +16,31 @@
  */
 
 function smarty_function_sponsors($params, &$smarty) {
-    $smarty_sponsors = common::getSmarty(true); //Use Smarty
-    $qry = common::$sql['default']->select("SELECT `id`,`xlink`,`xend`,`link` FROM `{prefix_sponsoren}` WHERE `box` = 1 ORDER BY `pos`;");
+    $params['only_id'] = !array_key_exists('only_id',$params) ? 0 : (int)$params['only_id'];
+    $params['begin_id'] = !array_key_exists('begin_id',$params) ? 1 : (int)$params['begin_id'];
+    $params['end_id'] = !array_key_exists('end_id',$params) ? 0 : (int)$params['end_id'];
+    $params['limit'] = !array_key_exists('limit',$params) ? 0 : (int)$params['limit'];
+
+    if($params['end_id'] >= 2 && $params['begin_id'] >= 1) {
+        $qry = common::$sql['default']->select("SELECT `id`,`xlink`,`xend`,`link` FROM `{prefix_sponsoren}` WHERE `box` = 1 ORDER BY `pos`".
+            ($params['limit'] ? ' LIMIT '.$params['begin_id'].','.$params['end_id'] : '').";");
+    } else {
+        $qry = common::$sql['default']->select("SELECT `id`,`xlink`,`xend`,`link` FROM `{prefix_sponsoren}` WHERE `box` = 1 ORDER BY `pos`".
+            ($params['limit'] ? ' LIMIT '.$params['limit'] : '').";");
+    }
+
     $sponsors = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qry as $get) {
-            $smarty_sponsors->caching = false;
-            $smarty_sponsors->assign('id',$get['id']);
-            $smarty_sponsors->assign('title',htmlspecialchars(str_replace('http://', '', stringParser::decode($get['link']))));
-            $smarty_sponsors->assign('banner',(empty($get['xlink']) ? "../banner/sponsors/box_".$get['id'].".".$get['xend'] : stringParser::decode($get['xlink'])));
-            $banner = $smarty_sponsors->fetch('file:['.common::$tmpdir.']menu/sponsors/sponsors_bannerlink.tpl');
-            $smarty_sponsors->clearAllAssign();
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('title',htmlspecialchars(str_replace('http://', '', stringParser::decode($get['link']))));
+            $smarty->assign('banner',(empty($get['xlink']) ? "../banner/sponsors/box_".$get['id'].".".$get['xend'] : stringParser::decode($get['xlink'])));
+            $banner = $smarty->fetch('file:['.common::$tmpdir.']menu/sponsors/sponsors_bannerlink.tpl');
 
-            $smarty_sponsors->caching = false;
-            $smarty_sponsors->assign('banner',$banner);
-            $sponsors .= $smarty_sponsors->fetch('file:['.common::$tmpdir.']menu/sponsors/sponsors.tpl');
-            $smarty_sponsors->clearAllAssign();
+            $smarty->caching = false;
+            $smarty->assign('banner',$banner);
+            $sponsors .= $smarty->fetch('file:['.common::$tmpdir.']menu/sponsors/sponsors.tpl');
         }
     }
 

@@ -22,26 +22,14 @@
  * @return string
  */
 function smarty_function_avatar($params, &$smarty) {
-    $smarty_avatar = common::getSmarty(true); //Use Smarty
     $avatar = '';
     if(common::$chkMe >= 1) {
-        $uid = 0; $width=70; $height=100;
-        if(array_key_exists('id',$params)) {
-            $uid = (int)$params['id'];
-        }
-
-        if(array_key_exists('height',$params)) {
-            $height = (int)$params['height'];
-        }
-
-        if(array_key_exists('width',$params)) {
-            $width = (int)$params['width'];
-        }
-
-        $smarty_avatar->caching = false;
-        $smarty_avatar->assign('avatar_show', common::useravatar($uid, $width, $height));
-        $avatar = $smarty_avatar->fetch('file:[' . common::$tmpdir . ']menu/avatar/avatars.tpl');
-        $smarty_avatar->clearAllAssign();
+        $params['id'] = (array_key_exists('id',$params) ? (int)$params['id'] : 0);
+        $params['height'] = (array_key_exists('height',$params) ? (int)$params['height'] : 100);
+        $params['width'] = (array_key_exists('width',$params) ? (int)$params['width'] : 70);
+        $smarty->caching = false;
+        $smarty->assign('avatar_show', common::useravatar($params['id'], $params['width'], $params['height']));
+        $avatar = $smarty->fetch('file:[' . common::$tmpdir . ']menu/avatar/avatars.tpl');
     }
 
     return $avatar;

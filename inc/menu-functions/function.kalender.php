@@ -22,7 +22,6 @@ function smarty_function_kalender($params, &$smarty) {
             "<script language=\"javascript\" type=\"text/javascript\">DZCP.initDynLoader('navKalender','kalender','',true);</script>";
     } else {
         header("Content-Type: text/html; charset=utf-8");
-        $smarty_kalender = common::getSmarty(true); //Use Smarty
         if(!empty($params['month']) && !empty($params['year'])) {
             $monat = common::cal($params['month']);
             $jahr = $params['year'];
@@ -94,17 +93,15 @@ function smarty_function_kalender($params, &$smarty) {
                     if(!checkdate($monat, $i, $jahr))
                         $data .= '<td class="navKalEmpty"></td>';
                     elseif($datum == $today) {
-                        $smarty_kalender->caching = false;
-                        $smarty_kalender->assign('day',$day);
-                        $smarty_kalender->assign('id',"navKalToday");
-                        $data .= $smarty_kalender->fetch('file:['.common::$tmpdir.']menu/kalender/kal_day.tpl');
-                        $smarty_kalender->clearAllAssign();
+                        $smarty->caching = false;
+                        $smarty->assign('day',$day);
+                        $smarty->assign('id',"navKalToday");
+                        $data .= $smarty->fetch('file:['.common::$tmpdir.']menu/kalender/kal_day.tpl');
                     } else {
-                        $smarty_kalender->caching = false;
-                        $smarty_kalender->assign('day',$day);
-                        $smarty_kalender->assign('id',"navKalDays");
-                        $data .= $smarty_kalender->fetch('file:['.common::$tmpdir.']menu/kalender/kal_day.tpl');
-                        $smarty_kalender->clearAllAssign();
+                        $smarty->caching = false;
+                        $smarty->assign('day',$day);
+                        $smarty->assign('id',"navKalDays");
+                        $data .= $smarty->fetch('file:['.common::$tmpdir.']menu/kalender/kal_day.tpl');
                     }
 
                     $i++;
@@ -130,16 +127,15 @@ function smarty_function_kalender($params, &$smarty) {
             $ly = $jahr;
         }
 
-        $smarty_kalender->caching = false;
-        $smarty_kalender->assign('monat',$month);
-        $smarty_kalender->assign('show',$show);
-        $smarty_kalender->assign('year',$jahr);
-        $smarty_kalender->assign('nm',$nm);
-        $smarty_kalender->assign('ny',$ny);
-        $smarty_kalender->assign('lm',$lm);
-        $smarty_kalender->assign('ly',$ly);
-        $kalender = $smarty_kalender->fetch('file:['.common::$tmpdir.']menu/kalender/kalender.tpl');
-        $smarty_kalender->clearAllAssign();
+        $smarty->caching = false;
+        $smarty->assign('monat',$month);
+        $smarty->assign('show',$show);
+        $smarty->assign('year',$jahr);
+        $smarty->assign('nm',$nm);
+        $smarty->assign('ny',$ny);
+        $smarty->assign('lm',$lm);
+        $smarty->assign('ly',$ly);
+        $kalender = $smarty->fetch('file:['.common::$tmpdir.']menu/kalender/kalender.tpl');
     }
 
     return '<div id="navKalender">'.$kalender.'</div>';

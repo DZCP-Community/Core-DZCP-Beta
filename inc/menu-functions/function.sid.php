@@ -16,5 +16,5 @@
  */
 
 function smarty_function_sid($params, &$smarty) {
-    return common::$sid;
+    return (int)common::$sid;
 }

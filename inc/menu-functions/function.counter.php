@@ -23,7 +23,6 @@ function smarty_function_counter($params, &$smarty) {
             "<script language=\"javascript\" type=\"text/javascript\">DZCP.initDynLoader('navCounter','counter','',true);</script>";
     } else {
         if(!common::$CrawlerDetect->isCrawler()) {
-            $smarty_counter = common::getSmarty(true); //Use Smarty
             $get2day = common::$sql['default']->fetch("SELECT `visitors` FROM `{prefix_counter}` WHERE `today` = ?;", [date("j.n.Y")]);
             if(common::$sql['default']->rowCount()) {
                 $v_today = $get2day['visitors'];
@@ -68,18 +67,17 @@ function smarty_function_counter($params, &$smarty) {
             if(empty($where)) {
                 $where = '';
             }
-            $smarty_counter->caching = false;
-            $smarty_counter->assign('v_today',$v_today);
-            $smarty_counter->assign('v_yesterday',$yDay);
-            $smarty_counter->assign('v_all',$getstats['allvisitors']);
-            $smarty_counter->assign('v_perday',round($getstats['avgvisitors'], 2));
-            $smarty_counter->assign('v_max',$getstats['maxvisitors']);
-            $smarty_counter->assign('g_online',common::online_guests($where));
-            $smarty_counter->assign('u_online',common::online_guests($where));
-            $smarty_counter->assign('v_online',$getstats['maxonline']);
-            $smarty_counter->assign('info',$info);
-            $counter = $smarty_counter->fetch('file:['.common::$tmpdir.']menu/counter/counter.tpl');
-            $smarty_counter->clearAllAssign();
+            $smarty->caching = false;
+            $smarty->assign('v_today',$v_today);
+            $smarty->assign('v_yesterday',$yDay);
+            $smarty->assign('v_all',$getstats['allvisitors']);
+            $smarty->assign('v_perday',round($getstats['avgvisitors'], 2));
+            $smarty->assign('v_max',$getstats['maxvisitors']);
+            $smarty->assign('g_online',common::online_guests($where));
+            $smarty->assign('u_online',common::online_guests($where));
+            $smarty->assign('v_online',$getstats['maxonline']);
+            $smarty->assign('info',$info);
+            $counter = $smarty->fetch('file:['.common::$tmpdir.']menu/counter/counter.tpl');
         }
     }
 

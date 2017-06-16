@@ -22,7 +22,6 @@ function smarty_function_ftopics($params, &$smarty) {
 
     $f = 0; $ftopics = '';
     if(common::$sql['default']->rowCount()) {
-        $smarty_ftopics = common::getSmarty(true); //Use Smarty
         foreach($qry as $get) {
             if($f == settings::get('m_ftopics')) { break; }
             if(common::forum_intern($get['kid'])) {
@@ -36,15 +35,14 @@ function smarty_function_ftopics($params, &$smarty) {
                         date("d.m.Y H:i", $get['lp']) . _uhr . '\')" onmouseout="DZCP.hideInfo()"';
                 }
 
-                $smarty_ftopics->caching = false;
-                $smarty_ftopics->assign('id',$get['id']);
-                $smarty_ftopics->assign('pagenr',$page);
-                $smarty_ftopics->assign('p',$lp);
-                $smarty_ftopics->assign('titel',common::cut(stringParser::decode($get['topic']),settings::get('l_ftopics')));
-                $smarty_ftopics->assign('info',$info);
-                $smarty_ftopics->assign('kid',$get['kid']);
-                $ftopics .= $smarty_ftopics->fetch('file:['.common::$tmpdir.']menu/forum/forum_topics.tpl');
-                $smarty_ftopics->clearAllAssign();
+                $smarty->caching = false;
+                $smarty->assign('id',$get['id']);
+                $smarty->assign('pagenr',$page);
+                $smarty->assign('p',$lp);
+                $smarty->assign('titel',common::cut(stringParser::decode($get['topic']),settings::get('l_ftopics')));
+                $smarty->assign('info',$info);
+                $smarty->assign('kid',$get['kid']);
+                $ftopics .= $smarty->fetch('file:['.common::$tmpdir.']menu/forum/forum_topics.tpl');
                 $f++;
             }
         }

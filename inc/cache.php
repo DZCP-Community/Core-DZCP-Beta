@@ -20,11 +20,14 @@ use phpFastCache\Util;
 
 class Cache extends CacheManager
 {
-    //Public Indexes
-    const SETTINGS = 'dzcp_mem_settings';
-    const PERMISSIONS = 'dzcp_permissions';
-    const USR_HASH = 'dzcp_usr_hash';
+    //Time config for system-cache ttl in seconds
+    const TIME_USERSTATS = 300; //function userstats() & function userstats_increase()
+    const TIME_USERINDEX = 300; //function getUserIndex()
+    const TIME_VOTE_ANSWER = 10; //function voteanswer()
+    const TIME_ONLINE_CHECK = 15; //function onlinecheck()
+    const TIME_TEMPLATE_XML = 300; //
 
+    //Class Stuff
     private $cache_index = null;
 
     function __construct() {

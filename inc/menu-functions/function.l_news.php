@@ -22,7 +22,6 @@
  * @return string
  */
 function smarty_function_l_news($params, &$smarty) {
-    $smarty_lnews = common::getSmarty(true); //Use Smarty
     $qry = common::$sql['default']->select("SELECT `id`,`titel`,`autor`,`datum`,`kat`,`public`,`timeshift` "
         . "FROM `{prefix_news}` "
         . "WHERE `public` = 1 AND `datum` <= ? ".(common::permission("intnews") ? "" : "AND `intern` = 0")." "
@@ -40,13 +39,12 @@ function smarty_function_l_news($params, &$smarty) {
                     common::cnt('{prefix_newscomments}', "WHERE `news` = ?", "id", [$get['id']]) . '\')" onmouseout="DZCP.hideInfo()"';
             }
 
-            $smarty_lnews->caching = false;
-            $smarty_lnews->assign('id',$get['id']);
-            $smarty_lnews->assign('titel',common::cut(stringParser::decode($get['titel']),settings::get('l_lnews')));
-            $smarty_lnews->assign('datum',date("d.m.Y", $get['datum']));
-            $smarty_lnews->assign('info',$info);
-            $l_news .= $smarty_lnews->fetch('file:['.common::$tmpdir.']menu/l_news/last_news.tpl');
-            $smarty_lnews->clearAllAssign();
+            $smarty->caching = false;
+            $smarty->assign('id',$get['id']);
+            $smarty->assign('titel',common::cut(stringParser::decode($get['titel']),settings::get('l_lnews')));
+            $smarty->assign('datum',date("d.m.Y", $get['datum']));
+            $smarty->assign('info',$info);
+            $l_news .= $smarty->fetch('file:['.common::$tmpdir.']menu/l_news/last_news.tpl');
         }
     }
 

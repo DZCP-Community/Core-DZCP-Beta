@@ -19,7 +19,6 @@ function smarty_function_vote($params, &$smarty) {
     $params['js'] = !array_key_exists('js',$params) ? false : true;
     $get = common::$sql['default']->fetch("SELECT `id`,`closed`,`titel`,`intern` FROM `{prefix_votes}` WHERE `menu` = 1 AND `forum` = 0;"); $vote = '';
     if(common::$sql['default']->rowCount()) {
-        $smarty_vote = common::getSmarty(true); //Use Smarty
         if(!$get['intern'] || common::$chkMe >= 1) {
             $qryv = common::$sql['default']->select("SELECT `id`,`stimmen`,`sel` FROM `{prefix_vote_results}` WHERE `vid` = ? ORDER BY `what`;", [$get['id']]);
             $results = '';
@@ -32,46 +31,41 @@ function smarty_function_vote($params, &$smarty) {
                         $rawpercent = round($getv['stimmen']/$stimmen*100,0);
                         $votebutton = "";
 
-                        $smarty_vote->caching = false;
-                        $smarty_vote->assign('width',$rawpercent);
-                        $balken = $smarty_vote->fetch('string:'._votes_balken);
-                        $smarty_vote->clearAllAssign();
+                        $smarty->caching = false;
+                        $smarty->assign('width',$rawpercent);
+                        $balken = $smarty->fetch('string:'._votes_balken);
 
-                        $smarty_vote->caching = false;
-                        $smarty_vote->assign('answer',stringParser::decode($getv['sel']));
-                        $smarty_vote->assign('percent',$percent);
-                        $smarty_vote->assign('stimmen',$getv['stimmen']);
-                        $smarty_vote->assign('balken',$balken);
-                        $results .= $smarty_vote->fetch('file:['.common::$tmpdir.']menu/vote/vote_results.tpl');
-                        $smarty_vote->clearAllAssign();
+                        $smarty->caching = false;
+                        $smarty->assign('answer',stringParser::decode($getv['sel']));
+                        $smarty->assign('percent',$percent);
+                        $smarty->assign('stimmen',$getv['stimmen']);
+                        $smarty->assign('balken',$balken);
+                        $results .= $smarty->fetch('file:['.common::$tmpdir.']menu/vote/vote_results.tpl');
                     } else {
                         $votebutton = '<input id="contentSubmitVote" type="submit" value="'._button_value_vote.'" class="voteSubmit" />';
 
-                        $smarty_vote->caching = false;
-                        $smarty_vote->assign('id',$getv['id']);
-                        $smarty_vote->assign('answer',stringParser::decode($getv['sel']));
-                        $results .= $smarty_vote->fetch('file:['.common::$tmpdir.']menu/vote/vote_vote.tpl');
-                        $smarty_vote->clearAllAssign();
+                        $smarty->caching = false;
+                        $smarty->assign('id',$getv['id']);
+                        $smarty->assign('answer',stringParser::decode($getv['sel']));
+                        $results .= $smarty->fetch('file:['.common::$tmpdir.']menu/vote/vote_vote.tpl');
                     }
                 } else {
                     $votebutton = '<input id="contentSubmitVote" type="submit" value="'._button_value_vote.'" class="voteSubmit" />';
 
-                    $smarty_vote->caching = false;
-                    $smarty_vote->assign('id',$getv['id']);
-                    $smarty_vote->assign('answer',stringParser::decode($getv['sel']));
-                    $results .= $smarty_vote->fetch('file:['.common::$tmpdir.']menu/vote/vote_vote.tpl');
-                    $smarty_vote->clearAllAssign();
+                    $smarty->caching = false;
+                    $smarty->assign('id',$getv['id']);
+                    $smarty->assign('answer',stringParser::decode($getv['sel']));
+                    $results .= $smarty->fetch('file:['.common::$tmpdir.']menu/vote/vote_vote.tpl');
                 }
             }
 
-            $smarty_vote->caching = false;
-            $smarty_vote->assign('titel',stringParser::decode($get['titel']));
-            $smarty_vote->assign('vid',$get['id']);
-            $smarty_vote->assign('results',$results);
-            $smarty_vote->assign('votebutton',$votebutton);
-            $smarty_vote->assign('stimmen',$stimmen);
-            $vote = $smarty_vote->fetch('file:['.common::$tmpdir.']menu/vote/vote.tpl');
-            $smarty_vote->clearAllAssign();
+            $smarty->caching = false;
+            $smarty->assign('titel',stringParser::decode($get['titel']));
+            $smarty->assign('vid',$get['id']);
+            $smarty->assign('results',$results);
+            $smarty->assign('votebutton',$votebutton);
+            $smarty->assign('stimmen',$stimmen);
+            $vote = $smarty->fetch('file:['.common::$tmpdir.']menu/vote/vote.tpl');
         }
     }
 

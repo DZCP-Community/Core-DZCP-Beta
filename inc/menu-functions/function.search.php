@@ -16,10 +16,8 @@
  */
 
 function smarty_function_search($params, &$smarty) {
-    $smarty_search = common::getSmarty(true); //Use Smarty
-    $smarty_search->caching = true;
-    $smarty_search->assign('searchword',(empty($_GET['searchword']) ? _search_word : $_GET['searchword']));
-    $search = $smarty_search->fetch('file:['.common::$tmpdir.']menu/search/search.tpl',common::getSmartyCacheHash('menu_search'));
-    $smarty_search->clearAllAssign();
+    $smarty->caching = true;
+    $smarty->assign('searchword',(empty($_GET['searchword']) ? _search_word : $_GET['searchword']));
+    $search = $smarty->fetch('file:['.common::$tmpdir.']menu/search/search.tpl',common::getSmartyCacheHash('menu_search'));
     return $search;
 }

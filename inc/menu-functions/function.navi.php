@@ -15,17 +15,10 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-/**
- * Usage {dir}
- * @param $params
- * @param $smarty
- * @return string
- */
 function smarty_function_navi($params, &$smarty) {
     $navi=""; $params['kat'] = 'nav_'.trim($params['kat']);
     $k = common::$sql['default']->fetch("SELECT `level` FROM `{prefix_navi_kats}` WHERE `placeholder` = ?;",[stringParser::encode($params['kat'])]);
     if(common::$sql['default']->rowCount()) {
-        $smarty_nav = common::getSmarty(true); //Use Smarty
         $permissions = ($params['kat'] == 'nav_admin' && common::admin_perms(common::$userid)) ? "" : (common::$chkMe >= 2 ? '' : " AND s1.`internal` = 0")." AND ".
             (int)(common::$chkMe)." >= ".(int)($k['level']);
         $qry = common::$sql['default']->select("SELECT s1.* FROM `{prefix_navi}` AS `s1` "
@@ -40,23 +33,21 @@ function smarty_function_navi($params, &$smarty) {
                     $name = ($get['wichtig']) ? '<span class="fontWichtig">'.common::navi_name(stringParser::decode($get['name'])).'</span>' : common::navi_name(stringParser::decode($get['name']));
                     $target = ($get['target']) ? '_blank' : '_self';
                     if(file_exists(common::$designpath.'/menu/navi/'.$get['kat'].'.tpl')) {
-                        $smarty_nav->caching = false;
-                        $smarty_nav->assign('target',$target);
-                        $smarty_nav->assign('href',preg_replace('"( |^)(www.[-a-zA-Z0-9@:%_\+.~#?&//=]+)"i', 'http://\2', stringParser::decode($get['url'])));
-                        $smarty_nav->assign('title',strip_tags($name));
-                        $smarty_nav->assign('css',ucfirst(str_replace('nav_', '', stringParser::decode($get['kat']))));
-                        $smarty_nav->assign('link',$name);
-                        $link = $smarty_nav->fetch('file:['.common::$tmpdir.']menu/navi/'.stringParser::decode($get['kat']).'.tpl');
-                        $smarty_nav->clearAllAssign();
+                        $smarty->caching = false;
+                        $smarty->assign('target',$target);
+                        $smarty->assign('href',preg_replace('"( |^)(www.[-a-zA-Z0-9@:%_\+.~#?&//=]+)"i', 'http://\2', stringParser::decode($get['url'])));
+                        $smarty->assign('title',strip_tags($name));
+                        $smarty->assign('css',ucfirst(str_replace('nav_', '', stringParser::decode($get['kat']))));
+                        $smarty->assign('link',$name);
+                        $link = $smarty->fetch('file:['.common::$tmpdir.']menu/navi/'.stringParser::decode($get['kat']).'.tpl');
                     } else {
-                        $smarty_nav->caching = false;
-                        $smarty_nav->assign('target',$target);
-                        $smarty_nav->assign('href',preg_replace('"( |^)(www.[-a-zA-Z0-9@:%_\+.~#?&//=]+)"i', 'http://\2', stringParser::decode($get['url'])));
-                        $smarty_nav->assign('title',strip_tags($name));
-                        $smarty_nav->assign('css',ucfirst(str_replace('nav_', '', stringParser::decode($get['kat']))));
-                        $smarty_nav->assign('link',$name);
-                        $link = $smarty_nav->fetch('file:['.common::$tmpdir.']menu/navi/nav_link.tpl');
-                        $smarty_nav->clearAllAssign();
+                        $smarty->caching = false;
+                        $smarty->assign('target',$target);
+                        $smarty->assign('href',preg_replace('"( |^)(www.[-a-zA-Z0-9@:%_\+.~#?&//=]+)"i', 'http://\2', stringParser::decode($get['url'])));
+                        $smarty->assign('title',strip_tags($name));
+                        $smarty->assign('css',ucfirst(str_replace('nav_', '', stringParser::decode($get['kat']))));
+                        $smarty->assign('link',$name);
+                        $link = $smarty->fetch('file:['.common::$tmpdir.']menu/navi/nav_link.tpl');
                     }
 
                     $table = strstr($link, '<tr>') ? true : false;

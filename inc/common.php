@@ -403,30 +403,56 @@ class common {
      * Setzt das aktive Template
      */
     private static function sysTemplateswitch() {
-        //TODO: Add xml to Memcache
         $files = self::get_files(basePath.'/inc/_templates_/',true);
         if(isset($_GET['tmpl_set'])) {
             foreach ($files as $templ) {
-                $xml = simplexml_load_file(basePath.'/inc/_templates_/'.$templ.'/template.xml');
-                if(!empty((string)$xml->permissions) && (string)$xml->permissions != 'null') {
-                    if(common::permission((string)$xml->permissions) || ((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level)) {
+                $cache_hash = md5('templateswitch_xml_'.$templ);
+                if(!common::$cache->AutoMemExists($cache_hash) || !config::$use_system_cache) {
+                    $xml = simplexml_load_file(basePath.'/inc/_templates_/'.$templ.'/template.xml');
+                    if(!empty((string)$xml->permissions) && (string)$xml->permissions != 'null') {
+                        if(common::permission((string)$xml->permissions) || ((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level)) {
+                            if($templ == $_GET['tmpl_set']) {
+                                cookie::put('tmpdir', $templ);
+                                cookie::save();
+                                header("Location: ".self::GetServerVars('HTTP_REFERER'));
+                            }
+                        }
+                    } else if((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level) {
+                        if($templ == $_GET['tmpl_set']) {
+                            cookie::put('tmpdir', $templ);
+                            cookie::save();
+                            header("Location: ".self::GetServerVars('HTTP_REFERER'));
+                        }
+                    } else if(!(int)$xml->level){
                         if($templ == $_GET['tmpl_set']) {
                             cookie::put('tmpdir', $templ);
                             cookie::save();
                             header("Location: ".self::GetServerVars('HTTP_REFERER'));
                         }
                     }
-                } else if((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level) {
-                    if($templ == $_GET['tmpl_set']) {
-                        cookie::put('tmpdir', $templ);
-                        cookie::save();
-                        header("Location: ".self::GetServerVars('HTTP_REFERER'));
-                    }
-                } else if(!(int)$xml->level){
-                    if($templ == $_GET['tmpl_set']) {
-                        cookie::put('tmpdir', $templ);
-                        cookie::save();
-                        header("Location: ".self::GetServerVars('HTTP_REFERER'));
+                } else {
+                    $data = json_decode(common::$cache->AutoMemGet($cache_hash),true);
+                    if(!empty($data['permissions']) && (string)$data['permissions'] != 'null') {
+                        if(common::permission((string)$data['permissions']) || ((int)$data['level'] >= 1 && (int)$data['level'])) {
+                            if($templ == $_GET['tmpl_set']) {
+                                cookie::put('tmpdir', $templ);
+                                cookie::save();
+                                header("Location: ".self::GetServerVars('HTTP_REFERER'));
+                            }
+                        }
+                    } else if((int)$data['level'] >= 1 &&
+                        common::$chkMe >= (int)$data['level']) {
+                        if($templ == $_GET['tmpl_set']) {
+                            cookie::put('tmpdir', $templ);
+                            cookie::save();
+                            header("Location: ".self::GetServerVars('HTTP_REFERER'));
+                        }
+                    } else if(!(int)$data['level']){
+                        if($templ == $_GET['tmpl_set']) {
+                            cookie::put('tmpdir', $templ);
+                            cookie::save();
+                            header("Location: ".self::GetServerVars('HTTP_REFERER'));
+                        }
                     }
                 }
             }
@@ -461,7 +487,7 @@ class common {
     }
 
     /**
-     * @param bool $new_instance
+     * @param bool $new_instance (optional) Erstellt eine neue unabhängige Smarty-Instanz.
      * @return null|Smarty
      */
     public static function getSmarty(bool $new_instance = false) {
@@ -496,44 +522,65 @@ class common {
      * @param string $tag
      * @return string
      */
-    public static function getSmartyCacheHash(string $tag='') {
+    public static function getSmartyCacheHash(string $tag) {
         return md5($tag.'_'.$_SESSION['language']);
+    }
+
+    /**
+     * Insert User in Network or Memory Cache
+     * @param int $uid
+     * @param bool $refresh (optional)
+     * @return array
+     */
+    public static function getUserIndex(int $uid=0, bool $refresh = false) {
+        if(empty($uid) || !$uid) return [];
+        $cache_hash = md5('user_'.$uid);
+        if(!self::$cache->AutoMemExists($cache_hash) || !config::$use_system_cache || $refresh) {
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [$uid]);
+            if(self::$sql['default']->rowCount()) {
+                if (config::$use_system_cache) {
+                    self::$cache->AutoMemSet($cache_hash, $get, cache::TIME_USERINDEX);
+                }
+
+                return $get;
+            }
+
+            return [];
+        } else {
+            return self::$cache->AutoMemGet($cache_hash);
+        }
     }
 
     /**
      * Nickausgabe mit Profillink oder Emaillink (reg/nicht reg)
      * @param int $uid
-     * @param string $class
-     * @param string $nick
-     * @param string $email
-     * @param string $cut
-     * @param string $add
-     * @return mixed|string
+     * @param string $class (optional)
+     * @param string $nick (optional)
+     * @param string $email (optional)
+     * @param string $cut (optional)
+     * @param string $add (optional)
+     * @return string
      */
     public static function autor(int $uid=0,string $class="",string $nick="",string $email="",string $cut="",string $add="") {
-        $smarty = self::getSmarty(true);
-        $uid = (!$uid ? self::$userid : $uid);
-        if(!$uid) return '* No UserID! *';
-        if(!dbc_index::issetIndex('user_'.(int)($uid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [(int)($uid)]);
-            if(self::$sql['default']->rowCount()) {
-                dbc_index::setIndex('user_'.$get['id'], $get);
-            } else {
-                $nickname = (!empty($cut)) ? self::cut(stringParser::decode($nick), $cut) : stringParser::decode($nick);
-                return self::CryptMailto($email,_user_link_noreg, ["nick" => $nickname, "class" => $class]);
-            }
+        $user = self::getUserIndex($uid); //Load user from Mem/Netcache
+        if(count($user) > 2) {
+            $country = self::flag(stringParser::decode($user['country']));
+            $nickname = (!empty($cut) ? self::cut(stringParser::decode($user['nick']), $cut) : stringParser::decode($user['nick']));
+        } else {
+            $nickname = (!empty($cut) ? self::cut(stringParser::decode($nick), $cut) : stringParser::decode($nick));
+            return self::CryptMailto($email,_user_link_noreg, ["nick" => $nickname, "class" => $class]);
         }
 
-        $nickname = (!empty($cut)) ? self::cut(stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick')), $cut) :
-            stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick'));
-
-        $smarty->caching = false;
+        $smarty = self::getSmarty(true);
+        $smarty->caching = true;
+        $smarty->cache_lifetime = 30;
         $smarty->assign('id',$uid);
-        $smarty->assign('country',self::flag(dbc_index::getIndexKey('user_'.(int)($uid), 'country')));
+        $smarty->assign('country',$country);
         $smarty->assign('class',$class);
         $smarty->assign('get',$add);
         $smarty->assign('nick',$nickname);
-        $user = $smarty->fetch('file:['.common::$tmpdir.']user/user_link.tpl');
+        $user = $smarty->fetch('file:['.common::$tmpdir.']user/user_link.tpl',
+            self::getSmartyCacheHash('user_link_'.$uid.$class.$cut.$add));
         $smarty->clearAllAssign();
         return $user;
     }
@@ -541,97 +588,91 @@ class common {
     /**
      * Nickausgabe mit Profillink (reg + position farbe)
      * @param int $uid
-     * @param string $class
-     * @param string $cut
+     * @param string $class (optional)
+     * @param string $cut (optional)
+     * @param bool $refresh (optional)
      * @return mixed|string
      */
-    public static function autorcolerd(int $uid=0, $class="", $cut="") {
-        /* TODO: dbc_index */
+    public static function autorcolerd(int $uid=0, $class="", $cut="", bool $refresh = false) {
+        $uid = (!$uid ? self::$userid : $uid);
+        if(!$uid) return '* No UserID! *';
+        $user = self::getUserIndex($uid,$refresh); //Load user from Mem/Netcache
+        if(count($user) > 2) {
+            $get = self::$sql['default']->fetch("SELECT `id`,`color` FROM `{prefix_positions}` WHERE `id` = ?;", [$user['position']]);
+            if(!$user['position'] || !self::$sql['default']->rowCount()) {
+                return self::autor($uid,$class,'','',$cut);
+            }
 
-        $getp = self::$sql['default']->fetch("SELECT `position` FROM `{prefix_users}` WHERE `id` = ?;", [(int)($uid)]);
-        $get = self::$sql['default']->fetch("SELECT `id`,`color` FROM `{prefix_positions}` WHERE `id` = ?;", [$getp['position']]);
-        if(!$getp['position'] || !self::$sql['default']->rowCount()) {
-            return self::autor($uid,$class,'','',$cut);
+            $smarty = self::getSmarty(true);
+            $smarty->caching = true;
+            $smarty->cache_lifetime = 30;
+            $smarty->assign('id',$uid);
+            $smarty->assign('country',self::flag(stringParser::decode($user['country'])));
+            $smarty->assign('class',$class);
+            $smarty->assign('color',stringParser::decode($get['color']));
+            $smarty->assign('nick',(!empty($cut) ? self::cut(stringParser::decode($user['nick']), $cut) : stringParser::decode($user['nick'])));
+            $autor = $smarty->fetch('file:['.common::$tmpdir.']user/user_link_colerd.tpl',
+                self::getSmartyCacheHash('user_link_colerd_'.$uid.$class.$cut));
+            $smarty->clearAllAssign();
+            return $autor;
         }
-
-        $nickname = (!empty($cut)) ? self::cut(stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick')), $cut) : stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick'));
-
-        $smarty = self::getSmarty(true);
-        $smarty->caching = false;
-        $smarty->assign('id',$uid);
-        $smarty->assign('country',self::flag(self::data('country',$uid)));
-        $smarty->assign('class',$class);
-        $smarty->assign('color',stringParser::decode($get['color']));
-        $smarty->assign('nick',$nickname);
-        $autor = $smarty->fetch('file:['.common::$tmpdir.']user/user_link_colerd.tpl');
-        $smarty->clearAllAssign();
-        return $autor;
     }
 
     /**
      * @param int $uid
-     * @param string $class
-     * @param string $nick
-     * @param string $email
+     * @param string $class (optional)
+     * @param string $nick (optional)
+     * @param string $email (optional)
      * @return mixed|string
      */
     public static function cleanautor(int $uid=0, $class="", $nick="", $email="") {
-        /* TODO: Replace dbc_index */
-        $smarty = self::getSmarty(true);
-
-        if(!dbc_index::issetIndex('user_'.(int)($uid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [(int)($uid)]);
-            if(self::$sql['default']->rowCount()) {
-                dbc_index::setIndex('user_' . $get['id'], $get);
-            } else {
-                return self::CryptMailto($email, _user_link_noreg, ["nick" => stringParser::decode($nick), "class" => $class]);
-            }
+        $user = self::getUserIndex($uid); //Load user from Mem/Netcache
+        if(count($user) > 2) {
+            $smarty = self::getSmarty(true);
+            $smarty->caching = true;
+            $smarty->cache_lifetime = 30;
+            $smarty->assign('id',$uid);
+            $smarty->assign('country',self::flag(stringParser::decode($user['country'])));
+            $smarty->assign('class',$class);
+            $smarty->assign('nick',stringParser::decode($user['nick']));
+            $user = $smarty->fetch('file:['.common::$tmpdir.']user/user_link_preview.tpl',
+                self::getSmartyCacheHash('user_link_preview_'.$uid.$class));
+            $smarty->clearAllAssign();
+            return $user;
         }
 
-        $smarty->caching = false;
-        $smarty->assign('id',$uid);
-        $smarty->assign('country',self::flag(dbc_index::getIndexKey('user_'.(int)($uid), 'country')));
-        $smarty->assign('class',$class);
-        $smarty->assign('nick',stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick')));
-        $user = $smarty->fetch('file:['.common::$tmpdir.']user/user_link_preview.tpl');
-        $smarty->clearAllAssign();
-        return $user;
+        return self::CryptMailto($email, _user_link_noreg, ["nick" => stringParser::decode($nick), "class" => $class]);
     }
 
     /**
      * @param int $uid
+     * @param bool $refresh (optional)
      * @return string
      */
-    public static function rawautor(int $uid=0) {
-        /* TODO: Replace dbc_index */
-        if(!dbc_index::issetIndex('user_'.(int)($uid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [(int)($uid)]);
-            if(self::$sql['default']->rowCount()) {
-                dbc_index::setIndex('user_' . $get['id'], $get);
-            } else {
-                return self::rawflag('') . " " . self::jsconvert(stringParser::decode($uid));
-            }
+    public static function rawautor(int $uid=0, bool $refresh = false) {
+        $uid = (!$uid ? self::$userid : $uid);
+        if(!$uid) return '* No UserID! *';
+        $user = self::getUserIndex($uid,$refresh); //Load user from Mem/Netcache
+        if(count($user) > 2) {
+            return self::rawflag(stringParser::decode($user['country']))." ".
+                self::jsconvert(stringParser::decode($user['nick']));
         }
 
-        return self::rawflag(dbc_index::getIndexKey('user_'.(int)($uid), 'country'))." ".
-        self::jsconvert(stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick')));
+        return self::rawflag(null);
     }
 
     /**
      * Nickausgabe ohne Profillink oder Emaillink fr das ForenAbo
      * @param int $uid
+     * @param bool $refresh (optional)
      * @return mixed|string
      */
-    public static function fabo_autor(int $uid) {
-        /* TODO: Replace dbc_index */
-        if(!dbc_index::issetIndex('user_'.(int)($uid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [(int)($uid)]);
-            if(self::$sql['default']->rowCount()) {
-                dbc_index::setIndex('user_' . $get['id'], $get);
-                return stringParser::decode($get['nick']);
-            }
-        } else {
-            return stringParser::decode(stringParser::decode(dbc_index::getIndexKey('user_'.(int)($uid), 'nick')));
+    public static function fabo_autor(int $uid, bool $refresh = false) {
+        $uid = (!$uid ? self::$userid : $uid);
+        if(!$uid) return '* No UserID! *';
+        $user = self::getUserIndex($uid,$refresh); //Load user from Mem/Netcache
+        if(count($user) > 2) {
+            return stringParser::decode($user['nick']);
         }
 
         return '';
@@ -639,11 +680,12 @@ class common {
 
     /**
      * Rechte abfragen
-     * @param string $txt
+     * @param string $txt (optional)
      * @return mixed
      */
-    public static function jsconvert(string $txt)
-    { return str_replace(["'","&#039;","\"","\r","\n"], ["\'","\'","&quot;","",""],$txt); }
+    public static function jsconvert(string $txt) {
+        return str_replace(["'","&#039;","\"","\r","\n"], ["\'","\'","&quot;","",""],$txt);
+    }
 
     /**
      * interner Forencheck
@@ -669,44 +711,64 @@ class common {
     /**
      * Einzelne Userdaten ermitteln
      * @param string $what
-     * @param int $tid
+     * @param int $uid
+     * @param bool $refresh (optional)
      * @return string
      */
-    public static function data(string $what='id',int $tid=0) {
-        /* TODO: Cacheing & Indexing a User */
-        if (!$tid) { $tid = self::$userid; }
-        if(!dbc_index::issetIndex('user_'.$tid)) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [(int)($tid)]);
-            dbc_index::setIndex('user_'.$tid, $get);
+    public static function data(string $what='id', int $uid=0, bool $refresh = false) {
+        $uid = (!$uid ? self::$userid : $uid);
+        if(!$uid) return '* No UserID! *';
+        $user = self::getUserIndex($uid,$refresh); //Load user from Mem/Netcache
+        if(count($user) > 2 && array_key_exists($what,$user)) {
+            return (string)$user[$what];
         }
 
-        return stripslashes(dbc_index::getIndexKey('user_'.$tid, $what));
+        return '';
     }
 
     /**
+     *
      * @param string $address
+     * @param bool $ip6 (optional)
      * @return bool|string
      */
-    public static function DNSToIp(string $address='') {
-        if (!preg_match('#^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$#', $address)) {
+    public static function DNSToIp(string $address='', bool $ip6 = false) {
+        if(!filter_var(gethostbyname($address), FILTER_VALIDATE_IP)) {
+            return false;
+        }
+
+        if($ip6) {
+            $dns = dns_get_record($address, DNS_AAAA);
+            foreach ($dns as $record) {
+                if ($record["type"] == "AAAA") {
+                    $ip6[] = $record["ipv6"];
+                }
+            }
+
+            if (count($ip6) < 1) {
+                if (!($result = gethostbyname($address))) {
+                    return false;
+                }
+            } else {
+                $result = $ip6[0];
+            }
+        } else {
             if (!($result = gethostbyname($address))) {
                 return false;
             }
-
-            if ($result === $address) {
-                $result = false;
-            }
-        } else {
-            $result = $address;
         }
 
-        return $result;
+        if ($result !== $address) {
+            return $result;
+        }
+
+        return false;
     }
 
     /**
      * Errormmeldung ausgeben
      * @param string $error
-     * @param int $back
+     * @param int $back (optional)
      * @return mixed|string
      */
     public static function error(string $error,int $back=3) {
@@ -722,12 +784,13 @@ class common {
     /**
      * Email wird auf korrekten Syntax
      * @param string $email
+     * @param string $field (optional)
      * @return bool
      */
-    public static function check_email(string $email) {
-        $rules = ['email' => 'required|valid_email'];
-        $filters = ['email' => 'trim|sanitize_email'];
-        return self::$gump->validate(self::$gump->filter(['email'=>$email], $filters), $rules) === TRUE ? true : false;
+    public static function check_email(string $email, string $field = 'email') {
+        $rules = [$field => 'required|valid_email'];
+        $filters = [$field => 'trim|sanitize_email'];
+        return self::$gump->validate(self::$gump->filter([$field=>$email], $filters), $rules) === TRUE ? true : false;
     }
 
     /**
@@ -749,7 +812,7 @@ class common {
      * @param $entrys
      * @param $perpage
      * @param string $urlpart
-     * @param int $recall
+     * @param int $recall (optional)
      * @return string
      */
     public static function nav(int $entrys,int $perpage,string $urlpart='',int $recall = 0) {
@@ -817,7 +880,7 @@ class common {
      * @return string
      */
     public static function show_countrys(string $i="") {
-        if ($i != "") {
+        if (!empty($i)) {
             $options = preg_replace('#<option value="' . $i . '">(.*?)</option>#', '<option value="' . $i . '" selected="selected"> \\1</option>', _country_list);
         } else {
             $options = preg_replace('#<option value="de"> Deutschland</option>#', '<option value="de" selected="selected"> Deutschland</option>', _country_list);
@@ -852,8 +915,8 @@ class common {
 
     /**
      * Funktion um Passwoerter generieren zu lassen
-     * @param int $passwordLength
-     * @param bool $specialcars
+     * @param int $passwordLength (optional)
+     * @param bool $specialcars (optional)
      * @return string
      */
     public static function mkpwd(int $passwordLength=8,bool $specialcars=true) {
@@ -879,40 +942,68 @@ class common {
     /**
      * Einzelne Userstatistiken ermitteln
      * @param string $what
-     * @param int $tid
+     * @param int $uid
+     * @param bool $refresh (optional)
      * @return int
      */
-    public static function userstats(string $what='id',int $tid=0) {
-        /*
-        TODO: Use PHPFastCache - Cache in Memory
-        */
-        if (!$tid) { $tid = self::$userid; }
-        $stats = self::$sql['default']->fetch("SELECT `".$what."` FROM `{prefix_userstats}` WHERE `user` = ?;", [(int)($tid)]);
-        if(!common::$sql['default']->rowCount() && $tid >= 1) {
-            self::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?;", [(int)($tid)]);
-            return 0;
+    public static function userstats(string $what='id', int $uid=0, bool $refresh = false) {
+        if (!$uid) { $uid = self::$userid; }
+        $cache_hash = md5('userstats_'.$uid);
+        if(!self::$cache->AutoMemExists($cache_hash) || !config::$use_system_cache || $refresh) {
+            $stats = self::$sql['default']->fetch("SELECT * FROM `{prefix_userstats}` WHERE `user` = ?;", [$uid]);
+            if(!common::$sql['default']->rowCount()) {
+                self::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?;", [$uid]);
+                self::$cache->AutoMemSet($cache_hash, self::$sql['default']->fetch("SELECT * FROM `{prefix_userstats}` WHERE `user` = ?;",
+                    [$uid]),cache::TIME_USERSTATS);
+                return 0;
+            } else {
+                self::$cache->AutoMemSet($cache_hash, $stats,cache::TIME_USERSTATS);
+            }
         }
 
-        return $stats[$what];
+        return (int)self::$cache->AutoMemGet($cache_hash)[$what];
     }
 
     /**
      * Einzelne Userstatistiken ermitteln
-     * @param string $what
-     * @param int $tid
+     * @param string $what (optional)
+     * @param int $uid (optional)
      * @return int
      */
-    public static function userstats_increase(string $what='profilhits',int $tid=0) {
-        /*
-        TODO: Use PHPFastCache - Cache in Memory
-        */
-        if (!$tid) { $tid = self::$userid; }
-        self::$sql['default']->fetch("SELECT `".$what."` FROM `{prefix_userstats}` WHERE `user` = ?;", [(int)($tid)]);
-        if(common::$sql['default']->rowCount() && $tid >= 1) {
-            self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `".$what."` = (".$what."+1) WHERE `user` = ?;", [(int)($tid)]);
-        } else if(!common::$sql['default']->rowCount() && $tid >= 1) {
-            self::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?;", [(int)($tid)]);
-            self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `".$what."` = (".$what."+1) WHERE `user` = ?;", [(int)($tid)]);
+    public static function userstats_increase(string $what='profilhits',int $uid=0) {
+        if (!$uid) { $uid = self::$userid; }
+        $cache_hash = md5('userstats_'.$uid);
+        if(self::$cache->AutoMemExists($cache_hash) && config::$use_system_cache) {
+            //Update Database
+            self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `".$what."` = (".$what."+1) WHERE `user` = ?;", [$uid]);
+
+            //Update Cache
+            $data = self::$cache->AutoMemGet($cache_hash);
+            $data[$what] = ($data[$what]+1);
+            self::$cache->AutoMemSet($cache_hash, $data,cache::TIME_USERSTATS);
+        } else {
+            self::$sql['default']->fetch("SELECT * FROM `{prefix_userstats}` WHERE `user` = ?;", [$uid]);
+            if(!common::$sql['default']->rowCount()) {
+                //Update Database
+                self::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?;", [$uid]);
+                self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `".$what."` = (".$what."+1) WHERE `user` = ?;", [$uid]);
+
+                //Update Cache
+                if(config::$use_system_cache) {
+                    self::$cache->AutoMemSet($cache_hash, self::$sql['default']->fetch("SELECT * FROM `{prefix_userstats}` WHERE `user` = ?;",
+                        [$uid]),cache::TIME_USERSTATS);
+                }
+                return 0;
+            } else {
+                //Update Database
+                self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `".$what."` = (".$what."+1) WHERE `user` = ?;", [$uid]);
+
+                //Update Cache
+                if(config::$use_system_cache) {
+                    self::$cache->AutoMemSet($cache_hash, self::$sql['default']->fetch("SELECT * FROM `{prefix_userstats}` WHERE `user` = ?;",
+                        [$uid]), cache::TIME_USERSTATS);
+                }
+            }
         }
     }
 
@@ -970,38 +1061,33 @@ class common {
 
     /**
      * Userpic ausgeben
-     * @param $userid
-     * @param int $width
-     * @param int $height
+     * @param int $uid
+     * @param int $width (optional)
+     * @param int $height (optional)
      * @return mixed|string
      */
-    public static function userpic(int $userid,int $width=170,int $height=210) {
-        $cache_hash = md5($userid.$width.$height);
-        if(!self::$cache->MemExists($cache_hash) || !config::$use_system_cache) {
-            $smarty = self::getSmarty(true);
-            foreach (["jpg", "gif", "png"] as $endung) {
-                if (file_exists(basePath . "/inc/images/uploads/userpics/" . $userid . "." . $endung)) {
-                    $smarty->caching = false;
-                    $smarty->assign('id', $userid);
-                    $smarty->assign('endung', $endung);
-                    $smarty->assign('width', $width);
-                    $smarty->assign('height', $height);
-                    $pic = $smarty->fetch('file:[' . common::$tmpdir . ']page/userpic_link.tpl');
-                    if(config::$use_system_cache) {
-                        self::$cache->MemSet($cache_hash, $pic, 30);
-                    }
-                    $smarty->clearAllAssign();
-                    break;
-                } else {
-                    $smarty->caching = false;
-                    $smarty->assign('width', $width);
-                    $smarty->assign('height', $height);
-                    $pic = $smarty->fetch('file:[' . common::$tmpdir . ']page/no_userpic.tpl');
-                    $smarty->clearAllAssign();
-                }
+    public static function userpic(int $uid,int $width=170,int $height=210) {
+        $smarty = self::getSmarty(true);
+        foreach (["jpg", "gif", "png"] as $endung) {
+            if (file_exists(basePath . "/inc/images/uploads/userpics/" . $uid . "." . $endung)) {
+                $smarty->caching = true;
+                $smarty->cache_lifetime = 300;
+                $smarty->force_compile = false;
+                $smarty->assign('id', $uid);
+                $smarty->assign('endung', $endung);
+                $smarty->assign('width', $width);
+                $smarty->assign('height', $height);
+                $pic = $smarty->fetch('file:[' . common::$tmpdir . ']page/userpic_link.tpl',
+                    self::getSmartyCacheHash('userpic_'.$uid.$width.$height));
+                $smarty->clearAllAssign();
+                break;
+            } else {
+                $smarty->caching = false;
+                $smarty->assign('width', $width);
+                $smarty->assign('height', $height);
+                $pic = $smarty->fetch('file:[' . common::$tmpdir . ']page/no_userpic.tpl');
+                $smarty->clearAllAssign();
             }
-        } else {
-            $pic = self::$cache->MemGet($cache_hash);
         }
 
         return $pic;
@@ -1010,8 +1096,8 @@ class common {
     /**
      * Useravatar ausgeben
      * @param int $uid
-     * @param int $width
-     * @param int $height
+     * @param int $width (optional)
+     * @param int $height (optional)
      * @return mixed|string
      */
     public static function useravatar(int $uid=0, int $width=100,int $height=100) {
@@ -1019,12 +1105,14 @@ class common {
         $uid = ($uid == 0 ? self::$userid : $uid);
         foreach(["jpg", "gif", "png"] as $endung) {
             if (file_exists(basePath . "/inc/images/uploads/useravatare/" . $uid . "." . $endung)) {
-                $smarty->caching = false;
+                $smarty->caching = true;
+                $smarty->cache_lifetime = 300;
                 $smarty->assign('id',$uid);
                 $smarty->assign('endung',$endung);
                 $smarty->assign('width',$width);
                 $smarty->assign('height',$height);
-                $pic = $smarty->fetch('file:['.common::$tmpdir.']page/userava_link.tpl');
+                $pic = $smarty->fetch('file:['.common::$tmpdir.']page/userava_link.tpl',
+                    self::getSmartyCacheHash('useravatar_'.$uid.$width.$height));
                 $smarty->clearAllAssign();
                 break;
             } else {
@@ -1078,12 +1166,17 @@ class common {
      * @return string
      */
     public static function voteanswer(string $what, int $vid) {
-        //TODO: Cache
-        $data = self::$sql['default']->select("SELECT `what`,`sel` FROM `{prefix_vote_results}` WHERE `vid` = ?;", [(int)($vid)]);
-        foreach ($data as $value) {
-            if(strtolower($value['what']) == strtolower($what)) {
-                return $value['sel'];
+        $cache_hash = md5($what.$vid);
+        if(!self::$cache->MemExists($cache_hash)) {
+            $data = self::$sql['default']->select("SELECT `what`,`sel` FROM `{prefix_vote_results}` WHERE `vid` = ?;", [(int)($vid)]);
+            foreach ($data as $value) {
+                if (strtolower($value['what']) == strtolower($what)) {
+                    self::$cache->MemSet($cache_hash,$value['sel'],cache::TIME_VOTE_ANSWER);
+                    return $value['sel'];
+                }
             }
+        } else {
+            return self::$cache->MemGet($cache_hash);
         }
 
         return '';
@@ -1092,7 +1185,7 @@ class common {
     /**
      * Konvertiert Platzhalter in die jeweiligen bersetzungen
      * @param $name
-     * @return mixed|string
+     * @return string
      */
     public static function navi_name(string $name) {
         $name = trim($name);
@@ -1105,17 +1198,6 @@ class common {
 
         return $name;
     }
-    
-    /**
-     * @param string $tpl
-     * @param array $array
-     * @param array $array_lang_constant
-     * @param array $array_block
-     * @return mixed|string
-     */
-    public static function show(string $tpl="", array $array= [], array $array_lang_constant= [], array $array_block= []) {
-        return self::show_runner($tpl,"inc/_templates_/".self::$tmpdir."/",$array,$array_lang_constant,$array_block);
-    }/** @noinspection PhpDocSignatureInspection */
 
     /**
      * Checkt versch. Dinge anhand der Hostmaske eines Users
@@ -1143,7 +1225,7 @@ class common {
     /**
      * Setzt bei einem Tag >10 eine 0 vorran (Kalender)
      * @param int $i
-     * @return int|mixed|string
+     * @return string
      */
     public static function cal(int $i) {
         if (preg_match("=10|20|30=Uis", $i) == FALSE) {
@@ -1151,9 +1233,9 @@ class common {
         }
 
         if ($i < 10) {
-            $tag_nr = "0" . $i;
+            $tag_nr = (string)"0" . $i;
         } else {
-            $tag_nr = $i;
+            $tag_nr = (string)$i;
         }
 
         return $tag_nr;
@@ -1162,7 +1244,7 @@ class common {
     /**
      * Geburtstag errechnen
      * @param int $bday
-     * @return bool|string
+     * @return string
      */
     public static function getAge(int $bday) {
         if (!empty($bday) && $bday) {
@@ -1172,9 +1254,9 @@ class common {
             $iCurrentMonth = date('n');
             $iCurrentYear = date('Y');
             if (($iCurrentMonth > $iMonth) || (($iCurrentMonth == $iMonth) && ($iCurrentDay >= $tiday))) {
-                return $iCurrentYear - $iYear;
+                return (string)$iCurrentYear - $iYear;
             } else {
-                return $iCurrentYear - ($iYear + 1);
+                return (string)$iCurrentYear - ($iYear + 1);
             }
         }
 
@@ -1182,12 +1264,12 @@ class common {
     }
 
     public static function check_msg_emal() {
-        $smarty = self::getSmarty(true);
         if(!is_ajax && !is_thumbgen && !is_api && !self::$CrawlerDetect->isCrawler() && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;", [session_id()])) {
             $qry = self::$sql['default']->select("SELECT s1.`an`,s1.`page`,s1.`titel`,s1.`sendmail`,s1.`id` AS `mid`, "
                 . "s2.`id`,s2.`nick`,s2.`email`,s2.`pnmail` FROM `{prefix_messages}` AS `s1` "
                 . "LEFT JOIN `{prefix_users}` AS `s2` ON s2.`id` = s1.`an` WHERE `page` = 0 AND `sendmail` = 0;");
             if(self::$sql['default']->rowCount()) {
+                $smarty = self::getSmarty(true);
                 foreach($qry as $get) {
                     if($get['pnmail']) {
                         self::$sql['default']->update("UPDATE `{prefix_messages}` SET `sendmail` = 1 WHERE `id` = ?;", [$get['mid']]);
@@ -1324,7 +1406,7 @@ class common {
      * Funktion um Ausgaben zu kuerzen
      * @param string $str
      * @param int|null $length
-     * @param bool $dots
+     * @param bool $dots (optional)
      * @return string
      */
     public static function cut(string $str, int $length = null, bool $dots = true) {
@@ -1361,8 +1443,8 @@ class common {
     /**
      * Ausgabe der Position des einzelnen Members
      * @param int $tid
-     * @param int $squad
-     * @param bool $profil
+     * @param int $squad (optional)
+     * @param bool $profil (optional)
      * @return string
      */
     public static function getrank(int $tid=0, int $squad=0, bool $profil=false) {
@@ -1371,7 +1453,7 @@ class common {
         if($squad) {
             if ($profil) {
                 $qry = self::$sql['default']->select("SELECT s1.`posi`,s2.`name` FROM `{prefix_userposis}` AS `s1` LEFT JOIN `{prefix_groups}` AS `s2` ON s1.`group` = s2.`id` "
-                    . "WHERE s1.`user` = ? AND s1.`group` = ? AND s1.`posi` != 0;", [(int)($tid),(int)($squad)]);
+                    . "WHERE s1.`user` = ? AND s1.`group` = ? AND s1.`posi` != 0;",[(int)($tid),(int)($squad)]);
             } else {
                 $qry = self::$sql['default']->select("SELECT `posi` FROM `{prefix_userposis}` WHERE `user` = ? AND `group` = ? AND `posi` != 0;", [(int)($tid),(int)($squad)]);
             }
@@ -1449,12 +1531,12 @@ class common {
     /**
      * Funktion um Dateien aus einem Verzeichnis auszulesen
      * @param string|null $dir
-     * @param bool $only_dir
-     * @param bool $only_files
-     * @param array $file_ext
-     * @param bool $preg_match
-     * @param array $blacklist
-     * @param bool $blacklist_word
+     * @param bool $only_dir (optional)
+     * @param bool $only_files (optional)
+     * @param array $file_ext (optional)
+     * @param bool $preg_match (optional)
+     * @param array $blacklist (optional)
+     * @param bool $blacklist_word (optional)
      * @return array
      */
     public static function get_files(string $dir=null, bool $only_dir=false, bool $only_files=false, array $file_ext= [], bool $preg_match=false, array $blacklist= [], bool $blacklist_word=false) {
@@ -1550,8 +1632,22 @@ class common {
      */
     public static function onlinecheck(int $tid = 0) {
         $tid = !$tid ? self::$userid : $tid;
-        $row = self::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `id` = ? AND (time+1800)>? AND `online` = 1;", [(int)($tid),time()]);
-        return $row ? "<img src=\"../inc/images/online.png\" alt=\"\" class=\"icon\" />" : "<img src=\"../inc/images/offline.png\" alt=\"\" class=\"icon\" />";
+        $cache_hash = md5('onlinecheck_'.$tid);
+        $status = "<img src=\"../inc/images/offline.png\" alt=\"\" class=\"icon\" />";
+        if(!self::$cache->AutoMemExists($cache_hash) || !config::$use_system_cache) {
+            $row = self::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `id` = ? AND (time+1800)>? AND `online` = 1;", [(int)($tid),time()]);
+            if($row) {
+                $status = "<img src=\"../inc/images/online.png\" alt=\"\" class=\"icon\" />";
+            }
+
+            if(config::$use_system_cache && $row) {
+                self::$cache->AutoMemSet($cache_hash, $status,cache::TIME_ONLINE_CHECK);
+            }
+        } else {
+            return self::$cache->AutoMemGet($cache_hash);
+        }
+
+        return $status;
     }
 
     /**
@@ -1674,10 +1770,6 @@ class common {
      * Pruft ob die IP gesperrt und gultig ist
      */
     public static function check_ip() {
-        if(!dbc_index::issetIndex('ip_check')) {
-            dbc_index::setIndex('ip_check', []);
-        }
-
         if(!self::isIP(self::$userip, true)) {
             if((!self::isIP(self::$userip) && !self::isIP(self::$userip,true)) || self::$userip == false || empty(self::$userip)) {
                 self::dzcp_session_destroy();
@@ -1718,6 +1810,9 @@ class common {
                 $ips[md5(self::$userip)] = true;
                 dbc_index::setIndex('ip_check', $ips, 30);
             }
+        } if(self::isIP(self::$userip, true)) {
+            //Is IPv6
+            //TODO: Support for IPV6
         }
     }
 
@@ -2034,7 +2129,7 @@ class common {
 
         //Liste der Rechte zusammenstellen
         $permission = [];
-        $qry = self::$sql['default']->show("SHOW COLUMNS FROM `dzcp_permissions`;");
+        $qry = self::$sql['default']->show("SHOW COLUMNS FROM `{prefix_permissions}`;");
         if(self::$sql['default']->rowCount()) {
             foreach($qry as $get) {
                 if($get['Field'] != 'id' && $get['Field'] != 'user' && $get['Field'] != 'pos' && $get['Field'] != 'intforum') {

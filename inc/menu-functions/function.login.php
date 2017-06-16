@@ -15,24 +15,15 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-/**
- * Usage {idir}
- * @param $params
- * @param $smarty
- * @return string
- */
 function smarty_function_login($params, &$smarty) {
     $login = '';
     if(!common::$chkMe) {
-        $smarty_login = common::getSmarty(true); //Use Smarty
+        $smarty->caching = false;
+        $secure = $smarty->fetch('file:[' . common::$tmpdir . ']menu/login/secure.tpl');
 
-        $smarty_login->caching = false;
-        $secure = $smarty_login->fetch('file:[' . common::$tmpdir . ']menu/login/secure.tpl');
-
-        $smarty_login->caching = false;
-        $smarty_login->assign('secure', $secure);
-        $login = $smarty_login->fetch('file:[' . common::$tmpdir . ']menu/login/login.tpl');
-        $smarty_login->clearAllAssign();
+        $smarty->caching = false;
+        $smarty->assign('secure', $secure);
+        $login = $smarty->fetch('file:[' . common::$tmpdir . ']menu/login/login.tpl');
     }
 
     return $login;
