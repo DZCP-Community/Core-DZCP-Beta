@@ -77,7 +77,8 @@ if(defined('_UserMenu')) {
                                     . "`date` = ?, "
                                     . "`update` = 0, "
                                     . "`expires` = ?;",
-                            array($get['id'], session_id(), $permanent_key, common::$userip['v4'], common::cut($gethostbyaddr, 20), $gethostbyaddr, time(), autologin_expire));
+                            array($get['id'], session_id(), $permanent_key, common::$userip['v4'],
+                                common::cut($gethostbyaddr, 20), $gethostbyaddr, time(), autologin_expire));
                         }
 
                         cookie::put('pkey', $permanent_key);

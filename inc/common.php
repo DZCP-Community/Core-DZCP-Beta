@@ -355,7 +355,7 @@ class common {
             if(self::$sql['default']->rowCount()) {
                 foreach($qryDNS as $getDNS) {
                     self::$sql['default']->delete("DELETE FROM `{prefix_iptodns}` WHERE `id` = ?;", [$getDNS['id']]);
-                    self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `ipv4` = ?;", [$getDNS['ip']]);
+                    self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `ipv4` = ?;", [$getDNS['ipv4']]);
                 } unset($getDNS);
             } unset($qryDNS);
 
@@ -376,7 +376,7 @@ class common {
                             $data_array['lastseen'] = '';
                             $data_array['banned_msg'] = stringParser::encode('SpamBot detected by System * No BotAgent *');
                             $data_array['agent'] = $get_sb['agent'];
-                            self::$sql['default']->insert("INSERT INTO `{prefix_ipban}` SET `time` = ?, `ipv4` = ?, `data` = ?, `typ` = 3;", [time(), $get_sb['ip'], serialize($data_array)]);
+                            self::$sql['default']->insert("INSERT INTO `{prefix_ipban}` SET `time` = ?, `ipv4` = ?, `data` = ?, `typ` = 3;", [time(), $get_sb['ipv4'], serialize($data_array)]);
                             self::check_ip(); // IP Prufung * No IPV6 Support *
                             unset($data_array);
                         }
@@ -460,20 +460,37 @@ class common {
                 }
             }
 
-            unset($xml,$templ,$files);
+            unset($xml,$templ);
         }
 
         if(cookie::get('tmpdir') != false && cookie::get('tmpdir') != NULL) {
             if (file_exists(basePath . "/inc/_templates_/" . cookie::get('tmpdir'))) {
-                $xml = simplexml_load_file(basePath.'/inc/_templates_/'.cookie::get('tmpdir').'/template.xml');
-                if(!empty((string)$xml->permissions) && (string)$xml->permissions != 'null') {
-                    if(common::permission((string)$xml->permissions) || ((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level)) {
+                $cache_hash = md5('templateswitch_xml_'.cookie::get('tmpdir'));
+                if(!common::$cache->AutoMemExists($cache_hash) || !config::$use_system_cache) {
+                    $xml = simplexml_load_file(basePath.'/inc/_templates_/'.cookie::get('tmpdir').'/template.xml');
+                    if(config::$use_system_cache) {
+                        common::$cache->AutoMemSet($cache_hash, json_encode($xml), cache::TIME_TEMPLATE_XML);
+                    }
+                    if(!empty((string)$xml->permissions) && (string)$xml->permissions != 'null') {
+                        if(common::permission((string)$xml->permissions) || ((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level)) {
+                            self::$tmpdir = cookie::get('tmpdir');
+                        }
+                    } else if((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level) {
+                        self::$tmpdir = cookie::get('tmpdir');
+                    } else if(!(int)$xml->level) {
                         self::$tmpdir = cookie::get('tmpdir');
                     }
-                } else if((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level) {
-                    self::$tmpdir = cookie::get('tmpdir');
-                } else if(!(int)$xml->level) {
-                    self::$tmpdir = cookie::get('tmpdir');
+                } else {
+                    $data = json_decode(common::$cache->AutoMemGet($cache_hash),true);
+                    if(!empty($data['permissions']) && (string)$data['permissions'] != 'null') {
+                        if(common::permission((string)$data['permissions']) || ((int)$data['level'] >= 1 && common::$chkMe >= (int)$data['level'])) {
+                            self::$tmpdir = cookie::get('tmpdir');
+                        }
+                    } else if((int)$data['level'] >= 1 && common::$chkMe >= (int)$data['level']) {
+                        self::$tmpdir = cookie::get('tmpdir');
+                    } else if(!(int)$data['level']) {
+                        self::$tmpdir = cookie::get('tmpdir');
+                    }
                 }
             } else {
                 self::$tmpdir = $files[0];
@@ -1755,7 +1772,7 @@ class common {
     /**
      * Check given ip for ipv6 or ipv4.
      * @param    string        $ip
-     * @param    boolean       $v6
+     * @param    boolean       $v6 (optional)
      * @return   boolean
      */
     public static function isIP(string $ip,bool $v6=false) {
@@ -1835,7 +1852,7 @@ class common {
     /**
      * Passwort in md5 oder sha1 bis 512 codieren
      * @param $password
-     * @param int $encoder
+     * @param int $encoder (optional)
      * @return string
      */
     public static final function pwd_encoder(string $password,int $encoder=-1) {
@@ -1879,11 +1896,11 @@ class common {
     /**
      * @param string $address
      * @param int $port
-     * @param int $timeout
-     * @param bool $udp
+     * @param int $timeout (optional)
+     * @param bool $udp (optional)
      * @return bool
      */
-    public static function ping_port(string $address='',int $port=0000,int $timeout=2,bool $udp=false) {
+    public static function ping_port(string $address,int $port,int $timeout=2,bool $udp=false) {
         if (!self::fsockopen_support()) {
             return false;
         }
@@ -1905,9 +1922,9 @@ class common {
     /**
      * Funktion um eine Datei im Web auf Existenz zu prufen und abzurufen
      * @param string $url
-     * @param bool $post
-     * @param bool $nogzip
-     * @param int $timeout
+     * @param bool $post (optional)
+     * @param bool $nogzip (optional)
+     * @param int $timeout (optional)
      * @return String
      */
     public static function get_external_contents(string $url,bool $post=false,bool $nogzip=false,int $timeout=file_get_contents_timeout) {
@@ -2017,8 +2034,8 @@ class common {
     /**
      * Verschlusselt eine E-Mail Adresse per Javascript
      * @param string $email
-     * @param string $template
-     * @param array $custom
+     * @param string $template (optional)
+     * @param array $custom (optional)
      * @return string
      */
     public static function CryptMailto(string $email='',string $template=_emailicon,array $custom= []) {
@@ -2052,14 +2069,14 @@ class common {
      */
     public static function setIpcheck(string $what = '',bool $time = true) {
         self::$sql['default']->insert("INSERT INTO `{prefix_ip_action}` SET `ipv4` = ?, `user_id` = ?, `what` = ?, `time` = ?, `created` = ?;",
-            [self::visitorIp(),(int)(self::userid()),$what,($time ? time() : 0),time()]);
+            [self::visitorIp()['v4'],(int)(self::userid()),$what,($time ? time() : 0),time()]);
     }
 
     /**
      * Preuft ob alle clicks nur einmal gezahlt werden *gast/user
-     * @param string $side_tag
-     * @param int $clickedID
-     * @param bool $update
+     * @param string $side_tag (optional)
+     * @param int $clickedID (optional)
+     * @param bool $update (optional)
      * @return bool
      */
     public static function count_clicks(string $side_tag='',int $clickedID=0,bool $update=true) {
@@ -2110,11 +2127,12 @@ class common {
 
     /**
      * Rechte abfragen
-     * @param int $checkID
-     * @param int $pos
+     * @param int $checkID (optional)
+     * @param int $pos (optional)
      * @return string
      */
     public static function getPermissions(int $checkID = 0, int $pos = 0) {
+        //TODO: Use Cache
         //Rechte des Users oder des Teams suchen
         if(!empty($checkID)) {
             $check = empty($pos) ? 'user' : 'pos'; $checked = [];
@@ -2155,8 +2173,8 @@ class common {
 
     /**
      * interne Foren-Rechte abfragen
-     * @param int $checkID
-     * @param int $pos
+     * @param int $checkID (optional)
+     * @param int $pos (optional)
      * @return string
      */
     public static function getBoardPermissions(int $checkID = 0,int $pos = 0) {
@@ -2208,10 +2226,12 @@ class common {
 
     /**
      * Adminberechtigungen ueberpruefen
-     * @param int $userid
+     * @param int $userid (optional)
      * @return bool
      */
-    public static function admin_perms(int $userid) {
+    public static function admin_perms(int $userid = 0) {
+        //TODO: Use Cache
+        $userid = !$userid ? self::$userid : $userid;
         if (empty($userid)) {
             return false;
         }
@@ -2402,47 +2422,72 @@ class common {
     /**
      * Prueft, ob ein User diverse Rechte besitzt
      * @param string $check
-     * @param int $uid
+     * @param int $uid (optional)
+     * @param bool $refresh (optional)
      * @return bool
      */
-    public static function permission(string $check,int $uid=0) {
-        //TODO: Add Live Cache
-        //TODO: Check and create new permission key when keyis missing
+    public static function permission(string $check,int $uid=0,bool $refresh = false) {
         if (!$uid) { $uid = self::$userid; }
-        if(self::rootAdmin($uid))
+        if(self::rootAdmin($uid) || empty($check))
             return true;
 
         if(self::$chkMe == 4) {
             return true;
         } else {
             if ($uid) {
+                //Check ROW
                 if(!self::$sql['default']->rows("SELECT `id` FROM `{prefix_permissions}` WHERE `user` = ?;", [(int)($uid)]) && $uid >= 1) {
                     self::$sql['default']->insert("INSERT INTO `{prefix_permissions}` SET `user` = ?;", [(int)($uid)]);
                 }
 
-                // check rank permission
-                if (self::$sql['default']->rows("SELECT s1.`" . $check . "` FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi`"
-                    . "WHERE s2.`user` = ? AND s1.`" . $check . "` = 1 AND s2.`posi` != 0;", [(int)($uid)])) {
-                    return true;
-                }
-
-                // check user permission
-                if (!dbc_index::issetIndex('user_permission_' . (int)($uid))) {
+                $cache_hash = md5('permissions_'.$uid);
+                if(!self::$cache->AutoMemExists($cache_hash) || !config::$use_system_cache || $refresh) {
                     $permissions = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `user` = ?;", [(int)($uid)]);
-                    dbc_index::setIndex('user_permission_' . (int)($uid), $permissions);
-                }
+                    if(!array_key_exists($check,$permissions) && $check != 'xxxxx' && !empty($check)) {
+                        self::$sql['default']->query("ALTER TABLE `{prefix_permissions}` ADD `".$check."` INT(1) NOT NULL DEFAULT '0';");
+                        $permissions = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `user` = ?;", [(int)($uid)]);
+                    }
 
-                return dbc_index::getIndexKey('user_permission_' . (int)($uid), $check) ? true : false;
-            } else {
-                return false;
+                    if(config::$use_system_cache) {
+                        self::$cache->AutoMemSet($cache_hash,$permissions,cache::TIME_USERPERM);
+                    }
+
+                    // check rank permission
+                    if (self::$sql['default']->rows("SELECT s1.`" . $check . "` FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi`"
+                        . "WHERE s2.`user` = ? AND s1.`" . $check . "` = 1 AND s2.`posi` != 0;", [(int)($uid)])) {
+                        return true;
+                    }
+
+                    return (bool)(array_key_exists($check,$permissions) && $permissions[$check]);
+                } else {
+                    $permissions = self::$cache->AutoMemGet($cache_hash);
+                    if(!array_key_exists($check,$permissions) && $check != 'xxxxx' && !empty($check)) {
+                        self::$sql['default']->query("ALTER TABLE `{prefix_permissions}` ADD `".$check."` INT(1) NOT NULL DEFAULT '0';");
+                        $permissions = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `user` = ?;", [(int)($uid)]);
+
+                        if(config::$use_system_cache) {
+                            self::$cache->AutoMemSet($cache_hash, $permissions, cache::TIME_USERPERM);
+                        }
+                    }
+
+                    // check rank permission
+                    if (self::$sql['default']->rows("SELECT s1.`" . $check . "` FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi`"
+                        . "WHERE s2.`user` = ? AND s1.`" . $check . "` = 1 AND s2.`posi` != 0;", [(int)($uid)])) {
+                        return true;
+                    }
+
+                    return (bool)(array_key_exists($check,$permissions) && $permissions[$check]);
+                }
             }
         }
+
+        return false;
     }
 
     /**
      * Prueft, wieviele registrierte User gerade online sind
-     * @param string $where
-     * @param bool $like
+     * @param string $where (optional)
+     * @param bool $like (optional)
      * @return int
      */
     public static function online_reg(string $where='',bool $like=false) {
@@ -2457,35 +2502,32 @@ class common {
     }
 
     /**
-     * Prueft, ob der User eingeloggt ist und wenn ja welches Level besitzt er
-     * @param int $userid_set
-     * @return bool|int
+     * Prueft ob der User eingeloggt ist und wenn welches Level er besitzt.
+     * @param int $uid (optional)
+     * @param bool $refresh (optional)
+     * @return int
      */
-    public static function checkme(int $userid_set=0) {
-        //TODO: Cache
+    public static function checkme(int $uid=0, bool $refresh = false) {
         if (empty($_SESSION['id']) || empty($_SESSION['pwd'])) { return 0; }
-        if (!$userid = ($userid_set != 0 ? (int)($userid_set) : self::userid())) { return 0; }
-        if (self::rootAdmin($userid)) { return 4; }
-        if(!dbc_index::issetIndex('user_'.(int)($userid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ? AND `pwd` = ? AND `ipv4` = ?;",
-                [(int)($userid),$_SESSION['pwd'],self::$userip['v4']]);
-            if (!self::$sql['default']->rowCount()) { return 0; }
-            dbc_index::setIndex('user_'.$get['id'], $get);
-            return $get['level'];
+        if (!$uid = ($uid != 0 ? (int)($uid) : self::userid())) { return 0; }
+        if (self::rootAdmin($uid)) { return 4; }
+        $user = self::getUserIndex($uid,$refresh); //Load user from Mem/Netcache
+        if(count($user) > 2) {
+            return (int)$user['level'];
         }
 
-        return dbc_index::getIndexKey('user_'.(int)($userid), 'level');
+        return 0;
     }
 
     /**
      * Infomeldung ausgeben
      * @param string $msg
      * @param string $url
-     * @param int $timeout
-     * @param bool $direct_refresh
+     * @param int $timeout (optional)
+     * @param bool $direct_refresh (optional)
      * @return mixed|string|void
      */
-    public static function info(string $msg,string $url="",int $timeout = 5,bool $direct_refresh = true) {
+    public static function info(string $msg,string $url,int $timeout = 5,bool $direct_refresh = true) {
         if (settings::get('direct_refresh') && $direct_refresh) {
             return header('Location: ' . str_replace('&amp;', '&', $url));
         }
@@ -2554,7 +2596,7 @@ class common {
     /**
      * Prueft, wieviele Besucher gerade online sind
      * @param string $where
-     * @param bool $like
+     * @param bool $like (optional)
      * @return int
      */
     public static function online_guests(string $where='',bool $like=false) {
@@ -2628,9 +2670,7 @@ class common {
 
     /**
      * Generiert die Select-Felder für ein Dropdown Menu
-     * @param string $value
-     * @param bool $is_selected
-     * @param string $what
+     * @param array $get
      * @return string
      */
     public static function editor_is_reg(array $get = array()) {
@@ -2657,9 +2697,9 @@ class common {
     /**
      * Generiert die Select-Felder für ein Dropdown Menu
      * @param string $value
-     * @param bool $is_selected
+     * @param bool $is_selected (optional)
      * @param string $what
-     * @param string $class
+     * @param string $class (optional)
      * @return string
      */
     public static function select_field(string $value,bool $is_selected=false,string $what,string $class = null) {
@@ -2680,8 +2720,8 @@ class common {
      * Generiert die Select-Felder für ein Dropdown Menu
      * @param string $id
      * @param string $action
-     * @param string $title
-     * @param string $del
+     * @param string $title (optional)
+     * @param string $del (optional)
      * @return string
      * @internal param string $value
      * @internal param bool $is_selected
@@ -2726,8 +2766,8 @@ class common {
     /**
      * @param array $order_by
      * @param string $default_order
-     * @param string $join
-     * @param array $order
+     * @param string $join (optional)
+     * @param array $order (optional)
      * @return string
      */
     public static function orderby_sql(array $order_by= [], string $default_order='', string $join='', array $order = ['ASC','DESC']) {
@@ -2793,9 +2833,9 @@ class common {
     /**
      * Funktion um diverse Dinge aus Tabellen zusammenzaehlen zu lassen
      * @param string $db
-     * @param string $where
-     * @param string $what
-     * @param array $sql_std
+     * @param string $where (optional)
+     * @param string $what (optional)
+     * @param array $sql_std (optional)
      * @return int
      */
     public static function sum(string $db,string $where = "",string $what = "id",array $sql_std=[]) {
@@ -2810,9 +2850,9 @@ class common {
     /**
      * Funktion um diverse Dinge aus Tabellen zusammenzaehlen zu lassen
      * @param string $db
-     * @param string $where
-     * @param array $whats
-     * @param array $sql_std
+     * @param string $where (optional)
+     * @param array $whats (optional)
+     * @param array $sql_std (optional)
      * @return array
      */
     public static function sum_multi(string $db, string $where = "", array $whats = ['id'], array $sql_std=[]) {
@@ -2831,9 +2871,9 @@ class common {
 
     /**
      * @param string $str
-     * @param int $width
-     * @param string $break
-     * @param bool $cut
+     * @param int $width (optional)
+     * @param string $break (optional)
+     * @param bool $cut (optional)
      * @return string
      */
     public static function wrap(string $str,int $width = 75,string $break = "\n",bool $cut = true) {
@@ -2869,7 +2909,7 @@ class common {
 
     /**
      * Prueft ob der User ein Rootadmin ist
-     * @param int $userid
+     * @param int $userid (optional)
      * @return bool
      */
     public static function rootAdmin(int $userid=0) {
@@ -2880,9 +2920,9 @@ class common {
 
     /**
      * Languagefiles einlesen
-     * @param string $lng
+     * @param string $lng (optional)
      */
-    public static function lang(string $lng) {
+    public static function lang(string $lng = 'de') {
         if(!file_exists(basePath."/inc/lang/".$lng.".php")) {
             $files = self::get_files(basePath.'/inc/lang/',false,true,['php']);
             $lng = str_replace('.php','',$files[0]);
@@ -2912,7 +2952,7 @@ class common {
     /**
      * Wandelt bytes in eine lesbare Größe.
      * @param int $bytes
-     * @param int $decimals
+     * @param int $decimals (optional)
      * @return string
      */
     public static function parser_filesize(int $bytes, int $decimals = 2) {
@@ -2959,11 +2999,11 @@ class common {
     /**
      * Ausgabe des Indextemplates
      * @param string $index
-     * @param string $title
-     * @param string $where
-     * @param string $index_templ
+     * @param string $title (optional)
+     * @param string $where (optional)
+     * @param string $index_templ (optional)
      */
-    public static final function page(string $index='',string $title='',string $where='',string $template='index') {
+    public static final function page(string $index,string $title='',string $where='',string $template='index') {
         //JS SetOptions
         javascript::set('lng',($_SESSION['language']=='deutsch'?'de':'en'));
         javascript::set('maxW',settings::get('maxwidth'));
