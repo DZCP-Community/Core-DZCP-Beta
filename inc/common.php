@@ -2443,7 +2443,7 @@ class common {
                 $cache_hash = md5('permissions_'.$uid);
                 if(!self::$cache->AutoMemExists($cache_hash) || !config::$use_system_cache || $refresh) {
                     $permissions = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `user` = ?;", [(int)($uid)]);
-                    if(!array_key_exists($check,$permissions) && $check != 'xxxxx' && !empty($check)) {
+                    if(!array_key_exists($check,$permissions) && $check != 'xxxxx') {
                         self::$sql['default']->query("ALTER TABLE `{prefix_permissions}` ADD `".$check."` INT(1) NOT NULL DEFAULT '0';");
                         $permissions = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `user` = ?;", [(int)($uid)]);
                     }
@@ -2453,12 +2453,15 @@ class common {
                     }
 
                     // check rank permission
-                    if (self::$sql['default']->rows("SELECT s1.`" . $check . "` FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi`"
-                        . "WHERE s2.`user` = ? AND s1.`" . $check . "` = 1 AND s2.`posi` != 0;", [(int)($uid)])) {
-                        return true;
-                    }
+                    if($check != 'xxxxx') {
+                        if (self::$sql['default']->rows("SELECT s1.`" . $check . "` FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi`"
+                            . "WHERE s2.`user` = ? AND s1.`" . $check . "` = 1 AND s2.`posi` != 0;", [(int)($uid)])
+                        ) {
+                            return true;
+                        }
 
-                    return (bool)(array_key_exists($check,$permissions) && $permissions[$check]);
+                        return (bool)(array_key_exists($check, $permissions) && $permissions[$check]);
+                    }
                 } else {
                     $permissions = self::$cache->AutoMemGet($cache_hash);
                     if(!array_key_exists($check,$permissions) && $check != 'xxxxx' && !empty($check)) {
@@ -2470,13 +2473,16 @@ class common {
                         }
                     }
 
-                    // check rank permission
-                    if (self::$sql['default']->rows("SELECT s1.`" . $check . "` FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi`"
-                        . "WHERE s2.`user` = ? AND s1.`" . $check . "` = 1 AND s2.`posi` != 0;", [(int)($uid)])) {
-                        return true;
-                    }
+                    if($check != 'xxxxx') {
+                        // check rank permission
+                        if (self::$sql['default']->rows("SELECT s1.`" . $check . "` FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi`"
+                            . "WHERE s2.`user` = ? AND s1.`" . $check . "` = 1 AND s2.`posi` != 0;", [(int)($uid)])
+                        ) {
+                            return true;
+                        }
 
-                    return (bool)(array_key_exists($check,$permissions) && $permissions[$check]);
+                        return (bool)(array_key_exists($check, $permissions) && $permissions[$check]);
+                    }
                 }
             }
         }
