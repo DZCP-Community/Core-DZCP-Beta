@@ -139,7 +139,7 @@ if(defined('_Forum')) {
             $smarty->assign('signatur',$sig);
             $smarty->assign('zitat',_forum_zitat_preview);
             $smarty->assign('onoff',$onoff);
-            $smarty->assign('ip',common::$userip.'<br />'._only_for_admins);
+            $smarty->assign('ip',common::$userip['v4'].'<br />'._only_for_admins);
             $smarty->assign('id',$_GET['id']);
             $smarty->assign('lpost',$lpost);
             $smarty->assign('lp','');
@@ -243,7 +243,7 @@ if(defined('_Forum')) {
             $smarty->assign('email', $email);
             $smarty->assign('status', common::getrank($pUId));
             $smarty->assign('avatar', common::useravatar($pUId));
-            $smarty->assign('ip', common::$userip.'<br />'._only_for_admins);
+            $smarty->assign('ip', common::$userip['v4'].'<br />'._only_for_admins);
             $smarty->assign('edited', '');
             $smarty->assign('posts', $userposts);
             $smarty->assign('titel', $titel);

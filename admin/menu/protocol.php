@@ -31,7 +31,7 @@ switch ($do) {
         
         $params = array();
         if(!empty($_GET['sip'])) {
-            $search = "WHERE `ip` = ? AND `time` != 0 AND `what` NOT REGEXP 'vid_'";
+            $search = "WHERE `ipv4` = ? AND `time` != 0 AND `what` NOT REGEXP 'vid_'";
             array_push($params, stringParser::encode($_GET['sip']));
             $swhat = $_GET['sip'];
         } else {

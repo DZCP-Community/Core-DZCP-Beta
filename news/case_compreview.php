@@ -67,7 +67,7 @@ if(defined('_News') && common::$chkMe >= 1) {
     $smarty->assign('avatar',common::useravatar($get_userid));
     $smarty->assign('onoff',common::onlinecheck($get_userid));
     $smarty->assign('rank',common::getrank($get_userid));
-    $smarty->assign('ip',common::$userip._only_for_admins);
+    $smarty->assign('ip',common::$userip['v4']._only_for_admins);
     $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/comments_show.tpl');
     $smarty->clearAllAssign();
 

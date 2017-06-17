@@ -139,32 +139,32 @@ if(defined('_UserMenu')) {
                             switch ($do) {
                                 case 'self_add':
                                     $permanent_key = md5(common::mkpwd(8));
-                                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `host` = ?;", array(gethostbyaddr(common::$userip)))) {
+                                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `host` = ?;", array(gethostbyaddr(common::$userip['v4'])))) {
                                         //Update Autologin
                                         common::$sql['default']->update("UPDATE `{prefix_autologin}` SET "
                                                           . "`ssid` = ?, "
                                                           . "`pkey` = ?, "
-                                                          . "`ip` = ?, "
+                                                          . "`ipv4` = ?, "
                                                           . "`date` = ?, "
                                                           . "`update` = ?, "
                                                           . "`expires` = ? "
                                                     . "WHERE `host` = ?;", 
-                                        array(session_id(),$permanent_key,common::$userip,$time=time(),$time,autologin_expire,
-                                              gethostbyaddr(common::$userip)));
+                                        array(session_id(),$permanent_key,common::$userip['v4'],$time=time(),$time,autologin_expire,
+                                              gethostbyaddr(common::$userip['v4'])));
                                     } else {
                                         //Insert Autologin
                                         common::$sql['default']->insert("INSERT INTO `{prefix_autologin}` SET "
                                                                . "`uid` = ?,"
                                                                . "`ssid` = ?,"
                                                                . "`pkey` = ?,"
-                                                               . "`ip` = ?,"
+                                                               . "`ipv4` = ?,"
                                                                . "`name` = ?, "
                                                                . "`host` = ?,"
                                                                . "`date` = ?,"
                                                                . "`update` = 0,"
                                                                . "`expires` = ?;",
-                                        array($get['id'],session_id(),$permanent_key,common::$userip,
-                                            common::cut(gethostbyaddr(common::$userip),20), gethostbyaddr(common::$userip),
+                                        array($get['id'],session_id(),$permanent_key,common::$userip['v4'],
+                                            common::cut(gethostbyaddr(common::$userip['v4']),20), gethostbyaddr(common::$userip),
                                             $time=time(),autologin_expire));
                                     }
                                     
@@ -174,7 +174,7 @@ if(defined('_UserMenu')) {
                                     notification::add_success(_info_almgr_self_added);
                                 break;
                                 case 'self_remove':
-                                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `host` = ? AND `ssid` = ?;", array(gethostbyaddr(common::$userip), session_id()))) {
+                                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `host` = ? AND `ssid` = ?;", array(gethostbyaddr(common::$userip['v4']), session_id()))) {
                                         common::$sql['default']->delete("DELETE FROM `{prefix_autologin}` WHERE `ssid` = ?;",array(session_id()));
                                         cookie::delete('pkey');
                                         cookie::delete('id');

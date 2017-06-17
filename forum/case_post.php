@@ -194,9 +194,9 @@ if(defined('_Forum')) {
                                                 break;
                                             default:
                                             case common::FORUM_DOUBLE_POST_INSERT:
-                                                common::$sql['default']->insert("INSERT INTO `{prefix_forumposts}` SET `kid` = ?, `sid` = ?, `date` = ?, `nick` = ?,`email` = ?,`reg` = ?,`text` = ?,`ip`= ?;",
+                                                common::$sql['default']->insert("INSERT INTO `{prefix_forumposts}` SET `kid` = ?, `sid` = ?, `date` = ?, `nick` = ?,`email` = ?,`reg` = ?,`text` = ?,`ipv4`= ?;",
                                                     [$_SESSION['kid'], $id, time(), stringParser::encode($_POST['nick']), stringParser::encode($_POST['email']),
-                                                        common::$userid, stringParser::encode($_POST['eintrag']), common::$userip]);
+                                                        common::$userid, stringParser::encode($_POST['eintrag']), common::$userip['v4']]);
 
                                                 common::$sql['default']->update("UPDATE `{prefix_forumthreads}` SET `lp` = ?,`first` = 0,`posts` = (posts+1) WHERE id = ?;",
                                                     [time(), $id]);

@@ -64,10 +64,10 @@ if(defined('_UserMenu')) {
 
                 $_SESSION['id'] = (int)($_GET['id']);
                 $_SESSION['pwd'] =stringParser::decode(common::data("pwd", (int)($_GET['id'])));
-                $_SESSION['ip'] = common::$userip;
+                $_SESSION['ip'] = common::$userip['v4'];
 
-                common::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ip` = ? WHERE `id` = ?;",
-                array(session_id(),common::$userip,(int)($_GET['id'])));
+                common::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ipv4` = ? WHERE `id` = ?;",
+                array(session_id(),common::$userip['v4'],(int)($_GET['id'])));
                 common::setIpcheck("ident(" . common::$userid . "_" . (int)($_GET['id']) . ")");
 
                 $index = common::info($msg, "?action=user&amp;id=" . $_GET['id'] . "", 5, false);

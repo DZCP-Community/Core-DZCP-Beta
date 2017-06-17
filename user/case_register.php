@@ -22,7 +22,7 @@ if(defined('_UserMenu')) {
         // POST
         // ########################################
 
-        if ($do == "add" && !common::$chkMe && common::isIP(common::visitorIp()) && !common::$CrawlerDetect->isCrawler()) {
+        if ($do == "add" && !common::$chkMe && common::isIP(common::$userip['v4']) && !common::$CrawlerDetect->isCrawler()) {
             $check_user = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `user`= ?;",
                 array(stringParser::encode($_POST['user'])));
 
@@ -91,7 +91,7 @@ if(defined('_UserMenu')) {
                     . "SET `user`     = ?, "
                     . "`nick`     = ?, "
                     . "`email`    = ?, "
-                    . "`ip`       = ?, "
+                    . "`ipv4`       = ?, "
                     . "`pwd`      = ?, "
                     . "`pwd_encoder` = ?, "
                     . "`actkey`   = ?, "
@@ -103,7 +103,7 @@ if(defined('_UserMenu')) {
                     array(stringParser::encode(trim($_POST['user'])),
                         stringParser::encode(trim($_POST['nick'])),
                         stringParser::encode(trim($_POST['email'])),
-                        common::visitorIp(),
+                        common::$userip['v4'],
                         stringParser::encode($pwd),
                         settings::get('default_pwd_encoder'),
                         (settings::get('use_akl') ? ($guid=common::GenGuid()) : ''),

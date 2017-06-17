@@ -35,7 +35,7 @@ switch ($do) {
             $data_array = array();
             $data_array['confidence'] = ''; $data_array['frequency'] = ''; $data_array['lastseen'] = '';
             $data_array['banned_msg'] = $info;
-            common::$sql['default']->insert("INSERT INTO `{prefix_ipban}` SET `time` = ?, `ip` = ?,, `data` = ?, `typ` = 3;",
+            common::$sql['default']->insert("INSERT INTO `{prefix_ipban}` SET `time` = ?, `ipv4` = ?, `data` = ?, `typ` = 3;",
                     array(time(),stringParser::encode($_POST['ip']),serialize($data_array)));
             $show = common::info(_ipban_admin_added, "?admin=ipban");
         }
@@ -45,7 +45,7 @@ switch ($do) {
         $show = common::info(_ipban_admin_deleted, "?admin=ipban");
     break;
     case 'edit':
-        $get = common::$sql['default']->fetch("SELECT `ip`,`data` FROM `{prefix_ipban}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT `ipv4`,`data` FROM `{prefix_ipban}` WHERE `id` = ?;",array((int)($_GET['id'])));
         $data_array = unserialize($get['data']);
         $smarty->caching = false;
         $smarty->assign('newhead',_ipban_edit_head);
@@ -64,7 +64,7 @@ switch ($do) {
             $get = common::$sql['default']->fetch("SELECT `id`,`data` FROM `{prefix_ipban}` WHERE `id` = ?;",array((int)($_GET['id'])));
             $data_array = unserialize($get['data']);
             $data_array['banned_msg'] = stringParser::decode($_POST['info']);
-            common::$sql['default']->update("UPDATE `{prefix_ipban}` SET `ip` = ?, `time` = ?, `data` = ? WHERE `id` = ?;",
+            common::$sql['default']->update("UPDATE `{prefix_ipban}` SET `ipv4` = ?, `time` = ?, `data` = ? WHERE `id` = ?;",
                     array(stringParser::encode($_POST['ip']),time(),serialize($data_array),(int)($get['id'])));
             $show = common::info(_ipban_admin_edited, "?admin=ipban");
         }
@@ -85,7 +85,7 @@ switch ($do) {
         $smarty->clearAllAssign();
     break;
     case 'search':
-        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_ipban}` WHERE `ip` LIKE '%?%' ORDER BY `ip` ASC;",array(stringParser::encode($_POST['ip']))); //Suche
+        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_ipban}` WHERE `ipv4` LIKE '%?%' ORDER BY `ipv4` ASC;",array(stringParser::encode($_POST['ip']))); //Suche
         $color = 1; $show_search = '';
         foreach($qry as $get) {
             $data_array = unserialize($get['data']);

@@ -39,9 +39,9 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                                         notification::add_error(_empty_eintrag,'artikel');
                                     }
                                 } else {
-                                    common::$sql['default']->insert("INSERT INTO `{prefix_acomments}` SET `artikel` = ?,`datum` = ?,`nick` = ?,`email` = ?,`hp` = ?,`reg` = ?,`comment` = ?, `ip` = ?;",
+                                    common::$sql['default']->insert("INSERT INTO `{prefix_acomments}` SET `artikel` = ?,`datum` = ?,`nick` = ?,`email` = ?,`hp` = ?,`reg` = ?,`comment` = ?, `ipv4` = ?;",
                                     [$artikel_id,time(),(isset($_POST['nick']) && !common::$userid ? stringParser::encode($_POST['nick']) : common::data('nick')),(isset($_POST['email']) && !common::$userid ? stringParser::encode($_POST['email']) : common::data('email')),
-                                    (isset($_POST['hp']) && !common::$userid ? stringParser::encode(common::links($_POST['hp'])) : stringParser::encode(common::links(stringParser::decode(common::data('hp'))))),(int)(common::$userid),stringParser::encode($_POST['comment']),common::$userip]);
+                                    (isset($_POST['hp']) && !common::$userid ? stringParser::encode(common::links($_POST['hp'])) : stringParser::encode(common::links(stringParser::decode(common::data('hp'))))),(int)(common::$userid),stringParser::encode($_POST['comment']),common::$userip['v4']]);
                                     common::setIpcheck("artid(" . $artikel_id . ")");
                                     if(notification::has()) {
                                         javascript::set('AnchorMove', 'notification-box');

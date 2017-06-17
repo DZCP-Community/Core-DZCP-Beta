@@ -73,7 +73,7 @@ class common {
     public static $sql = [];
     public static $securimage = NULL;
     public static $httphost = NULL;
-    public static $userip = NULL;
+    public static $userip = [];
     public static $userid = 0;
     public static $smarty = NULL;
     public static $gump = NULL;
@@ -100,6 +100,9 @@ class common {
     const FORUM_DOUBLE_POST_INSERT = 0;
     const FORUM_DOUBLE_POST_TH_ADD = 1;
     const FORUM_DOUBLE_POST_PO_ADD = 2;
+
+    const IPV6_NULL_ADDR = 'xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx';
+    const IPV4_NULL_ADDR = '0.0.0.0';
 
     //Functions
     /**
@@ -250,16 +253,16 @@ class common {
                         cookie::save();
 
                         //Update Autologin
-                        self::$sql['default']->update("UPDATE `{prefix_autologin}` SET `ssid` = ?, `pkey` = ?, `ip` = ?, `host` = ?, `update` = ?, `expires` = ? WHERE `id` = ?;",
-                            [session_id(),$permanent_key,self::$userip,gethostbyaddr(self::$userip),time(),autologin_expire,$get_almgr['id']]);
+                        self::$sql['default']->update("UPDATE `{prefix_autologin}` SET `ssid` = ?, `pkey` = ?, `ipv4` = ?, `host` = ?, `update` = ?, `expires` = ? WHERE `id` = ?;",
+                            [session_id(),$permanent_key,self::$userip['v4'],gethostbyaddr(self::$userip),time(),autologin_expire,$get_almgr['id']]);
 
                         //-> Schreibe Werte in die Server Sessions
                         $_SESSION['id']         = $get['id'];
                         $_SESSION['pwd']        = $get['pwd'];
                         $_SESSION['lastvisit']  = $get['time'];
-                        $_SESSION['ip']         = self::$userip;
+                        $_SESSION['ip']         = self::$userip['v4'];
 
-                        if (self::data("ip", $get['id']) != $_SESSION['ip']) {
+                        if (self::data("ipv4", $get['id']) != $_SESSION['ip']) {
                             $_SESSION['lastvisit'] = self::data("time", $get['id']);
                         }
 
@@ -268,14 +271,14 @@ class common {
                         }
 
                         //-> Aktualisiere Datenbank
-                        self::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ip` = ? WHERE `id` = ?;",
-                            [session_id(),self::$userip,$get['id']]);
+                        self::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ipv4` = ? WHERE `id` = ?;",
+                            [session_id(),self::$userip['v4'],$get['id']]);
 
                         //-> Aktualisiere die User-Statistik
                         self::userstats_increase('logins',$get['id']);
 
                         //-> Aktualisiere Ip-Count Tabelle
-                        foreach(self::$sql['default']->select("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ip` = ? AND `uid` = 0;", [self::$userip]) as $get_ci) {
+                        foreach(self::$sql['default']->select("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ipv4` = ? AND `uid` = 0;", [self::$userip['v4']]) as $get_ci) {
                             self::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ? WHERE `id` = ?;", [$get['id'],$get_ci['id']]);
                         }
 
@@ -316,7 +319,7 @@ class common {
         if(!self::$chkMe && (!empty($_SESSION['id']) || !empty($_SESSION['pwd']))) {
             $_SESSION['id']        = '';
             $_SESSION['pwd']       = '';
-            $_SESSION['ip']        = self::$userip;
+            $_SESSION['ip']        = self::$userip['v4'];
             $_SESSION['lastvisit'] = time();
             $_SESSION['language'] = stringParser::decode(settings::get('language'));
         }
@@ -324,7 +327,7 @@ class common {
         //-> Prueft ob der User gebannt ist, oder die IP des Clients warend einer offenen session veraendert wurde.
         if(!is_api) {
             if (self::$chkMe && self::$userid && !empty($_SESSION['ip'])) {
-                if ($_SESSION['ip'] != self::visitorIp() || self::isBanned(self::$userid, false)) {
+                if ($_SESSION['ip'] != self::visitorIp()['v4'] || self::isBanned(self::$userid, false)) {
                     self::dzcp_session_destroy();
                     header("Location: ../news/");
                 }
@@ -335,45 +338,45 @@ class common {
          * Aktualisiere die Client DNS & User Agent
          */
         if(!is_api && session_id()) {
-            $userdns = self::DNSToIp(self::$userip);
+            $userdns = self::DNSToIp(self::$userip['v4']);
             if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `update` <= ? AND `sessid` = ?;", [time(),session_id()])) {
-                self::$sql['default']->update("UPDATE `{prefix_iptodns}` SET `time` = ?, `update` = ?, `ip` = ?, `agent` = ?, `dns` = ?, `bot` = ?, `bot_name` = ? WHERE `sessid` = ?;",
-                    [(time()+10*60),(time()+60),self::$userip,stringParser::encode(self::$UserAgent),stringParser::encode($userdns),(self::$CrawlerDetect->isCrawler() ? 1 : 0),
+                self::$sql['default']->update("UPDATE `{prefix_iptodns}` SET `time` = ?, `update` = ?, `ipv4` = ?, `agent` = ?, `dns` = ?, `bot` = ?, `bot_name` = ? WHERE `sessid` = ?;",
+                    [(time()+10*60),(time()+60),self::$userip['v4'],stringParser::encode(self::$UserAgent),stringParser::encode($userdns),(self::$CrawlerDetect->isCrawler() ? 1 : 0),
                         stringParser::encode(self::$CrawlerDetect->getMatches()),session_id()]);
             } else if(!self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ?;", [session_id()])) {
-                self::$sql['default']->insert("INSERT INTO `{prefix_iptodns}` SET `sessid` = ?, `time` = ?, `ip` = ?, `agent` = ?, `dns` = ?, `bot` = ?, `bot_name` = ?;",
-                    [session_id(),(time()+10*60),self::$userip,stringParser::encode(self::$UserAgent),stringParser::encode($userdns),
+                self::$sql['default']->insert("INSERT INTO `{prefix_iptodns}` SET `sessid` = ?, `time` = ?, `ipv4` = ?, `agent` = ?, `dns` = ?, `bot` = ?, `bot_name` = ?;",
+                    [session_id(),(time()+10*60),self::$userip['v4'],stringParser::encode(self::$UserAgent),stringParser::encode($userdns),
                         (self::$CrawlerDetect->isCrawler() ? 1 : 0),stringParser::encode(self::$CrawlerDetect->getMatches())]);
                 unset($bot);
             }
 
             //-> Cleanup DNS DB
-            $qryDNS = self::$sql['default']->select("SELECT `id`,`ip` FROM `{prefix_iptodns}` WHERE `time` <= ?;", [time()]);
+            $qryDNS = self::$sql['default']->select("SELECT `id`,`ipv4` FROM `{prefix_iptodns}` WHERE `time` <= ?;", [time()]);
             if(self::$sql['default']->rowCount()) {
                 foreach($qryDNS as $getDNS) {
                     self::$sql['default']->delete("DELETE FROM `{prefix_iptodns}` WHERE `id` = ?;", [$getDNS['id']]);
-                    self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `ip` = ?;", [$getDNS['ip']]);
+                    self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `ipv4` = ?;", [$getDNS['ip']]);
                 } unset($getDNS);
             } unset($qryDNS);
 
             /*
              * Pruft ob mehrere Session IDs von der gleichen DNS kommen, sollte der Useragent keinen Bot Tag enthalten, wird ein Spambot angenommen.
              */
-            $get_sb_array = self::$sql['default']->select("SELECT `id`,`ip`,`bot`,`agent` FROM `{prefix_iptodns}` WHERE `dns` LIKE ?;", [stringParser::encode($userdns)]);
-            if(self::$sql['default']->rowCount() >= 3 && !self::validateIpV4Range(self::$userip, '[192].[168].[0-255].[0-255]') &&
-                !self::validateIpV4Range(self::$userip, '[127].[0].[0-255].[0-255]') &&
-                !self::validateIpV4Range(self::$userip, '[10].[0-255].[0-255].[0-255]') &&
-                !self::validateIpV4Range(self::$userip, '[172].[16-31].[0-255].[0-255]')) {
+            $get_sb_array = self::$sql['default']->select("SELECT `id`,`ipv4`,`bot`,`agent` FROM `{prefix_iptodns}` WHERE `dns` LIKE ?;", [stringParser::encode($userdns)]);
+            if(self::$sql['default']->rowCount() >= 3 && !self::validateIpV4Range(self::$userip['v4'], '[192].[168].[0-255].[0-255]') &&
+                !self::validateIpV4Range(self::$userip['v4'], '[127].[0].[0-255].[0-255]') &&
+                !self::validateIpV4Range(self::$userip['v4'], '[10].[0-255].[0-255].[0-255]') &&
+                !self::validateIpV4Range(self::$userip['v4'], '[172].[16-31].[0-255].[0-255]')) {
                 foreach ($get_sb_array as $get_sb) {
                     if (!$get_sb['bot'] && !self::$CrawlerDetect->isCrawler(stringParser::decode($get_sb['agent']))) {
-                        if (!self::$sql['default']->rows("SELECT `id` FROM `{prefix_ipban}` WHERE `ip` = ? LIMIT 1;", [self::$userip])) {
+                        if (!self::$sql['default']->rows("SELECT `id` FROM `{prefix_ipban}` WHERE `ipv4` = ? LIMIT 1;", [self::$userip['v4']])) {
                             $data_array = [];
                             $data_array['confidence'] = '';
                             $data_array['frequency'] = '';
                             $data_array['lastseen'] = '';
                             $data_array['banned_msg'] = stringParser::encode('SpamBot detected by System * No BotAgent *');
                             $data_array['agent'] = $get_sb['agent'];
-                            self::$sql['default']->insert("INSERT INTO `{prefix_ipban}` SET `time` = ?, `ip` = ?, `data` = ?, `typ` = 3;", [time(), $get_sb['ip'], serialize($data_array)]);
+                            self::$sql['default']->insert("INSERT INTO `{prefix_ipban}` SET `time` = ?, `ipv4` = ?, `data` = ?, `typ` = 3;", [time(), $get_sb['ip'], serialize($data_array)]);
                             self::check_ip(); // IP Prufung * No IPV6 Support *
                             unset($data_array);
                         }
@@ -1206,13 +1209,13 @@ class common {
      * @return bool
      */
     public static function ipcheck(string $what,int $time = 0) {
-        $get = self::$sql['default']->fetch("SELECT `time`,`what` FROM `{prefix_ip_action}` WHERE `what` = ? AND `ip` = ? ORDER BY `time` DESC;", [$what,self::$userip]);
+        $get = self::$sql['default']->fetch("SELECT `time`,`what` FROM `{prefix_ip_action}` WHERE `what` = ? AND `ipv4` = ? ORDER BY `time` DESC;", [$what,self::$userip['v4']]);
         if(self::$sql['default']->rowCount()) {
             if (preg_match("#vid#", $get['what'])) {
                 return true;
             } else {
                 if($get['time'] + $time < time()) {
-                    self::$sql['default']->delete("DELETE FROM `{prefix_ip_action}` WHERE `what` = ? AND `ip` = ? AND time+?<?;", [$what,self::$userip,$time,time()]);
+                    self::$sql['default']->delete("DELETE FROM `{prefix_ip_action}` WHERE `what` = ? AND `ipv4` = ? AND time+?<?;", [$what,self::$userip['v4'],$time,time()]);
                 }
 
                 return ($get['time'] + $time > time() ? true : false);
@@ -1711,25 +1714,23 @@ class common {
 
     /**
      * Gibt die IP des Besuchers / Users zuruck
-     * Forwarded IP Support
+     * Forwarded IP Support - IPV4 & IPV6
      */
     public static function visitorIp() {
-        $SetIP = '0.0.0.0';
+        $SetIP = ['v4' => self::IPV4_NULL_ADDR, 'v6' => self::IPV6_NULL_ADDR];
         $ServerVars = ['REMOTE_ADDR','HTTP_CLIENT_IP','HTTP_X_FORWARDED_FOR','HTTP_X_FORWARDED',
             'HTTP_FORWARDED_FOR','HTTP_FORWARDED','HTTP_VIA','HTTP_X_COMING_FROM','HTTP_COMING_FROM'];
         foreach ($ServerVars as $ServerVar) {
             if($IP=self::detectIP($ServerVar)) {
-                if (self::isIP($IP) && !self::validateIpV4Range($IP, '[192].[168].[0-255].[0-255]') &&
-                    !self::validateIpV4Range($IP, '[127].[0].[0-255].[0-255]') &&
-                    !self::validateIpV4Range($IP, '[10].[0-255].[0-255].[0-255]') &&
-                    !self::validateIpV4Range($IP, '[172].[16-31].[0-255].[0-255]')) {
-                    return $IP;
-                } else {
-                    $SetIP = $IP;
+                //IP-Version 4
+                if(self::isIP($IP, false)) {
+                    $SetIP[self::isIP($IP, false) ? 'v4' : 'v6'] = $IP;
                 }
 
-                //IPV6
-                if(self::isIP($IP, true)) { return $IP; }
+                //IP-Version 6
+                if(self::isIP($IP, true)) {
+                    $SetIP['v6'] = $IP;
+                }
             }
         }
 
@@ -1770,8 +1771,8 @@ class common {
      * Pruft ob die IP gesperrt und gultig ist
      */
     public static function check_ip() {
-        if(!self::isIP(self::$userip, true)) {
-            if((!self::isIP(self::$userip) && !self::isIP(self::$userip,true)) || self::$userip == false || empty(self::$userip)) {
+        if(!self::isIP(self::$userip['v4'], true)) {
+            if((!self::isIP(self::$userip['v4']) && !self::isIP(self::$userip,true)) || self::$userip == false || empty(self::$userip)) {
                 self::dzcp_session_destroy();
                 die('Deine IP ist ung&uuml;ltig!<p>Your IP is invalid!');
             }
@@ -1782,9 +1783,9 @@ class common {
             }
 
             //Banned IP
-            if(!dbc_index::getIndexKey('ip_check', md5(self::$userip))) {
+            if(!dbc_index::getIndexKey('ip_check', md5(self::$userip['v4']))) {
                 $ips = dbc_index::getIndex('ip_check');
-                foreach(self::$sql['default']->select("SELECT `id`,`typ`,`data` FROM `{prefix_ipban}` WHERE `ip` = ? AND `enable` = 1;", [self::$userip]) as $banned_ip) {
+                foreach(self::$sql['default']->select("SELECT `id`,`typ`,`data` FROM `{prefix_ipban}` WHERE `ipv4` = ? AND `enable` = 1;", [self::$userip['v4']]) as $banned_ip) {
                     if($banned_ip['typ'] == 2 || $banned_ip['typ'] == 3) {
                         self::dzcp_session_destroy();
                         $banned_ip['data'] = unserialize($banned_ip['data']);
@@ -1793,10 +1794,10 @@ class common {
                 }
                 unset($banned_ip);
 
-                if((ini_get('allow_url_fopen') == 1) && self::isIP(self::$userip) && !self::validateIpV4Range(self::$userip, '[192].[168].[0-255].[0-255]') &&
-                    !self::validateIpV4Range(self::$userip, '[127].[0].[0-255].[0-255]') &&
-                    !self::validateIpV4Range(self::$userip, '[10].[0-255].[0-255].[0-255]') &&
-                    !self::validateIpV4Range(self::$userip, '[172].[16-31].[0-255].[0-255]')) {
+                if((ini_get('allow_url_fopen') == 1) && self::isIP(self::$userip['v4']) && !self::validateIpV4Range(self::$userip['v4'], '[192].[168].[0-255].[0-255]') &&
+                    !self::validateIpV4Range(self::$userip['v4'], '[127].[0].[0-255].[0-255]') &&
+                    !self::validateIpV4Range(self::$userip['v4'], '[10].[0-255].[0-255].[0-255]') &&
+                    !self::validateIpV4Range(self::$userip['v4'], '[172].[16-31].[0-255].[0-255]')) {
                     sfs::check(); //SFS Update
                     if(sfs::is_spammer()) {
                         self::$sql['default']->delete("DELETE FROM `{prefix_iptodns}` WHERE `sessid` = ?;",
@@ -1807,10 +1808,10 @@ class common {
                     }
                 }
 
-                $ips[md5(self::$userip)] = true;
+                $ips[md5(self::$userip['v4'])] = true;
                 dbc_index::setIndex('ip_check', $ips, 30);
             }
-        } if(self::isIP(self::$userip, true)) {
+        } if(self::isIP(self::$userip['v4'], true)) {
             //Is IPv6
             //TODO: Support for IPV6
         }
@@ -2050,7 +2051,7 @@ class common {
      * @param bool $time
      */
     public static function setIpcheck(string $what = '',bool $time = true) {
-        self::$sql['default']->insert("INSERT INTO `{prefix_ip_action}` SET `ip` = ?, `user_id` = ?, `what` = ?, `time` = ?, `created` = ?;",
+        self::$sql['default']->insert("INSERT INTO `{prefix_ip_action}` SET `ipv4` = ?, `user_id` = ?, `what` = ?, `time` = ?, `created` = ?;",
             [self::visitorIp(),(int)(self::userid()),$what,($time ? time() : 0),time()]);
     }
 
@@ -2077,26 +2078,26 @@ class common {
                     return false;
                 }
 
-                if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ip` = ? AND `ids` = ? AND `side` = ?;", [self::$userip,(int)($clickedID),$side_tag])) {
+                if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ipv4` = ? AND `ids` = ? AND `side` = ?;", [self::$userip['v4'],(int)($clickedID),$side_tag])) {
                     if($update) {
-                        self::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ?, `time` = ? WHERE `ip` = ? AND `ids` = ? AND `side` = ?;",
-                            [(int)(self::$userid),(time()+count_clicks_expires),self::$userip,(int)($clickedID),$side_tag]);
+                        self::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ?, `time` = ? WHERE `ipv4` = ? AND `ids` = ? AND `side` = ?;",
+                            [(int)(self::$userid),(time()+count_clicks_expires),self::$userip['v4'],(int)($clickedID),$side_tag]);
                     }
 
                     return false;
                 } else {
                     if($update) {
-                        self::$sql['default']->insert("INSERT INTO `{prefix_clicks_ips}` SET `ip` = ?, `uid` = ?, `ids` = ?, `side` = ?, `time` = ?;",
-                            [self::$userip, (int)(self::$userid), (int)($clickedID), $side_tag, (time() + count_clicks_expires)]);
+                        self::$sql['default']->insert("INSERT INTO `{prefix_clicks_ips}` SET `ipv4` = ?, `uid` = ?, `ids` = ?, `side` = ?, `time` = ?;",
+                            [self::$userip['v4'], (int)(self::$userid), (int)($clickedID), $side_tag, (time() + count_clicks_expires)]);
                     }
 
                     return true;
                 }
             } else {
-                if(!self::$sql['default']->rows("SELECT id FROM `{prefix_clicks_ips}` WHERE `ip` = ? AND `ids` = ? AND `side` = ?;", [self::$userip,(int)($clickedID),$side_tag])) {
+                if(!self::$sql['default']->rows("SELECT id FROM `{prefix_clicks_ips}` WHERE `ipv4` = ? AND `ids` = ? AND `side` = ?;", [self::$userip['v4'],(int)($clickedID),$side_tag])) {
                     if($update) {
-                        self::$sql['default']->insert("INSERT INTO `{prefix_clicks_ips}` SET `ip` = ?, `uid` = 0, `ids` = ?, `side` = ?, `time` = ?;",
-                            [self::$userip,(int)($clickedID),$side_tag,(time()+count_clicks_expires)]);
+                        self::$sql['default']->insert("INSERT INTO `{prefix_clicks_ips}` SET `ipv4` = ?, `uid` = 0, `ids` = ?, `side` = ?, `time` = ?;",
+                            [self::$userip['v4'],(int)($clickedID),$side_tag,(time()+count_clicks_expires)]);
                     }
 
                     return true;
@@ -2358,14 +2359,14 @@ class common {
     public static function update_user_status_preview() {
         ## User aus der Datenbank suchen ##
         $get = self::$sql['default']->fetch("SELECT `id`,`time` FROM `{prefix_users}` "
-            . "WHERE `id` = ? AND `sessid` = ? AND `ip` = ? AND level != 0;",
-            [(int)($_SESSION['id']),session_id(),stringParser::encode(self::$userip)]);
+            . "WHERE `id` = ? AND `sessid` = ? AND `ipv4` = ? AND level != 0;",
+            [(int)($_SESSION['id']),session_id(),stringParser::encode(self::$userip['v4'])]);
 
         if(self::$sql['default']->rowCount()) {
             ## Schreibe Werte in die Server Sessions ##
             $_SESSION['lastvisit']  = $get['time'];
 
-            if(stringParser::decode(self::data("ip",$get['id'])) != $_SESSION['ip'])
+            if(stringParser::decode(self::data("ipv4",$get['id'])) != $_SESSION['ip'])
                 $_SESSION['lastvisit'] = self::data($get['id'], "time");
 
             if(empty($_SESSION['lastvisit']))
@@ -2461,11 +2462,13 @@ class common {
      * @return bool|int
      */
     public static function checkme(int $userid_set=0) {
+        //TODO: Cache
         if (empty($_SESSION['id']) || empty($_SESSION['pwd'])) { return 0; }
         if (!$userid = ($userid_set != 0 ? (int)($userid_set) : self::userid())) { return 0; }
         if (self::rootAdmin($userid)) { return 4; }
         if(!dbc_index::issetIndex('user_'.(int)($userid))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ? AND `pwd` = ? AND `ip` = ?;", [(int)($userid),$_SESSION['pwd'],$_SESSION['ip']]);
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ? AND `pwd` = ? AND `ipv4` = ?;",
+                [(int)($userid),$_SESSION['pwd'],self::$userip['v4']]);
             if (!self::$sql['default']->rowCount()) { return 0; }
             dbc_index::setIndex('user_'.$get['id'], $get);
             return $get['level'];
@@ -2533,13 +2536,13 @@ class common {
                 self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `online` < ?;", [time()]);
             }
 
-            $get = self::$sql['default']->fetch("SELECT `id` FROM `{prefix_counter_whoison}` WHERE `ip` = ? AND `ssid` = ?;", [self::$userip,session_id()]); //Update Move
+            $get = self::$sql['default']->fetch("SELECT `id` FROM `{prefix_counter_whoison}` WHERE `ipv4` = ? AND `ssid` = ?;", [self::$userip['v4'],session_id()]); //Update Move
             if(self::$sql['default']->rowCount()) {
                 self::$sql['default']->update("UPDATE `{prefix_counter_whoison}` SET `whereami` = ?, `online` = ?, `login` = ?  WHERE `id` = ?;",
                     [stringParser::encode($where),(time()+1800),(!self::$chkMe ? 0 : 1),$get['id']]);
             } else {
-                self::$sql['default']->insert("INSERT INTO `{prefix_counter_whoison}` SET `ip` = ?, `ssid` = ?, `online` = ?, `whereami` = ?, `login` = ?;",
-                    [self::$userip, session_id(),(time()+1800),stringParser::encode($where),(!self::$chkMe ? 0 : 1)]);
+                self::$sql['default']->insert("INSERT INTO `{prefix_counter_whoison}` SET `ipv4` = ?, `ssid` = ?, `online` = ?, `whereami` = ?, `login` = ?;",
+                    [self::$userip['v4'], session_id(),(time()+1800),stringParser::encode($where),(!self::$chkMe ? 0 : 1)]);
             }
 
             if(self::$chkMe) {
@@ -2570,25 +2573,25 @@ class common {
      */
     public static function updateCounter() {
         $datum = time();
-        $get_agent = self::$sql['default']->fetch("SELECT `id`,`agent`,`bot` FROM `{prefix_iptodns}` WHERE `ip` = ?;", [stringParser::encode(self::$userip)]);
+        $get_agent = self::$sql['default']->fetch("SELECT `id`,`agent`,`bot` FROM `{prefix_iptodns}` WHERE `ipv4` = ?;", [stringParser::encode(self::$userip['v4'])]);
         if(self::$sql['default']->rowCount()) {
             if(!$get_agent['bot'] && !self::$CrawlerDetect->isCrawler(stringParser::decode($get_agent['agent']))) {
                 if(self::$sql['default']->rows("SELECT id FROM `{prefix_counter_ips}` WHERE datum+? <= ? OR FROM_UNIXTIME(datum,'%d.%m.%Y') != ?;", [self::$reload,time(),date("d.m.Y")])) {
                     self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE datum+? <= ? OR FROM_UNIXTIME(datum,'%d.%m.%Y') != ?;", [self::$reload,time(),date("d.m.Y")]);
                 }
 
-                $get = self::$sql['default']->fetch("SELECT `datum` FROM `{prefix_counter_ips}` WHERE `ip` = ? AND FROM_UNIXTIME(datum,'%d.%m.%Y') = ?;", [stringParser::encode(self::$userip),date("d.m.Y")]);
+                $get = self::$sql['default']->fetch("SELECT `datum` FROM `{prefix_counter_ips}` WHERE `ipv4` = ? AND FROM_UNIXTIME(datum,'%d.%m.%Y') = ?;", [stringParser::encode(self::$userip['v4']),date("d.m.Y")]);
                 if(self::$sql['default']->rowCount()) {
                     $sperrzeit = $get['datum']+self::$reload;
                     if($sperrzeit <= time()) {
-                        self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE `ip` = ?;", [stringParser::encode(self::$userip)]);
+                        self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE `ipv4` = ?;", [stringParser::encode(self::$userip['v4'])]);
                         if (self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter}` WHERE `today` = '" . date("j.n.Y") . "';", [date("j.n.Y")])) {
                             self::$sql['default']->update("UPDATE `{prefix_counter}` SET `visitors` = (visitors+1) WHERE `today` = ?;", [date("j.n.Y")]);
                         } else {
                             self::$sql['default']->insert("INSERT INTO `{prefix_counter}` SET `visitors` = 1 WHERE `today` = ?;", [date("j.n.Y")]);
                         }
 
-                        self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ip` = ?, `datum` = ?;", [stringParser::encode(self::$userip),(int)($datum)]);
+                        self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ipv4` = ?, `datum` = ?;", [stringParser::encode(self::$userip['v4']),(int)($datum)]);
                     }
                 } else {
                     if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter}` WHERE `today` = ?;", [date("j.n.Y")])) {
@@ -2597,7 +2600,7 @@ class common {
                         self::$sql['default']->insert("INSERT INTO `{prefix_counter}` SET `visitors` = 1, `today` = ?;", [date("j.n.Y")]);
                     }
 
-                    self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ip` = ?, `datum` = ?;", [stringParser::encode(self::$userip),(int)($datum)]);
+                    self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ipv4` = ?, `datum` = ?;", [stringParser::encode(self::$userip['v4']),(int)($datum)]);
                 }
             }
         }

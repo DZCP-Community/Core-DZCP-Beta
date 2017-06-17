@@ -308,10 +308,10 @@ if(defined('_Forum')) {
 
                         //Insert thread
                         common::$sql['default']->insert("INSERT INTO `{prefix_forumthreads}` SET `kid` = ?, `t_date` = ?,`topic` = ?, `subtopic` = ?, `t_reg` = ?, `t_text` = ?," .
-                            "`sticky` = ?, `global` = ?, `ip` = ?, `vote` = ?, `first` = 1;",
+                            "`sticky` = ?, `global` = ?, `ipv4` = ?, `vote` = ?, `first` = 1;",
                             [$_SESSION['kid'], time(), stringParser::encode($validated_post_data['topic']), stringParser::encode($validated_post_data['subtopic']),
                                 common::$userid, stringParser::encode($validated_post_data['eintrag']), $validated_post_data['sticky'], $validated_post_data['global'],
-                                common::$userip, $vid]);
+                                common::$userip['v4'], $vid]);
 
                         $thisFID = common::$sql['default']->lastInsertId(); //Get new thread-id
                         common::setIpcheck("fid(" . $_SESSION['kid'] . ")");

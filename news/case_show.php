@@ -39,10 +39,10 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                                         notification::add_error(_empty_eintrag,'news_tr');
                                     }
                                 } else {
-                                    common::$sql['default']->insert("INSERT INTO `{prefix_newscomments}` SET `news` = ?,`datum` = ?,`nick` = ?,`email` = ?,`hp` = ?,`reg` = ?,`comment` = ?, `ip` = ?;",
+                                    common::$sql['default']->insert("INSERT INTO `{prefix_newscomments}` SET `news` = ?,`datum` = ?,`nick` = ?,`email` = ?,`hp` = ?,`reg` = ?,`comment` = ?, `ipv4` = ?;",
                                     [$news_id,time(),common::data('nick'),common::data('email'),
                                         (isset($_POST['hp']) && !common::$userid ? common::links($_POST['hp']) : common::links(common::data('hp'))),
-                                        (int)(common::$userid),stringParser::encode($_POST['comment']),common::$userip]);
+                                        (int)(common::$userid),stringParser::encode($_POST['comment']),common::$userip['v4']]);
                                     common::setIpcheck("ncid(" . $news_id . ")");
                                     if(notification::has()) {
                                         javascript::set('AnchorMove', 'notification-box');

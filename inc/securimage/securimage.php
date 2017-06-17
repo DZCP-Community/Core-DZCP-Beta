@@ -489,7 +489,7 @@ class Securimage {
      */
     public static function getCaptchaId($new = true) {
         if (is_null($new) || (bool)$new == true) {
-            $id = sha1(uniqid(common::visitorIp(), true));
+            $id = sha1(uniqid(common::visitorIp()['v4'], true));
             $si = new self(array());
             Securimage::$_captchaId = $id;
             $si->createCode();
@@ -1190,7 +1190,7 @@ class Securimage {
      */
     protected function saveCodeToDatabase() {
         $id = $this->getCaptchaId(false);
-        $id = empty($id) ? common::visitorIp() : $id;
+        $id = empty($id) ? common::visitorIp()['v4'] : $id;
         $this->clearCodeFromDatabase();
         common::$sql['default']->insert("INSERT INTO `{prefix_captcha}` SET "
                     . "`id` = ?, "
@@ -1214,7 +1214,7 @@ class Securimage {
      * returns an array with indices "code" and "code_disp"
      */
     protected function getCodeFromDatabase() {
-        $params = array(md5(common::visitorIp()),stringParser::encode($this->namespace));
+        $params = array(md5(common::visitorIp()['v4']),stringParser::encode($this->namespace));
         if (Securimage::$_captchaId !== null) {
             $params = array(md5(Securimage::$_captchaId),stringParser::encode($this->namespace));
         }
@@ -1251,7 +1251,7 @@ class Securimage {
      * Remove an entered code from the database
      */
     protected function clearCodeFromDatabase() {
-        $id = empty(Securimage::$_captchaId) ? common::visitorIp() : Securimage::$_captchaId;
+        $id = empty(Securimage::$_captchaId) ? common::visitorIp()['v4'] : Securimage::$_captchaId;
         common::$sql['default']->delete("DELETE FROM `{prefix_captcha}` WHERE `id` = ? AND `namespace` = ?;",array(md5($id),stringParser::encode($this->namespace)));
         $qry = common::$sql['default']->select("SELECT `id` FROM `{prefix_captcha}` WHERE `created` < ".(time()-(30*30)).";");
         foreach($qry as $get) {

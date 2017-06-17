@@ -53,31 +53,31 @@ if(defined('_UserMenu')) {
                     if (isset($_POST['permanent'])) {
                         cookie::put('id', $get['id']);
                         $permanent_key = md5(common::mkpwd(8));
-                        $gethostbyaddr = gethostbyaddr(common::$userip);
+                        $gethostbyaddr = gethostbyaddr(common::$userip['v4']);
                         if (common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `host` = ?;", array($gethostbyaddr)) >= 1) {
                             //Update Autologin
                             common::$sql['default']->update("UPDATE `{prefix_autologin}` "
                                     . "SET `ssid` = ?,"
                                     . "`pkey` = ?,"
-                                    . "`ip` = ?,"
+                                    . "`ipv4` = ?,"
                                     . "`date` = ?,"
                                     . "`update` = ?,"
                                     . "`expires` = ? "
                                     . "WHERE `host` = ?;",
-                            array(session_id(), $permanent_key, common::$userip, $time = time(), $time, autologin_expire, $gethostbyaddr));
+                            array(session_id(), $permanent_key, common::$userip['v4'], $time = time(), $time, autologin_expire, $gethostbyaddr));
                         } else {
                             //Insert Autologin
                             common::$sql['default']->insert("INSERT INTO `{prefix_autologin}` "
                                     . "SET `uid` = ?, "
                                     . "`ssid` = ?, "
                                     . "`pkey` = ?, "
-                                    . "`ip` = ?, "
+                                    . "`ipv4` = ?, "
                                     . "`name` = ?, "
                                     . "`host` = ?, "
                                     . "`date` = ?, "
                                     . "`update` = 0, "
                                     . "`expires` = ?;",
-                            array($get['id'], session_id(), $permanent_key, common::$userip, common::cut($gethostbyaddr, 20), $gethostbyaddr, time(), autologin_expire));
+                            array($get['id'], session_id(), $permanent_key, common::$userip['v4'], common::cut($gethostbyaddr, 20), $gethostbyaddr, time(), autologin_expire));
                         }
 
                         cookie::put('pkey', $permanent_key);
@@ -88,14 +88,14 @@ if(defined('_UserMenu')) {
                     $_SESSION['id'] = $get['id'];
                     $_SESSION['pwd'] = $get['pwd'];
                     $_SESSION['lastvisit'] = $get['time'];
-                    $_SESSION['ip'] = common::$userip;
+                    $_SESSION['ip'] = common::$userip['v4'];
 
                     common::userstats_increase('logins',$get['id']);
-                    common::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ip` = ? WHERE `id` = ?;", array(session_id(), common::$userip, $get['id']));
+                    common::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ipv4` = ? WHERE `id` = ?;", array(session_id(), common::$userip['v4'], $get['id']));
                     common::setIpcheck("login(" . $get['id'] . ")");
 
                     //-> Aktualisiere Ip-Count Tabelle
-                    $qry = common::$sql['default']->select("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ip` = ? AND `uid` = 0;", array(common::$userip));
+                    $qry = common::$sql['default']->select("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ipv4` = ? AND `uid` = 0;", array(common::$userip['v4']));
                     if (common::$sql['default']->rowCount() >= 1) {
                         foreach ($qry as $get_ci) {
                             common::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ? WHERE `id` = ?;", array($get['id'], $get_ci['id']));
