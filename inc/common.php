@@ -1759,7 +1759,7 @@ class common {
      * @return   boolean
      */
     public static function isIP(string $ip,bool $v6=false) {
-        if (!$v6 && $ip == "0.0.0.0") { return false; }
+        if (!$v6 && $ip == self::IPV4_NULL_ADDR) { return false; }
         if(!$v6 && substr_count($ip,":") < 1) {
             return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) ? true : false;
         }
