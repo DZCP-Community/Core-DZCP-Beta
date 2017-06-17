@@ -90,7 +90,7 @@ if(defined('_Forum')) {
 
                 $ftxt = hl($getp['text'], (isset($_GET['hl']) ? $_GET['hl'] : ''));
                 $text = isset($_GET['hl']) ? bbcode_base::parse_html((string)$ftxt['text']) : bbcode_base::parse_html((string)$getp['text']);
-                $posted_ip = (common::$chkMe == 4 || common::permission('ipban') ? $getp['ip'] : _logged);
+                $posted_ip = (common::$chkMe == 4 || common::permission('ipban') ? $getp['ipv4'] : _logged);
 
                 //Titel
                 $smarty->caching = false;
@@ -245,7 +245,7 @@ if(defined('_Forum')) {
                 $text = bbcode_base::parse_html((string)$get['t_text']);
 
             //User IP
-            $posted_ip = (common::$chkMe == 4 || common::permission('ipban') ? $get['ip'] : _logged);
+            $posted_ip = (common::$chkMe == 4 || common::permission('ipban') ? $get['ipv4'] : _logged);
 
             //Titel
             $smarty->caching = false;

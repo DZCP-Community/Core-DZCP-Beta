@@ -198,7 +198,7 @@ if(defined('_UserMenu')) {
                                         $smarty->assign('name',stringParser::decode($get['name']));
                                         $smarty->assign('id',stringParser::decode($get['id']));
                                         $smarty->assign('host',stringParser::decode($get['host']));
-                                        $smarty->assign('ip',stringParser::decode($get['ip']));
+                                        $smarty->assign('ip',stringParser::decode($get['ipv4']));
                                         $smarty->assign('ssid',stringParser::decode($get['ssid']));
                                         $smarty->assign('pkey',stringParser::decode($get['pkey']));
                                         $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/profil/edit_almgr_from.tpl');
@@ -238,7 +238,7 @@ if(defined('_UserMenu')) {
                                         $smarty->assign('color',$color);
                                         $smarty->assign('name',stringParser::decode($get['name']));
                                         $smarty->assign('host',stringParser::decode($get['host']));
-                                        $smarty->assign('ip',$get['ip']);
+                                        $smarty->assign('ip',$get['ipv4']);
                                         $smarty->assign('create',date('d.m.Y',$get['date']));
                                         $smarty->assign('lused',!$get['update'] ? '-' : date('d.m.Y',$get['update']));
                                         $smarty->assign('expires',date('d.m.Y',((!$get['update'] ? time() : $get['update'])+$get['expires'])));

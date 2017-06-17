@@ -50,7 +50,7 @@ switch ($do) {
         $smarty->caching = false;
         $smarty->assign('newhead',_ipban_edit_head);
         $smarty->assign('do',"edit_save&amp;id=".$_GET['id']."");
-        $smarty->assign('ip_set',stringParser::decode($get['ip']));
+        $smarty->assign('ip_set',stringParser::decode($get['ipv4']));
         $smarty->assign('info',stringParser::decode($data_array['banned_msg']));
         $smarty->assign('what',_button_value_edit);
         $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/ipban_form.tpl');
@@ -98,7 +98,7 @@ switch ($do) {
 
             if($get['enable']) {
                 $smarty->caching = false;
-                $smarty->assign('ip',$get['ip']);
+                $smarty->assign('ip',$get['ipv4']);
                 $info = $smarty->fetch('string:'._confirm_disable_ipban);
                 $smarty->clearAllAssign();
 
@@ -110,7 +110,7 @@ switch ($do) {
                 $smarty->clearAllAssign();
             } else {
                 $smarty->caching = false;
-                $smarty->assign('ip',$get['ip']);
+                $smarty->assign('ip',$get['ipv4']);
                 $info = $smarty->fetch('string:'._confirm_enable_ipban);
                 $smarty->clearAllAssign();
 
@@ -125,7 +125,7 @@ switch ($do) {
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_ipban);
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             $smarty->caching = false;
-            $smarty->assign('ip',stringParser::decode($get['ip']));
+            $smarty->assign('ip',stringParser::decode($get['ipv4']));
             $smarty->assign('bez',stringParser::decode($data_array['banned_msg']));
             $smarty->assign('rep',stringParser::decode($data_array['frequency']));
             $smarty->assign('zv',stringParser::decode($data_array['confidence']).'%');
@@ -177,7 +177,7 @@ switch ($do) {
 
                 if($get['enable']) {
                     $smarty->caching = false;
-                    $smarty->assign('ip',$get['ip']);
+                    $smarty->assign('ip',$get['ipv4']);
                     $info = $smarty->fetch('string:'._confirm_disable_ipban);
                     $smarty->clearAllAssign();
 
@@ -189,7 +189,7 @@ switch ($do) {
                     $smarty->clearAllAssign();
                 } else {
                     $smarty->caching = false;
-                    $smarty->assign('ip',$get['ip']);
+                    $smarty->assign('ip',$get['ipv4']);
                     $info = $smarty->fetch('string:'._confirm_enable_ipban);
                     $smarty->clearAllAssign();
 
@@ -203,7 +203,7 @@ switch ($do) {
 
                 $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
                 $smarty->caching = false;
-                $smarty->assign('ip',stringParser::decode($get['ip']));
+                $smarty->assign('ip',stringParser::decode($get['ipv4']));
                 $smarty->assign('bez',stringParser::decode($data_array['banned_msg']));
                 $smarty->assign('rep',stringParser::decode($data_array['frequency']));
                 $smarty->assign('zv',stringParser::decode($data_array['confidence']).'%');
@@ -250,7 +250,7 @@ switch ($do) {
 
                 if($get['enable']) {
                     $smarty->caching = false;
-                    $smarty->assign('ip',$get['ip']);
+                    $smarty->assign('ip',$get['ipv4']);
                     $info = $smarty->fetch('string:'._confirm_disable_ipban);
                     $smarty->clearAllAssign();
 
@@ -262,7 +262,7 @@ switch ($do) {
                     $smarty->clearAllAssign();
                 } else {
                     $smarty->caching = false;
-                    $smarty->assign('ip',$get['ip']);
+                    $smarty->assign('ip',$get['ipv4']);
                     $info = $smarty->fetch('string:'._confirm_enable_ipban);
                     $smarty->clearAllAssign();
 
@@ -276,7 +276,7 @@ switch ($do) {
 
                 $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
                 $smarty->caching = false;
-                $smarty->assign('ip',stringParser::decode($get['ip']));
+                $smarty->assign('ip',stringParser::decode($get['ipv4']));
                 $smarty->assign('bez',stringParser::decode($data_array['banned_msg']));
                 $smarty->assign('class',$class);
                 $smarty->assign('delete',$delete);

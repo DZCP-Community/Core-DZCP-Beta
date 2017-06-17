@@ -104,7 +104,7 @@ switch ($do) {
             $smarty->assign('datum',$date);
             $smarty->assign('class',$class);
             $smarty->assign('delete',$delete);
-            $smarty->assign('user', $get['ip']);
+            $smarty->assign('user', $get['ipv4']);
             $smarty->assign('action',$action);
             $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/protocol_show.tpl');
             $smarty->clearAllAssign();

@@ -202,7 +202,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                 $titel = $smarty->fetch('string:'._eintrag_titel);
                 $smarty->clearAllAssign();
 
-                $posted_ip = (common::$chkMe == 4 || common::permission('ipban') ? $getc['ip'] : _logged);
+                $posted_ip = (common::$chkMe == 4 || common::permission('ipban') ? $getc['ipv4'] : _logged);
                 $smarty->caching = true;
                 $smarty->assign('titel',$titel);
                 $smarty->assign('comment',bbcode_base::parse_html((string)$getc['comment']));
