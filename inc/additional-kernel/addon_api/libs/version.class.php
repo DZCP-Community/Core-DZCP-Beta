@@ -6,8 +6,6 @@
 
 //api.php?input={"event":"version","dzcp":"1.6","edition":"stable","type":"xml"}
 
-if(!DZCPApi) die();
-
 /**
  * Class dzcp_version
  * @property array cache_hash
@@ -73,26 +71,25 @@ class dzcp_version extends dzcp_event
         $this->addCacheHashKey('av_'.$this->version);
         $this->addCacheHashKey('edition_'.$this->edition);
         $this->addCacheHashKey('contenttype_'.$this->contenttype);
-        //$CacheHash = $this->getCacheHash();
 
-            $get = common::$sql['default']->fetch("SELECT `version`,`release`,`build`,`edition` FROM `{prefix_addon_version}` WHERE `static_version` = ? AND `edition` = ?;",
-                [$this->version, $this->edition]);
-            if (common::$sql['default']->rowCount()) {
-                switch ($this->contenttype) {
-                    case 'xml':
-                        $output = xmlrpc_encode([
-                            'dzcp' => [
-                                'version' => stringParser::decode($get['version']),
-                                'release' => stringParser::decode($get['release']),
-                                'build' => stringParser::decode($get['build']),
-                                'edition' => stringParser::decode($get['edition'])
-                            ]
-                        ]);
+        $get = common::$sql['default']->fetch("SELECT `version`,`release`,`build`,`edition` FROM `{prefix_addon_version}` WHERE `static_version` = ? AND `edition` = ?;",
+            [$this->version, $this->edition]);
+        if (common::$sql['default']->rowCount()) {
+            switch ($this->contenttype) {
+                case 'xml':
+                    $output = xmlrpc_encode([
+                        'dzcp' => [
+                            'version' => stringParser::decode($get['version']),
+                            'release' => stringParser::decode($get['release']),
+                            'build' => stringParser::decode($get['build']),
+                            'edition' => stringParser::decode($get['edition'])
+                        ]
+                    ]);
 
-                        echo $output;
-                        break;
-                    case 'jsonp':
-                    default:
+                    echo $output;
+                break;
+                case 'jsonp':
+                default:
                     common::$gump->validation_rules(array('dzcp' => 'required|min_len,1'));
                     common::$gump->filter_rules(array('dzcp' => 'json_encode'));
                     $output = [
@@ -108,20 +105,17 @@ class dzcp_version extends dzcp_event
                     if ($validated_data !== false) {
                         echo $validated_data;
                     }
-                    break;
-                }
+                break;
             }
+        }
     }
 
-    /**
-     *
-     */
-    function runUpdate() {
+    function runUpdate(bool $force=false) {
         $update_stable = false;
         $qryv = common::$sql['default']->select("SELECT `id`,`static_version`,`edition`,`updated` FROM `{prefix_addon_version}` WHERE `enabled` = 1;");
         if(common::$sql['default']->rowCount()) {
             foreach ($qryv as $getv) {
-                if ($getv['updated'] == 0 || $getv['updated'] <= (time() - (10 * 60))) {
+                if ($getv['updated'] == 0 || $force || $getv['updated'] <= (time() - (30 * 60))) {
                     $xml = $this->updateGithub($getv['static_version'], $getv['edition']);
                     if (is_array($xml)) {
                         common::$sql['default']->update("UPDATE `{prefix_addon_version}` SET `version` = ?, `release` = ?, `build` = ?, `updated` = ? WHERE `id` = ?;",
@@ -148,7 +142,7 @@ class dzcp_version extends dzcp_event
      * @param string $edition
      * @return array|bool
      */
-    private function updateGithub($version='1.7', $edition='stable') {
+    public function updateGithub($version='1.7', $edition='stable') {
         if($version == '1.6') {
             switch ($edition) {
                 case 'dev':

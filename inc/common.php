@@ -2132,7 +2132,6 @@ class common {
      * @return string
      */
     public static function getPermissions(int $checkID = 0, int $pos = 0) {
-        //TODO: Use Cache
         //Rechte des Users oder des Teams suchen
         if(!empty($checkID)) {
             $check = empty($pos) ? 'user' : 'pos'; $checked = [];
@@ -2229,10 +2228,9 @@ class common {
      * @param int $userid (optional)
      * @return bool
      */
-    public static function admin_perms(int $userid = 0) {
-        //TODO: Use Cache
+    public static function admin_perms(int $userid = 0, bool $refresh = false) {
         $userid = !$userid ? self::$userid : $userid;
-        if (empty($userid)) {
+        if (empty($userid) || !$userid) {
             return false;
         }
 
@@ -2242,14 +2240,22 @@ class common {
 
         // no need for these admin areas & check user permission
         $e = ['editusers', 'votes', 'contact', 'intnews', 'forum', 'dlintern','intforum'];
-        $qry = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `user` = ?;", [(int)($userid)]);
-        if(self::$sql['default']->rowCount()) {
-            foreach($qry as $v => $k) {
-                if($v != 'id' && $v != 'user' && $v != 'pos' && !in_array($v, $e)) {
-                    if($k == 1) {
-                        return true;
-                        break;
-                    }
+        $cache_hash = md5('permissions_'.$userid);
+        if(!self::$cache->AutoMemExists($cache_hash) || !config::$use_system_cache || $refresh) {
+            $permissions = self::$sql['default']->fetch("SELECT * FROM `{prefix_permissions}` WHERE `user` = ?;",
+                [(int)($userid)]);
+            if(config::$use_system_cache) {
+                self::$cache->AutoMemSet($cache_hash,$permissions,cache::TIME_USERPERM);
+            }
+        } else {
+            $permissions = self::$cache->AutoMemGet($cache_hash);
+        }
+
+        foreach($permissions as $v => $k) {
+            if($v != 'id' && $v != 'user' && $v != 'pos' && !in_array($v, $e)) {
+                if($k == 1) {
+                    return true;
+                    break;
                 }
             }
         }
@@ -2428,8 +2434,9 @@ class common {
      */
     public static function permission(string $check,int $uid=0,bool $refresh = false) {
         if (!$uid) { $uid = self::$userid; }
-        if(self::rootAdmin($uid) || empty($check))
+        if(self::rootAdmin($uid) || empty($check)) {
             return true;
+        }
 
         if(self::$chkMe == 4) {
             return true;
@@ -3094,20 +3101,20 @@ class common {
 //-> Neue Kernel Funktionen einbinden, sofern vorhanden
 if($functions_files = common::get_files(basePath.'/inc/additional-kernel/',false,true, ['php'])) {
     foreach($functions_files AS $func) {
-        include(basePath.'/inc/additional-kernel/'.$func);
+        include_once(basePath.'/inc/additional-kernel/'.$func);
     } unset($functions_files,$func);
 }
 
 //-> Neue Languages einbinden, sofern vorhanden
 if($language_files = common::get_files(basePath.'/inc/additional-languages/'.$_SESSION['language'].'/',false,true, ['php'])) {
     foreach($language_files AS $languages)
-    { include(basePath.'/inc/additional-languages/'.$_SESSION['language'].'/'.$languages); }
+    { include_once(basePath.'/inc/additional-languages/'.$_SESSION['language'].'/'.$languages); }
     unset($language_files,$languages);
 }
 
 //-> Neue Funktionen einbinden, sofern vorhanden
 if($functions_files = common::get_files(basePath.'/inc/additional-functions/',false,true, ['php'])) {
     foreach($functions_files AS $func)
-    { include(basePath.'/inc/additional-functions/'.$func); }
+    { include_once(basePath.'/inc/additional-functions/'.$func); }
     unset($functions_files,$func);
 }

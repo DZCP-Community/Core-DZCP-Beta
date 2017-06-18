@@ -45,8 +45,8 @@ if(defined('_Votes')) {
         foreach($qryv as $getv) {
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             if($ipcheck || cookie::get('vid_'.$get['id']) != false || $get['closed']) {
-                $percent = @round($getv['stimmen']/$stimmen*100,2);
-                $rawpercent = @round($getv['stimmen']/$stimmen*100,0);
+                $percent = $getv['stimmen'] >= 1 ? round($getv['stimmen']/$stimmen*100,2) : 0;
+                $rawpercent = $getv['stimmen'] >= 1 ?round($getv['stimmen']/$stimmen*100,0) : 0;
                 $smarty->caching = false;
                 $smarty->assign('width',$rawpercent);
                 $balken = $smarty->fetch('string:'._votes_balken);

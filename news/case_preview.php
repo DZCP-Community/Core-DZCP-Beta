@@ -147,10 +147,10 @@ EOI;
 
     //Smileys Test
     $test = bbcode_base::getInstance();
-    foreach ($test->GetSmileys() as $tag => $Smiley) {
-        echo bbcode_base::parse_html((string)$tag).'<p>';
-    }
-    die();
+ //   foreach ($test->GetSmileys() as $tag => $Smiley) {
+        echo bbcode_base::parse_html((string)$input).'<p>';
+ //   }
+//    die();
 
     //-> News Preview
     $smarty->caching = false;

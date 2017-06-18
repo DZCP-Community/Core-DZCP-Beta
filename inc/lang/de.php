@@ -18,7 +18,6 @@
 setlocale(LC_ALL, "de_DE.utf8");
 
 ## DEV ##
-define('_config_test_menu_addon','Test in Addons Menu');
 define('_config_test_menu_template','Test in Template Menu');
 
 ## Allgemein ##
@@ -51,6 +50,7 @@ define('_click_close', 'schlie&szlig;en');
 define('_lang_de', 'Deutsch');
 define('_lang_uk', 'Englisch');
 define('_template', 'Design');
+define('_perm_editby', 'Editby verwalten');
 
 ## Lost Password ##
 define('_admin_lpwd_subj', 'Betreff: Passwort zur&uuml;cksetzen');

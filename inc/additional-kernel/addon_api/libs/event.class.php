@@ -1,11 +1,9 @@
 <?php
-
 /**
- * Created by PhpStorm.
- * User: Lucas
- * Date: 12.03.2017
- * Time: 11:23
+ * DZCP - deV!L`z ClanPortal 1.7.0
+ * http://www.dzcp.de
  */
+
 class dzcp_event
 {
     public $event = NULL;

@@ -9,14 +9,16 @@
 //Run by ZendServer @ 30 Min
 class conjob
 {
+    private $version = null;
+
     function __construct()
     {
-
+        $this->version = new dzcp_version();
     }
 
     function run()
     {
-
+        $this->version->runUpdate();
     }
 
     function getOutput() {

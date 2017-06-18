@@ -6,8 +6,6 @@
 
 //api.php?input={"event":"news","count":4,"type":"xml"}
 
-if(!DZCPApi) die();
-
 /**
  * Class dzcp_news
  */
@@ -23,14 +21,11 @@ class dzcp_news extends dzcp_event
     }
 
     function getOldNews() {
-        global $sql;
-
 
 
     }
 
     function getNews() {
-        global $sql;
 
         
     }

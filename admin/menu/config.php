@@ -103,11 +103,42 @@ foreach($files as $file) {
 }
 unset($files,$file,$lng,$sel);
 
-$tmps = common::get_files(basePath.'/inc/_templates_/',true); $tmplsel = '';
-foreach($tmps as $tmp) {
-    $tmplsel .= common::select_field($tmp,(stringParser::decode(settings::get('tmpdir')) == $tmp),$tmp);
+$tmplsel="";
+$tmps = common::get_files(basePath.'/inc/_templates_/',true);
+foreach ($tmps as $tmp) {
+    $cache_hash = md5('templateswitch_xml_'.$tmp);
+    if(!common::$cache->AutoMemExists($cache_hash) || !config::$use_system_cache) {
+        if(file_exists(basePath.'/inc/_templates_/'.$tmp.'/template.xml')) {
+            $xml = simplexml_load_file(basePath . '/inc/_templates_/' . $tmp . '/template.xml');
+            if(config::$use_system_cache) {
+                common::$cache->AutoMemSet($cache_hash, json_encode($xml), cache::TIME_TEMPLATE_XML);
+            }
+
+            if(!empty((string)$xml->permissions)) {
+                if(common::permission((string)$xml->permissions) || ((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level)) {
+                    $tmplsel .= common::select_field("?tmpl_set=".$tmp,(settings::get('tmpdir') == $tmp),(string)$xml->name);
+                }
+            } else if((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level) {
+                $tmplsel .= common::select_field($tmp,(settings::get('tmpdir') == $tmp),(string)$xml->name);
+            } else if (!(int)$xml->level){
+                $tmplsel .= common::select_field($tmp,(settings::get('tmpdir') == $tmp),(string)$xml->name);
+            }
+        }
+    } else {
+        $data = json_decode(common::$cache->AutoMemGet($cache_hash),true);
+        if(!empty($data['permissions'])) {
+            if(common::permission((string)$data['permissions']) || ((int)$data['level'] >= 1 && common::$chkMe >= (int)$data['level'])) {
+                $tmplsel .= common::select_field($tmp,(settings::get('tmpdir') == $tmp),(string)$data['name']);
+            }
+        } else if((int)$data['level'] >= 1 && common::$chkMe >= (int)$data['level']) {
+            $tmplsel .= common::select_field($tmp,(settings::get('tmpdir') == $tmp),(string)$data['name']);
+        } else if (!(int)$data['level']){
+            $tmplsel .= common::select_field($tmp,(settings::get('tmpdir') == $tmp),(string)$data['name']);
+        }
+    }
 }
-unset($tmps,$tmp,$selt);
+
+unset($data,$tmps,$tmp,$xml);
 
 $smarty->caching = false;
 $pwde_options = $smarty->fetch('string:<option '.(!settings::get('default_pwd_encoder') ? 'selected="selected"' : '').' value="0">MD5 [lang_pwd_encoder_algorithm]</option>'

@@ -9,6 +9,15 @@ define('DZCPApi', true);
 //Base Class
 require_once(basePathAPI.'/libs/event.class.php');
 
+//-> Neue Languages einbinden
+if($language_files = common::get_files(basePathAPI.'/lang/',false,true, ['php'])) {
+    foreach($language_files AS $languages) {
+        if($_SESSION['language'] == str_replace('.php','',$languages) ||
+            str_replace('.php','',$languages) == 'global')
+            include_once(basePathAPI.'/lang/'.$languages);
+    } unset($language_files,$languages);
+}
+
 //-> Neue PHP Liberty's oder Classen einbinden
 if($libs_files = common::get_files(basePathAPI.'/libs/',false,true, ['php'])) {
     foreach($libs_files AS $func)
