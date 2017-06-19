@@ -18,8 +18,7 @@
 use phpFastCache\CacheManager;
 use phpFastCache\Util;
 
-class Cache extends CacheManager
-{
+class Cache extends CacheManager {
     //Time config for system-cache ttl in seconds
     const TIME_USERSTATS = 300; //function userstats() & function userstats_increase()
     const TIME_USERINDEX = 300; //function getUserIndex()
@@ -27,6 +26,7 @@ class Cache extends CacheManager
     const TIME_VOTE_ANSWER = 10; //function voteanswer()
     const TIME_ONLINE_CHECK = 15; //function onlinecheck()
     const TIME_TEMPLATE_XML = 300; //function smarty_function_templateswitch() & function sysTemplateswitch()
+    const TIME_IPS_BLOCKING = 30; //function check_ip()
 
     //Class Stuff
     private $cache_index = null;

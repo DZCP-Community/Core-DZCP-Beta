@@ -36,7 +36,6 @@ require_once(basePath.'/inc/crypt.php');
 require_once(basePath.'/inc/sessions.php');
 require_once(basePath.'/inc/secure.php');
 require_once(basePath."/inc/cookie.php");
-require_once(basePath."/inc/dbc_index.php");
 require_once(basePath."/inc/javascript.php");
 require_once(basePath."/inc/stringParser.php");
 require_once(basePath."/inc/sfs.php");
@@ -61,7 +60,6 @@ if(!is_api) {
 } $index = ''; $show = ''; $color = 0;
 
 new common(); //Main Construct
-
 require_once(basePath.'/inc/sfs.php');
 
 /**
@@ -1800,34 +1798,45 @@ class common {
             }
 
             //Banned IP
-            if(!dbc_index::getIndexKey('ip_check', md5(self::$userip['v4']))) {
-                $ips = dbc_index::getIndex('ip_check');
-                foreach(self::$sql['default']->select("SELECT `id`,`typ`,`data` FROM `{prefix_ipban}` WHERE `ipv4` = ? AND `enable` = 1;", [self::$userip['v4']]) as $banned_ip) {
-                    if($banned_ip['typ'] == 2 || $banned_ip['typ'] == 3) {
-                        self::dzcp_session_destroy();
-                        $banned_ip['data'] = unserialize($banned_ip['data']);
-                        die('Deine IP ist gesperrt!<p>Your IP is banned!<p>MSG: '.$banned_ip['data']['banned_msg']);
-                    }
+            $ips = [];
+            if(self::$cache->AutoMemExists('ip_check')) {
+                $ips = self::$cache->AutoMemGet('ip_check');
+                if(!is_array($ips)){
+                    $ips = [];
                 }
-                unset($banned_ip);
-
-                if((ini_get('allow_url_fopen') == 1) && self::isIP(self::$userip['v4']) && !self::validateIpV4Range(self::$userip['v4'], '[192].[168].[0-255].[0-255]') &&
-                    !self::validateIpV4Range(self::$userip['v4'], '[127].[0].[0-255].[0-255]') &&
-                    !self::validateIpV4Range(self::$userip['v4'], '[10].[0-255].[0-255].[0-255]') &&
-                    !self::validateIpV4Range(self::$userip['v4'], '[172].[16-31].[0-255].[0-255]')) {
-                    sfs::check(); //SFS Update
-                    if(sfs::is_spammer()) {
-                        self::$sql['default']->delete("DELETE FROM `{prefix_iptodns}` WHERE `sessid` = ?;",
-                            [session_id()]);
-                        self::dzcp_session_destroy();
-                        die('Deine IP-Adresse ist auf <a href="http://www.stopforumspam.com/" target="_blank">http://www.stopforumspam.com/</a> gesperrt, die IP wurde zu oft fÃ¼r Spam Angriffe auf Webseiten verwendet.<p>
-                             Your IP address is known on <a href="http://www.stopforumspam.com/" target="_blank">http://www.stopforumspam.com/</a>, your IP has been used for spam attacks on websites.');
-                    }
-                }
-
-                $ips[md5(self::$userip['v4'])] = true;
-                dbc_index::setIndex('ip_check', $ips, 30);
             }
+
+            if(array_key_exists(md5(self::$userip['v4']),$ips) && $ips[md5(self::$userip['v4'])]) {
+                return;
+            }
+
+            foreach(self::$sql['default']->select("SELECT `id`,`typ`,`data` FROM `{prefix_ipban}` WHERE `ipv4` = ? AND `enable` = 1;", [self::$userip['v4']]) as $banned_ip) {
+                if($banned_ip['typ'] == 2 || $banned_ip['typ'] == 3) {
+                    self::dzcp_session_destroy();
+                    $banned_ip['data'] = unserialize($banned_ip['data']);
+                    die('Deine IP ist gesperrt!<p>Your IP is banned!<p>MSG: '.$banned_ip['data']['banned_msg']);
+                }
+            } unset($banned_ip);
+
+            if((ini_get('allow_url_fopen') == 1) && self::isIP(self::$userip['v4']) && !self::validateIpV4Range(self::$userip['v4'], '[192].[168].[0-255].[0-255]') &&
+                !self::validateIpV4Range(self::$userip['v4'], '[127].[0].[0-255].[0-255]') &&
+                !self::validateIpV4Range(self::$userip['v4'], '[10].[0-255].[0-255].[0-255]') &&
+                !self::validateIpV4Range(self::$userip['v4'], '[172].[16-31].[0-255].[0-255]')) {
+                sfs::check(); //SFS Update
+                if(sfs::is_spammer()) {
+                    self::$sql['default']->delete("DELETE FROM `{prefix_iptodns}` WHERE `sessid` = ?;",
+                        [session_id()]);
+                    self::dzcp_session_destroy();
+                    die('Deine IP-Adresse ist auf <a href="http://www.stopforumspam.com/" target="_blank">http://www.stopforumspam.com/</a> gesperrt, die IP wurde zu oft fÃ¼r Spam Angriffe auf Webseiten verwendet.<p>
+                            Your IP address is known on <a href="http://www.stopforumspam.com/" target="_blank">http://www.stopforumspam.com/</a>, your IP has been used for spam attacks on websites.');
+                }
+            }
+
+            $ips[md5(self::$userip['v4'])] = true;
+            if(config::$use_system_cache) {
+                self::$cache->AutoMemSet('ip_check', $ips, cache::TIME_IPS_BLOCKING);
+            }
+
         } if(self::isIP(self::$userip['v4'], true)) {
             //Is IPv6
             //TODO: Support for IPV6
@@ -2951,15 +2960,12 @@ class common {
      **/
     public static function userid() {
         if (empty($_SESSION['id']) || empty($_SESSION['pwd'])) { return 0; }
-        if(!dbc_index::issetIndex('user_'.(int)($_SESSION['id']))) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ? AND `pwd` = ?;",
-                [(int)($_SESSION['id']),$_SESSION['pwd']]);
-            if (!self::$sql['default']->rowCount()) { return 0; }
-            dbc_index::setIndex('user_'.$get['id'], $get, 2);
-            return $get['id'];
+        $user = self::getUserIndex((int)$_SESSION['id']); //Load user from Mem/Netcache
+        if(count($user) > 2) {
+            return $user['id'];
         }
 
-        return dbc_index::getIndexKey('user_'.(int)($_SESSION['id']), 'id');
+        return 0;
     }
 
     /**
