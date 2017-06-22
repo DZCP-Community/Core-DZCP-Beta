@@ -206,15 +206,23 @@ class bbcode_base
                 if (isset($params['autoplay']) && !preg_match('/^[0-1]*$/', $params['autoplay']))
                     return false;
 
+                if (isset($params['start']) && !preg_match('/^[1-9][0-9]*$/', $params['start']))
+                    return false;
+
                 return true;
             }
 
             $width = isset($params['width']) ? $params['width'] : 640;
             $height = isset($params['height']) ? $params['height'] : 385;
             $autoplay = isset($params['autoplay']) ? $params['autoplay'] : 0;
+            $start = isset($params['start']) ? $params['start'] : 0;
 
             return '<iframe class="youtube-player" type="text/html" width="' . $width . '" height="' .
-                $height . '" src="http://www.youtube.com/embed/' . $content . ($autoplay ? '?autoplay=1' : ''). '" frameborder="0"></iframe>';
+                $height . '" src="http://www.youtube.com/embed/' . $content .
+                ($autoplay ? '?autoplay=1' : '')
+                .($autoplay && $start ? '&start='.$start : '')
+                .(!$autoplay && $start ? '?start='.$start : '')
+                . '" frameborder="0"></iframe>';
         }
 
         return $content;
