@@ -20,13 +20,13 @@
     }
   ],
   "require": {
-    "ckeditor/ckeditor": "4.6.2",
+    "ckeditor/ckeditor": "4.7.0",
     "phpmailer/phpmailer": "v5.2.23",
     "smarty/smarty": "v3.1.31",
     "suin/php-rss-writer": "1.5.0",
-    "jaybizzle/crawler-detect": "v1.2.40",
+    "jaybizzle/crawler-detect": "v1.2.46",
     "oyejorge/less.php": "v1.7.0.14",
-    "wixel/gump": "1.4",
+    "wixel/gump": "1.5.2",
     "pherum/snoopy": "2.0",
     "tan-tan-kanarek/github-php-client": "1.0.0",
     "mobiledetect/mobiledetectlib": "2.8.25",
