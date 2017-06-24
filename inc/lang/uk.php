@@ -194,6 +194,7 @@ define("_forum_go", 'Go');
 define("_forum_from", 'From');
 define('_forum_admin_closed' , 'Close vote');
 define("_forum_admin_editby", 'der Nachricht "<span class="fontWichtig">zuletzt editiert</span>" anh&auml;ngen?');
+define('_forum_thread_lpost' , 'from {$nick}<br />at {$date}{lang msgID="uhr"}');
 
 //Startpage
 define('_profil_startpage', 'Startseite');

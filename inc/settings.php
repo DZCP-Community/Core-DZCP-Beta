@@ -96,13 +96,13 @@ class settings extends common {
             if(self::changed($what,$var)) {
                 $var = empty($var) && $default ? self::get_default($what) : $var;
                 $data = self::$index[$what];
-                $data['value'] = ($data['length'] >= 1 ? self::cut($var,((int)$data['length']),false) : $var);
+                $data['value'] = ($data['length'] >= 1 ? self::cut($var,((int)$data['length']),false, false) : $var);
                 self::$index[$what] = $data;
                 if (show_settings_debug) {
                     DebugConsole::insert_successful('settings::set()', 'Set "'.$what.'" to "'.$var.'"');
                 }
                 return self::$sql['default']->update("UPDATE `{prefix_settings}` SET `value` = ? WHERE `key` = ?;",
-                    array(utf8_encode($data['length'] >= 1 ? self::cut($var,((int)$data['length']),false) : $var),$what)) ? true : false;
+                    array(utf8_encode($data['length'] >= 1 ? self::cut($var,((int)$data['length']),false, false) : $var),$what)) ? true : false;
             }
         }
 
@@ -142,7 +142,7 @@ class settings extends common {
         foreach($qry as $get) {
             $setting = array();
             $setting['value'] = !((int)$get['length']) ? $get['type'] == 'int' ? ((int)$get['value']) : ((string)$get['value'])
-            : self::cut($get['type'] == 'int' ? ((int)$get['value']) : ((string)$get['value']),((int)$get['length']),false);
+            : self::cut($get['type'] == 'int' ? ((int)$get['value']) : ((string)$get['value']),((int)$get['length']),false,false);
             $setting['default'] = $get['type'] == 'int' ? ((int)$get['default']) : ((string)$get['default']);
             $setting['length'] = ((int)$get['length']);
             self::$index[$get['key']] = $setting; unset($setting);
@@ -163,7 +163,7 @@ class settings extends common {
         if(!self::is_exists($what)) {
             $setting = array();
             $setting['value'] = !((int)$length) ? $int ? ((int)$var) : ((string)$var)
-            : self::cut($int ? ((int)$var) : ((string)$var),((int)$length),false);
+            : self::cut($int ? ((int)$var) : ((string)$var),((int)$length),false,false);
             $setting['default'] = $int ? ((int)$default) : ((string)$default);
             $setting['length'] = ((int)$length);
             self::$index[$what] = $setting;

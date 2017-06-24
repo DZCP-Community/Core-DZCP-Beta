@@ -575,17 +575,17 @@ class common {
      * @param string $class (optional)
      * @param string $nick (optional)
      * @param string $email (optional)
-     * @param string $cut (optional)
+     * @param int    $cut (optional)
      * @param string $add (optional)
      * @return string
      */
-    public static function autor(int $uid=0,string $class="",string $nick="",string $email="",string $cut="",string $add="") {
+    public static function autor(int $uid=0,string $class="",string $nick="",string $email="",int $cut=100,string $add="") {
         $user = self::getUserIndex($uid); //Load user from Mem/Netcache
         if(count($user) > 2) {
             $country = self::flag(stringParser::decode($user['country']));
-            $nickname = (!empty($cut) ? self::cut(stringParser::decode($user['nick']), $cut) : stringParser::decode($user['nick']));
+            $nickname = (!empty($cut) ? self::cut(stringParser::decode($user['nick']), $cut, true, false) : stringParser::decode($user['nick']));
         } else {
-            $nickname = (!empty($cut) ? self::cut(stringParser::decode($nick), $cut) : stringParser::decode($nick));
+            $nickname = (!empty($cut) ? self::cut(stringParser::decode($nick), $cut, true, false) : stringParser::decode($nick));
             return self::CryptMailto($email,_user_link_noreg, ["nick" => $nickname, "class" => $class]);
         }
 
@@ -607,11 +607,11 @@ class common {
      * Nickausgabe mit Profillink (reg + position farbe)
      * @param int $uid
      * @param string $class (optional)
-     * @param string $cut (optional)
+     * @param int $cut (optional)
      * @param bool $refresh (optional)
      * @return mixed|string
      */
-    public static function autorcolerd(int $uid=0, $class="", $cut="", bool $refresh = false) {
+    public static function autorcolerd(int $uid=0,string $class="",int $cut = 100, bool $refresh = false) {
         $uid = (!$uid ? self::$userid : $uid);
         if(!$uid) return '* No UserID! *';
         $user = self::getUserIndex($uid,$refresh); //Load user from Mem/Netcache
@@ -628,7 +628,7 @@ class common {
             $smarty->assign('country',self::flag(stringParser::decode($user['country'])));
             $smarty->assign('class',$class);
             $smarty->assign('color',stringParser::decode($get['color']));
-            $smarty->assign('nick',(!empty($cut) ? self::cut(stringParser::decode($user['nick']), $cut) : stringParser::decode($user['nick'])));
+            $smarty->assign('nick',(!empty($cut) ? self::cut(stringParser::decode($user['nick']), $cut, true, false) : stringParser::decode($user['nick'])));
             $autor = $smarty->fetch('file:['.common::$tmpdir.']user/user_link_colerd.tpl',
                 self::getSmartyCacheHash('user_link_colerd_'.$uid.$class.$cut));
             $smarty->clearAllAssign();
@@ -1421,41 +1421,120 @@ class common {
     }
 
     /**
-     * Funktion um Ausgaben zu kuerzen
-     * @param string $str
-     * @param int|null $length
-     * @param bool $dots (optional)
-     * @return string
+     * Truncates text / Funktion um Ausgaben zu kuerzen
+     *
+     * Cuts a string to the length of $length and replaces the last characters
+     * with the ending if the text is longer than length.
+     * ( CakePhp Export ) *https://cakephp.org/*
+     *
+     * @param string  $text String to truncate.
+     * @param integer $length Length of returned string, including ellipsis.
+     * @param bool    $dots Using dots on end of string.
+     * @param string  $ending Ending to be appended to the trimmed string.
+     * @param boolean $exact If false, $text will not be cut mid-word
+     * @param boolean $considerHtml If true, HTML tags would be handled correctly
+     * @return string Trimmed string.
      */
-    public static function cut(string $str, int $length = null, bool $dots = true) {
+    public static function cut(string $text, int $length = 100, bool $dots = true,bool $html = true,string $ending = '',bool $exact = false,bool $considerHtml = true) {
         if($length === 0)
             return '';
 
-        $start = 0;
-        $dots = ($dots == true && strlen(html_entity_decode($str)) > $length) ? '...' : '';
+        $ending = $dots || !empty($ending) ? (!empty($ending) ? $ending : '...') : '';
 
-        if(strpos($str, '&') === false)
-            return (($length === null) ? substr($str, $start) : substr($str, $start, $length)).$dots;
+        if(!$html)
+            return substr($text, 0, $length).$ending;
 
-        $chars = preg_split('/(&[^;\s]+;)|/', $str, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE);
-        $html_length = count($chars);
+        if ($considerHtml) {
+            // if the plain text is shorter than the maximum length, return the whole text
+            if (strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
+                return $text;
+            }
 
-        if(($html_length === 0) || ($start >= $html_length) || (isset($length) && ($length <= -$html_length)))
-            return '';
+            // splits all html-tags to scanable lines
+            preg_match_all('/(<.+?>)?([^<>]*)/s', $text, $lines, PREG_SET_ORDER);
+            $total_length = strlen($ending);
+            $open_tags = array();
+            $truncate = '';
+            foreach ($lines as $line_matchings) {
+                // if there is any html-tag in this line, handle it and add it (uncounted) to the output
+                if (!empty($line_matchings[1])) {
+                    // if it's an "empty element" with or without xhtml-conform closing slash
+                    if (preg_match('/^<(\s*.+?\/\s*|\s*(img|br|input|hr|area|base|basefont|col|frame|isindex|link|meta|param)(\s.+?)?)>$/is', $line_matchings[1])) {
+                        // do nothing
+                        // if tag is a closing tag
+                    } else if (preg_match('/^<\s*\/([^\s]+?)\s*>$/s', $line_matchings[1], $tag_matchings)) {
+                        // delete tag from $open_tags list
+                        $pos = array_search($tag_matchings[1], $open_tags);
+                        if ($pos !== false) {
+                            unset($open_tags[$pos]);
+                        }
+                        // if tag is an opening tag
+                    } else if (preg_match('/^<\s*([^\s>!]+).*?>$/s', $line_matchings[1], $tag_matchings)) {
+                        // add tag to the beginning of $open_tags list
+                        array_unshift($open_tags, strtolower($tag_matchings[1]));
+                    }
+                    // add html-tag to $truncate'd text
+                    $truncate .= $line_matchings[1];
+                }
 
-        if($start >= 0)
-            $real_start = $chars[$start][1];
-        else {
-            $start = max($start,-$html_length);
-            $real_start = $chars[$html_length+$start][1];
+                // calculate the length of the plain text part of the line; handle entities as one character
+                $content_length = strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|[0-9a-f]{1,6};/i', ' ', $line_matchings[2]));
+                if ($total_length+$content_length> $length) {
+                    // the number of characters which are left
+                    $left = $length - $total_length;
+                    $entities_length = 0;
+                    // search for html entities
+                    if (preg_match_all('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|[0-9a-f]{1,6};/i', $line_matchings[2], $entities, PREG_OFFSET_CAPTURE)) {
+                        // calculate the real length of all entities in the legal range
+                        foreach ($entities[0] as $entity) {
+                            if ($entity[1]+1-$entities_length <= $left) {
+                                $left--;
+                                $entities_length += strlen($entity[0]);
+                            } else {
+                                // no more characters left
+                                break;
+                            }
+                        }
+                    }
+                    $truncate .= substr($line_matchings[2], 0, $left+$entities_length);
+                    // maximum lenght is reached, so get off the loop
+                    break;
+                } else {
+                    $truncate .= $line_matchings[2];
+                    $total_length += $content_length;
+                }
+                // if the maximum length is reached, get off the loop
+                if($total_length>= $length) {
+                    break;
+                }
+            }
+        } else {
+            if (strlen($text) <= $length) {
+                return $text;
+            } else {
+                $truncate = substr($text, 0, $length - strlen($ending));
+            }
         }
 
-        if (!isset($length))
-            return substr($str, $real_start).$dots;
-        else if($length > 0)
-            return (($start+$length >= $html_length) ? substr($str, $real_start) : substr($str, $real_start, $chars[max($start,0)+$length][1] - $real_start)).$dots;
-        else
-            return substr($str, $real_start, $chars[$html_length+$length][1] - $real_start).$dots;
+        // if the words shouldn't be cut in the middle...
+        if (!$exact) {
+            // ...search the last occurance of a space...
+            $spacepos = strrpos($truncate, ' ');
+            if (isset($spacepos)) {
+                // ...and cut the text in this position
+                $truncate = substr($truncate, 0, $spacepos);
+            }
+        }
+
+        // add the defined ending to the text
+        $truncate .= $ending;
+        if($considerHtml) {
+            // close all unclosed html-tags
+            foreach ($open_tags as $tag) {
+                $truncate .= '</' . $tag . '>';
+            }
+        }
+        return $truncate;
     }
 
     /**

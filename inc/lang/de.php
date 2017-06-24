@@ -178,6 +178,7 @@ define("_forum_sort_ascending", 'Aufsteigend');
 define("_forum_go", 'Los');
 define("_forum_from", 'Von');
 define("_forum_admin_editby", 'der Nachricht "<span class="fontWichtig">zuletzt editiert</span>" anh&auml;ngen?');
+define('_forum_thread_lpost', 'von {$nick}<br />am {$date}{lang msgID="uhr"}');
 
 //Startpage
 define('_profil_startpage', 'Startseite');
