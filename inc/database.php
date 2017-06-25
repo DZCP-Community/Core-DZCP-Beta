@@ -293,7 +293,7 @@ final class database {
             }
         }
 
-        return array('status'=>false,'msg'=>'','code'=>0);
+        return ['status'=>false,'msg'=>'','code'=>0];
     }
     
     public final function rep_prefix($qry){

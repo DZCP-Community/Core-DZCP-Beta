@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "cd26633b7e41402a8a74dfb31b852259",
+    "content-hash": "aae2ae7ec3c2c449ab61557e307063ac",
     "packages": [
         {
             "name": "ckeditor/ckeditor",
@@ -640,6 +640,45 @@
             "time": "2015-11-16T08:36:41+00:00"
         },
         {
+            "name": "vanilla/nbbc",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vanilla/nbbc.git",
+                "reference": "2da62098363c3da5a653d611ce15c41fa6681092"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vanilla/nbbc/zipball/2da62098363c3da5a653d611ce15c41fa6681092",
+                "reference": "2da62098363c3da5a653d611ce15c41fa6681092",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Nbbc\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSDv2"
+            ],
+            "authors": [
+                {
+                    "name": "Todd Burry",
+                    "email": "todd@vanillaforums.com"
+                }
+            ],
+            "description": "A composer-compatible fork of the NBBC BBCode parsing library.",
+            "time": "2017-06-15 20:18:49"
+        },
+        {
             "name": "wixel/gump",
             "version": "v1.5.2",
             "source": {
@@ -705,7 +744,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "vanilla/nbbc": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

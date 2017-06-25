@@ -29,7 +29,7 @@ $smarty = common::getSmarty(); //Use Smarty
 ## SECTIONS ##
 $smarty->caching = false;
 $smarty->assign('show_domain',stringParser::decode(settings::get('i_domain')));
-$smarty->assign('show_autor',bbcode_base::parse_html(settings::get('i_autor')));
+$smarty->assign('show_autor',BBCode::parse_html(settings::get('i_autor')));
 $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/impressum.tpl');
 $smarty->clearAllAssign();
 

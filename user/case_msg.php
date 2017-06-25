@@ -56,7 +56,7 @@ if(defined('_UserMenu')) {
                     $smarty->caching = false;
                     $smarty->assign('answermsg',$answermsg);
                     $smarty->assign('titel',stringParser::decode($get['titel']));
-                    $smarty->assign('nachricht',bbcode_base::parse_html((string)$get['nachricht']));
+                    $smarty->assign('nachricht',BBCode::parse_html((string)$get['nachricht']));
                     $smarty->assign('answer',$answer);
                     $smarty->assign('delete',$delete);
                     $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/msg/msg_show.tpl');
@@ -83,7 +83,7 @@ if(defined('_UserMenu')) {
                     $smarty->caching = false;
                     $smarty->assign('answermsg',$answermsg);
                     $smarty->assign('titel',stringParser::decode($get['titel']));
-                    $smarty->assign('nachricht',bbcode_base::parse_html((string)$get['nachricht']));
+                    $smarty->assign('nachricht',BBCode::parse_html((string)$get['nachricht']));
                     $smarty->assign('answer',$answer);
                     $smarty->assign('delete',$delete);
                     $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/msg/msg_show.tpl');
@@ -99,7 +99,7 @@ if(defined('_UserMenu')) {
                     $smarty->assign('an',$get['von']);
                     $smarty->assign('titel',$titel);
                     $smarty->assign('nick',common::autor($get['von']));
-                    $smarty->assign('zitat',bbcode_base::zitat(common::autor($get['von']),stringParser::decode($get['nachricht'])));
+                    $smarty->assign('zitat',BBCode::zitat(common::autor($get['von']),stringParser::decode($get['nachricht'])));
                     $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/msg/answer.tpl');
                     $smarty->clearAllAssign();
                 }
@@ -150,7 +150,7 @@ if(defined('_UserMenu')) {
                         $smarty->assign('nick',stringParser::decode(common::data('nick',(int)$_POST['an'])));
                         $smarty->assign('titel',stringParser::encode($_POST['titel']));
                         $smarty->assign('clan',common::$pagetitle);
-                        $message = $smarty->fetch('string:'.bbcode_base::bbcode_email(stringParser::decode(settings::get('eml_pn'))));
+                        $message = $smarty->fetch('string:'.BBCode::bbcode_email(stringParser::decode(settings::get('eml_pn'))));
                         $smarty->clearAllAssign();
 
                         //subj
@@ -321,7 +321,7 @@ if(defined('_UserMenu')) {
                         $smarty->assign('nick',stringParser::decode(common::data('nick',(int)$to)));
                         $smarty->assign('titel',stringParser::encode($_POST['titel']));
                         $smarty->assign('clan',common::$pagetitle);
-                        $message = $smarty->fetch('string:'.bbcode_base::bbcode_email(stringParser::decode(settings::get('eml_pn'))));
+                        $message = $smarty->fetch('string:'.BBCode::bbcode_email(stringParser::decode(settings::get('eml_pn'))));
                         $smarty->clearAllAssign();
 
                         //subj

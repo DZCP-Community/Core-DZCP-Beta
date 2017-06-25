@@ -26,9 +26,12 @@ if(!defined('is_api')) { define('is_api', false); }
 if(!defined('is_ajax')) { define('is_ajax', false); }
 if(!defined('is_thumbgen')) { define('is_thumbgen', false); }
 
+if(!file_exists(basePath."/vendor/autoload.php")) {
+    die("The folder '/vendor' was not found! Run composer to install the missing packets! 'php composer install'");
+}
+
 ## INCLUDES ##
 require_once(basePath."/vendor/autoload.php");
-require_once(basePath."/vendor/nbbc/src/nbbc_main.php");
 require_once(basePath."/inc/debugger.php");
 require_once(basePath."/inc/configs/config.php");
 require_once(basePath."/inc/database.php");
@@ -90,6 +93,7 @@ class common {
     public static $page = 1;
     public static $do = '';
     public static $search_forum = false;
+    public static $BBCode = NULL;
 
     //Private
     private static $menu_index = [];
@@ -166,6 +170,9 @@ class common {
 
         //->Init-CacheManager
         self::$cache = new Cache();
+
+        //->Init-Nbbc_BBCode
+        self::$BBCode = new Nbbc\BBCode();
 
         //->Init-Database
         self::$database = new database();
@@ -400,7 +407,7 @@ class common {
         self::sysTemplateswitch();
 
         //Init new BBCode
-        $bbcode = new bbcode_base();
+        $bbcode = new BBCode();
         $bbcode->getInstance();
         unset($bbcode);
 
@@ -1793,7 +1800,7 @@ class common {
 
     /**
      * Pruft eine IP gegen eine IP-Range
-     * @param ipv4|string $ip
+     * @param string $ip
      * @param string $range $range
      * @return bool
      */

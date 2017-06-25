@@ -64,7 +64,7 @@ switch (common::$do) {
             $smarty->assign('link_page','<a href="'.$akl_link_page.'" target="_blank">'.$akl_link_page.'</a>');
             $smarty->assign('guid',$guid);
             $smarty->assign('link','<a href="'.$akl_link.'" target="_blank">Link</a>');
-            $message = $smarty->fetch('string:'.bbcode_base::bbcode_email(settings::get('eml_akl_register')));
+            $message = $smarty->fetch('string:'.BBCode::bbcode_email(settings::get('eml_akl_register')));
             $smarty->clearAllAssign();
 
             $smarty->caching = false;
@@ -92,7 +92,7 @@ switch (common::$do) {
                 $smarty->assign('link_page','<a href="'.$akl_link_page.'" target="_blank">'.$akl_link_page.'</a>');
                 $smarty->assign('guid',$guid);
                 $smarty->assign('link','<a href="'.$akl_link.'" target="_blank">Link</a>');
-                $message = $smarty->fetch('string:'.bbcode_base::bbcode_email(settings::get('eml_akl_register')));
+                $message = $smarty->fetch('string:'.BBCode::bbcode_email(settings::get('eml_akl_register')));
                 $smarty->clearAllAssign();
 
                 common::sendMail(stringParser::decode($get['email']), stringParser::decode(settings::get('eml_akl_register_subj')), $message);

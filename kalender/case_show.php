@@ -32,7 +32,7 @@ foreach($qry as $get) {
     $smarty->caching = false;
     $smarty->assign('edit',$edit);
     $smarty->assign('show_time',date("H:i", $get['datum'])._uhr);
-    $smarty->assign('show_event',bbcode_base::parse_html((string)$get['event']));
+    $smarty->assign('show_event',BBCode::parse_html((string)$get['event']));
     $smarty->assign('show_title',stringParser::decode($get['title']));
     $events .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/event_show.tpl');
     $smarty->clearAllAssign();

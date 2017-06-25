@@ -82,7 +82,7 @@ if(_adminMenu != 'true') exit;
         {
             $smarty->caching = false;
             $smarty->assign('text', bbcode_nletter($_POST['eintrag']));
-            $message = $smarty->fetch('string:'.bbcode_base::bbcode_email(settings::get('eml_nletter')));
+            $message = $smarty->fetch('string:'.BBCode::bbcode_email(settings::get('eml_nletter')));
             $smarty->clearAllAssign();
             $subject =stringParser::decode(settings::get('eml_nletter_subj'));
 
@@ -99,7 +99,7 @@ if(_adminMenu != 'true') exit;
         } elseif($_POST['to'] == "member") {
             $smarty->caching = false;
             $smarty->assign('text', bbcode_nletter($_POST['eintrag']));
-            $message = $smarty->fetch('string:'.bbcode_base::bbcode_email(settings::get('eml_nletter')));
+            $message = $smarty->fetch('string:'.BBCode::bbcode_email(settings::get('eml_nletter')));
             $smarty->clearAllAssign();
 
             $subject =stringParser::decode(settings::get('eml_nletter_subj'));
@@ -115,7 +115,7 @@ if(_adminMenu != 'true') exit;
         } else {
             $smarty->caching = false;
             $smarty->assign('text', bbcode_nletter($_POST['eintrag']));
-            $message = $smarty->fetch('string:'.bbcode_base::bbcode_email(settings::get('eml_nletter')));
+            $message = $smarty->fetch('string:'.BBCode::bbcode_email(settings::get('eml_nletter')));
             $smarty->clearAllAssign();
 
             $subject =stringParser::decode(settings::get('eml_nletter_subj'));

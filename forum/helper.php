@@ -128,14 +128,14 @@ function send_forum_abo(bool $is_thread = false, int $id,string $eintrag,bool $e
             $smarty->assign('id',$id);
             $smarty->assign('entrys',!$entrys ? 1 : $entrys);
             $smarty->assign('page',!$entrys ? 1 : ceil($entrys/settings::get('m_fposts')));
-            $smarty->assign('text',bbcode_base::parse_html((string)$eintrag));
+            $smarty->assign('text',BBCode::parse_html((string)$eintrag));
             $smarty->assign('clan',settings::get('clanname'));
             if($is_thread && !$edit) {
-                $message = $smarty->fetch('string:'.bbcode_base::bbcode_email(settings::get('eml_fabo_tedit')));
+                $message = $smarty->fetch('string:'.BBCode::bbcode_email(settings::get('eml_fabo_tedit')));
             } else if(!$is_thread &&!$edit) {
-                $message = $smarty->fetch('string:'.bbcode_base::bbcode_email(settings::get('eml_fabo_npost')));
+                $message = $smarty->fetch('string:'.BBCode::bbcode_email(settings::get('eml_fabo_npost')));
             } else {
-                $message = $smarty->fetch('string:'.bbcode_base::bbcode_email(settings::get('eml_fabo_pedit')));
+                $message = $smarty->fetch('string:'.BBCode::bbcode_email(settings::get('eml_fabo_pedit')));
             }
             $smarty->clearAllAssign();
 

@@ -153,9 +153,9 @@ The unanimous Declaration of the thirteen united States of America[/b][/center]
 EOI;
 
     //Smileys Test
-   // $test = bbcode_base::getInstance();
+   // $test = BBCode::getInstance();
  //   foreach ($test->GetSmileys() as $tag => $Smiley) {
-      //  echo bbcode_base::parse_html((string)$input).'<p>';
+      //  echo BBCode::parse_html((string)$input).'<p>';
  //   }
 //    die();
 
@@ -170,8 +170,8 @@ EOI;
     $smarty->assign('notification_page','');
     $smarty->assign('sticky',$sticky);
     $smarty->assign('intern',$intern);
-    $smarty->assign('more',bbcode_base::parse_html((string)$_POST['morenews']));
-    $smarty->assign('text',bbcode_base::parse_html((string)$_POST['newstext']));
+    $smarty->assign('more',BBCode::parse_html((string)$_POST['morenews']));
+    $smarty->assign('text',BBCode::parse_html((string)$_POST['newstext']));
     $smarty->assign('datum',date("j.m.y H:i", time()));
     $smarty->assign('links',$links);
     $smarty->assign('autor',common::autor());

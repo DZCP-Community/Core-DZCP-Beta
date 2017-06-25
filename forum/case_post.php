@@ -241,13 +241,13 @@ if(defined('_Forum')) {
                                             [(int)($_GET['zitat'])]);
 
                                         $nick = (!$getzitat['reg'] ? $getzitat['nick'] : common::autor($getzitat['reg']));
-                                        $zitat = bbcode_base::zitat($nick, $getzitat['text']);
+                                        $zitat = BBCode::zitat($nick, $getzitat['text']);
                                     } else if (isset($_GET['zitat_thread'])) {
                                         $getzitat = common::$sql['default']->fetch("SELECT `t_nick`,`t_reg`,`t_text` FROM `{prefix_forumthreads}` WHERE `id` = ?;",
                                             [(int)($_GET['zitat_thread'])]);
 
                                         $nick = (!$getzitat['t_reg'] ? $getzitat['t_nick'] : stringParser::decode(common::data("nick", $getzitat['t_reg'])));
-                                        $zitat = bbcode_base::zitat($nick, $getzitat['t_text']);
+                                        $zitat = BBCode::zitat($nick, $getzitat['t_text']);
                                     }
 
                                     //Show last post
@@ -257,7 +257,7 @@ if(defined('_Forum')) {
                                     if (common::$sql['default']->rowCount()) {
                                         $sig = "";
                                         if (common::data("signatur", $get['reg']))
-                                            $sig = _sig . bbcode_base::parse_html(common::data("signatur", $get['reg']));
+                                            $sig = _sig . BBCode::parse_html(common::data("signatur", $get['reg']));
 
                                         //User Posts ( Uber Avatar )
                                         $userposts = '';
@@ -322,7 +322,7 @@ if(defined('_Forum')) {
                                         $smarty->assign('chkme', common::$chkMe);
                                         $smarty->assign('postnr', "");
                                         $smarty->assign('p', (common::$page - 1 * settings::get('m_fposts')));
-                                        $smarty->assign('text', bbcode_base::parse_html((string)$get['text']));
+                                        $smarty->assign('text', BBCode::parse_html((string)$get['text']));
                                         $smarty->assign('class', $class);
                                         $smarty->assign('pn', $pn);
                                         $smarty->assign('hp', $hp);
@@ -343,7 +343,7 @@ if(defined('_Forum')) {
 
                                     if (empty($lastpost)) { //Show last forum thread ( if last post is empty )
                                         $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE `kid` = ? AND `id` = ?;", [$_SESSION['kid'], $id]);
-                                        $sig = (($signatur = common::data("signatur", $get['t_reg'])) ? _sig . bbcode_base::parse_html((string)$signatur) : '');
+                                        $sig = (($signatur = common::data("signatur", $get['t_reg'])) ? _sig . BBCode::parse_html((string)$signatur) : '');
 
                                         //User Posts ( Uber Avatar )
                                         $userposts = '';
@@ -358,7 +358,7 @@ if(defined('_Forum')) {
                                         $onoff = ($get['t_reg'] ? common::onlinecheck($get['t_reg']) : '');
 
                                         $ftxt = hl($get['t_text'], (isset($_GET['hl']) ? $_GET['hl'] : ''));
-                                        $text = isset($_GET['hl']) ? bbcode_base::parse_html((string)$ftxt['text']) : bbcode_base::parse_html((string)$get['t_text']);
+                                        $text = isset($_GET['hl']) ? BBCode::parse_html((string)$ftxt['text']) : BBCode::parse_html((string)$get['t_text']);
                                         $posted_ip = common::$chkMe == 4 || common::permission('ipban') ? $get['ipv4'] : _logged;
 
                                         //Titel
@@ -410,7 +410,7 @@ if(defined('_Forum')) {
                                         $smarty->assign('chkme', common::$chkMe);
                                         $smarty->assign('postnr', "");
                                         $smarty->assign('p', (common::$page - 1 * settings::get('m_fposts')));
-                                        $smarty->assign('text', bbcode_base::parse_html((string)$get['t_text']));
+                                        $smarty->assign('text', BBCode::parse_html((string)$get['t_text']));
                                         $smarty->assign('class', $ftxt['class']);
                                         $smarty->assign('pn', $pn);
                                         $smarty->assign('hp', $hp);

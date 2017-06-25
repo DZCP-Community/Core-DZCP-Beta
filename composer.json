@@ -30,6 +30,7 @@
     "pherum/snoopy": "2.0",
     "tan-tan-kanarek/github-php-client": "1.0.0",
     "mobiledetect/mobiledetectlib": "2.8.25",
-    "phpfastcache/phpfastcache": "6.0.1"
+    "phpfastcache/phpfastcache": "6.0.1",
+    "vanilla/nbbc": "dev-master"
   }
 }

@@ -18,17 +18,19 @@
 /**
  * BBCodeParser Class expanded the NBBC: The New BBCode Parser
  */
-class bbcode_base
+class BBCode extends common
 {
-    protected static $BBCode = null;
     private static $words = null;
     private static $string = null;
 
     /**
-     * bbcode_base constructor.
+     * BBCode constructor.
      */
-    public function __construct() {
-        self::$BBCode = new BBCode(); //Call NBBC constructor
+    public function __construct($reint=false) {
+        if($reint) {
+            //->ReInit-Nbbc_BBCode
+            self::$BBCode = new Nbbc\BBCode();
+        }
 
         //Add Smileys
         self::$BBCode->SetSmileyDir(basePath.'/vendor/nbbc/smileys'); //default
@@ -66,7 +68,7 @@ class bbcode_base
 
         //Add new BBCodes
         self::$BBCode->AddRule('border', [
-            'mode' => BBCODE_MODE_ENHANCED,
+            'mode' => Nbbc\BBCode::BBCODE_MODE_ENHANCED,
             'template' => '<div style="border: {$size}px solid {$color}">{$_content}</div>',
             'allow' => [
                 'color' => '/^#[0-9a-fA-F]+|[a-zA-Z]+$/',
@@ -91,8 +93,8 @@ class bbcode_base
          * [youtube height=200 width=300 autoplay=1]xxxxx[/youtube]
          */
         self::$BBCode->AddRule('youtube', [
-            'mode' => BBCODE_MODE_CALLBACK,
-            'method' => 'bbcode_base::callback_youtube',
+            'mode' => Nbbc\BBCode::BBCODE_MODE_CALLBACK,
+            'method' => 'BBCode::callback_youtube',
             'class' => 'block',
             'allow_in' => ['listitem', 'block', 'columns'],
         ]);
@@ -108,8 +110,8 @@ class bbcode_base
          * [divx height=200 width=300 autoplay=1]http://xxx.xx/video123.divx[/divx]
          */
         self::$BBCode->AddRule('divx', [
-            'mode' => BBCODE_MODE_CALLBACK,
-            'method' => 'bbcode_base::callback_divx',
+            'mode' => Nbbc\BBCode::BBCODE_MODE_CALLBACK,
+            'method' => 'BBCode::callback_divx',
             'class' => 'block',
             'allow_in' => ['listitem', 'block', 'columns'],
         ]);
@@ -125,8 +127,8 @@ class bbcode_base
          * [video height=200 width=300 autoplay=1]http://xxx.xx/video123.mp4[/video]
          */
         self::$BBCode->AddRule('video', [
-            'mode' => BBCODE_MODE_CALLBACK,
-            'method' => 'bbcode_base::callback_video',
+            'mode' => Nbbc\BBCode::BBCODE_MODE_CALLBACK,
+            'method' => 'BBCode::callback_video',
             'class' => 'block',
             'allow_in' => ['listitem', 'block', 'columns'],
         ]);
@@ -142,8 +144,8 @@ class bbcode_base
          * [vimeo height=200 width=300 autoplay=1]xxxxxxxx[/vimeo]
          */
         self::$BBCode->AddRule('vimeo', [
-            'mode' => BBCODE_MODE_CALLBACK,
-            'method' => 'bbcode_base::callback_vimeo',
+            'mode' => Nbbc\BBCode::BBCODE_MODE_CALLBACK,
+            'method' => 'BBCode::callback_vimeo',
             'class' => 'block',
             'allow_in' => ['listitem', 'block', 'columns'],
         ]);
@@ -159,8 +161,8 @@ class bbcode_base
          * [golem height=200 width=300 autoplay=1]xxxxxxxx[/golem]
          */
         self::$BBCode->AddRule('golem', [
-            'mode' => BBCODE_MODE_CALLBACK,
-            'method' => 'bbcode_base::callback_golem',
+            'mode' => Nbbc\BBCode::BBCODE_MODE_CALLBACK,
+            'method' => 'BBCode::callback_golem',
             'class' => 'block',
             'allow_in' => ['listitem', 'block', 'columns'],
         ]);
@@ -177,8 +179,8 @@ class bbcode_base
          * [hide level=4]Text1234 show on == level 4[/hide]
          */
         self::$BBCode->AddRule('hide', [
-            'mode' => BBCODE_MODE_CALLBACK,
-            'method' => 'bbcode_base::callback_hide',
+            'mode' => Nbbc\BBCode::BBCODE_MODE_CALLBACK,
+            'method' => 'BBCode::callback_hide',
             'class' => 'block',
             'allow_in' => ['listitem', 'block', 'columns'],
         ]);
@@ -196,7 +198,7 @@ class bbcode_base
      */
     public static function callback_youtube($bbcode, $action, $name, $default, $params, $content) {
         if($name == 'youtube') {
-            if ($action == BBCODE_CHECK) {
+            if ($action == Nbbc\BBCode::BBCODE_CHECK) {
                 if (isset($params['height']) && !preg_match('/^[1-9][0-9]*$/', $params['height']))
                     return false;
 
@@ -240,7 +242,7 @@ class bbcode_base
      */
     public static function callback_divx($bbcode, $action, $name, $default, $params, $content) {
         if($name == 'divx') {
-            if ($action == BBCODE_CHECK) {
+            if ($action == Nbbc\BBCode::BBCODE_CHECK) {
                 if (isset($params['height']) && !preg_match('/^[1-9][0-9]*$/', $params['height']))
                     return false;
 
@@ -278,7 +280,7 @@ class bbcode_base
      */
     public static function callback_video($bbcode, $action, $name, $default, $params, $content) {
         if($name == 'video') {
-            if ($action == BBCODE_CHECK) {
+            if ($action == Nbbc\BBCode::BBCODE_CHECK) {
                 if (isset($params['height']) && !preg_match('/^[1-9][0-9]*$/', $params['height']))
                     return false;
 
@@ -314,7 +316,7 @@ class bbcode_base
      */
     public static function callback_vimeo($bbcode, $action, $name, $default, $params, $content) {
         if($name == 'vimeo') {
-            if ($action == BBCODE_CHECK) {
+            if ($action == Nbbc\BBCode::BBCODE_CHECK) {
                 if (isset($params['height']) && !preg_match('/^[1-9][0-9]*$/', $params['height']))
                     return false;
 
@@ -351,7 +353,7 @@ class bbcode_base
      */
     public static function callback_golem($bbcode, $action, $name, $default, $params, $content) {
         if($name == 'golem') {
-            if ($action == BBCODE_CHECK) {
+            if ($action == Nbbc\BBCode::BBCODE_CHECK) {
                 if (isset($params['height']) && !preg_match('/^[1-9][0-9]*$/', $params['height']))
                     return false;
 
@@ -389,7 +391,7 @@ class bbcode_base
      */
     public static function callback_hide($bbcode, $action, $name, $default, $params, $content) {
         if($name == 'hide') {
-            if ($action == BBCODE_CHECK) {
+            if ($action == Nbbc\BBCode::BBCODE_CHECK) {
                 if (isset($params['level']) && !preg_match('/^[1-9]*$/', $params['level']))
                     return false;
 
@@ -479,11 +481,11 @@ class bbcode_base
      * @return BBCode|null
      */
     public static final function getInstance() {
-        if (self::$BBCode instanceof BBCode) {
+        if (self::$BBCode instanceof Nbbc\BBCode) {
             return self::$BBCode;
         }
 
-        self::__construct();
+        self::__construct(true);
         return self::$BBCode;
     }
 }
