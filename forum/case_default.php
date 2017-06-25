@@ -20,7 +20,7 @@ if(defined('_Forum')) {
     $_SESSION['kid'] = 0;
     foreach($qry as $get) {
         $showt = "";
-        $qrys = common::$sql['default']->select("SELECT * FROM `{prefix_forumsubkats}` WHERE `sid` = ? ORDER BY pos;",array($get['id']));
+        $qrys = common::$sql['default']->select("SELECT * FROM `{prefix_forumsubkats}` WHERE `sid` = ? ORDER BY pos;", [$get['id']]);
         foreach($qrys as $gets) {
             if($get['intern'] == 0 || ($get['intern'] == 1 && common::forum_intern($gets['id']))) {
                 unset($lpost);
@@ -28,17 +28,17 @@ if(defined('_Forum')) {
                                 . "FROM `{prefix_forumthreads}` "
                                 . "WHERE `kid` = ? "
                                 . "ORDER BY `lp` DESC;",
-                                array($gets['id']));
+                                [$gets['id']]);
 
                 $getlp = common::$sql['default']->fetch("SELECT s1.`kid`,s1.`id`,s1.`date`,s1.`nick`,s1.`reg`,s1.`email`,s2.`kid`,s2.`id`,s2.`t_date`,s2.`lp`,s2.`first` "
                                 . "FROM `{prefix_forumposts}` AS `s1` "
                                 . "LEFT JOIN `{prefix_forumthreads}` AS `s2` "
                                 . "ON s2.`lp` = s1.`date` "
                                 . "WHERE s2.`kid` = ? "
-                                . "ORDER BY s1.`date` DESC;",array($gets['id']));
+                                . "ORDER BY s1.`date` DESC;", [$gets['id']]);
 
                 $lpost = "-"; $lpdate = 0;
-                if(common::cnt('{prefix_forumthreads}', " WHERE `kid` = ?","id",array($gets['id']))) {
+                if(common::cnt('{prefix_forumthreads}', " WHERE `kid` = ?","id", [$gets['id']])) {
                    $lpost = "";
                    if($getlt['first'] == 1) { //Only Thread
                         //Check Unreaded
@@ -47,7 +47,7 @@ if(defined('_Forum')) {
                             //Check in Threads
                             if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumthreads}` "
                                     . "WHERE (`t_date` >= ? || `lp` >= ?) AND `t_reg` != ? AND `id` = ?;",
-                                    array($_SESSION['lastvisit'],$_SESSION['lastvisit'],common::$userid,$getlt['id']))) {
+                                    [$_SESSION['lastvisit'],$_SESSION['lastvisit'],common::$userid,$getlt['id']])) {
                                 $iconpic = "icon_topic_newest.gif";
                             }
                         }
@@ -72,7 +72,7 @@ if(defined('_Forum')) {
                             //Check in Posts
                             if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumposts}` "
                                     . "WHERE `date` >= ? AND `reg` != ? AND `id` = ?;",
-                                    array($_SESSION['lastvisit'],common::$userid,$getlp['id']))) {
+                                    [$_SESSION['lastvisit'],common::$userid,$getlp['id']])) {
                                 $iconpic = "icon_topic_newest.gif";
                             }
                         }
@@ -102,20 +102,20 @@ if(defined('_Forum')) {
                     //Check new Threads
                     if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumthreads}` "
                             . "WHERE (`t_date` >= ? || `lp` >= ?) AND `t_reg` != ? AND `kid` = ?;",
-                            array($_SESSION['lastvisit'],$_SESSION['lastvisit'],common::$userid,$gets['id']))) {
+                            [$_SESSION['lastvisit'],$_SESSION['lastvisit'],common::$userid,$gets['id']])) {
                         $frompic = "unread";
                     }
                     
                     //Check new Posts
                     if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumposts}` "
                             . "WHERE `date` >= ? AND `reg` != ? AND `kid` = ?;",
-                            array($_SESSION['lastvisit'],common::$userid,$gets['id']))) {
+                            [$_SESSION['lastvisit'],common::$userid,$gets['id']])) {
                         $frompic = "unread";
                     }
                 }
 
-                $threads = common::cnt('{prefix_forumthreads}', " WHERE `kid` = ?","id",array($gets['id']));
-                $posts = common::cnt('{prefix_forumposts}', " WHERE `kid` = ?","id",array($gets['id']));
+                $threads = common::cnt('{prefix_forumthreads}', " WHERE `kid` = ?","id", [$gets['id']]);
+                $posts = common::cnt('{prefix_forumposts}', " WHERE `kid` = ?","id", [$gets['id']]);
 
                 //Show
                 $smarty->caching = false;
@@ -201,7 +201,7 @@ if(defined('_Forum')) {
     }
 
     common::update_online($where); //Update Where
-    $qryo = common::$sql['default']->select("SELECT `id` FROM `{prefix_users}` WHERE `whereami` LIKE ? AND (time+1800) > ".time().";",array("%".$where."%"));
+    $qryo = common::$sql['default']->select("SELECT `id` FROM `{prefix_users}` WHERE `whereami` LIKE ? AND (time+1800) > ".time().";", ["%".$where."%"]);
        if(common::$sql['default']->rowCount()) {
             $i=0; $check = 1; $nick = '';
             $cnto = common::cnt('{prefix_users}', " WHERE (time+1800) > ".time()." AND `whereami` LIKE ?;",'id', ["%".$where."%"]);

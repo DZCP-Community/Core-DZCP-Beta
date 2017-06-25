@@ -7,7 +7,7 @@
   <td colspan="3" class="contentMainTop"><span class="fontBold">{lang msgID="nick"}</span></td>
   <td align="center" class="contentMainTop"><span class="fontBold">{lang msgID="admin_akl_activated"}</span></td>
   <td width="1%" class="contentMainTop"><span class="fontBold">{lang msgID="emailicon_blank"}</span></td>
-  <td width="1%" colspan="3" class="contentMainTop"><span class="fontBold"><div align="center">{lang msgID="aktion"}</div></span></td>
+  <td width="1%" colspan="3" class="contentMainTop"><span class="fontBold" style="text-align: center;">{lang msgID="aktion"}</span></td>
   <td width="1%" class="contentMainTop"><span class="fontBold"><input onclick="DZCP.check_all('userid[]',this)" type="checkbox"></span></td>
 </tr>
 {$show}

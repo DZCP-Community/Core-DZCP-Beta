@@ -89,9 +89,8 @@ if(settings::get('news_feed')) { //NewsFeed
     unset($feed,$host,$pfad,$channel,$qry);
 }
 
-$action = empty($action) ? 'default' : $action;
-if (file_exists(basePath . "/news/case_" . $action . ".php")) {
-    require_once(basePath . "/news/case_" . $action . ".php");
+if (file_exists(basePath . "/news/case_" . common::$action . ".php")) {
+    require_once(basePath . "/news/case_" . common::$action . ".php");
 }
 
 ## INDEX OUTPUT ##

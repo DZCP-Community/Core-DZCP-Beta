@@ -18,20 +18,15 @@
 if(_adminMenu != 'true') exit();
 $where = $where.': '._admin_pos;
 
-switch ($do) {
+switch (common::$do) {
     case 'edit':
         $qry = common::$sql['default']->select("SELECT `pid`,`position` FROM `{prefix_positions}` ORDER BY `pid` DESC;"); $positions = '';
         foreach($qry as $get) {
-            $smarty->caching = false;
-            $smarty->assign('value',($get['pid']+1));
-            $smarty->assign('what', _nach.' '.stringParser::decode($get['position']));
-            $smarty->assign('sel','');
-            $positions .= $smarty->fetch('string:'._select_field);
-            $smarty->clearAllAssign();
+            $positions .= common::select_field(($get['pid']+1),false,_nach.' '.stringParser::decode($get['position']));
         }
 
         $id = (int)($_GET['id']);
-        $get = common::$sql['default']->fetch("SELECT `position`,`color` FROM `{prefix_positions}` WHERE `id` = ?;",array($id));
+        $get = common::$sql['default']->fetch("SELECT `position`,`color` FROM `{prefix_positions}` WHERE `id` = ?;", [$id]);
         $smarty->caching = false;
         $smarty->assign('newhead',_pos_edit_head);
         $smarty->assign('do',"editpos&amp;id=".$id."");
@@ -53,16 +48,16 @@ switch ($do) {
             if($_POST['pos'] != 'lazy') {
                 $posid = (int)($_POST['pos']);
                 common::$sql['default']->update("UPDATE `{prefix_positions}` SET `pid` = (pid+1) WHERE `pid` " . ($_POST['pos'] == "1" || $_POST['pos'] == "2" ? ">= " : "> ")
-                    . " ?;", array((int)($_POST['pos'])));
+                    . " ?;", [(int)($_POST['pos'])]);
             }
 
             common::$sql['default']->update("UPDATE `{prefix_positions}` SET `position` = ? ".
                     ($_POST['pos'] == "lazy" ? "" : ",`pid` = ".(int)($_POST['pos'])).", `color` = ? WHERE `id` = ?;",
-                    array(stringParser::encode($_POST['kat']),stringParser::encode($_POST['color']),$id));
+                    [stringParser::encode($_POST['kat']),stringParser::encode($_POST['color']),$id]);
 
             // Permissions Update
             if(empty($_POST['perm'])) {
-                $_POST['perm'] = array();
+                $_POST['perm'] = [];
             }
 
             $qry_fields = common::$sql['default']->show("SHOW FIELDS FROM `{prefix_permissions}`;"); $sql_update = '';
@@ -74,31 +69,31 @@ switch ($do) {
             }
 
             // Check group Permissions is exists
-            if(!common::$sql['default']->rows('SELECT `id` FROM `{prefix_permissions}` WHERE `pos` = ? LIMIT 1;',array($id))) {
-                common::$sql['default']->insert("INSERT INTO `{prefix_permissions}` SET `pos` = ?;",array($id));
+            if(!common::$sql['default']->rows('SELECT `id` FROM `{prefix_permissions}` WHERE `pos` = ? LIMIT 1;', [$id])) {
+                common::$sql['default']->insert("INSERT INTO `{prefix_permissions}` SET `pos` = ?;", [$id]);
             }
 
             // Update Permissions
-            common::$sql['default']->update('UPDATE `{prefix_permissions}` SET '.substr($sql_update, 0, -2).' WHERE `pos` = ? LIMIT 1;',array($id));
+            common::$sql['default']->update('UPDATE `{prefix_permissions}` SET '.substr($sql_update, 0, -2).' WHERE `pos` = ? LIMIT 1;', [$id]);
 
             // Internal Boardpermissions Update
             if(empty($_POST['board'])) {
-                $_POST['board'] = array();
+                $_POST['board'] = [];
             }
 
             // Cleanup Boardpermissions
-            $qry = common::$sql['default']->select('SELECT `id`,`forum` FROM `{prefix_forum_access}` WHERE `pos` = ?;',array($id));
+            $qry = common::$sql['default']->select('SELECT `id`,`forum` FROM `{prefix_forum_access}` WHERE `pos` = ?;', [$id]);
             foreach($qry as $get) {
                 if(!common::array_var_exists($get['forum'],$_POST['board'])) {
-                    common::$sql['default']->delete('DELETE FROM `{prefix_forum_access}` WHERE `id` = ?;',array($get['id']));
+                    common::$sql['default']->delete('DELETE FROM `{prefix_forum_access}` WHERE `id` = ?;', [$get['id']]);
                 }
             }
 
             //Add new Boardpermissions
             if(count($_POST['board']) >= 1) {
                 foreach($_POST['board'] AS $boardpem) { 
-                    if(!common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `pos` = ? AND `forum` = ?;",array($id,$boardpem))) {
-                        common::$sql['default']->insert("INSERT INTO `{prefix_forum_access}` SET `pos` = ?, `forum` = ?;",array($id,$boardpem));
+                    if(!common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `pos` = ? AND `forum` = ?;", [$id,$boardpem])) {
+                        common::$sql['default']->insert("INSERT INTO `{prefix_forum_access}` SET `pos` = ?, `forum` = ?;", [$id,$boardpem]);
                     }
                 }
             }
@@ -107,22 +102,17 @@ switch ($do) {
         }
     break;
     case 'delete':
-        $get = fetch("SELECT `id` FROM `{prefix_positions}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT `id` FROM `{prefix_positions}` WHERE `id` = ?;", [(int)($_GET['id'])]);
         if(common::$sql['default']->rowCount()) {
-            common::$sql['default']->delete("DELETE FROM `{prefix_positions}` WHERE `id` = ?;",array($get['id']));
-            common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `pos` = ?;",array($get['id']));
+            common::$sql['default']->delete("DELETE FROM `{prefix_positions}` WHERE `id` = ?;", [$get['id']]);
+            common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `pos` = ?;", [$get['id']]);
             $show = common::info(_pos_admin_deleted, "?admin=positions");
         }
     break;
     case 'new':
         $qry = common::$sql['default']->select("SELECT `pid`,`position` FROM `{prefix_positions}` ORDER BY `pid` DESC;"); $positions = '';
         foreach($qry as $get) {
-            $smarty->caching = false;
-            $smarty->assign('value',($get['pid']+1));
-            $smarty->assign('what',_nach.' '.stringParser::decode($get['position']));
-            $smarty->assign('sel','');
-            $positions .= $smarty->fetch('string:'._select_field);
-            $smarty->clearAllAssign();
+            $positions .= common::select_field(($get['pid']+1),false,_nach.' '.stringParser::decode($get['position']));
         }
 
         $smarty->caching = false;
@@ -145,9 +135,9 @@ switch ($do) {
         } else {
             common::$sql['default']->update("UPDATE `{prefix_positions}` SET `pid` = (pid+1) WHERE `pid`;".
                     ($_POST['pos'] == "1" || $_POST['pos'] == "2" ? ">= " : "> ")." ?;",
-                    array((int)($_POST['pos'])));
+                    [(int)($_POST['pos'])]);
             common::$sql['default']->insert("INSERT INTO `{prefix_positions}` SET `pid` = ?, `position` = ?, `color` = ?;",
-                array((int)($_POST['pos']),stringParser::encode($_POST['kat']),stringParser::encode($_POST['color'])));
+                [(int)($_POST['pos']),stringParser::encode($_POST['kat']),stringParser::encode($_POST['color'])]);
             
             $posID = common::$sql['default']->lastInsertId();
             $qry = common::$sql['default']->show("SHOW FIELDS FROM `{prefix_permissions}`;"); $sql_update = '';
@@ -159,18 +149,18 @@ switch ($do) {
             }
             
             // Add Permissions
-            common::$sql['default']->insert('INSERT INTO `{prefix_permissions}` SET '.$sql_update.'`pos` = ?;',array($posID));
+            common::$sql['default']->insert('INSERT INTO `{prefix_permissions}` SET '.$sql_update.'`pos` = ?;', [$posID]);
 
             // Internal Boardpermissions Update
             if(empty($_POST['board'])) {
-                $_POST['board'] = array();
+                $_POST['board'] = [];
             }
 
             //Add new Boardpermissions
             if(count($_POST['board']) >= 1) {
                 foreach($_POST['board'] AS $boardpem) { 
-                    if(!common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `pos` = ? AND `forum` = ?;",array($posID,$boardpem))) {
-                        common::$sql['default']->insert("INSERT INTO `{prefix_forum_access}` SET `pos` = ?, `forum` = ?;",array($posID,$boardpem));
+                    if(!common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `pos` = ? AND `forum` = ?;", [$posID,$boardpem])) {
+                        common::$sql['default']->insert("INSERT INTO `{prefix_forum_access}` SET `pos` = ?, `forum` = ?;", [$posID,$boardpem]);
                     }
                 }
             }

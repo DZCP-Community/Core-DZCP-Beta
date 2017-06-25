@@ -15,7 +15,7 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function smarty_function_kalender($params, &$smarty) {
+function smarty_function_kalender($params,Smarty_Internal_Template &$smarty) {
     $params['js'] = !array_key_exists('js',$params) ? true : $params['js'];
     if($params['js']) {
         $kalender = '<div style="width:100%;padding:10px 0;text-align:center"><img src="../inc/images/ajax_loading.gif" alt="" /></div>'.

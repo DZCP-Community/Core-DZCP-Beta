@@ -17,7 +17,7 @@
 
 if(defined('_Upload')) {
     if(common::permission('partners')) {
-        if($do == "upload") {
+        if(common::$do == "upload") {
             $tmpname = $_FILES['file']['tmp_name'];
             $name = $_FILES['file']['name'];
             $type = $_FILES['file']['type'];

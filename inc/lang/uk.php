@@ -195,6 +195,7 @@ define("_forum_from", 'From');
 define('_forum_admin_closed' , 'Close vote');
 define("_forum_admin_editby", 'der Nachricht "<span class="fontWichtig">zuletzt editiert</span>" anh&auml;ngen?');
 define('_forum_thread_lpost' , 'from {$nick}<br />at {$date}{lang msgID="uhr"}');
+define('_forum_search_word', 'Board search in...');
 
 //Startpage
 define('_profil_startpage', 'Startseite');
@@ -332,7 +333,7 @@ define('_eintrag_titel' , '<span class="fontBold">#{$postid}</span> at {$datum} 
 ## ADDED / REDEFINED FOR 1.5.1
 define('_config_double_post' , 'Forum double post');
 define('_config_fotum_vote' , 'Forum-Vote');
-define('_config_fotum_vote_info' , '<center>Here you can specify whether a Forum-Vote also Vote to be displayed.</center>');
+define('_config_fotum_vote_info' , '<div style="text-align: center;">Here you can specify whether a Forum-Vote also Vote to be displayed.</div>');
 
 ## ADDED / REDEFINED FOR 1.5
 define('_search_sites' , 'Sites');
@@ -396,7 +397,7 @@ define('_sponsors_empty_link' , 'You have to indivate a link url!');
 define('_public' , 'Public');
 define('_non_public' , 'non Public');
 define('_no_public' , '<b>unpublished</b>');
-define('_no_events' , '<center>no events available</center>');
+define('_no_events' , '<div style="text-align: center;">no events available</div>');
 define('_config_c_events' , 'Menu: Events');
 define('_msg_all_leader' , "all Leader & Co-Leader");
 define('_msg_leader' , "Squad-Leader");
@@ -472,7 +473,7 @@ define('_error_vote_show' , 'This is a public vote! Just internal votes can be s
 define('_login_pwd_dont_match' , 'Loginname and/or password are invalid or account has been banned!');
 define('_sq_aktiv' , 'Active');
 define('_sq_inaktiv' , 'Inactive');
-define('_sq_sstatus' , '<center>If checked, the team will be also shown in figtus form, etc</center>');
+define('_sq_sstatus' , '<div style="text-align: center;">If checked, the team will be also shown in figtus form, etc</div>');
 define('_internal' , 'Internal');
 define('_sticky' , 'Important');
 define('_misc' , "Misc");
@@ -843,7 +844,8 @@ define('_forum_admin_head' , 'Admin');
 define('_forum_admin_addsticky' , 'mark as <span class="fontWichtig">important</span>?');
 define('_forum_katname_intern' , '<span class="fontWichtig">Internal:</span> {$katname}');
 define('_forum_sticky' , 'Important');
-define('_forum_sticky_global', 'Global and Important');
+define('_forum_global', 'Global');
+define('_forum_closed', 'Closed');
 define('_forum_head_skat_search' , 'Search in this category');
 define('_forum_head_threads' , 'Threads');
 define('_forum_replys' , 'Answers');
@@ -1183,6 +1185,7 @@ define('_upload_userpic_info' , ' Only jpg, gif or png files with a maximum file
 define('_upload_ava_head' , 'Useravatar');
 define('_upload_userava_info' , 'Only jpg, gif or png files with a maximum filesize of {$userpicsize}KB!<br />The recommended dimension is 100px * 100px ');
 define('_upload_newskats_head' , 'Category pictures');
+define('_upload_usergallery_info' , 'Only jpg, gif or png files with a maximum filesize of {$userpicsize}KB!');
 
 ## Unzugeordnet ##
 define('_config_maxwidth' , 'Resize pictures automatically');
@@ -1201,7 +1204,6 @@ define('_lobby_new_artc_2' , 'new comments');
 define('_profil_nletter' , 'Receive newsletter?');
 define('_forum_admin_addglobal' , '<span class="fontWichtig">Global</span> entry? (In all boards and subboards)');
 define('_forum_admin_global' , '<span class="fontWichtig">Global</span> entry?');
-define('_forum_global' , 'Global');
 define('_admin_config_badword' , 'Badwordfilter');
 define('_admin_config_badword_info' , 'Here you can indicate the words, which will be filter and replaced with ***. The words have to be seperated with a comma!');
 define('_iplog_info' , '<span class="fontBold">Note:</span> In case of security reasons your ip will be logged!');

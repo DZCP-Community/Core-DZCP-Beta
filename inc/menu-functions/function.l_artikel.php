@@ -21,7 +21,7 @@
  * @param $smarty
  * @return string
  */
-function smarty_function_l_artikel($params, &$smarty) {
+function smarty_function_l_artikel($params,Smarty_Internal_Template &$smarty) {
     $qry = common::$sql['default']->select("SELECT `id`,`titel`,`text`,`autor`,`datum`,`kat`,`public` "
         . "FROM `{prefix_artikel}` "
         . "WHERE `public` = 1 "

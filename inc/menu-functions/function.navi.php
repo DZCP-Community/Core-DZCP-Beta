@@ -15,7 +15,29 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function smarty_function_navi($params, &$smarty) {
+/**
+ * Konvertiert Platzhalter in die jeweiligen bersetzungen
+ * @param $name
+ * @return string
+ */
+function navi_name(string $name) {
+    $name = trim($name);
+    if(preg_match("#^_(.*?)_$#Uis",$name)) {
+        $name = preg_replace("#_(.*?)_#Uis", "$1", $name);
+        if (defined("_" . $name)) {
+            return constant("_" . $name);
+        }
+    }
+
+    return $name;
+}
+
+/**
+ * @param $params
+ * @param $smarty
+ * @return string
+ */
+function smarty_function_navi($params,Smarty_Internal_Template &$smarty) {
     $navi=""; $params['kat'] = 'nav_'.trim($params['kat']);
     $k = common::$sql['default']->fetch("SELECT `level` FROM `{prefix_navi_kats}` WHERE `placeholder` = ?;",[stringParser::encode($params['kat'])]);
     if(common::$sql['default']->rowCount()) {
@@ -30,7 +52,7 @@ function smarty_function_navi($params, &$smarty) {
             foreach($qry as $get) {
                 $link = '';
                 if($get['type'] == 1 || $get['type'] == 2 || $get['type'] == 3) {
-                    $name = ($get['wichtig']) ? '<span class="fontWichtig">'.common::navi_name(stringParser::decode($get['name'])).'</span>' : common::navi_name(stringParser::decode($get['name']));
+                    $name = ($get['wichtig']) ? '<span class="fontWichtig">'.navi_name(stringParser::decode($get['name'])).'</span>' : navi_name(stringParser::decode($get['name']));
                     $target = ($get['target']) ? '_blank' : '_self';
                     if(file_exists(common::$designpath.'/menu/navi/'.$get['kat'].'.tpl')) {
                         $smarty->caching = false;

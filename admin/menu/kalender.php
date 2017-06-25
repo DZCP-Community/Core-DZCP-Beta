@@ -18,7 +18,7 @@
 if(_adminMenu != 'true') exit;
 
 $where = $where.': '._kalender_head;
-switch ($do) {
+switch (common::$do) {
     case 'add':
         if(isset($_POST['title'])) {
             if(empty($_POST['title']) || empty($_POST['event'])) {
@@ -29,7 +29,7 @@ switch ($do) {
             } else {
                 $time = mktime($_POST['h'],$_POST['min'],0,$_POST['m'],$_POST['t'],$_POST['j']);
                 common::$sql['default']->insert("INSERT INTO `{prefix_events}` SET `datum` = ?, `title` = ?, `event` = ?;",
-                    array((int)($time),stringParser::encode($_POST['title']),stringParser::encode($_POST['event'])));
+                    [(int)($time),stringParser::encode($_POST['title']),stringParser::encode($_POST['event'])]);
 
                 $show = common::info(_kalender_successful_added,"?admin=kalender");
             }
@@ -39,7 +39,7 @@ switch ($do) {
                 common::dropdown("year",date("Y",time())));
 
             $dropdown_time = common::dropdown_date(common::dropdown("hour",date("H",time())),
-                common::dropdown("minute",date("i",time())));
+                common::dropdown("minute",date("i",time())),common::dropdown("year",date("Y",time())));
 
             $smarty->caching = false;
             $smarty->assign('dropdown_time',$dropdown_time);
@@ -54,7 +54,7 @@ switch ($do) {
         }
     break;
     case 'edit':
-        $get = common::$sql['default']->fetch("SELECT `datum`,`title`,`event` FROM `{prefix_events}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT `datum`,`title`,`event` FROM `{prefix_events}` WHERE `id` = ?;", [(int)($_GET['id'])]);
 
         $dropdown_date = common::dropdown_date(common::dropdown("day",date("d",$get['datum'])),
             common::dropdown("month",date("m",$get['datum'])),
@@ -84,16 +84,16 @@ switch ($do) {
         } else {
             $time = mktime($_POST['h'],$_POST['min'],0,$_POST['m'],$_POST['t'],$_POST['j']);
             common::$sql['default']->update("UPDATE `{prefix_events}` SET `datum` = ?, `title` = ?, `event` = ? WHERE `id` = ?;",
-            array((int)($time),stringParser::encode($_POST['title']),stringParser::encode($_POST['event']),(int)($_GET['id'])));
+            [(int)($time),stringParser::encode($_POST['title']),stringParser::encode($_POST['event']),(int)($_GET['id'])]);
             $show = common::info(_kalender_successful_edited,"?admin=kalender");
         }
     break;
     case 'delete':
-        common::$sql['default']->delete("DELETE FROM `{prefix_events}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_events}` WHERE `id` = ?;", [(int)($_GET['id'])]);
         $show = common::info(_kalender_deleted,"?admin=kalender");
     break;
     default:
-        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_events}` ".common::orderby_sql(array("event","datum"),'ORDER BY `datum` DESC').";");
+        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_events}` ".common::orderby_sql(["event","datum"],'ORDER BY `datum` DESC').";");
         foreach($qry as $get) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_kalender);

@@ -91,11 +91,11 @@ if($_POST) {
     if(settings::changed(($key='eml_lpwd_key'),($var=stringParser::encode($_POST['eml_lpwd'])))) settings::set($key,$var);
     if(settings::changed(($key='eml_lpwd_key_subj'),($var=stringParser::encode($_POST['eml_lpwd_subj'])))) settings::set($key,$var);
     if(settings::changed(($key='use_akl'),($var=(int)($_POST['akl'])))) settings::set($key,$var);
-    settings::load(true);
+    settings::load();
     notification::add_success(_config_set);
 }
 
-$files = common::get_files(basePath.'/inc/lang/languages/',false,true,array('php')); $lang = '';
+$files = common::get_files(basePath.'/inc/lang/languages/',false,true, ['php']); $lang = '';
 foreach($files as $file) {
     $lng = preg_replace("#.php#", "",$file);
     $lang .= common::select_field($lng,(stringParser::decode(settings::get('language')) == $lng),$lng);
@@ -246,7 +246,6 @@ $smarty->assign('sel_refresh',(settings::get('direct_refresh') ? 'selected="sele
 $smarty->assign('pwde_options',$pwde_options);
 $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_config.tpl');
 $smarty->clearAllAssign();
-
 
 $smarty->caching = false;
 $smarty->assign('head',_config_global_head);

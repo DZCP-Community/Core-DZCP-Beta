@@ -77,20 +77,20 @@ if(defined('_Forum')) {
             $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forumthreads}` "
                     . "WHERE `kid` = ? OR `global` = 1 "
                     . "ORDER BY ".$sortby." "
-                    . "LIMIT ".(($page - 1)*settings::get('m_fthreads')).",".settings::get('m_fthreads').";",
-                    array($_SESSION['kid']));
+                    . "LIMIT ".((common::$page - 1)*settings::get('m_fthreads')).",".settings::get('m_fthreads').";",
+                    [$_SESSION['kid']]);
             
             $_SESSION['search_type'] = "";
             $entrys = common::$sql['default']->rowCount();
         } else {
             common::$gump->sanitize($_POST);
-            $filters = array('suche' => 'trim|addslashes|sanitize_string');
+            $filters = ['suche' => 'trim|addslashes|sanitize_string'];
             $qry = common::$sql['default']->select("SELECT s1.global,s1.topic,s1.subtopic,s1.t_text,s1.t_email,s1.hits,s1.t_reg,s1.t_date,s1.closed,s1.sticky,s1.id,s1.lp,s1.t_nick "
                     . "FROM `{prefix_forumthreads}` AS s1 "
                     . "WHERE s1.topic LIKE ? AND s1.kid = ? OR s1.subtopic LIKE ? AND s1.kid = ? OR s1.t_text LIKE ? AND s1.kid = ? "
                     . "ORDER BY ".$sortby." "
-                    . "LIMIT ".($page - 1)*settings::get('m_fthreads').",".settings::get('m_fthreads').";",
-                    array($search="%".common::$gump->filter($_POST, $filters)['suche']."%",$id,$search,$id,$search,$id));
+                    . "LIMIT ".(common::$page - 1)*settings::get('m_fthreads').",".settings::get('m_fthreads').";",
+                    [$search="%".common::$gump->filter($_POST, $filters)['suche']."%",$id,$search,$id,$search,$id]);
             
             $_SESSION['search_type'] = "text";
             $entrys = common::$sql['default']->rowCount();
@@ -110,7 +110,7 @@ if(defined('_Forum')) {
                     //Check in Posts
                     if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumposts}` "
                             . "WHERE `date` >= ? AND `reg` != ? AND `id` = ?;",
-                            array($_SESSION['lastvisit'],common::$userid,$getlp['id']))) {
+                            [$_SESSION['lastvisit'],common::$userid,$getlp['id']])) {
                         $iconpic = "icon_topic_newest.gif";
                     }
                 }
@@ -137,14 +137,14 @@ if(defined('_Forum')) {
                 //Check new Threads
                 if(common::$sql['default']->rows($test="SELECT `id` FROM `{prefix_forumthreads}` "
                         . "WHERE (`t_date` >= ? || `lp` >= ?) AND `t_reg` != ? AND `id` = ?;",
-                        array($lastvisit=$_SESSION['lastvisit'],$lastvisit,common::$userid,$get['id']))) {
+                        [$lastvisit=$_SESSION['lastvisit'],$lastvisit,common::$userid,$get['id']])) {
                     $frompic = $get['closed'] ? "unread_locked" : "unread";
                 }
 
                 //Check new Posts
                 if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumposts}` "
                         . "WHERE `date` >= ? AND `reg` != ? AND `sid` = ?;",
-                        array($_SESSION['lastvisit'],common::$userid,$get['id']))) {
+                        [$_SESSION['lastvisit'],common::$userid,$get['id']])) {
                     $frompic = $get['closed'] ? "unread_locked" : "unread";
                 }
             }
@@ -193,7 +193,7 @@ if(defined('_Forum')) {
                          . "FROM `{prefix_forumsubkats}` AS `s1` "
                          . "LEFT JOIN `{prefix_forumkats}` AS `s2` "
                          . "ON s1.`sid` = s2.`id` "
-                         . "WHERE s1.`id` = ?;",array($_SESSION['kid']));
+                         . "WHERE s1.`id` = ?;", [$_SESSION['kid']]);
 
         //Breadcrumbs
         $smarty->caching = false;

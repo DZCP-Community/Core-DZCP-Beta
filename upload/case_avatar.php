@@ -17,7 +17,7 @@
 
 if(defined('_Upload')) {
     if(common::$chkMe >= 1) {
-        switch ($do) {
+        switch (common::$do) {
             case 'upload':
                 $tmpname = $_FILES['file']['tmp_name'];
                 $name = $_FILES['file']['name'];
@@ -32,7 +32,7 @@ if(defined('_Upload')) {
                 else if($size > settings::get('upicsize')."000")
                     $index = common::error(_upload_wrong_size, 1);
                 else  {
-                    foreach(["jpg", "gif", "png"] as $tmpendung) {
+                    foreach(common::SUPPORTED_PICTURE as $tmpendung) {
                         if(file_exists(basePath."/inc/images/uploads/useravatare/".common::$userid.".".$tmpendung))
                             @unlink(basePath."/inc/images/uploads/useravatare/".common::$userid.".".$tmpendung);
                     }
@@ -44,7 +44,7 @@ if(defined('_Upload')) {
                 }
             break;
             case 'delete':
-                foreach(["jpg", "gif", "png"] as $tmpendung) {
+                foreach(common::SUPPORTED_PICTURE as $tmpendung) {
                     if(file_exists(basePath."/inc/images/uploads/useravatare/".common::$userid.".".$tmpendung))
                         @unlink(basePath."/inc/images/uploads/useravatare/".common::$userid.".".$tmpendung);
                 }

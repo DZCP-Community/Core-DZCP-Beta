@@ -17,16 +17,11 @@
 
 if(_adminMenu != 'true') exit;
 $where = $where.': '._dl;
-switch ($do) {
+switch (common::$do) {
     case 'new':
         $qry = common::$sql['default']->select("SELECT `id`,`name` FROM `{prefix_download_kat}` ORDER BY `name`;"); $kats = '';
         foreach($qry as $get) {
-            $smarty->caching = false;
-            $smarty->assign('value',$get['id']);
-            $smarty->assign('what',stringParser::decode($get['name']));
-            $smarty->assign('sel','');
-            $kats .= $smarty->fetch('string:'._select_field);
-            $smarty->clearAllAssign();
+            $kats .= common::select_field($get['id'],false,stringParser::decode($get['name']));
         }
 
         $files = common::get_files(basePath.'/downloads/files/',false,true); $dl = '';
@@ -68,24 +63,18 @@ switch ($do) {
                     . "`beschreibung` = ?, "
                     . "`kat` = ?, "
                     . "`intern` = ?;",
-                    array(stringParser::encode($_POST['download']),$dl,time(),stringParser::encode($_POST['beschreibung']),
-                        (int)($_POST['kat']),(int)($_POST['intern']),(int)($_POST['intern'])));
+                    [stringParser::encode($_POST['download']),$dl,time(),stringParser::encode($_POST['beschreibung']),
+                        (int)($_POST['kat']),(int)($_POST['intern']),(int)($_POST['intern'])]);
 
             $show = common::info(_downloads_added, "?admin=dladmin");
         }
     break;
     case 'edit':
         $get  = common::$sql['default']->fetch("SELECT `download`,`intern`,`url`,`kat`,`beschreibung` FROM `{prefix_downloads}` WHERE `id` = ?;",
-                array((int)($_GET['id'])));
+                [(int)($_GET['id'])]);
         $qryk = common::$sql['default']->select("SELECT `id`,`name` FROM `{prefix_download_kat}` ORDER BY `name`;"); $kats = '';
         foreach($qryk as $getk) {
-            $sel = ($getk['id'] == $get['kat'] ? 'selected="selected"' : '');
-            $smarty->caching = false;
-            $smarty->assign('value',$getk['id']);
-            $smarty->assign('what',stringParser::decode($getk['name']));
-            $smarty->assign('sel',$sel);
-            $kats .= $smarty->fetch('string:'._select_field);
-            $smarty->clearAllAssign();
+            $kats .= common::select_field($getk['id'],($getk['id'] == $get['kat']),stringParser::decode($getk['name']));
         }
 
         $smarty->caching = false;
@@ -115,14 +104,14 @@ switch ($do) {
                     . "`kat` = ?, "
                     . "`intern` = ? "
                     . "WHERE id = ?;",
-                array(stringParser::encode($_POST['download']),$dl,stringParser::encode($_POST['beschreibung']),(int)($_POST['kat']),
-                    (int)($_POST['intern']),(int)($_GET['id'])));
+                [stringParser::encode($_POST['download']),$dl,stringParser::encode($_POST['beschreibung']),(int)($_POST['kat']),
+                    (int)($_POST['intern']),(int)($_GET['id'])]);
 
             $show = common::info(_downloads_edited, "?admin=dladmin");
         }
     break;
     case 'delete':
-        common::$sql['default']->delete("DELETE FROM `{prefix_downloads}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_downloads}` WHERE `id` = ?;", [(int)($_GET['id'])]);
         $show = common::info(_downloads_deleted, "?admin=dladmin");
     break;
     default:

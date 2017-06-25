@@ -15,7 +15,7 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function smarty_function_top_dl($params, &$smarty) {
+function smarty_function_top_dl($params,Smarty_Internal_Template &$smarty) {
     $qry = common::$sql['default']->select("SELECT `id`,`kat`,`download`,`date`,`hits` "
         . "FROM `{prefix_downloads}`".(common::permission('dlintern') ? "" : " WHERE `intern` = 0")." "
         . "ORDER BY `hits` ".(!settings::get('m_topdl') ? "DESC LIMIT ".settings::get('m_topdl').";" : ";"));

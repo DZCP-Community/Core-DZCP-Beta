@@ -18,12 +18,12 @@
 if(defined('_UserMenu')) {
     $where = _site_user_lostpwd;
     if (!common::$chkMe) {
-        if ($do == "sended") {
+        if (common::$do == "sended") {
             $get = common::$sql['default']->fetch("SELECT `id`,`user`,`level`,`email`,`nick` FROM `{prefix_users}` WHERE `user` = ? AND `email` = ?;",
-                array(stringParser::encode($_POST['user']), stringParser::encode($_POST['email'])));
+                [stringParser::encode($_POST['user']), stringParser::encode($_POST['email'])]);
             if (common::$sql['default']->rowCount() && (isset($_POST['secure']) || common::$securimage->check($_POST['secure']))) {
                 common::$sql['default']->update("UPDATE `{prefix_users}` SET `lostpwd_key` = ? WHERE `id` = ?;",
-                    array(stringParser::encode($guid = common::GenGuid()),$get['id']));
+                    [stringParser::encode($guid = common::GenGuid()),$get['id']]);
 
                 $lpwd_link = 'http://'.common::$httphost.'/user/?action=lostpwd&do=set&key='.$guid;
                 $smarty->caching = false;
@@ -42,14 +42,14 @@ if(defined('_UserMenu')) {
                     notification::add_error(_lostpwd_failed);
                 }
             }
-        } else if($do == "set") {
+        } else if(common::$do == "set") {
             if(isset($_GET['key']) && !empty($_GET['key']))
             $get = common::$sql['default']->fetch("SELECT `user`,`id`,`email`,`nick` FROM `{prefix_users}` WHERE `lostpwd_key` = ?;",
-                array(stringParser::encode($_GET['key'])));
+                [stringParser::encode($_GET['key'])]);
             if(common::$sql['default']->rowCount()) {
                 $pwd = common::mkpwd();
                 common::$sql['default']->update("UPDATE `{prefix_users}` SET `pwd` = ?, `pwd_encoder` = ?, `lostpwd_key` = '' WHERE `id` = ?;",
-                    array(common::pwd_encoder($pwd),settings::get('default_pwd_encoder'),$get['id']));
+                    [common::pwd_encoder($pwd),settings::get('default_pwd_encoder'),$get['id']]);
                 common::setIpcheck("pwd(" . $get['id'] . ")");
 
                 $smarty->caching = false;

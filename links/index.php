@@ -27,8 +27,8 @@ $where = _site_links;
 define('_Links', true);
 $smarty = common::getSmarty(); //Use Smarty
 
-if(file_exists(basePath."/links/case_".$action.".php"))
-    require_once(basePath."/links/case_".$action.".php");
+if(file_exists(basePath."/links/case_".common::$action.".php"))
+    require_once(basePath."/links/case_".common::$action.".php");
 
 ## INDEX OUTPUT ##
 $title = common::$pagetitle." - ".$where;

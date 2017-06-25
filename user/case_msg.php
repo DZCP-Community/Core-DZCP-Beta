@@ -20,11 +20,11 @@ if(defined('_UserMenu')) {
     if(!common::$chkMe) {
         $index = common::error(_error_have_to_be_logged, 1);
     } else {
-        switch ($do) {
+        switch (common::$do) {
             case 'show':
-                $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_messages}` WHERE `id` = ? LIMIT 1;",array((int)($_GET['id'])));
+                $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_messages}` WHERE `id` = ? LIMIT 1;", [(int)($_GET['id'])]);
                 if(common::$sql['default']->rowCount() && ($get['von'] == common::$userid || $get['an'] == common::$userid)) {
-                    common::$sql['default']->update("UPDATE `{prefix_messages}` SET `readed` = 1 WHERE `id` = ?;",array($get['id']));
+                    common::$sql['default']->update("UPDATE `{prefix_messages}` SET `readed` = 1 WHERE `id` = ?;", [$get['id']]);
 
                     //delete icon
                     $smarty->caching = false;
@@ -66,7 +66,7 @@ if(defined('_UserMenu')) {
             case 'showsended':
                 $get = common::$sql['default']->fetch("SELECT `id`,`von`,`an`,`titel`,`nachricht` "
                                         . "FROM `{prefix_messages}` "
-                                        . "WHERE `id` = ? LIMIT 1;",array((int)$_GET['id']));
+                                        . "WHERE `id` = ? LIMIT 1;", [(int)$_GET['id']]);
                 if(common::$sql['default']->rowCount() && ($get['von'] == common::$userid || $get['an'] == common::$userid)) {
                     $smarty->caching = false;
                     $smarty->assign('nick',common::autor($get['an']));
@@ -91,7 +91,7 @@ if(defined('_UserMenu')) {
                 }
             break;
             case 'answer':
-                $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_messages}` WHERE `id` = ? LIMIT 1;",array((int)$_GET['id']));
+                $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_messages}` WHERE `id` = ? LIMIT 1;", [(int)$_GET['id']]);
                 if(common::$sql['default']->rowCount() && ($get['von'] == common::$userid || $get['an'] == common::$userid)) {
                     $titel = (preg_match("#RE:#is",stringParser::decode($get['titel'])) ? stringParser::decode($get['titel']) : "RE: ".stringParser::decode($get['titel']));
                     $smarty->caching = false;
@@ -140,7 +140,7 @@ if(defined('_UserMenu')) {
                                . "`titel`      = ?,"
                                . "`nachricht`  = ?,"
                                . "`see`        = 1;",
-                    array(common::$userid,(int)$_POST['an'],stringParser::encode($_POST['titel']),stringParser::encode($_POST['eintrag'])));
+                    [common::$userid,(int)$_POST['an'],stringParser::encode($_POST['titel']),stringParser::encode($_POST['eintrag'])]);
                     common::userstats_increase('writtenmsg');
 
                     //benachrichtigungs email senden
@@ -170,11 +170,11 @@ if(defined('_UserMenu')) {
                 if(!empty($_POST)) {
                     foreach ($_POST as $key => $id) {
                         if(strpos($key, 'posteingang_') !== false) {
-                            $get = common::$sql['default']->fetch("SELECT `id`,`see` FROM `{prefix_messages}` WHERE `id` = ? LIMIT 1;",array((int)($id)));
+                            $get = common::$sql['default']->fetch("SELECT `id`,`see` FROM `{prefix_messages}` WHERE `id` = ? LIMIT 1;", [(int)($id)]);
                             if(!$get['see']) {
-                                common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `id` = ?;",array($get['id']));
+                                common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `id` = ?;", [$get['id']]);
                             } else {
-                                common::$sql['default']->update("UPDATE `{prefix_messages}` SET `see_u` = 1 WHERE `id` = ?;",array($get['id']));
+                                common::$sql['default']->update("UPDATE `{prefix_messages}` SET `see_u` = 1 WHERE `id` = ?;", [$get['id']]);
                             }
                         }
                     }
@@ -182,12 +182,12 @@ if(defined('_UserMenu')) {
                 header("Location: ?action=msg");
             break;
             case 'deletethis':
-                $get = common::$sql['default']->fetch("SELECT `id`,`see` FROM `{prefix_messages}` WHERE `id` = ? LIMIT 1;",array((int)($_GET['id'])));
+                $get = common::$sql['default']->fetch("SELECT `id`,`see` FROM `{prefix_messages}` WHERE `id` = ? LIMIT 1;", [(int)($_GET['id'])]);
                 if(common::$sql['default']->rowCount()) {
                     if(!$get['see']) {
-                        common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `id` = ?;",array($get['id']));
+                        common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `id` = ?;", [$get['id']]);
                     } else {
-                        common::$sql['default']->update("UPDATE `{prefix_messages}` SET `see_u` = 1 WHERE `id` = ?;",array($get['id']));
+                        common::$sql['default']->update("UPDATE `{prefix_messages}` SET `see_u` = 1 WHERE `id` = ?;", [$get['id']]);
                     }
                 }
                 
@@ -197,7 +197,7 @@ if(defined('_UserMenu')) {
                 if(!empty($_POST)) {
                     foreach ($_POST as $key => $id) {
                         if(strpos($key, 'postausgang_') !== false) {
-                            common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `id` = ?;",array((int)($id)));
+                            common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `id` = ?;", [(int)($id)]);
                         }
                     }
                 }
@@ -208,7 +208,7 @@ if(defined('_UserMenu')) {
                 $qry = common::$sql['default']->select("SELECT `id`,`nick` "
                                   . "FROM `{prefix_users}` "
                                   . "WHERE `id` != ? "
-                                  . "ORDER BY `nick`;",array(common::$userid));
+                                  . "ORDER BY `nick`;", [common::$userid]);
                 $users = '';
                 foreach($qry as $get) {
                     $smarty->caching = false;
@@ -225,7 +225,7 @@ if(defined('_UserMenu')) {
                                   . "LEFT JOIN `dzcp_users` AS `user` "
                                   . "ON (user.`id` = userbuddy.`buddy`) "
                                   . "WHERE userbuddy.`user` = ? "
-                                  . "ORDER BY userbuddy.`user`;",array(common::$userid));
+                                  . "ORDER BY userbuddy.`user`;", [common::$userid]);
                 $buddys = '';
                 foreach($qry as $get) {
                     $smarty->caching = false;
@@ -265,7 +265,7 @@ if(defined('_UserMenu')) {
                     $qry = common::$sql['default']->select("SELECT `id`,`nick` "
                                       . "FROM `{prefix_users}` "
                                       . "WHERE `id` != ? "
-                                      . "ORDER BY `nick`;",array(common::$userid));
+                                      . "ORDER BY `nick`;", [common::$userid]);
                     $users = '';
                     foreach($qry as $get) {
                         $selected = isset($_POST['users']) && $get['id'] == $_POST['users'] ? 'selected="selected"' : '';
@@ -283,7 +283,7 @@ if(defined('_UserMenu')) {
                             . "LEFT JOIN `dzcp_users` AS `user` "
                             . "ON (user.`id` = userbuddy.`buddy`) "
                             . "WHERE userbuddy.`user` = ? "
-                            . "ORDER BY userbuddy.`user`;",array(common::$userid));
+                            . "ORDER BY userbuddy.`user`;", [common::$userid]);
                     $buddys = '';
                     foreach($qry as $get) {
                         $selected = isset($_POST['buddys']) && $get['buddy'] == $_POST['buddys'] ? 'selected="selected"' : '';
@@ -312,7 +312,7 @@ if(defined('_UserMenu')) {
                                . "`an` = ?, "
                                . "`titel` = ?, "
                                . "`nachricht` = ?,"
-                               . "`see` = 1;",array(common::$userid,(int)$to,stringParser::encode($_POST['titel']),stringParser::encode($_POST['eintrag'])));
+                               . "`see` = 1;", [common::$userid,(int)$to,stringParser::encode($_POST['titel']),stringParser::encode($_POST['eintrag'])]);
 
                     //benachrichtigungs email senden
                     if(common::data('pnmail',(int)$to)) {
@@ -343,7 +343,7 @@ if(defined('_UserMenu')) {
                 $qry = common::$sql['default']->select("SELECT `von`,`titel`,`datum`,`readed`,`see_u`,`id` "
                                   . "FROM `{prefix_messages}` "
                                   . "WHERE `an` = ? AND `see_u` = 0 "
-                                  . "ORDER BY datum DESC;",array(common::$userid));
+                                  . "ORDER BY datum DESC;", [common::$userid]);
                 $posteingang = "";
                 if(common::$sql['default']->rowCount()) {
                     foreach($qry as $get) {
@@ -380,7 +380,7 @@ if(defined('_UserMenu')) {
                 $qry = common::$sql['default']->select("SELECT `titel`,`datum`,`readed`,`an`,`id` "
                                   . "FROM `{prefix_messages}` "
                                   . "WHERE `von` = ? AND `see` = 1 "
-                                  . "ORDER BY datum DESC;", array(common::$userid));
+                                  . "ORDER BY datum DESC;", [common::$userid]);
                 $postausgang = "";
                 foreach($qry as $get) {
                     $smarty->caching = false;

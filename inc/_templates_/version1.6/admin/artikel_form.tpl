@@ -90,7 +90,7 @@
           </td>
         </tr>
         <tr>
-          <td class="contentBottom" colspan="2"><input id="contentSubmit" type="submit" value="{$button}" class="submit" /> <input type="button"  value="{lang msgID="preview}" class="submit" onclick="DZCP.ajaxPreview('artikelForm')" /></td>
+          <td class="contentBottom" colspan="2"><input id="contentSubmit" type="submit" value="{$button}" class="submit" /> <input type="button"  value="{lang msgID="preview"}" class="submit" onclick="DZCP.ajaxPreview('artikelForm')" /></td>
         </tr>
       </table>
     </form>

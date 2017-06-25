@@ -24,7 +24,7 @@ if(defined('_UserMenu')) {
             common::$sql['default']->update("UPDATE `{prefix_userstats}` "
                        . "SET `lastvisit` = ? "
                        . "WHERE `user` = ?;",
-            array((int)($_SESSION['lastvisit']),common::$userid));
+            [(int)($_SESSION['lastvisit']),common::$userid]);
         }
 
         //Get Userinfos
@@ -45,7 +45,7 @@ if(defined('_UserMenu')) {
                                            . "FROM `{prefix_forumthreads}` "
                                            . "WHERE `kid` = ? AND `lp` > ? "
                                            . "ORDER BY `lp` DESC LIMIT 150;",
-                                array($getkat['id'],$lastvisit));
+                                [$getkat['id'],$lastvisit]);
                     if (common::$sql['default']->rowCount()) {
                         $forumposts_show = '';
                         foreach($qrytopic as $gettopic) {
@@ -124,7 +124,7 @@ if(defined('_UserMenu')) {
                                    . "FROM `{prefix_messages}` "
                                    . "WHERE `an` = ? AND `readed` = 0 AND `see_u` = 0 "
                                    . "ORDER BY `datum` DESC;",
-                  array(common::$userid));
+                  [common::$userid]);
         $check = common::cnt("{prefix_messages}", " WHERE `an` = ? AND `readed` = 0 AND `see_u` = 0",'id', [common::$userid]);
         if ($check >= 1) {
             $smarty->caching = false;
@@ -167,7 +167,7 @@ if(defined('_UserMenu')) {
                                              . "FROM `{prefix_newscomments}` "
                                              . "WHERE `news` = ? "
                                              . "ORDER BY `datum` DESC;",
-                            array($getcheckn['id']));
+                            [$getcheckn['id']]);
                 if (common::check_new((int)$getnewsc['datum'])) {
                     $check = common::cnt("{prefix_newscomments}", " WHERE `datum` > ? AND `news` = ?",'id', [$lastvisit,$getnewsc['news']]);
                     if ($check == "1") {
@@ -277,7 +277,7 @@ if(defined('_UserMenu')) {
                                             . "FROM `{prefix_acomments}` "
                                             . "WHERE `artikel` = ? "
                                             . "ORDER BY `datum` DESC;",
-                            array($getchecka['id']));
+                            [$getchecka['id']]);
                 if (!empty($getartc) && common::check_new($getartc['datum'])) {
                     $check = common::cnt('{prefix_acomments}', " WHERE `datum` > ? AND `artikel` = ?",'id', [$lastvisit,$getartc['artikel']]);
                     if ($check == "1") {
@@ -314,7 +314,7 @@ if(defined('_UserMenu')) {
                                              . "FROM `{prefix_forumposts}` "
                                              . "WHERE `kid` = ? AND `sid` = ? "
                                              . "ORDER BY `date` DESC LIMIT 1;",
-                            array($getft['kid'],$getft['id']));
+                            [$getft['kid'],$getft['id']]);
 
                     $text = strip_tags(!empty($getp) ? stringParser::decode($getp['text']) : stringParser::decode($getft['t_text']));
                     $intern = $getft['intern'] != 1 ? "" : '<span class="fontWichtig">' . _internal . ':</span>';

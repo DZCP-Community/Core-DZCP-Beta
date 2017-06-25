@@ -16,7 +16,7 @@
  */
 
 class settings extends common {
-    private static $index = array();
+    private static $index = [];
 
     /**
      * Gibt eine Einstellung aus der Settings Tabelle zurück
@@ -25,7 +25,7 @@ class settings extends common {
      */
     public final static function get(string $what='',bool $decode=false) {
         $what = utf8_encode(strtolower($what));
-        $get = self::$sql['default']->fetch("SELECT `value` FROM `{prefix_settings}` WHERE `key` = ? LIMIT 1;",array($what));
+        $get = self::$sql['default']->fetch("SELECT `value` FROM `{prefix_settings}` WHERE `key` = ? LIMIT 1;", [$what]);
         if(!self::$sql['default']->rowCount()) {
             if (show_settings_debug) {
                 DebugConsole::insert_error('settings::get()', 'Setting "' . $what . '" not found in ' . self::$sql['default']->rep_prefix('{prefix_settings}'));
@@ -42,12 +42,12 @@ class settings extends common {
      * @param string $what
      * @return array|boolean
      */
-    public final static function get_array($what=array()) {
+    public final static function get_array($what= []) {
         if (!is_array($what) || !count($what) || empty($what)) {
             return false;
         }
 
-        $return = array();
+        $return = [];
         foreach ($what as $key) {
             $key = strtolower($key);
             if(array_key_exists($key, self::$index)) {
@@ -71,7 +71,7 @@ class settings extends common {
             $data = self::$index[$what];
             return utf8_decode($data['default']);
         } else {
-            $get = self::$sql['default']->fetch("SELECT `default` FROM `{prefix_settings}` WHERE `key` = ? LIMIT 1;",array($what));
+            $get = self::$sql['default']->fetch("SELECT `default` FROM `{prefix_settings}` WHERE `key` = ? LIMIT 1;", [$what]);
             if(!self::$sql['default']->rowCount()) {
                 if (show_settings_debug) {
                     DebugConsole::insert_error('settings::get_default()', 'Setting "' . $what . '" not found in '.common::$sql['default']->rep_prefix('{prefix_settings}'));
@@ -102,7 +102,7 @@ class settings extends common {
                     DebugConsole::insert_successful('settings::set()', 'Set "'.$what.'" to "'.$var.'"');
                 }
                 return self::$sql['default']->update("UPDATE `{prefix_settings}` SET `value` = ? WHERE `key` = ?;",
-                    array(utf8_encode($data['length'] >= 1 ? self::cut($var,((int)$data['length']),false, false) : $var),$what)) ? true : false;
+                    [utf8_encode($data['length'] >= 1 ? self::cut($var,((int)$data['length']),false, false) : $var),$what]) ? true : false;
             }
         }
 
@@ -140,7 +140,7 @@ class settings extends common {
     public final static function load() {
         $qry = self::$sql['default']->select("SELECT `key`,`value`,`default`,`length`,`type` FROM `{prefix_settings}`;");
         foreach($qry as $get) {
-            $setting = array();
+            $setting = [];
             $setting['value'] = !((int)$get['length']) ? $get['type'] == 'int' ? ((int)$get['value']) : ((string)$get['value'])
             : self::cut($get['type'] == 'int' ? ((int)$get['value']) : ((string)$get['value']),((int)$get['length']),false,false);
             $setting['default'] = $get['type'] == 'int' ? ((int)$get['default']) : ((string)$get['default']);
@@ -161,7 +161,7 @@ class settings extends common {
     public final static function add($what='',$var='',$default='',$length='',$int=false) {
         $what = strtolower($what);
         if(!self::is_exists($what)) {
-            $setting = array();
+            $setting = [];
             $setting['value'] = !((int)$length) ? $int ? ((int)$var) : ((string)$var)
             : self::cut($int ? ((int)$var) : ((string)$var),((int)$length),false,false);
             $setting['default'] = $int ? ((int)$default) : ((string)$default);
@@ -172,7 +172,7 @@ class settings extends common {
                 DebugConsole::insert_successful('settings::add()', 'Add "'.$what.'" set to "'.$var.'"');
             }
             return self::$sql['default']->insert("INSERT INTO `{prefix_settings}` SET `key` = ?, `value` = ?,"
-                . "`default` = ?,`length` = ?,`type` = '".($int ? 'int' : 'string')."';",array(utf8_encode($what),utf8_encode($var),utf8_encode($default),$length));
+                . "`default` = ?,`length` = ?,`type` = '".($int ? 'int' : 'string')."';", [utf8_encode($what),utf8_encode($var),utf8_encode($default),$length]);
         }
 
         return false;
@@ -190,7 +190,7 @@ class settings extends common {
                 DebugConsole::insert_info('settings::remove()', 'Remove "'.$what.'"');
             }
             unset(self::$index[$what]);
-            return self::$sql['default']->delete("DELETE FROM `{prefix_settings}` WHERE `key` = ?;",array($what)) ? true : false;
+            return self::$sql['default']->delete("DELETE FROM `{prefix_settings}` WHERE `key` = ?;", [$what]) ? true : false;
         }
 
         return false;

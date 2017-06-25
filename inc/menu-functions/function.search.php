@@ -15,7 +15,13 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function smarty_function_search($params, &$smarty) {
+function smarty_function_search($params,Smarty_Internal_Template &$smarty) {
+    global $dir;
+    if($dir == 'forum' || common::$search_forum) {
+        $smarty->caching = true;
+        return $smarty->fetch('file:['.common::$tmpdir.']menu/search/search_forum.tpl',common::getSmartyCacheHash('menu_search_forum'));
+    }
+
     $smarty->caching = true;
     $smarty->assign('searchword',(empty($_GET['searchword']) ? _search_word : $_GET['searchword']));
     $search = $smarty->fetch('file:['.common::$tmpdir.']menu/search/search.tpl',common::getSmartyCacheHash('menu_search'));

@@ -17,7 +17,7 @@
 
 //-> Verbertet wichtige Informationen zwischen JS und PHP
 class javascript {
-    private static $data_array = array();
+    private static $data_array = [];
 
     public static function set($key='',$var='') {
         self::$data_array[$key] = utf8_encode($var);

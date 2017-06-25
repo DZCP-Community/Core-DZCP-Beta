@@ -20,30 +20,30 @@ if(defined('_UserMenu')) {
     if (!common::$chkMe) {
         $index = common::error(_error_have_to_be_logged, 1);
     } else {
-            switch ($do) {
+            switch (common::$do) {
                 case 'delete':
                     if(!common::rootAdmin(common::$userid)) {
-                        $getdel = common::$sql['default']->fetch("SELECT `id`,`nick`,`email`,`hp` FROM `{prefix_users}` WHERE `id` = ?;",array(common::$userid));
+                        $getdel = common::$sql['default']->fetch("SELECT `id`,`nick`,`email`,`hp` FROM `{prefix_users}` WHERE `id` = ?;", [common::$userid]);
                         if(common::$sql['default']->rowCount()) {
                             common::$sql['default']->update("UPDATE `{prefix_forumthreads}` SET `t_nick` = ?, `t_email` = ?, `t_hp` = ?, `t_reg` = 0, WHERE t_reg = ?;",
-                            array($getdel['nick'],$getdel['email'],stringParser::encode(common::links($getdel['hp'])),$getdel['id']));
+                            [$getdel['nick'],$getdel['email'],stringParser::encode(common::links($getdel['hp'])),$getdel['id']]);
                             common::$sql['default']->update("UPDATE `{prefix_forumposts}` SET `nick` = ?, `email` = ?, `hp` = ?, WHERE `reg` = ?;",
-                            array($getdel['nick'],$getdel['email'],stringParser::encode(common::links($getdel['hp'])),$getdel['id']));
+                            [$getdel['nick'],$getdel['email'],stringParser::encode(common::links($getdel['hp'])),$getdel['id']]);
                             common::$sql['default']->update("UPDATE `{prefix_newscomments}` SET `nick` = ?,`email` = ?, `hp` = ?, `reg` = 0, WHERE `reg` = ?;",
-                            array($getdel['nick'],$getdel['email'],stringParser::encode(common::links($getdel['hp'])),$getdel['id']));
+                            [$getdel['nick'],$getdel['email'],stringParser::encode(common::links($getdel['hp'])),$getdel['id']]);
                             common::$sql['default']->update("UPDATE `{prefix_acomments}` SET `nick` = ?, `email` = ?, `hp` = ?, `reg` = 0, WHERE `reg` = ?;",
-                            array($getdel['nick'],$getdel['email'],stringParser::encode(common::links($getdel['hp'])),$getdel['id']));
-                            common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `von` = ? OR   `an`  = ?;",array($getdel['id'],$getdel['id']));
-                            common::$sql['default']->delete("DELETE FROM `{prefix_news}` WHERE `autor` = ?;",array($getdel['id']));
-                            common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `user` = ?;",array($getdel['id']));
-                            common::$sql['default']->delete("DELETE FROM `{prefix_groupuser}` WHERE `user` = ?;",array($getdel['id']));
-                            common::$sql['default']->delete("DELETE FROM `{prefix_userbuddys}` WHERE `user` = ? OR `buddy` = ?;",array($getdel['id'],$getdel['id']));
-                            common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;",array($getdel['id']));
-                            common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;",array($getdel['id']));
-                            common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;",array($getdel['id']));
-                            common::$sql['default']->delete("DELETE FROM `{prefix_clicks_ips}` WHERE `uid` = ?;",array($getdel['id']));
+                            [$getdel['nick'],$getdel['email'],stringParser::encode(common::links($getdel['hp'])),$getdel['id']]);
+                            common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `von` = ? OR   `an`  = ?;", [$getdel['id'],$getdel['id']]);
+                            common::$sql['default']->delete("DELETE FROM `{prefix_news}` WHERE `autor` = ?;", [$getdel['id']]);
+                            common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `user` = ?;", [$getdel['id']]);
+                            common::$sql['default']->delete("DELETE FROM `{prefix_groupuser}` WHERE `user` = ?;", [$getdel['id']]);
+                            common::$sql['default']->delete("DELETE FROM `{prefix_userbuddys}` WHERE `user` = ? OR `buddy` = ?;", [$getdel['id'],$getdel['id']]);
+                            common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;", [$getdel['id']]);
+                            common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;", [$getdel['id']]);
+                            common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;", [$getdel['id']]);
+                            common::$sql['default']->delete("DELETE FROM `{prefix_clicks_ips}` WHERE `uid` = ?;", [$getdel['id']]);
 
-                            $files = common::get_files(basePath."/inc/images/uploads/userpics/",false,true,array("jpg", "gif", "png"));
+                            $files = common::get_files(basePath."/inc/images/uploads/userpics/",false,true, common::SUPPORTED_PICTURE);
                             foreach ($files as $file) {
                                 if(preg_match("#".$getdel['id']."_(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
                                     $res = preg_match("#".$getdel['id']."_(.*)#",$file,$match);
@@ -53,7 +53,7 @@ if(defined('_UserMenu')) {
                                 }
                             }
 
-                            $files = common::get_files(basePath."/inc/images/uploads/useravatare/",false,true,array("jpg", "gif", "png"));
+                            $files = common::get_files(basePath."/inc/images/uploads/useravatare/",false,true, common::SUPPORTED_PICTURE);
                             foreach ($files as $file) {
                                 if(preg_match("#".$getdel['id']."_(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
                                     $res = preg_match("#".$getdel['id']."_(.*)#",$file,$match);
@@ -63,7 +63,7 @@ if(defined('_UserMenu')) {
                                 }
                             }
 
-                            foreach (array("jpg", "gif", "png") as $tmpendung) {
+                            foreach (common::SUPPORTED_PICTURE as $tmpendung) {
                                 if (file_exists(basePath . "/inc/images/uploads/userpics/" . (int)($getdel['id']) . "." . $tmpendung)) {
                                     @unlink(basePath . "/inc/images/uploads/userpics/" . (int)($getdel['id']) . "." . $tmpendung);
                                 }
@@ -82,14 +82,14 @@ if(defined('_UserMenu')) {
                     if(isset($_POST) && !isset($_GET['show']) && array_key_exists('user',$_POST)) {
                         $check_user = false; $check_nick = false; $check_email = false;
                         if (common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE (`user`= ? OR `nick`= ? OR `email`= ?) AND `id` != ?;",
-                            array(stringParser::encode($_POST['user']), stringParser::encode($_POST['nick']), stringParser::encode($_POST['email']), common::$userid))
+                            [stringParser::encode($_POST['user']), stringParser::encode($_POST['nick']), stringParser::encode($_POST['email']), common::$userid])
                         ) {
                             $check_user = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `user` = ? AND `id` != ?;",
-                                array(stringParser::encode($_POST['user']), common::$userid));
+                                [stringParser::encode($_POST['user']), common::$userid]);
                             $check_nick = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `nick` = ? AND `id` != ?;",
-                                array(stringParser::encode($_POST['nick']), common::$userid));
+                                [stringParser::encode($_POST['nick']), common::$userid]);
                             $check_email = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `email`= ? AND `id` != ?;",
-                                array(stringParser::encode($_POST['email']), common::$userid));
+                                [stringParser::encode($_POST['email']), common::$userid]);
                         }
 
                         if (!isset($_POST['user']) || empty($_POST['user'])) {
@@ -122,24 +122,24 @@ if(defined('_UserMenu')) {
                             common::$sql['default']->update("UPDATE `{prefix_users}` SET " . $newpwd . " `country` = ?,`user` = ?, `nick` = ?, `rlname` = ?, `sex` = ?, "
                                     . "`bday` = ?, `email` = ?, `nletter` = ?, `pnmail` = ?, `city` = ?, `hp` = ?,"
                                     . "`signatur` = ?,`beschreibung` = ?, `startpage` = ?, `profile_access` = ?"
-                                    . " WHERE id = ?;", array(stringParser::encode($_POST['land']), stringParser::encode($_POST['user']),
+                                    . " WHERE id = ?;", [stringParser::encode($_POST['land']), stringParser::encode($_POST['user']),
                                     stringParser::encode($_POST['nick']), stringParser::encode($_POST['rlname']),
                                     (int)($_POST['sex']),
                                     (!$bday ? 0 : strtotime($bday)), stringParser::encode($_POST['email']), (int)($_POST['nletter']), (int)($_POST['pnmail']), stringParser::encode($_POST['city']),
                                     stringParser::encode(common::links($_POST['hp'])), stringParser::encode($_POST['sig']), stringParser::encode($_POST['ich']),
-                                    (int)($_POST['startpage']), (int)($_POST['visibility_profile']), common::$userid));
+                                    (int)($_POST['startpage']), (int)($_POST['visibility_profile']), common::$userid]);
 
                             notification::add_success(_info_edit_profile_done);
                         }
                     }
 
-                    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;",array(common::$userid));
+                    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_users}` WHERE `id` = ?;", [common::$userid]);
                     switch(isset($_GET['show']) ? $_GET['show'] : '') {
                         case 'almgr':
-                            switch ($do) {
+                            switch (common::$do) {
                                 case 'self_add':
                                     $permanent_key = md5(common::mkpwd(8));
-                                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `host` = ?;", array(gethostbyaddr(common::$userip['v4'])))) {
+                                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `host` = ?;", [gethostbyaddr(common::$userip['v4'])])) {
                                         //Update Autologin
                                         common::$sql['default']->update("UPDATE `{prefix_autologin}` SET "
                                                           . "`ssid` = ?, "
@@ -149,8 +149,8 @@ if(defined('_UserMenu')) {
                                                           . "`update` = ?, "
                                                           . "`expires` = ? "
                                                     . "WHERE `host` = ?;", 
-                                        array(session_id(),$permanent_key,common::$userip['v4'],$time=time(),$time,autologin_expire,
-                                              gethostbyaddr(common::$userip['v4'])));
+                                        [session_id(),$permanent_key,common::$userip['v4'],$time=time(),$time,autologin_expire,
+                                              gethostbyaddr(common::$userip['v4'])]);
                                     } else {
                                         //Insert Autologin
                                         common::$sql['default']->insert("INSERT INTO `{prefix_autologin}` SET "
@@ -163,9 +163,9 @@ if(defined('_UserMenu')) {
                                                                . "`date` = ?,"
                                                                . "`update` = 0,"
                                                                . "`expires` = ?;",
-                                        array($get['id'],session_id(),$permanent_key,common::$userip['v4'],
+                                        [$get['id'],session_id(),$permanent_key,common::$userip['v4'],
                                             common::cut(gethostbyaddr(common::$userip['v4']),20), gethostbyaddr(common::$userip),
-                                            $time=time(),autologin_expire));
+                                            $time=time(),autologin_expire]);
                                     }
                                     
                                     cookie::put('id', $get['id']);
@@ -174,8 +174,8 @@ if(defined('_UserMenu')) {
                                     notification::add_success(_info_almgr_self_added);
                                 break;
                                 case 'self_remove':
-                                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `host` = ? AND `ssid` = ?;", array(gethostbyaddr(common::$userip['v4']), session_id()))) {
-                                        common::$sql['default']->delete("DELETE FROM `{prefix_autologin}` WHERE `ssid` = ?;",array(session_id()));
+                                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `host` = ? AND `ssid` = ?;", [gethostbyaddr(common::$userip['v4']), session_id()])) {
+                                        common::$sql['default']->delete("DELETE FROM `{prefix_autologin}` WHERE `ssid` = ?;", [session_id()]);
                                         cookie::delete('pkey');
                                         cookie::delete('id');
                                         cookie::save();
@@ -183,8 +183,8 @@ if(defined('_UserMenu')) {
                                     }
                                 break;
                                 case 'almgr_delete':
-                                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `id` = ?;", array((int)($_GET['id'])))) {
-                                        common::$sql['default']->delete("DELETE FROM `{prefix_autologin}` WHERE `id` = ?;",array((int)($_GET['id'])));
+                                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `id` = ?;", [(int)($_GET['id'])])) {
+                                        common::$sql['default']->delete("DELETE FROM `{prefix_autologin}` WHERE `id` = ?;", [(int)($_GET['id'])]);
                                         cookie::delete('pkey');
                                         cookie::delete('id');
                                         cookie::save();
@@ -192,7 +192,7 @@ if(defined('_UserMenu')) {
                                     }
                                 break;
                                 case 'almgr_edit':
-                                    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_autologin}` WHERE `id` = ?;", array((int)($_GET['id'])));
+                                    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_autologin}` WHERE `id` = ?;", [(int)($_GET['id'])]);
                                     if(common::$sql['default']->rowCount()) {
                                         $smarty->caching = false;
                                         $smarty->assign('name',stringParser::decode($get['name']));
@@ -206,9 +206,9 @@ if(defined('_UserMenu')) {
                                     }
                                 break;
                                 case 'almgr_edit_save':
-                                    if(common::$sql['default']->rows("SELECT id FROM `{prefix_autologin}` WHERE `id` = ?;", array((int)($_GET['id'])))) {
+                                    if(common::$sql['default']->rows("SELECT id FROM `{prefix_autologin}` WHERE `id` = ?;", [(int)($_GET['id'])])) {
                                         common::$sql['default']->update("UPDATE `{prefix_autologin}` SET `name` = ? WHERE `id` = ?;",
-                                            array(stringParser::encode($_POST['name']), (int)($_GET['id'])));
+                                            [stringParser::encode($_POST['name']), (int)($_GET['id'])]);
                                         notification::add_success(_almgr_editd);
                                     }
                                 break;
@@ -216,7 +216,7 @@ if(defined('_UserMenu')) {
                             
                             if(empty($index)) {
                                 $qry = common::$sql['default']->select("SELECT * FROM `{prefix_autologin}` WHERE `uid` = ?;",
-                                    array(common::$userid)); $almgr = ""; $color = 0;
+                                    [common::$userid]); $almgr = ""; $color = 0;
                                 if(common::$sql['default']->rowCount()) {
                                     foreach($qry as $get) {
                                         //delete button
@@ -266,7 +266,7 @@ if(defined('_UserMenu')) {
                         break;
                         default:
                             $sex = ($get['sex'] == 1 ? _pedit_male : ($get['sex'] == 2 ? _pedit_female : _pedit_sex_ka));
-                            $levels = array(0,1,2,3); $perm_profile = "";
+                            $levels = [0,1,2,3]; $perm_profile = "";
                             foreach ($levels as &$level) {
                                 $selected = ($level == $get['profile_access']);
                                 switch ($level) {
@@ -362,6 +362,7 @@ if(defined('_UserMenu')) {
 
                         //index
                         $smarty->caching = false;
+                        /** @var TYPE_NAME $show */
                         $smarty->assign('show',$show);
                         $smarty->assign('notification_page',notification::get());
                         $smarty->assign('profil_edit_head',$profil_edit_head);

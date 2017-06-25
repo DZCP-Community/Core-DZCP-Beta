@@ -26,12 +26,12 @@ if(defined('_UserMenu')) {
             $posi = "";
             foreach($qrypos as $getpos) {
                 $check = common::$sql['default']->rows("SELECT `id` FROM `{prefix_userposis}` WHERE `posi` = ? AND `group` = ? AND `user` = ?;",
-                    array($getpos['id'],$getsq['id'],(int)($_GET['edit'])));
+                    [$getpos['id'],$getsq['id'],(int)($_GET['edit'])]);
                 $posi .= common::select_field($getpos['id'],$check,stringParser::decode($getpos['position']));
             }
 
             $check = common::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",
-                array((int)($_GET['edit']),$getsq['id'])) ? 'checked="checked"' : '';
+                [(int)($_GET['edit']),$getsq['id']]) ? 'checked="checked"' : '';
 
             $smarty->caching = false;
             $smarty->assign('id',$getsq['id']);
@@ -50,7 +50,7 @@ if(defined('_UserMenu')) {
         $index = common::error(_error_edit_admin, 1);
     } else {
         //Edit a User
-        if ($do == "identy") {
+        if (common::$do == "identy") {
             if((common::data("level", (int)($_GET['id'])) == 4 && !common::rootAdmin((int)($_GET['id'])) && !common::rootAdmin(common::$userid))) {
                 $index = common::error(_identy_admin, 1);
             } else {
@@ -59,7 +59,7 @@ if(defined('_UserMenu')) {
                 $msg = $smarty->fetch('string:'._admin_user_get_identy);
                 $smarty->clearAllAssign();
 
-                common::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 0, `sessid` = '' WHERE id = ?;",array(common::$userid)); //Logout
+                common::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 0, `sessid` = '' WHERE id = ?;", [common::$userid]); //Logout
                 session_regenerate_id();
 
                 $_SESSION['id'] = (int)($_GET['id']);
@@ -67,18 +67,18 @@ if(defined('_UserMenu')) {
                 $_SESSION['ip'] = common::$userip['v4'];
 
                 common::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ipv4` = ? WHERE `id` = ?;",
-                array(session_id(),common::$userip['v4'],(int)($_GET['id'])));
+                [session_id(),common::$userip['v4'],(int)($_GET['id'])]);
                 common::setIpcheck("ident(" . common::$userid . "_" . (int)($_GET['id']) . ")");
 
                 $index = common::info($msg, "?action=user&amp;id=" . $_GET['id'] . "", 5, false);
             }
-        } else if ($do == "update") {
+        } else if (common::$do == "update") {
             if ($_POST && isset($_GET['user'])) {
                 $edituser = (int)($_GET['user']);
 
                 // Permissions Update
                 if (empty($_POST['perm'])) {
-                    $_POST['perm'] = array();
+                    $_POST['perm'] = [];
                 }
 
                 $qry_fields = common::$sql['default']->show("SHOW FIELDS FROM `{prefix_permissions}`;");
@@ -91,48 +91,48 @@ if(defined('_UserMenu')) {
                 }
 
                 // Check User Permissions is exists
-                if (!common::$sql['default']->rows('SELECT `id` FROM `{prefix_permissions}` WHERE `user` = ? LIMIT 1;',array($edituser))) {
-                    common::$sql['default']->insert("INSERT INTO `{prefix_permissions}` SET `user` = ?;",array($edituser));
+                if (!common::$sql['default']->rows('SELECT `id` FROM `{prefix_permissions}` WHERE `user` = ? LIMIT 1;', [$edituser])) {
+                    common::$sql['default']->insert("INSERT INTO `{prefix_permissions}` SET `user` = ?;", [$edituser]);
                 }
 
                 // Update Permissions
-                common::$sql['default']->update('UPDATE `{prefix_permissions}` SET '.substr($sql_update, 0, -2).' WHERE `user` = ?;',array($edituser));
+                common::$sql['default']->update('UPDATE `{prefix_permissions}` SET '.substr($sql_update, 0, -2).' WHERE `user` = ?;', [$edituser]);
 
                 // Internal Boardpermissions Update
                 if (empty($_POST['board'])) {
-                    $_POST['board'] = array();
+                    $_POST['board'] = [];
                 }
 
                 // Boardpermissions Cleanup
-                $qry = common::$sql['default']->select('SELECT `id`,`forum` FROM `{prefix_forum_access}` WHERE `user` = ?;',array($edituser));
+                $qry = common::$sql['default']->select('SELECT `id`,`forum` FROM `{prefix_forum_access}` WHERE `user` = ?;', [$edituser]);
                 foreach($qry as $get) {
                     if (!common::array_var_exists($get['forum'], $_POST['board'])) {
-                        common::$sql['default']->delete('DELETE FROM `{prefix_forum_access}` WHERE `id` = ?;',array($get['id']));
+                        common::$sql['default']->delete('DELETE FROM `{prefix_forum_access}` WHERE `id` = ?;', [$get['id']]);
                     }
                 }
 
                 //Add new Boardpermissions
                 if (count($_POST['board']) >= 1) {
                     foreach ($_POST['board'] AS $boardpem) {
-                        if (!common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `user` = ? AND `forum` = ?;", array($edituser,$boardpem))) {
-                            common::$sql['default']->insert("INSERT INTO `{prefix_forum_access}` SET `user` = ?, `forum` = ?;",array($edituser,$boardpem));
+                        if (!common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `user` = ? AND `forum` = ?;", [$edituser,$boardpem])) {
+                            common::$sql['default']->insert("INSERT INTO `{prefix_forum_access}` SET `user` = ?, `forum` = ?;", [$edituser,$boardpem]);
                         }
                     }
                 }
 
-                common::$sql['default']->delete("DELETE FROM `{prefix_groupuser}` WHERE `user` = ?;",array($edituser));
-                common::$sql['default']->delete("DELETE FROM `{prefix_userposis}` WHERE `user` = ?;",array($edituser));
+                common::$sql['default']->delete("DELETE FROM `{prefix_groupuser}` WHERE `user` = ?;", [$edituser]);
+                common::$sql['default']->delete("DELETE FROM `{prefix_userposis}` WHERE `user` = ?;", [$edituser]);
 
                 $sq = common::$sql['default']->select("SELECT `id` FROM `{prefix_groups}`;");
                 foreach($sq as $getsq) {
                     if (isset($_POST['squad' . $getsq['id']])) {
                         common::$sql['default']->insert("INSERT INTO `{prefix_groupuser}` SET `user` = ?, `group`  = ?;",
-                        array($edituser,(int)($_POST['squad' . $getsq['id']])));
+                        [$edituser,(int)($_POST['squad' . $getsq['id']])]);
                     }
 
                     if (isset($_POST['squad' . $getsq['id']])) {
                         common::$sql['default']->insert("INSERT INTO {prefix_userposis} SET `user` = ?, `posi` = ?, `group` = ?;",
-                        array($edituser,(int)($_POST['sqpos' . $getsq['id']]),(int)($getsq['id'])));
+                        [$edituser,(int)($_POST['sqpos' . $getsq['id']]),(int)($getsq['id'])]);
                     }
                 }
 
@@ -152,32 +152,32 @@ if(defined('_UserMenu')) {
                         . "`level`  = ?, "
                         . "`banned`  = ? "
                         . "WHERE `id` = ?;",
-                        array(stringParser::encode($_POST['nick']),stringParser::encode($_POST['email']),stringParser::encode($_POST['loginname']),(isset($_POST['listck']) ? (int)($_POST['listck']) : 0),
-                        (int)($update_level),(int)($update_banned),$edituser));
+                        [stringParser::encode($_POST['nick']),stringParser::encode($_POST['email']),stringParser::encode($_POST['loginname']),(isset($_POST['listck']) ? (int)($_POST['listck']) : 0),
+                        (int)($update_level),(int)($update_banned),$edituser]);
 
                 common::setIpcheck("upduser(" . common::$userid . "_" . $edituser . ")");
             }
 
             $index = common::info(_admin_user_edited, "?action=userlist");
-        } elseif ($do == "updateme") {
-            common::$sql['default']->delete("DELETE FROM `{prefix_groupuser}` WHERE `user` = ?;",array(common::$userid));
-            common::$sql['default']->delete("DELETE FROM `{prefix_userposis}` WHERE `user` = ?;",array(common::$userid));
+        } elseif (common::$do == "updateme") {
+            common::$sql['default']->delete("DELETE FROM `{prefix_groupuser}` WHERE `user` = ?;", [common::$userid]);
+            common::$sql['default']->delete("DELETE FROM `{prefix_userposis}` WHERE `user` = ?;", [common::$userid]);
 
             $squads = common::$sql['default']->select("SELECT `id` FROM `{prefix_groups}`;");
             foreach($squads as $getsq) {
                 if (isset($_POST['squad' . $getsq['id']])) {
                     common::$sql['default']->insert("INSERT INTO `{prefix_groupuser}` SET `user`  = ?, `group` = ?;",
-                    array((int)(common::$userid),(int)($_POST['squad' . $getsq['id']])));
+                    [(int)(common::$userid),(int)($_POST['squad' . $getsq['id']])]);
                 }
 
                 if (isset($_POST['squad' . $getsq['id']])) {
                     common::$sql['default']->insert("INSERT INTO `{prefix_userposis}` SET `user` = ?, `posi` = ?, `group`  = ?",
-                    array((int)(common::$userid),(int)($_POST['sqpos'.$getsq['id']]),(int)($getsq['id'])));
+                    [(int)(common::$userid),(int)($_POST['sqpos'.$getsq['id']]),(int)($getsq['id'])]);
                 }
             }
 
             $index = common::info(_admin_user_edited, "?action=user&amp;id=" . common::$userid . "");
-        } elseif ($do == "delete") {
+        } elseif (common::$do == "delete") {
             $delUID = (int)($_GET['id']);
             if ($_GET['verify'] == "yes") {
                 if (common::data("level", (int)($_GET['id'])) == 4 || common::data("level", (int)($_GET['id'])) == 3 || common::rootAdmin($delUID))
@@ -185,18 +185,18 @@ if(defined('_UserMenu')) {
                 else {
                     if($delUID >= 1) {
                         common::setIpcheck("deluser(" . common::$userid . "_" . $delUID . ")");
-                        common::$sql['default']->update("UPDATE `{prefix_forumposts}` SET `reg` = 0 WHERE `reg` = ?;",array($delUID));
-                        common::$sql['default']->update("UPDATE `{prefix_forumthreads}` SET `t_reg` = 0 WHERE `t_reg` = ?;",array($delUID));
-                        common::$sql['default']->update("UPDATE `{prefix_newscomments}` SET `reg` = 0 WHERE `reg` = ?;",array($delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `von` = ? OR `an` = ?;",array($delUID,$delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_news}` WHERE `autor` = ?;",array($delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `user` = ?;",array($delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_groupuser}` WHERE `user` = ?;",array($delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_userbuddys}` WHERE `user` = ? OR `buddy` = ?;",array($delUID,$delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_userposis}` WHERE `user` = ?;",array($delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;",array($delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;",array($delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_clicks_ips}` WHERE `uid` = ?;",array($delUID));
+                        common::$sql['default']->update("UPDATE `{prefix_forumposts}` SET `reg` = 0 WHERE `reg` = ?;", [$delUID]);
+                        common::$sql['default']->update("UPDATE `{prefix_forumthreads}` SET `t_reg` = 0 WHERE `t_reg` = ?;", [$delUID]);
+                        common::$sql['default']->update("UPDATE `{prefix_newscomments}` SET `reg` = 0 WHERE `reg` = ?;", [$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `von` = ? OR `an` = ?;", [$delUID,$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_news}` WHERE `autor` = ?;", [$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `user` = ?;", [$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_groupuser}` WHERE `user` = ?;", [$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_userbuddys}` WHERE `user` = ? OR `buddy` = ?;", [$delUID,$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_userposis}` WHERE `user` = ?;", [$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;", [$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;", [$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_clicks_ips}` WHERE `uid` = ?;", [$delUID]);
                         $index = common::info(_user_deleted, "?action=userlist", 5, false);
                     }
                 }
@@ -207,7 +207,7 @@ if(defined('_UserMenu')) {
             $smarty->assign('user',common::autor($delUID));
             $index = $smarty->fetch('string:'._user_delete_verify);
             $smarty->clearAllAssign();
-        } elseif ($do == "full_delete") {
+        } elseif (common::$do == "full_delete") {
             $delUID = ((int)$_GET['id']);
             if ($_GET['verify'] == "yes") {
                 if (common::data("level", (int)($_GET['id'])) == 4 || common::data("level", (int)($_GET['id'])) == 3 || common::rootAdmin($delUID))
@@ -215,18 +215,18 @@ if(defined('_UserMenu')) {
                 else {
                     if($delUID >= 1) {
                         common::setIpcheck("deluser(" . common::$userid . "_" . $delUID . ")");
-                        common::$sql['default']->update("DELETE FROM `{prefix_forumposts}` WHERE `reg` = ?;",array($delUID));
-                        common::$sql['default']->update("DELETE FROM `{prefix_forumthreads}` WHERE `t_reg` = ?;",array($delUID));
-                        common::$sql['default']->update("DELETE FROM `{prefix_newscomments}` WHERE `reg` = ?;",array($delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `von` = ? OR `an` = ?;",array($delUID,$delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_news}` WHERE `autor` = ?;",array($delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `user` = ?;",array($delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_groupuser}` WHERE `user` = ?;",array($delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_userbuddys}` WHERE `user` = ? OR `buddy` = ?;",array($delUID,$delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_userposis}` WHERE `user` = ?;",array($delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;",array($delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;",array($delUID));
-                        common::$sql['default']->delete("DELETE FROM `{prefix_clicks_ips}` WHERE `uid` = ?;",array($delUID));
+                        common::$sql['default']->update("DELETE FROM `{prefix_forumposts}` WHERE `reg` = ?;", [$delUID]);
+                        common::$sql['default']->update("DELETE FROM `{prefix_forumthreads}` WHERE `t_reg` = ?;", [$delUID]);
+                        common::$sql['default']->update("DELETE FROM `{prefix_newscomments}` WHERE `reg` = ?;", [$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `von` = ? OR `an` = ?;", [$delUID,$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_news}` WHERE `autor` = ?;", [$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `user` = ?;", [$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_groupuser}` WHERE `user` = ?;", [$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_userbuddys}` WHERE `user` = ? OR `buddy` = ?;", [$delUID,$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_userposis}` WHERE `user` = ?;", [$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;", [$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;", [$delUID]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_clicks_ips}` WHERE `uid` = ?;", [$delUID]);
                         $index = common::info(_user_deleted, "?action=userlist", 5 ,false);
                     }
                 }
@@ -241,22 +241,22 @@ if(defined('_UserMenu')) {
             //Show edit user
             $get = common::$sql['default']->fetch("SELECT `id`,`user`,`nick`,`pwd`,`email`,`level`,`position`,`listck` "
                                     . "FROM `{prefix_users}` "
-                                    . "WHERE `id` = ?;",array((int)($_GET['edit'])));
+                                    . "WHERE `id` = ?;", [(int)($_GET['edit'])]);
             if (common::$sql['default']->rowCount()) {
                 $where = _user_profile_of . common::autor(((int)$_GET['edit']));
                 $qrysq = common::$sql['default']->select("SELECT `id`,`name` FROM `{prefix_groups}` ORDER BY `id`;");
-                $esquads = '';
+                $esquads = ''; $posi = "";
                 foreach($qrysq as $getsq) {
                     $qrypos = common::$sql['default']->select("SELECT `id`,`position` FROM `{prefix_positions}` ORDER BY `pid`;");
                     $posi = "";
                     foreach($qrypos as $getpos) {
                         $check = common::$sql['default']->rows("SELECT `id` FROM `{prefix_userposis}` WHERE `posi` = ? AND `group` = ? AND `user` = ?;",
-                        array($getpos['id'],$getsq['id'],(int)($_GET['edit'])));
+                        [$getpos['id'],$getsq['id'],(int)($_GET['edit'])]);
                         $posi .= common::select_field($getpos['id'],$check,stringParser::decode($getpos['position']));
                     }
 
                     $checksquser = common::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",
-                    array((int)($_GET['edit']),$getsq['id']));
+                    [(int)($_GET['edit']),$getsq['id']]);
                     $check = $checksquser ? 'checked="checked"' : '';
 
                     $smarty->caching = false;

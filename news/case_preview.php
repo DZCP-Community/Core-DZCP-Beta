@@ -77,7 +77,7 @@ if(defined('_News')) {
     }
 
     //empty news kat image
-    foreach(["jpg", "gif", "png"] as $end) {
+    foreach(common::SUPPORTED_PICTURE as $end) {
         if (file_exists(basePath . "/inc/images/nopic." . $end)) {
             $newsimage = '../inc/images/nopic.' . $end;
             break;
@@ -91,6 +91,13 @@ if(defined('_News')) {
 
     //Test
     $input = <<< EOI
+    
+    Ein Test,
+Texte ganz viele...
+
+Test 123456
+    
+[url=http://fdgdfgf.de/fff]gff[/url]
     
 [video height=400 width=600 autoplay=0]http://hammermaps.de/videoplayback.mp4[/video]    
     
@@ -146,9 +153,9 @@ The unanimous Declaration of the thirteen united States of America[/b][/center]
 EOI;
 
     //Smileys Test
-    $test = bbcode_base::getInstance();
+   // $test = bbcode_base::getInstance();
  //   foreach ($test->GetSmileys() as $tag => $Smiley) {
-        echo bbcode_base::parse_html((string)$input).'<p>';
+      //  echo bbcode_base::parse_html((string)$input).'<p>';
  //   }
 //    die();
 
@@ -163,7 +170,7 @@ EOI;
     $smarty->assign('notification_page','');
     $smarty->assign('sticky',$sticky);
     $smarty->assign('intern',$intern);
-    $smarty->assign('more',bbcode_base::parse_html((string)$input));
+    $smarty->assign('more',bbcode_base::parse_html((string)$_POST['morenews']));
     $smarty->assign('text',bbcode_base::parse_html((string)$_POST['newstext']));
     $smarty->assign('datum',date("j.m.y H:i", time()));
     $smarty->assign('links',$links);

@@ -16,7 +16,7 @@
  */
 
 if(defined('_Artikel')) {
-    if($do == 'edit') {
+    if(common::$do == 'edit') {
         $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_acomments}` WHERE `id` = ?;", [(int)($_GET['cid'])]);
 
         $get_id = '?';

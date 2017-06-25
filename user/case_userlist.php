@@ -19,7 +19,7 @@ if(defined('_UserMenu')) {
     $where = _site_ulist;
     $entrys = common::cnt('{prefix_users}'," WHERE level != 0");
     $show_sql = isset($_GET['show']) ? $_GET['show'] : '';
-    $limit_sql = ($page - 1)*settings::get('m_userlist').",".settings::get('m_userlist');
+    $limit_sql = (common::$page - 1)*settings::get('m_userlist').",".settings::get('m_userlist');
     $select_sql = "`id`,`nick`,`level`,`email`,`hp`,`bday`,`sex`,`position`,`regdatum`";
     
     switch (isset($_GET['show']) ? $_GET['show'] : '') {
@@ -27,65 +27,65 @@ if(defined('_UserMenu')) {
             $qry = common::$sql['default']->select("SELECT ".$select_sql." "
                               . "FROM `{prefix_users}` "
                               . "WHERE `nick` LIKE ? AND `level` != 0 "
-                              . common::orderby_sql(array("nick","bday"), 'ORDER BY `nick`')." "
+                              . common::orderby_sql(["nick","bday"], 'ORDER BY `nick`')." "
                               . "LIMIT ".$limit_sql.";",
-                    array('%'.stringParser::encode($_GET['search']).'%'));
+                    ['%'.stringParser::encode($_GET['search']).'%']);
         break;
         case 'newreg':
             $qry = common::$sql['default']->select("SELECT ".$select_sql." "
                               . "FROM `{prefix_users}` "
                               . "WHERE regdatum > ? AND `level` != 0 "
-                              . common::orderby_sql(array("nick","bday"), 'ORDER BY `regdatum` DESC,`nick`')." "
+                              . common::orderby_sql(["nick","bday"], 'ORDER BY `regdatum` DESC,`nick`')." "
                               . "LIMIT ".$limit_sql.";",
-                    array($_SESSION['lastvisit']));
+                    [$_SESSION['lastvisit']]);
         break;
         case 'lastlogin':
             $qry = common::$sql['default']->select("SELECT ".$select_sql." "
                               . "FROM `{prefix_users}` "
                               . "WHERE `level` != 0 "
-                              . common::orderby_sql(array("nick","bday"), 'ORDER BY `time` DESC,`nick`')." "
+                              . common::orderby_sql(["nick","bday"], 'ORDER BY `time` DESC,`nick`')." "
                               . "LIMIT ".$limit_sql.";");
         break;
         case 'lastreg':
             $qry = common::$sql['default']->select("SELECT ".$select_sql." "
                               . "FROM `{prefix_users}` "
                               . "WHERE `level` != 0 "
-                              . common::orderby_sql(array("nick","bday"), 'ORDER BY `regdatum` DESC,`nick`')." "
+                              . common::orderby_sql(["nick","bday"], 'ORDER BY `regdatum` DESC,`nick`')." "
                               . "LIMIT ".$limit_sql.";");
         break;
         case 'online':
             $qry = common::$sql['default']->select("SELECT ".$select_sql." "
                               . "FROM `{prefix_users}` "
                               . "WHERE `level` != 0 "
-                              . common::orderby_sql(array("nick","bday"), 'ORDER BY `time` DESC,`nick`')." "
+                              . common::orderby_sql(["nick","bday"], 'ORDER BY `time` DESC,`nick`')." "
                               . "LIMIT ".$limit_sql.";");
         break;
         case 'country':
             $qry = common::$sql['default']->select("SELECT ".$select_sql." "
                               . "FROM `{prefix_users}` "
                               . "WHERE `level` != 0 "
-                              . common::orderby_sql(array("nick","bday"), 'ORDER BY `country`,`nick`')." "
+                              . common::orderby_sql(["nick","bday"], 'ORDER BY `country`,`nick`')." "
                               . "LIMIT ".$limit_sql.";");
         break;
         case 'sex':
             $qry = common::$sql['default']->select("SELECT ".$select_sql." "
                               . "FROM `{prefix_users}` "
                               . "WHERE `level` != 0 "
-                              . common::orderby_sql(array("nick","bday"), 'ORDER BY `sex` DESC')." "
+                              . common::orderby_sql(["nick","bday"], 'ORDER BY `sex` DESC')." "
                               . "LIMIT ".$limit_sql.";");
         break;
         case 'banned':
             $qry = common::$sql['default']->select("SELECT ".$select_sql." "
                               . "FROM `{prefix_users}` "
                               . "WHERE `level` = 0 "
-                              . common::orderby_sql(array("nick","bday"), 'ORDER BY `nick`')." "
+                              . common::orderby_sql(["nick","bday"], 'ORDER BY `nick`')." "
                               . "LIMIT ".$limit_sql.";");
         break;
         default:
             $qry = common::$sql['default']->select("SELECT ".$select_sql." "
                               . "FROM `{prefix_users}` "
                               . "WHERE `level` != 0 "
-                              . common::orderby_sql(array("nick","bday"), 'ORDER BY `level` DESC,`nick`')." "
+                              . common::orderby_sql(["nick","bday"], 'ORDER BY `level` DESC,`nick`')." "
                               . "LIMIT ".$limit_sql.";");
         break;
     }

@@ -17,7 +17,7 @@
 
 if(_adminMenu != 'true') exit;
 
-switch ($do) {
+switch (common::$do) {
     default:
         if(isset($_GET['id'])) {
             $update_stable = false;

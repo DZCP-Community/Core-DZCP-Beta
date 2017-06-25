@@ -21,7 +21,7 @@
  * @param $smarty
  * @return string
  */
-function smarty_function_l_news($params, &$smarty) {
+function smarty_function_l_news($params,Smarty_Internal_Template &$smarty) {
     $qry = common::$sql['default']->select("SELECT `id`,`titel`,`autor`,`datum`,`kat`,`public`,`timeshift` "
         . "FROM `{prefix_news}` "
         . "WHERE `public` = 1 AND `datum` <= ? ".(common::permission("intnews") ? "" : "AND `intern` = 0")." "

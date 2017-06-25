@@ -18,9 +18,9 @@
 if(_adminMenu != 'true') exit;
 
 $where = $where.': '._protocol;
-switch ($do) {
+switch (common::$do) {
     case 'deletesingle':
-        common::$sql['default']->delete("DELETE FROM `{prefix_ip_action}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_ip_action}` WHERE `id` = ?;", [(int)($_GET['id'])]);
         header("Location: ".common::GetServerVars('HTTP_REFERER'));
     break;
     default:
@@ -29,7 +29,7 @@ switch ($do) {
             notification::add_success(_protocol_deleted);
         }
         
-        $params = array();
+        $params = [];
         if(!empty($_GET['sip'])) {
             $search = "WHERE `ipv4` = ? AND `time` != 0 AND `what` NOT REGEXP 'vid_'";
             array_push($params, stringParser::encode($_GET['sip']));
@@ -40,7 +40,7 @@ switch ($do) {
         }
 
         $entrys = common::cnt('{prefix_ip_action}', $search, 'id', $params); $maxprot = 30;
-        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_ip_action}` ".$search." ORDER BY `id` DESC LIMIT ".($page - 1)*$maxprot.",".$maxprot.";",$params);
+        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_ip_action}` ".$search." ORDER BY `id` DESC LIMIT ".(common::$page - 1)*$maxprot.",".$maxprot.";",$params);
         foreach($qry as $get) {
               $action = "";
               $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;

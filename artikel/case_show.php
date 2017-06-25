@@ -24,7 +24,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
         if (!common::$sql['default']->rowCount()) {
             $index = common::error(_id_dont_exist, 1);
         } else {
-            switch ($do) {
+            switch (common::$do) {
                 case 'add':
                     if (common::$sql['default']->rows("SELECT `id` FROM `{prefix_artikel}` WHERE `id` = ?;", [$artikel_id]) != 0) {
                         if (settings::get("reg_artikel") && !common::$chkMe) {
@@ -179,11 +179,11 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
 
             //Artikel Comments
             $qryc = common::$sql['default']->select("SELECT * FROM `{prefix_acomments}` WHERE `artikel` = ? "
-                ."ORDER BY `datum` DESC LIMIT ".($page - 1)*settings::get('m_comments').",".settings::get('m_comments').";",
+                ."ORDER BY `datum` DESC LIMIT ".(common::$page - 1)*settings::get('m_comments').",".settings::get('m_comments').";",
                 [$artikel_id]);
 
             $entrys = common::cnt('{prefix_acomments}', " WHERE `artikel` = ?","id",[$artikel_id]);
-            $i = ($entrys - ($page - 1) * settings::get('m_comments')); $comments = '';
+            $i = ($entrys - (common::$page - 1) * settings::get('m_comments')); $comments = '';
             foreach($qryc as $getc) {
                 $edit = ""; $delete = "";
                 if ((common::$chkMe >= 1 && $getc['reg'] == common::$userid) || common::permission("news")) {
@@ -294,7 +294,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
             $smarty->clearAllAssign();
 
             $artikelimage = '../inc/images/uploads/newskat/'.common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get_artikel['kat']],'katimg');
-            foreach (["jpg", "gif", "png"] as $tmpendung) {
+            foreach (common::SUPPORTED_PICTURE as $tmpendung) {
                 if (file_exists(basePath . "/inc/images/uploads/artikel/".$get_artikel['id'].".".$tmpendung)) {
                     $artikelimage = '../inc/images/uploads/artikel/'.$get_artikel['id'].'.'.$tmpendung;
                     break;

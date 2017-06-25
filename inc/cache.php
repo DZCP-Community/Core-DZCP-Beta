@@ -42,7 +42,7 @@ class Cache extends CacheManager {
         if(extension_loaded('Zend Data Cache') && function_exists('zend_disk_cache_store')) { //Zend Server
             $this->cache_index['file'] = self::getInstance('zenddisk');
         } else {
-            $this->cache_index['file'] = self::getInstance('files',array("path" => basePath.'/inc/_cache_'));
+            $this->cache_index['file'] = self::getInstance('files', ["path" => basePath.'/inc/_cache_']);
         }
 
         //Memory Cache
@@ -76,22 +76,22 @@ class Cache extends CacheManager {
 
         //Network Memory Cache (NetCache)
             if(config::$use_network_cache) {
-                if(config::is_memcache && function_exists('memcache_connect')) {
-                    $this->cache_index['net'] = self::getInstance('memcache',array('memcache' => array(config::$memcache_host, config::$memcache_port, 1)));
+                if(config::$is_memcache && function_exists('memcache_connect')) {
+                    $this->cache_index['net'] = self::getInstance('memcache', ['memcache' => [config::$memcache_host, config::$memcache_port, 1]]);
                 } else if(config::$is_memcache && class_exists('Memcached')) {
-                    $this->cache_index['net'] = self::getInstance('memcached',array('memcache' => array(config::$memcache_host, config::$memcache_port, 1)));
+                    $this->cache_index['net'] = self::getInstance('memcached', ['memcache' => [config::$memcache_host, config::$memcache_port, 1]]);
                 } else if(config::$is_redis && class_exists('Redis')) {
-                    $this->cache_index['net'] = self::getInstance('redis',array('redis' => array('host' => config::$redis_host,
+                    $this->cache_index['net'] = self::getInstance('redis', ['redis' => ['host' => config::$redis_host,
                                                                                                  'port' => config::$redis_port,
                                                                                                  'password' => config::$redis_password,
                                                                                                  'database' => config::$redis_database,
-                                                                                                 'timeout' => config::$redis_timeout)));
+                                                                                                 'timeout' => config::$redis_timeout]]);
                 } else if(config::$is_redis && class_exists("\\Predis\\Client")) {
-                    $this->cache_index['net'] = self::getInstance('predis',array('redis' => array('host' => config::$redis_host,
+                    $this->cache_index['net'] = self::getInstance('predis', ['redis' => ['host' => config::$redis_host,
                                                                                         'port' => config::$redis_port,
                                                                                         'password' => config::$redis_password,
                                                                                         'database' => config::$redis_database,
-                                                                                        'timeout' => config::$redis_timeout)));
+                                                                                        'timeout' => config::$redis_timeout]]);
                 }
             }
     }

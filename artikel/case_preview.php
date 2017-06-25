@@ -57,7 +57,7 @@ if(defined('_Artikel')) {
     }
 
     //empty artikel kat image
-    foreach(["jpg", "gif", "png"] as $end) {
+    foreach(common::SUPPORTED_PICTURE as $end) {
         if (file_exists(basePath . "/inc/images/nopic." . $end)) {
             $artikelimage = '../inc/images/nopic.' . $end;
             break;

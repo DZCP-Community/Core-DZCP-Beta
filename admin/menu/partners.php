@@ -18,7 +18,7 @@
 if(_adminMenu != 'true') exit;
 $where = $where.': '._partners_head;
 
-      if($do == "add")
+      if(common::$do == "add")
       {
         $files = common::get_files(basePath.'/banner/partners/',false,true);
         for($i=0; $i<count($files); $i++)
@@ -44,18 +44,18 @@ $where = $where.': '._partners_head;
           $smarty->assign('what',_button_value_add);
           $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_partners.tpl');
           $smarty->clearAllAssign();
-      } elseif($do == "addbutton") {
+      } elseif(common::$do == "addbutton") {
         if(empty($_POST['link']))
         {
           $show = common::error(_empty_url, 1);
         } else {
           common::$sql['default']->insert("INSERT INTO `{prefix_partners}` SET `link` = ?, `banner` = ?, `textlink` = ?;",
-                  array(stringParser::encode(common::links($_POST['link'])),stringParser::encode(empty($_POST['textlink']) ? $_POST['banner'] : $_POST['textlink']),(int)(empty($_POST['textlink']) ? 0 : 1)));
+                  [stringParser::encode(common::links($_POST['link'])),stringParser::encode(empty($_POST['textlink']) ? $_POST['banner'] : $_POST['textlink']),(int)(empty($_POST['textlink']) ? 0 : 1)]);
 
           $show = common::info(_partners_added, "?admin=partners");
         }
-      } elseif($do == "edit") {
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_partners}` WHERE `id` = ?;",array((int)($_GET['id'])));
+      } elseif(common::$do == "edit") {
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_partners}` WHERE `id` = ?;", [(int)($_GET['id'])]);
 
         $files = common::get_files(basePath.'/banner/partners/',false,true);
         for($i=0; $i<count($files); $i++)
@@ -83,18 +83,18 @@ $where = $where.': '._partners_head;
           $smarty->assign('what',_button_value_edit);
           $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_partners.tpl');
           $smarty->clearAllAssign();
-      } elseif($do == "editbutton") {
+      } elseif(common::$do == "editbutton") {
         if(empty($_POST['link'])) {
           $show = common::error(_empty_url);
         } else {
           common::$sql['default']->update("UPDATE `{prefix_partners}` SET `link` = ?, `banner` = ?, `textlink` = ? WHERE `id` = ?;",
-                  array(stringParser::encode(common::links($_POST['link'])),
+                  [stringParser::encode(common::links($_POST['link'])),
                       stringParser::encode(empty($_POST['textlink']) ? $_POST['banner'] : $_POST['textlink']),
-                      (int)(empty($_POST['textlink']) ? 0 : 1),(int)($_GET['id'])));
+                      (int)(empty($_POST['textlink']) ? 0 : 1),(int)($_GET['id'])]);
           $show = common::info(_partners_edited, "?admin=partners");
         }
-      } elseif($do == "delete") {
-        common::$sql['default']->delete("DELETE FROM `{prefix_partners}` WHERE `id` = ?;",array((int)($_GET['id'])));
+      } elseif(common::$do == "delete") {
+        common::$sql['default']->delete("DELETE FROM `{prefix_partners}` WHERE `id` = ?;", [(int)($_GET['id'])]);
         $show = common::info(_partners_deleted,"?admin=partners");
       } else {
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_partners}` ORDER BY id;");
@@ -107,7 +107,7 @@ $where = $where.': '._partners_head;
           $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             $smarty->caching = false;
             $smarty->assign('class',$class);
-            $smarty->assign('button',(empty($get['textlink']) ? $button : '<center>'._partnerbuttons_textlink.': <b>'.stringParser::decode($get['banner']).'</b></center>'));
+            $smarty->assign('button',(empty($get['textlink']) ? $button : '<div style="text-align: center;">'._partnerbuttons_textlink.': <b>'.stringParser::decode($get['banner']).'</b></div>'));
             $smarty->assign('link',stringParser::decode($get['link']));
             $smarty->assign('id',$get['id']);
             $smarty->assign('edit',$edit);

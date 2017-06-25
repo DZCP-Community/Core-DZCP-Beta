@@ -18,20 +18,12 @@
 if(_adminMenu != 'true') exit;
 
     $where = $where.': '._config_sponsors;
-      if($do == "new")
+      if(common::$do == "new")
       {
-
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_sponsoren}` ORDER BY pos");
         foreach($qry as $get) {
-            $smarty->caching = false;
-            $smarty->assign('value', $get['pos']+1);
-            $smarty->assign('sel','');
-            $smarty->assign('what', _nach.' '.stringParser::decode($get['name']));
-            $positions .= $smarty->fetch('string:'._select_field);
-            $smarty->clearAllAssign();
-          $posname = $get['name'];
+            $positions .= common::select_field(($get['pos']+1),false,_nach.' '.stringParser::decode($get['name']));
         }
-
 
           $smarty->caching = false;
           $smarty->assign('head',_sponsors_admin_head);
@@ -73,7 +65,7 @@ if(_adminMenu != 'true') exit;
           $smarty->assign('do',"add");
           $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_sponsors.tpl');
           $smarty->clearAllAssign();
-      } elseif($do == "add") {
+      } elseif(common::$do == "add") {
         if(empty($_POST['name']) || empty($_POST['link']) || empty($_POST['beschreibung']))
         {
           if(empty($_POST['beschreibung']))
@@ -97,21 +89,9 @@ if(_adminMenu != 'true') exit;
 
           $pos = common::$sql['default']->select("SELECT pos,name FROM `{prefix_sponsoren}` ORDER BY pos");
           foreach($pos as $getpos) {
-            if($getpos['name'] != $_POST['posname'])
-            {
-              $mp = common::$sql['default']->fetch("SELECT pos FROM `{prefix_sponsoren}`
-                          WHERE name != '".$_POST['posname']."'
-                          AND pos = '".(int)(($_POST['position']-1))."'");
-
-              if($getpos['pos'] == $mp['pos']) $sel = 'selected="selected"';
-              else $sel = '';
-
-                $smarty->caching = false;
-                $smarty->assign('value',$getpos['pos']+1);
-                $smarty->assign('what',_nach.' '.stringParser::decode($getpos['name']));
-                $smarty->assign('sel',$sel);
-                $positions .= $smarty->fetch('string:'._select_field);
-                $smarty->clearAllAssign();
+            if($getpos['name'] != $_POST['posname']) {
+                $mp = common::$sql['default']->fetch("SELECT pos FROM `{prefix_sponsoren}` WHERE name != '".$_POST['posname']."' AND pos = '".(int)(($_POST['position']-1))."'");
+                $positions .= common::select_field(($getpos['pos']+1),($getpos['pos'] == $mp['pos']),_nach.' '.stringParser::decode($getpos['name']));
             }
           }
 
@@ -251,29 +231,15 @@ if(_adminMenu != 'true') exit;
 
           $show = common::info(_sponsor_added, "?admin=sponsors");
         }
-      } elseif($do == "edit") {
+      } elseif(common::$do == "edit") {
 
         $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_sponsoren}` WHERE id = '".(int)($_GET['id'])."'");
 
           $pos = common::$sql['default']->select("SELECT pos,name FROM `{prefix_sponsoren}` ORDER BY pos");
           foreach($pos as $getpos) {
-            if($getpos['name'] != $get['name'])
-            {
-              $mp = common::$sql['default']->fetch("SELECT pos FROM `{prefix_sponsoren}`
-                          WHERE name != '".$get['name']."'
-                          AND pos = '".(int)(($get['pos']-1))."'");
-
-              if($getpos['pos'] == $mp['pos']) $sel = 'selected="selected"';
-              else $sel = '';
-
-                $smarty->caching = false;
-                $smarty->assign('value',$getpos['pos']+1);
-                $smarty->assign('what',_nach.' '.stringParser::decode($getpos['name']));
-                $smarty->assign('sel',$sel);
-                $positions .= $smarty->fetch('string:'._select_field);
-                $smarty->clearAllAssign();
-
-              $posname = $getpos['name'];
+            if($getpos['name'] != $get['name']) {
+                $mp = common::$sql['default']->fetch("SELECT pos FROM `{prefix_sponsoren}` WHERE name != '".$get['name']."' AND pos = '".(int)(($get['pos']-1))."'");
+                $positions .= common::select_field($getpos['pos']+1,($getpos['pos'] == $mp['pos']),_nach.' '.stringParser::decode($getpos['name']));
             }
           }
 
@@ -302,7 +268,7 @@ if(_adminMenu != 'true') exit;
           $xnone = "none";
         }
 
-    foreach(array("jpg", "gif", "png") AS $end)
+    foreach(common::SUPPORTED_PICTURE AS $end)
     {
       if(file_exists(basePath.'/banner/sponsors/site_'.$get['id'].'.'.$end))
             {
@@ -311,7 +277,7 @@ if(_adminMenu != 'true') exit;
             }
     }
 
-    foreach(array("jpg", "gif", "png") AS $end)
+    foreach(common::SUPPORTED_PICTURE AS $end)
     {
             if(file_exists(basePath.'/banner/sponsors/banner_'.$get['id'].'.'.$end))
             {
@@ -320,7 +286,7 @@ if(_adminMenu != 'true') exit;
             }
     }
 
-    foreach(array("jpg", "gif", "png") AS $end)
+    foreach(common::SUPPORTED_PICTURE AS $end)
     {
             if(file_exists(basePath.'/banner/sponsors/box_'.$get['id'].'.'.$end))
             {
@@ -369,7 +335,7 @@ if(_adminMenu != 'true') exit;
           $smarty->assign('do',"editsponsor&amp;id=".$_GET['id']."");
           $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_sponsors.tpl');
           $smarty->clearAllAssign();
-      } elseif($do == "editsponsor") {
+      } elseif(common::$do == "editsponsor") {
       if(empty($_POST['name']) || empty($_POST['link']) || empty($_POST['beschreibung']))
       {
           if(empty($_POST['beschreibung']))
@@ -391,27 +357,11 @@ if(_adminMenu != 'true') exit;
           $smarty->clearAllAssign();
 
           $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_sponsoren}` WHERE id = '".(int)($_GET['id'])."'");
-
           $pos = common::$sql['default']->select("SELECT pos,name FROM `{prefix_sponsoren}` ORDER BY pos");
           foreach($pos as $getpos) {
-            if($getpos['name'] != $get['name'])
-            {
-              $mp = common::$sql['default']->fetch("SELECT pos FROM `{prefix_sponsoren}`
-                          WHERE name != '".$get['name']."'
-                          AND pos = '".(int)(($_POST['position']-1))."'");
-
-              if($getpos['pos'] == $mp['pos']) $sel = 'selected="selected"';
-              else $sel = '';
-
-
-                $smarty->caching = false;
-                $smarty->assign('value',$getpos['pos']+1);
-                $smarty->assign('what',_nach.' '.stringParser::decode($getpos['name']));
-                $smarty->assign('sel',$sel);
-                $positions .= $smarty->fetch('string:'._select_field);
-                $smarty->clearAllAssign();
-
-              $posname = $getpos['name'];
+            if($getpos['name'] != $get['name']) {
+                $mp = common::$sql['default']->fetch("SELECT pos FROM `{prefix_sponsoren}` WHERE name != '".$get['name']."' AND pos = '".(int)(($_POST['position']-1))."'");
+                $positions .= common::select_field(($getpos['pos']+1),($getpos['pos'] == $mp['pos']),_nach.' '.stringParser::decode($getpos['name']));
             }
           }
 
@@ -440,8 +390,7 @@ if(_adminMenu != 'true') exit;
               $xnone = "none";
             }
 
-            foreach(array("jpg", "gif", "png") AS $end)
-            {
+            foreach(common::SUPPORTED_PICTURE AS $end) {
                 if(file_exists(basePath.'/banner/sponsors/site_'.$get['id'].'.'.$end))
                 {
                     $sitepic = '<img src="../banner/sponsors/site_'.$get['id'].'.'.$end.'" alt="" width="50%" />';
@@ -449,8 +398,7 @@ if(_adminMenu != 'true') exit;
                 }
             }
 
-            foreach(array("jpg", "gif", "png") AS $end)
-            {
+            foreach(common::SUPPORTED_PICTURE AS $end) {
                 if(file_exists(basePath.'/banner/sponsors/banner_'.$get['id'].'.'.$end))
                 {
                     $bannerpic = '<img src="../banner/sponsors/banner_'.$get['id'].'.'.$end.'" alt="" width="50%" />';
@@ -458,8 +406,7 @@ if(_adminMenu != 'true') exit;
                 }
             }
 
-            foreach(array("jpg", "gif", "png") AS $end)
-            {
+            foreach(common::SUPPORTED_PICTURE AS $end) {
                 if(file_exists(basePath.'/banner/sponsors/box_'.$get['id'].'.'.$end))
                 {
                     $boxpic = '<img src="../banner/sponsors/box_'.$get['id'].'.'.$end.'" alt="" width="50%" />';
@@ -609,7 +556,7 @@ if(_adminMenu != 'true') exit;
 
           $show = common::info(_sponsor_edited, "?admin=sponsors");
         }
-      } elseif($do == "delete") {
+      } elseif(common::$do == "delete") {
           common::$sql['default']->delete("DELETE FROM `{prefix_sponsoren}`
                    WHERE id = '".(int)($_GET['id'])."'");
 

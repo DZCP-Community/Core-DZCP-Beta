@@ -18,7 +18,7 @@
 if(_adminMenu != 'true') exit;
 $where = $where.': '._news_admin_head;
 
-switch ($do) {
+switch (common::$do) {
     case 'add':
         //Insert
         $notification_p = ""; $saved = false;
@@ -36,7 +36,7 @@ switch ($do) {
                     javascript::set('AnchorMove', 'notification-box');
                 }
             } else {
-                $timeshift = ''; $public = ''; $datum = ''; $params = array();
+                $timeshift = ''; $public = ''; $datum = ''; $params = [];
                 $stickytime = isset($_POST['sticky']) ? mktime($_POST['h'],$_POST['min'],0,$_POST['m'],$_POST['t'],$_POST['j']) : '0';
                 if(isset($_POST['timeshift'])) {
                     $timeshifttime = mktime($_POST['h_ts'],$_POST['min_ts'],0,$_POST['m_ts'],$_POST['t_ts'],$_POST['j_ts']);
@@ -46,12 +46,15 @@ switch ($do) {
                     $datum = "`datum` = ?,";
                 }
 
+                var_dump($_POST['newstext']);
+                die();
+
                 common::$sql['default']->insert("INSERT INTO `{prefix_news}` SET `autor` = ?,`kat` = ?,`titel` = ?,`text` = ?,`more` = ?,"
                         . "`link1` = ?,`link2` = ?,`link3` = ?,`url1` = ?,`url2` = ?,`url3` = ?,`intern` = ?,".$timeshift."".$public."".$datum."`sticky` = ?;",
-                        array_merge(array((int)(common::$userid),(int)($_POST['kat']),stringParser::encode($_POST['titel']),stringParser::encode($_POST['newstext']),
+                        array_merge([(int)(common::$userid),(int)($_POST['kat']),stringParser::encode($_POST['titel']),stringParser::encode($_POST['newstext']),
                             stringParser::encode($_POST['morenews']),stringParser::encode($_POST['link1']),stringParser::encode($_POST['link2']),stringParser::encode($_POST['link3']),
-                            stringParser::encode(common::links($_POST['url1'])),stringParser::encode(common::links($_POST['url2'])),stringParser::encode(common::links($_POST['url3'])),(isset($_POST['intern']) ? 1 : 0)),
-                                $params,array((int)($stickytime))));
+                            stringParser::encode(common::links($_POST['url1'])),stringParser::encode(common::links($_POST['url2'])),stringParser::encode(common::links($_POST['url3'])),(isset($_POST['intern']) ? 1 : 0)],
+                                $params, [(int)($stickytime)]));
 
                 $picUploadError = false;
                 if(isset($_FILES['newspic']['tmp_name']) && !empty($_FILES['newspic']['tmp_name'])) {
@@ -178,7 +181,7 @@ switch ($do) {
                     javascript::set('AnchorMove', 'notification-box');
                 }
             } else {
-                $timeshift = ''; $public = ''; $datum = ''; $params = array();
+                $timeshift = ''; $public = ''; $datum = ''; $params = [];
                 $stickytime = isset($_POST['sticky']) ? mktime($_POST['h'],$_POST['min'],0,$_POST['m'],$_POST['t'],$_POST['j']) : '0';
                 if(isset($_POST['timeshift'])) {
                     $timeshifttime = mktime($_POST['h_ts'],$_POST['min_ts'],0,$_POST['m_ts'],$_POST['t_ts'],$_POST['j_ts']);
@@ -209,13 +212,13 @@ switch ($do) {
                                 $picUploadError = true;
                             } else {
                                 //Remove Pic
-                                foreach(array("jpg", "gif", "png") as $tmpendung) {
+                                foreach(common::SUPPORTED_PICTURE as $tmpendung) {
                                     if(file_exists(basePath."/inc/images/uploads/news/".(int)($get['id']).".".$tmpendung))
                                         @unlink(basePath."/inc/images/uploads/news/".(int)($get['id']).".".$tmpendung);
                                 }
 
                                 //Remove minimize
-                                $files = common::get_files(basePath."/inc/images/uploads/news/",false,true,array("jpg", "gif", "png"));
+                                $files = common::get_files(basePath."/inc/images/uploads/news/",false,true,common::SUPPORTED_PICTURE);
                                 if($files) {
                                     foreach ($files as $file) {
                                         if(preg_match("#".(int)($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
@@ -338,7 +341,7 @@ switch ($do) {
         }
 
         $newsimage = ""; $delnewspic = "";
-        foreach(array("jpg", "gif", "png") as $tmpendung) {
+        foreach(common::SUPPORTED_PICTURE as $tmpendung) {
             if(file_exists(basePath."/inc/images/uploads/news/".$get['id'].".".$tmpendung)) {
                 $newsimage = common::img_size('inc/images/uploads/news/'.$get['id'].'.'.$tmpendung)."<br /><br />";
                 $delnewspic = '<a href="?admin=newsadmin&do=delnewspic&id='.$get['id'].'">'._newspic_del.'</a><br /><br />';
@@ -388,13 +391,13 @@ switch ($do) {
         common::$sql['default']->delete("DELETE FROM `{prefix_newscomments}` WHERE news = '".(int)($_GET['id'])."'");
 
         //Remove Pic
-        foreach(array("jpg", "gif", "png") as $tmpendung) {
+        foreach(common::SUPPORTED_PICTURE as $tmpendung) {
             if(file_exists(basePath."/inc/images/uploads/news/".(int)($_GET['id']).".".$tmpendung))
                 @unlink(basePath."/inc/images/uploads/news/".(int)($_GET['id']).".".$tmpendung);
         }
 
         //Remove minimize
-        $files = common::get_files(basePath."/inc/images/uploads/news/",false,true,array("jpg", "gif", "png"));
+        $files = common::get_files(basePath."/inc/images/uploads/news/",false,true, common::SUPPORTED_PICTURE);
         if($files) {
             foreach ($files as $file) {
                 if(preg_match("#".(int)($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
@@ -409,13 +412,13 @@ switch ($do) {
     break;
     case 'delnewspic':
         //Remove Pic
-        foreach(array("jpg", "gif", "png") as $tmpendung) {
+        foreach(common::SUPPORTED_PICTURE as $tmpendung) {
             if(file_exists(basePath."/inc/images/uploads/news/".(int)($_GET['id']).".".$tmpendung))
                 @unlink(basePath."/inc/images/uploads/news/".(int)($_GET['id']).".".$tmpendung);
         }
 
         //Remove minimize
-        $files = common::get_files(basePath."/inc/images/uploads/news/",false,true,array("jpg", "gif", "png"));
+        $files = common::get_files(basePath."/inc/images/uploads/news/",false,true,common::SUPPORTED_PICTURE);
         foreach ($files as $file) {
             if(preg_match("#".(int)($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
                 $res = preg_match("#".(int)($_GET['id'])."_(.*)#",$file,$match);
@@ -428,8 +431,8 @@ switch ($do) {
     break;
     default:
         $entrys = common::cnt('{prefix_news}'); $show_ = '';
-        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_news}` ".common::orderby_sql(array("titel","datum","autor"), 'ORDER BY `public` ASC, `datum` DESC')."
-                   LIMIT ".($page - 1)*settings::get('m_adminnews').",".settings::get('m_adminnews').";");
+        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_news}` ".common::orderby_sql(["titel","datum","autor"], 'ORDER BY `public` ASC, `datum` DESC')."
+                   LIMIT ".(common::$page - 1)*settings::get('m_adminnews').",".settings::get('m_adminnews').";");
         foreach($qry as $get) {
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_news);

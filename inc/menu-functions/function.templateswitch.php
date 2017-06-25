@@ -15,7 +15,7 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function smarty_function_templateswitch($params, &$smarty) {
+function smarty_function_templateswitch($params,Smarty_Internal_Template &$smarty) {
     $tmpldir="";
     $tmps = common::get_files(basePath.'/inc/_templates_/',true);
     foreach ($tmps as $tmp) {

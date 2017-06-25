@@ -63,8 +63,9 @@ if(defined('_Votes')) {
 
         if(isset($_GET['ajax'])) {
             header("Content-type: text/html; charset=utf-8");
-            require_once(basePath.'/inc/menu-functions/vote.php');
-            echo utf8_encode('<table class="navContent" cellspacing="0">'.vote(1).'</table>');
+            require_once(basePath.'/inc/menu-functions/function.vote.php');
+            echo utf8_encode('<table class="navContent" cellspacing="0">'.smarty_function_vote(array('js'=>false),
+                    new Smarty_Internal_Template('vote',common::getSmarty(true))).'</table>');
             cookie::save();
             exit();
         }

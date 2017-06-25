@@ -19,10 +19,10 @@ if(_adminMenu != 'true') exit;
 
 $where = $where.': '._config_impressum_head;
 
-if($do == "update") {
+if(common::$do == "update") {
     if(settings::changed(($key='i_autor'),($var=stringParser::encode($_POST['seitenautor'])))) settings::set($key,$var);
     if(settings::changed(($key='i_domain'),($var=stringParser::encode($_POST['domain'])))) settings::set($key,$var);
-    settings::load(true);
+    settings::load();
     $show = common::info(_config_set, "?admin=impressum");
 } else {
     $smarty->caching = false;

@@ -27,8 +27,9 @@ $dir = "downloads";
 define('_Downloads', true);
 $smarty = common::getSmarty(); //Use Smarty
 
-if(file_exists(basePath."/downloads/case_".$action.".php"))
-    require_once(basePath."/downloads/case_".$action.".php");
+if (file_exists(basePath . "/downloads/case_" . common::$action . ".php")) {
+    require_once(basePath . "/downloads/case_" . common::$action . ".php");
+}
 
 ## INDEX OUTPUT ##
 $title = common::$pagetitle." - ".$where;

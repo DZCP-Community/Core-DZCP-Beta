@@ -21,6 +21,6 @@
  * @param $smarty
  * @return string
  */
-function smarty_function_dir($params, &$smarty) {
+function smarty_function_dir($params,Smarty_Internal_Template &$smarty) {
     return common::$designpath;
 }

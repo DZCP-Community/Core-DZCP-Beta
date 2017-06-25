@@ -24,7 +24,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
         if (!common::$sql['default']->rowCount()) {
             $index = common::error(_id_dont_exist, 1);
         } else {
-            switch ($do) {
+            switch (common::$do) {
                 case 'add':
                     if (common::$sql['default']->rows("SELECT `id` FROM `{prefix_news}` WHERE `id` = ?;", [$news_id]) != 0) {
                         if (!common::$chkMe) {
@@ -141,11 +141,11 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
 
             //News Comments
             $qryc = common::$sql['default']->select("SELECT * FROM `{prefix_newscomments}` WHERE `news` = ? "
-                                ."ORDER BY `datum` DESC LIMIT ".($page - 1)*settings::get('m_comments').",".settings::get('m_comments').";",
+                                ."ORDER BY `datum` DESC LIMIT ".(common::$page - 1)*settings::get('m_comments').",".settings::get('m_comments').";",
                                 [$news_id]);
             
             $entrys = common::cnt('{prefix_newscomments}', " WHERE `news` = ?","id",[$news_id]);
-            $i = ($entrys - ($page - 1) * settings::get('m_comments')); $comments = '';
+            $i = ($entrys - (common::$page - 1) * settings::get('m_comments')); $comments = '';
             foreach($qryc as $getc) {
                 $edit = ""; $delete = "";
                 if ((common::$chkMe >= 1 && $getc['reg'] == common::$userid) || common::permission("news")) {
@@ -292,7 +292,7 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
 
             $intern = $get_news['intern'] ? _votes_intern : "";
             $newsimage = '../inc/images/uploads/newskat/'.common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get_news['kat']],'katimg');
-            foreach (["jpg", "gif", "png"] as $tmpendung) {
+            foreach (common::SUPPORTED_PICTURE as $tmpendung) {
                 if (file_exists(basePath . "/inc/images/uploads/news/".$get_news['id'].".".$tmpendung)) {
                     $newsimage = '../inc/images/uploads/news/'.$get_news['id'].'.'.$tmpendung;
                     break;

@@ -29,9 +29,8 @@ $index = common::error(_error_wrong_permissions, 1);
 $smarty = common::getSmarty(); //Use Smarty
 
 ## SECTIONS
-$action = empty($action) ? 'default' : $action;
-if(file_exists(basePath."/upload/case_".$action.".php"))
-    require_once(basePath."/upload/case_".$action.".php");
+if(file_exists(basePath."/upload/case_".common::$action.".php"))
+    require_once(basePath."/upload/case_".common::$action.".php");
 
 ## INDEX OUTPUT ##
 $title = common::$pagetitle." - ".$where;

@@ -43,12 +43,12 @@ define('show_settings_debug', false);
 define("EOL","\r\n");
 define('DEBUG_LOADER', true);
 class DebugConsole {
-    private static $log_array = array(array());
+    private static $log_array = [[]];
     private static $file_data = '';
     private static $warning_enable = false;
 
     public static final function initCon() { 
-        self::$log_array=array(array()); 
+        self::$log_array= [[]];
         self::$file_data=''; 
         if(!is_dir(basePath.'/inc/_logs') || 
             !file_exists(basePath.'/inc/_logs')) {
@@ -60,27 +60,27 @@ class DebugConsole {
     { if(view_error_reporting) self::$log_array[$file][] = ($line != 0 ? 'Line:"'.$line.'" => ' : "").($back ? $msg.$func : $func.$msg); }
 
     public static final function insert_successful($file,$func)
-    { if(view_error_reporting) self::$log_array[$file][] = '<font color="#009900">'.$func.'</font>'; }
+    { if(view_error_reporting) self::$log_array[$file][] = '<span style="color:#009900;">'.$func.'</span>'; }
 
     public static final function insert_error($file,$msg)
-    { self::$log_array[$file][] = '<font color="#FF0000">'.$msg.'</font>'; self::$warning_enable = true; }
+    { self::$log_array[$file][] = '<span style="color:#FF0000;">'.$msg.'</span>'; self::$warning_enable = true; }
 
     public static final function insert_loaded($file,$func)
-    { if(show_loaded && view_error_reporting) self::$log_array[$file][] = '<font color="#009900">'.$func.'</font>'; }
+    { if(show_loaded && view_error_reporting) self::$log_array[$file][] = '<span style="color:#009900;">'.$func.'</span>'; }
 
     public static final function insert_info($file,$info)
-    { if(show_info && view_error_reporting) self::$log_array[$file][] = '<font color="#9900CC">'.$info.'</font>'; }
+    { if(show_info && view_error_reporting) self::$log_array[$file][] = '<span style="color:#9900CC;">'.$info.'</span>'; }
 
     public static final function insert_sql_info($file,$info,$params)
-    { self::$log_array[$file][] = '<font color="#2A3AEC">'.$info.' <p> Data for SQL-Query => '.json_encode($params).'</font>'; }
+    { self::$log_array[$file][] = '<span color="#2A3AEC">'.$info.' <p> Data for SQL-Query => '.json_encode($params).'</span>'; }
     
     public static final function insert_warning($file,$func)
-    { if(show_warning && view_error_reporting) self::$log_array[$file][] = '<font color="#FFFF00">'.$func.'</font>'; }
+    { if(show_warning && view_error_reporting) self::$log_array[$file][] = '<span style="color:#FFFF00;">'.$func.'</span>'; }
     
     public static final function get_warning_enable()
     { return self::$warning_enable; }
 
-    public static final function sql_error_Exception($msg,$query,array $params = array()) {
+    public static final function sql_error_Exception($msg,$query,array $params = []) {
         $message = '#####################################################################'.EOL.
         'Datum   = '.date("d.m.y H:i", time()).EOL.
         'URL     = http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].$_SERVER['PHP_self'].EOL.EOL.
@@ -104,8 +104,8 @@ class DebugConsole {
         foreach(self::$log_array as $file => $msg_array) {
             foreach($msg_array as $msg) {
                 $set_color = ($color % 2) ? "#CCCCCC" : "#E6E6E6"; $color++;
-                $data .= '<tr><td width="40%" bgcolor="'.$set_color.'"><b><div align="center"><font color="#000000" style="font-size:11px">"'.$file.'"</font></div></b></td>
-                <td width="60%" bgcolor="'.$set_color.'"><b><div align="center"><font color="#000000" style="font-size:11px">"'.$msg.'"</font></div></b></td></tr>'; $i++;
+                $data .= '<tr><td width="40%" bgcolor="'.$set_color.'"><b><div align="center"><span style="color:#000000;font-size:11px;">"'.$file.'"</span></div></b></td>
+                <td width="60%" bgcolor="'.$set_color.'"><b><div align="center"><span style="color:#000000;font-size:11px;">"'.$msg.'"</span></div></b></td></tr>'; $i++;
             }
         }
 
@@ -117,14 +117,14 @@ class DebugConsole {
         '.$data.'</table></td></tr></table><table width="100%" border="0" cellpadding="0" cellspacing="0"><tr><td width="100%" bgcolor="#999999">&nbsp;</td></tr></table>';
     }
 
-    public static final function wire_log($input_level, $input_maxlevel=9, $input_file_name='', $input_content = "",$input_customlevel = "") { 
-        $file = basePath."/inc/_logs/".date("Y-m-d",time(TRUE))."_".$input_file_name.".log";
+    public static final function wire_log($input_level, $input_maxlevel=9, $input_file_name='', $input_content = "",$input_customlevel = "") {
+        $file = basePath."/inc/_logs/".date("Y-m-d",time())."_".$input_file_name.".log"; $status = [];
         if ($input_maxlevel > 0) {
             $string =
             "#############################".EOL.
-            "# <".$input_file_name.">-Logfile ".date("Y-m-d",time(TRUE))." #".EOL.
+            "# <".$input_file_name.">-Logfile ".date("Y-m-d",time())." #".EOL.
             "# ========================= #".EOL.
-            "# File created at: ".date("H:i:s",time(TRUE))." #".EOL.
+            "# File created at: ".date("H:i:s",time())." #".EOL.
             "#############################".EOL.EOL;
             if (!file_exists($file)) {
                 if (!$fileheader = fopen($file,"w")) {
@@ -219,7 +219,7 @@ class DebugConsole {
         }
 
         if ($loglevel_int > 0 AND $loglevel_int <= $input_maxlevel) {
-            $string = date("H:i:s",time(TRUE))." ". $_SERVER["REMOTE_ADDR"]." [".$loglevel_str."]: ".$input_content.EOL;
+            $string = date("H:i:s",time())." ". $_SERVER["REMOTE_ADDR"]." [".$loglevel_str."]: ".$input_content.EOL;
 
             if (!$fileheader = fopen($file,"a")) {
                 $status["int"] = 2;
@@ -241,6 +241,8 @@ class DebugConsole {
                 $status["str"] = "LOG_OK";
             }
         }
+
+        return $status;
     }
 }
 

@@ -18,7 +18,7 @@
 if(_adminMenu != 'true') exit;
 
     $where = $where.': '._navi_head;
-      if($do == "add")
+      if(common::$do == "add")
       {
         $qry = common::$sql['default']->select("SELECT s2.*, s1.name AS katname, s1.placeholder FROM `{prefix_navi_kats}` AS s1 LEFT JOIN `{prefix_navi}` AS s2 ON s1.`placeholder` = s2.`kat` ORDER BY s1.name, s2.pos;");
         $thiskat = ""; $position = "";
@@ -52,7 +52,7 @@ if(_adminMenu != 'true') exit;
           $smarty->assign('pos',_posi);
           $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_navi.tpl');
           $smarty->clearAllAssign();
-      } elseif($do == "addnavi") {
+      } elseif(common::$do == "addnavi") {
         if(empty($_POST['name']))
         {
           $show = common::error(_navi_no_name,1);
@@ -83,14 +83,14 @@ if(_adminMenu != 'true') exit;
                           `wichtig`   = '".(int)($_POST['wichtig'])."'");
           $show = common::info(_navi_added,"?admin=navi");
         }
-      } elseif($do == "delete") {
+      } elseif(common::$do == "delete") {
         $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_navi}` WHERE id = '".(int)($_GET['id'])."'");
 
         common::$sql['default']->delete("DELETE FROM `{prefix_sites}` WHERE id = '".(int)($get['editor'])."'");
         common::$sql['default']->delete("DELETE FROM `{prefix_navi}` WHERE id = '".(int)($_GET['id'])."'");
 
         $show = common::info(_navi_deleted, "?admin=navi");
-      } elseif($do == "edit") {
+      } elseif(common::$do == "edit") {
         $qry = common::$sql['default']->select("SELECT s2.*, s1.name AS katname, s1.placeholder "
                 . "FROM `{prefix_navi_kats}` AS s1 "
                 . "LEFT JOIN `{prefix_navi}` AS s2 "
@@ -152,7 +152,7 @@ if(_adminMenu != 'true') exit;
           $smarty->assign('head',_navi_edit_head);
           $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_navi_edit.tpl');
           $smarty->clearAllAssign();
-      } elseif($do == "editlink") {
+      } elseif(common::$do == "editlink") {
         if($_POST['pos'] == "1" || "2") $sign = ">= ";
         else $sign = "> ";
 
@@ -175,19 +175,19 @@ if(_adminMenu != 'true') exit;
                     WHERE id = '".(int)($_GET['id'])."'");
 
         $show = common::info(_navi_edited,"?admin=navi");
-      } elseif($do == "menu") {
+      } elseif(common::$do == "menu") {
         common::$sql['default']->update("UPDATE `{prefix_navi}`
                     SET `shown`     = '".(int)($_GET['set'])."'
                     WHERE id = '".(int)($_GET['id'])."'");
 
         header("Location: ?admin=navi");
-      } else if($do == 'intern') {
+      } else if(common::$do == 'intern') {
         common::$sql['default']->update("UPDATE `{prefix_navi_kats}`
                     SET `intern` = '".(int)($_GET['set'])."'
                     WHERE id = '".(int)($_GET['id'])."'");
 
         header("Location: ?admin=navi");
-      } else if($do == 'editkat') {
+      } else if(common::$do == 'editkat') {
         $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_navi_kats}` WHERE `id` = '".(int)($_GET['id'])."'");
 
           $smarty->caching = false;
@@ -211,7 +211,7 @@ if(_adminMenu != 'true') exit;
           $smarty->assign('do','updatekat&amp;id='.$get['id']);
           $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_navi_kats.tpl');
           $smarty->clearAllAssign();
-      } else if($do == 'updatekat') {
+      } else if(common::$do == 'updatekat') {
         common::$sql['default']->update("UPDATE `{prefix_navi_kats}`
             SET `name`        = '".stringParser::encode($_POST['name'])."',
                 `placeholder` = 'nav_".stringParser::encode($_POST['placeholder'])."',
@@ -219,10 +219,10 @@ if(_adminMenu != 'true') exit;
             WHERE `id` = '".(int)($_GET['id'])."'");
 
         $show = common::info(_menukat_updated, '?admin=navi');
-      } else if($do == 'deletekat') {
+      } else if(common::$do == 'deletekat') {
         common::$sql['default']->delete("DELETE FROM `{prefix_navi_kats}` WHERE `id` = '".(int)($_GET['id'])."'");
         $show = common::info(_menukat_deleted, '?admin=navi');
-      }  else if($do == 'addkat') {
+      }  else if(common::$do == 'addkat') {
         $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_navi_kats}` WHERE `id` = '".(int)($_GET['id'])."'");
 
           $smarty->caching = false;
@@ -246,7 +246,7 @@ if(_adminMenu != 'true') exit;
           $smarty->assign('do','insertkat');
           $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_navi_kats.tpl');
           $smarty->clearAllAssign();
-      } else if($do == 'insertkat') {
+      } else if(common::$do == 'insertkat') {
         common::$sql['default']->insert("INSERT INTO `{prefix_navi_kats}`
             SET `name`        = '".stringParser::encode($_POST['name'])."',
                 `placeholder` = 'nav_".stringParser::encode($_POST['placeholder'])."',

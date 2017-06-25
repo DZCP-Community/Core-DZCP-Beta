@@ -21,6 +21,6 @@
  * @param $smarty
  * @return string
  */
-function smarty_function_idir($params, &$smarty) {
+function smarty_function_idir($params,Smarty_Internal_Template &$smarty) {
     return '../inc/images';
 }

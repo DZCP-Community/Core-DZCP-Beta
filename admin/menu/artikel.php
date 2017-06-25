@@ -18,24 +18,18 @@
 if(_adminMenu != 'true') exit;
 $where = $where.': '._artikel;
 
-switch($do) {
+switch(common::$do) {
     case 'add':
         $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_newskat}`;"); $kat = '';
         foreach($qryk as $getk) {
-            $smarty->caching = false;
-            $smarty->assign('value',$getk['id']);
-            $smarty->assign('sel','');
-            $smarty->assign('what',stringParser::decode($getk['kategorie']));
-            $kat = $smarty->fetch('string:'._select_field);
-            $smarty->clearAllAssign();
+            $kat .= common::select_field($getk['id'],false,stringParser::decode($getk['kategorie']));
         }
-
 
         $smarty->caching = false;
         $smarty->assign('head',_artikel_add);
         $smarty->assign('autor',common::autor(common::$userid));
         $smarty->assign('kat',$kat);
-        $smarty->assign('do',insert);
+        $smarty->assign('do','insert');
         $smarty->assign('error','');
         $smarty->assign('titel','');
         $smarty->assign('artikeltext','');
@@ -58,15 +52,11 @@ switch($do) {
                 $error = _empty_artikel_title;
 
             $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_newskat}`;"); $kat = '';
-            foreach($getk as $getk) {
+            foreach($qryk as $getk) {
                 $sel = ($_POST['kat'] == $getk['id'] ? 'selected="selected"' : '');
-                $smarty->caching = false;
-                $smarty->assign('value',$getk['id']);
-                $smarty->assign('sel',$sel);
-                $smarty->assign('what',stringParser::decode($getk['kategorie']));
-                $kat .= $smarty->fetch('string:'._select_field);
-                $smarty->clearAllAssign();
+                $kat .= common::select_field($getk['id'],($_POST['kat'] == $getk['id']),stringParser::decode($getk['kategorie']));
             }
+
             $smarty->caching = false;
             $smarty->assign('error',$error);
             $error = $smarty->fetch('file:['.common::$tmpdir.']errors/errortable.tpl');
@@ -96,9 +86,9 @@ switch($do) {
             if(isset($_POST)) {
                 common::$sql['default']->insert("INSERT INTO `{prefix_artikel}` SET `autor` = ?, `kat` = ?, `titel` = ?, `text` = ?, "
                             ."`link1`  = ?, `link2`  = ?, `link3`  = ?, `url1`   = ?, `url2`   = ?, `url3`   = ?;",
-                array((int)(common::$userid),(int)($_POST['kat']),stringParser::encode($_POST['titel']),stringParser::encode($_POST['artikel']),stringParser::encode($_POST['link1']),
+                [(int)(common::$userid),(int)($_POST['kat']),stringParser::encode($_POST['titel']),stringParser::encode($_POST['artikel']),stringParser::encode($_POST['link1']),
                         stringParser::encode($_POST['link2']),stringParser::encode($_POST['link3']),stringParser::encode(common::links($_POST['url1'])),stringParser::encode(common::links($_POST['url2'])),
-                    stringParser::encode(common::links($_POST['url3']))));
+                    stringParser::encode(common::links($_POST['url3']))]);
 
                 if(isset($_FILES['artikelpic']['tmp_name']) && !empty($_FILES['artikelpic']['tmp_name'])) {
                     $endung = explode(".", $_FILES['artikelpic']['name']);
@@ -111,21 +101,14 @@ switch($do) {
         }
     break;
     case 'edit':
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_artikel}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_artikel}` WHERE `id` = ?;", [(int)($_GET['id'])]);
         $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_newskat}`;"); $kat = '';
         foreach($qryk as $getk) {
-            $sel = ($get['kat'] == $getk['id'] ? 'selected="selected"' : '');
-
-            $smarty->caching = false;
-            $smarty->assign('value',$getk['id']);
-            $smarty->assign('sel',$sel);
-            $smarty->assign('what',stringParser::decode($getk['kategorie']));
-            $kat .= $smarty->fetch('string:'._select_field);
-            $smarty->clearAllAssign();
+            $kat .= common::select_field($getk['id'],($get['kat'] == $getk['id']),stringParser::decode($getk['kategorie']));
         }
 
         $artikelimage = ""; $delartikelpic = "";
-        foreach(array("jpg", "gif", "png") as $tmpendung) {
+        foreach(common::SUPPORTED_PICTURE as $tmpendung) {
             if(file_exists(basePath."/inc/images/uploads/artikel/".(int)($_GET['id']).".".$tmpendung)) {
                 $artikelimage = common::img_size('inc/images/uploads/artikel/'.(int)($_GET['id']).'.'.$tmpendung)."<br /><br />";
                 $delartikelpic = '<a href="?admin=artikel&do=delartikelpic&id='.$_GET['id'].'">'._artikelpic_del.'</a><br /><br />';
@@ -164,18 +147,18 @@ switch($do) {
         if(isset($_POST)) {
             common::$sql['default']->update("UPDATE `{prefix_artikel}` SET `kat` = ?, `titel` = ?, `text` = ?, `link1` = ?, "
             . "`link2` = ?, `link3` = ?, `url1` = ?, `url2` = ?, `url3` = ? WHERE `id` = ?;",
-            array((int)($_POST['kat']),stringParser::encode($_POST['titel']),stringParser::encode($_POST['artikel']),stringParser::encode($_POST['link1']),
+            [(int)($_POST['kat']),stringParser::encode($_POST['titel']),stringParser::encode($_POST['artikel']),stringParser::encode($_POST['link1']),
                 stringParser::encode($_POST['link2']),stringParser::encode($_POST['link3']),stringParser::encode(common::links($_POST['url1'])),
-                stringParser::encode(common::links($_POST['url2'])),stringParser::encode(common::links($_POST['url3'])),(int)($_GET['id'])));
+                stringParser::encode(common::links($_POST['url2'])),stringParser::encode(common::links($_POST['url3'])),(int)($_GET['id'])]);
 
             if(isset($_FILES['artikelpic']['tmp_name']) && !empty($_FILES['artikelpic']['tmp_name'])) {
-                foreach(array("jpg", "gif", "png") as $tmpendung) {
+                foreach(common::SUPPORTED_PICTURE as $tmpendung) {
                     if(file_exists(basePath."/inc/images/uploads/artikel/".(int)($_GET['id']).".".$tmpendung))
                         @unlink(basePath."/inc/images/uploads/artikel/".(int)($_GET['id']).".".$tmpendung);
                 }
 
                 //Remove minimize
-                $files = common::get_files(basePath."/inc/images/uploads/artikel/",false,true,array("jpg", "gif", "png"));
+                $files = common::get_files(basePath."/inc/images/uploads/artikel/",false,true, common::SUPPORTED_PICTURE);
                 if($files) {
                     foreach ($files as $file) {
                         if(preg_match("#".(int)($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
@@ -195,17 +178,17 @@ switch($do) {
         }
     break;
     case 'delete':
-        common::$sql['default']->delete("DELETE FROM `{prefix_artikel}` WHERE `id` = ?;",array((int)($_GET['id'])));
-        common::$sql['default']->delete("DELETE FROM `{prefix_acomments}` WHERE `artikel` = ?;",array((int)($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_artikel}` WHERE `id` = ?;", [(int)($_GET['id'])]);
+        common::$sql['default']->delete("DELETE FROM `{prefix_acomments}` WHERE `artikel` = ?;", [(int)($_GET['id'])]);
 
         //Remove Pic
-        foreach(array("jpg", "gif", "png") as $tmpendung) {
+        foreach(common::SUPPORTED_PICTURE as $tmpendung) {
             if(file_exists(basePath."/inc/images/uploads/artikel/".(int)($_GET['id']).".".$tmpendung))
                 @unlink(basePath."/inc/images/uploads/artikel/".(int)($_GET['id']).".".$tmpendung);
         }
 
         //Remove minimize
-        $files = common::get_files(basePath."/inc/images/uploads/artikel/",false,true,array("jpg", "gif", "png"));
+        $files = common::get_files(basePath."/inc/images/uploads/artikel/",false,true, common::SUPPORTED_PICTURE);
         if($files) {
             foreach ($files as $file) {
                 if(preg_match("#".(int)($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
@@ -220,13 +203,13 @@ switch($do) {
     break;
     case 'delartikelpic':
         //Remove Pic
-        foreach(array("jpg", "gif", "png") as $tmpendung) {
+        foreach(common::SUPPORTED_PICTURE as $tmpendung) {
             if(file_exists(basePath."/inc/images/uploads/artikel/".(int)($_GET['id']).".".$tmpendung))
                 @unlink(basePath."/inc/images/uploads/artikel/".(int)($_GET['id']).".".$tmpendung);
         }
 
         //Remove minimize
-        $files = common::get_files(basePath."/inc/images/uploads/artikel/",false,true,array("jpg", "gif", "png"));
+        $files = common::get_files(basePath."/inc/images/uploads/artikel/",false,true, common::SUPPORTED_PICTURE);
         if($files) {
             foreach ($files as $file) {
                 if(preg_match("#".(int)($_GET['id'])."(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {
@@ -241,15 +224,16 @@ switch($do) {
     break;
     case 'public':
         if(isset($_GET['what']) && $_GET['what'] == 'set')
-            common::$sql['default']->update("UPDATE `{prefix_artikel}` SET `public` = 1, `datum`  = ? WHERE `id` = ?",array(time(),(int)($_GET['id'])));
+            common::$sql['default']->update("UPDATE `{prefix_artikel}` SET `public` = 1, `datum`  = ? WHERE `id` = ?", [time(),(int)($_GET['id'])]);
         else
-            common::$sql['default']->update("UPDATE `{prefix_artikel}` SET `public` = 0 WHERE `id` = ?;",array((int)($_GET['id'])));
+            common::$sql['default']->update("UPDATE `{prefix_artikel}` SET `public` = 0 WHERE `id` = ?;", [(int)($_GET['id'])]);
 
         header("Location: ?admin=artikel");
     break;
     default:
-        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_artikel}` ".common::orderby_sql(array("titel","datum","autor"),'ORDER BY `public` ASC, `datum` DESC')." LIMIT ".($page - 1)*settings::get('m_adminartikel').",".settings::get('m_adminartikel').";");
+        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_artikel}` ".common::orderby_sql(["titel","datum","autor"],'ORDER BY `public` ASC, `datum` DESC')." LIMIT ".(common::$page - 1)*settings::get('m_adminartikel').",".settings::get('m_adminartikel').";");
         foreach($qry as $get) {
+            /** @var TYPE_NAME $admin */
             $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
             $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_artikel);
 

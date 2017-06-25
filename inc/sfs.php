@@ -27,10 +27,10 @@ class sfs extends common {
         ## http://de.wikipedia.org/wiki/Private_IP-Adresse ##
         if(!self::validateIpV4Range(self::$userip['v4'], '[192].[168].[0-255].[0-255]') && !self::validateIpV4Range(self::$userip['v4'], '[127].[0].[0-255].[0-255]') &&
             !self::validateIpV4Range(self::$userip['v4'], '[10].[0-255].[0-255].[0-255]') && !self::validateIpV4Range(self::$userip['v4'], '[172].[16-31].[0-255].[0-255]')) {
-            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_ipban}` WHERE `ipv4` = ? LIMIT 1;",array(self::$userip['v4']));
+            $get = self::$sql['default']->fetch("SELECT * FROM `{prefix_ipban}` WHERE `ipv4` = ? LIMIT 1;", [self::$userip['v4']]);
             if(self::$sql['default']->rowCount()) {
                 if((time()-$get['time']) > (2*86400) && $get['enable']) {
-                    self::get(array('ip' => self::$userip['v4'])); //Array ( [success] => 1 [ip] => Array ( [lastseen] => 2013-04-26 19:57:51 [frequency] => 1327 [appears] => 1 [confidence] => 99.89 ) )
+                    self::get(['ip' => self::$userip['v4']]); //Array ( [success] => 1 [ip] => Array ( [lastseen] => 2013-04-26 19:57:51 [frequency] => 1327 [appears] => 1 [confidence] => 99.89 ) )
                     $stopforumspam = self::$json;
                     if(is_array($stopforumspam) && array_key_exists('success', $stopforumspam) && $stopforumspam['success']) {
                         $stopforumspam = $stopforumspam['ip']; // Array ( [lastseen] => 2013-04-26 19:57:51 [frequency] => 1327 [appears] => 1 [confidence] => 99.89 )
@@ -41,15 +41,15 @@ class sfs extends common {
                             $stopforumspam_data_db['lastseen'] = $stopforumspam['lastseen'];
                             $stopforumspam_data_db['banned_msg'] = 'Autoblock by stopforumspam.com';
                             self::$sql['default']->update("UPDATE `{prefix_ipban}` SET `time` = ?, `typ` = 1, `data` = ? WHERE `id` = ?;",
-                                    array(time(),serialize($stopforumspam_data_db),$get['id']));
-                            self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE `ipv4` = ?;",array(self::$userip['v4']));
-                            self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `ipv4` = ?;",array(self::$userip['v4']));
-                            self::$sql['default']->delete("DELETE FROM `{prefix_iptodns}` WHERE `ipv4` = ?;",array(self::$userip['v4']));
+                                    [time(),serialize($stopforumspam_data_db),$get['id']]);
+                            self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE `ipv4` = ?;", [self::$userip['v4']]);
+                            self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `ipv4` = ?;", [self::$userip['v4']]);
+                            self::$sql['default']->delete("DELETE FROM `{prefix_iptodns}` WHERE `ipv4` = ?;", [self::$userip['v4']]);
                             self::$blockuser = true;
                         } else {
                             $stopforumspam_data_db['appears'] = $stopforumspam['appears'];
                             self::$sql['default']->update("UPDATE `{prefix_ipban}` SET `time` = ?, `typ` = 0, `data` = ? WHERE `id` = ?;",
-                                    array(time(),serialize($stopforumspam_data_db),$get['id']));
+                                    [time(),serialize($stopforumspam_data_db),$get['id']]);
                             self::$blockuser = false;
                         }
                     }
@@ -60,22 +60,22 @@ class sfs extends common {
                     self::$blockuser = false;
             } else {
                 //typ: 0 = Off, 1 = GSL, 2 = SysBan, 3 = Ipban
-                self::get(array('ip' => self::$userip['v4'])); //Array ( [success] => 1 [ip] => Array ( [lastseen] => 2013-04-26 19:57:51 [frequency] => 1327 [appears] => 1 [confidence] => 99.89 ) )
+                self::get(['ip' => self::$userip['v4']]); //Array ( [success] => 1 [ip] => Array ( [lastseen] => 2013-04-26 19:57:51 [frequency] => 1327 [appears] => 1 [confidence] => 99.89 ) )
                 $stopforumspam = self::$json;
                 if(is_array($stopforumspam) && array_key_exists('success', $stopforumspam) && $stopforumspam['success']) {
                     $stopforumspam = $stopforumspam['ip']; // Array ( [lastseen] => 2013-04-26 19:57:51 [frequency] => 1327 [appears] => 1 [confidence] => 99.89 )
                     if($stopforumspam['appears'] == '1' && $stopforumspam['confidence'] >= self::$confidence && $stopforumspam['frequency'] >= self::$frequency && self::$autoblock) {
                         $stopforumspam['banned_msg'] = 'Autoblock by stopforumspam.com';
-                        self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE `ipv4` = ?;",array(self::$userip['v4']));
-                        self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `ipv4` = ?;",array(self::$userip['v4']));
-                        self::$sql['default']->delete("DELETE FROM `{prefix_iptodns}` WHERE `ipv4` = ?;",array(self::$userip['v4']));
+                        self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE `ipv4` = ?;", [self::$userip['v4']]);
+                        self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `ipv4` = ?;", [self::$userip['v4']]);
+                        self::$sql['default']->delete("DELETE FROM `{prefix_iptodns}` WHERE `ipv4` = ?;", [self::$userip['v4']]);
                         self::$sql['default']->insert("INSERT INTO `{prefix_ipban}` SET `ipv4` = ?, `time` = ?, `typ` = 1, `data` = ?;",
-                                array(self::$userip['v4'],time(),serialize($stopforumspam))); //Banned
+                                [self::$userip['v4'],time(),serialize($stopforumspam)]); //Banned
                         self::$blockuser = true;
                     } else {
                         $stopforumspam['banned_msg'] = '';
                         self::$sql['default']->insert("INSERT INTO `{prefix_ipban}` SET `ipv4` = ?, `time` = ?,`typ` = 0, `data` = ?;",
-                                array(self::$userip['v4'],time(),serialize($stopforumspam))); //Add to DB
+                                [self::$userip['v4'],time(),serialize($stopforumspam)]); //Add to DB
                         self::$blockuser = false;
                     }
                 }
@@ -86,9 +86,10 @@ class sfs extends common {
     public static function is_spammer()
     { return self::$blockuser; }
 
-    public static function get( $args = array() ) {
+    public static function get( $args = []) {
         self::$url = self::$endpoint.'api?f=json&'.http_build_query($args, '', '&');
-        if(!self::call_json()) return array('data' => array('success' => '0'));
+        if(!self::call_json()) return ['data' => ['success' => '0']];
+        return ['data' => ['success' => '0']];
     }
 
     protected static function call_json() {

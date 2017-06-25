@@ -29,9 +29,8 @@ define('_Votes', true);
 $smarty = common::getSmarty(); //Use Smarty
 
 ## SECTIONS
-$action = empty($action) ? 'default' : $action;
-if(file_exists(basePath."/votes/case_".$action.".php"))
-    require_once(basePath."/votes/case_".$action.".php");
+if(file_exists(basePath."/votes/case_".common::$action.".php"))
+    require_once(basePath."/votes/case_".common::$action.".php");
 
 ## INDEX OUTPUT ##
 $title = common::$pagetitle." - ".$where;

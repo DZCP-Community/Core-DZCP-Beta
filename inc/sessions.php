@@ -33,7 +33,7 @@ final class session {
                 if(show_sessions_debug)
                     DebugConsole::insert_info("session::__construct()", "Use Memcache for Sessions");
 
-                session_set_save_handler(array($this, 'mem_open'), array($this, 'mem_close'), array($this, 'mem_read'), array($this, 'mem_write'), array($this, 'mem_destroy'), array($this, 'mem_gc'));
+                session_set_save_handler([$this, 'mem_open'], [$this, 'mem_close'], [$this, 'mem_read'], [$this, 'mem_write'], [$this, 'mem_destroy'], [$this, 'mem_gc']);
                 register_shutdown_function('session_write_close');
             break;
             case 'apc':
@@ -41,14 +41,14 @@ final class session {
                     DebugConsole::insert_info("session::__construct()", "Use APC for Sessions");
 
                 $this->_ttl = sessions_ttl_maxtime;
-                session_set_save_handler(array($this, 'apc_open'), array($this, 'apc_close'), array($this, 'apc_read'), array($this, 'apc_write'), array($this, 'apc_destroy'), array($this, 'apc_gc'));
+                session_set_save_handler([$this, 'apc_open'], [$this, 'apc_close'], [$this, 'apc_read'], [$this, 'apc_write'], [$this, 'apc_destroy'], [$this, 'apc_gc']);
                 register_shutdown_function('session_write_close');
             break;
             case 'mysql':
                 if(show_sessions_debug)
                     DebugConsole::insert_info("session::__construct()", "Use MySQL for Sessions");
 
-                session_set_save_handler(array($this, 'sql_open'), array($this, 'sql_close'), array($this, 'sql_read'), array($this, 'sql_write'), array($this, 'sql_destroy'), array($this, 'sql_gc'));
+                session_set_save_handler([$this, 'sql_open'], [$this, 'sql_close'], [$this, 'sql_read'], [$this, 'sql_write'], [$this, 'sql_destroy'], [$this, 'sql_gc']);
                 register_shutdown_function('session_write_close');
             break;
             default:
@@ -116,7 +116,6 @@ final class session {
     }
 
     public final function mem_read($id) {
-        global $db_array;
         if(show_sessions_debug) {
             DebugConsole::insert_info("session::mem_read()", "Read Session-Data from Memcache");
             DebugConsole::insert_info("session::mem_read()", "Select ID: '".$id."'");
@@ -166,8 +165,8 @@ final class session {
     public final function apc_open($savePath, $sessionName) {
         $this->_prefix = 'BSession/'.$sessionName;
         if (apc_fetch($this->_prefix.'/TS') === false) {
-            apc_store($this->_prefix.'/TS', array(''));
-            apc_store($this->_prefix.'/LOCK', array(''));
+            apc_store($this->_prefix.'/TS', ['']);
+            apc_store($this->_prefix.'/LOCK', ['']);
         }
 
         if(show_sessions_debug)
@@ -287,8 +286,8 @@ final class session {
         global $db,$database;
         if (sessions_sql_sethost) {
             $this->_use_sqlS_local = false;
-            $database->setConfig('sessions',array("driver" => sessions_sql_driver, "db" => sessions_sql_db, 
-            "db_host" => sessions_sql_host, "db_user" => sessions_sql_user, "db_pw" => sessions_sql_pass));
+            $database->setConfig('sessions', ["driver" => sessions_sql_driver, "db" => sessions_sql_db,
+            "db_host" => sessions_sql_host, "db_user" => sessions_sql_user, "db_pw" => sessions_sql_pass]);
             $this->db = $database->getInstance('sessions');
         } else {
             $database->cloneConfig('default','sessions');
@@ -321,7 +320,7 @@ final class session {
         }
 
         if ($this->db instanceOf database) {
-            $data = $this->db->selectSingle("SELECT `data` FROM `{prefix_sessions}` WHERE `ssid` = ? LIMIT 1;",array($id),'data');
+            $data = $this->db->selectSingle("SELECT `data` FROM `{prefix_sessions}` WHERE `ssid` = ? LIMIT 1;", [$id],'data');
             if(!$this->db->rowCount()) { return ''; }
             if (empty($data)) { return ''; }
             if(sessions_encode) {
@@ -354,11 +353,11 @@ final class session {
 
         if ($this->db instanceOf database) {
             $time = time();
-            $this->db->select("SELECT `id` FROM `{prefix_sessions}` WHERE `ssid` = ? LIMIT 1;",array($id));
+            $this->db->select("SELECT `id` FROM `{prefix_sessions}` WHERE `ssid` = ? LIMIT 1;", [$id]);
             if(!$this->db->rowCount()) {
-                return $this->db->insert("INSERT INTO `{prefix_sessions}` (id, ssid, time, data) VALUES (NULL, ?, ?, ?);",array($id, $time, $data));
+                return $this->db->insert("INSERT INTO `{prefix_sessions}` (id, ssid, time, data) VALUES (NULL, ?, ?, ?);", [$id, $time, $data]);
             } else {
-                return $this->db->update("UPDATE `{prefix_sessions}` SET `time` = ?, `data` = ? WHERE `ssid` = ?;",array($time, $data, $id));
+                return $this->db->update("UPDATE `{prefix_sessions}` SET `time` = ?, `data` = ? WHERE `ssid` = ?;", [$time, $data, $id]);
             }
         }
 
@@ -370,10 +369,12 @@ final class session {
             DebugConsole::insert_info("session::sql_destroy()", "Call Session destroy");
         }
 
-        $this->db->select("SELECT `id` FROM `{prefix_sessions}` WHERE `ssid` = ? LIMIT 1;",array($id));
+        $this->db->select("SELECT `id` FROM `{prefix_sessions}` WHERE `ssid` = ? LIMIT 1;", [$id]);
         if($this->db->rowCount()) {
-            return $this->db->delete("DELETE FROM `{prefix_sessions}` WHERE `ssid` = ?;",array($id));
+            return $this->db->delete("DELETE FROM `{prefix_sessions}` WHERE `ssid` = ?;", [$id]);
         }
+
+        return false;
     }
 
     public final function sql_gc($max) {
@@ -386,6 +387,8 @@ final class session {
         if($this->db->rowCount()) {
             return $this->db->delete("DELETE FROM `{prefix_sessions}` WHERE `time` < ".$new_time.";");
         }
+
+        return false;
     }
 
     public static function encode($data,$mcryptkey='',$binary=false,$hex=false) {
@@ -395,7 +398,7 @@ final class session {
         if($binary && !$hex) { $crypt->__set('Hash',CRYPT_MODE_BINARY); }
         if(!$binary && $hex) { $crypt->__set('Hash',CRYPT_MODE_HEXADECIMAL); }
         $is_array = is_array($data);
-        $data = serialize(array('data' => $data, 'array' => $is_array));
+        $data = serialize(['data' => $data, 'array' => $is_array]);
         return $crypt->Encrypt($data);
     }
 

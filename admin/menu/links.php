@@ -18,7 +18,7 @@
 if(_adminMenu != 'true') exit;
 $where = $where.': '._config_links;
 
-switch ($do) {
+switch (common::$do) {
     case 'new':
         $smarty->caching = false;
         $smarty->assign('head',_links_admin_head);
@@ -43,12 +43,12 @@ switch ($do) {
                 $show = common::error(_links_empty_text, 1);
         } else {
             common::$sql['default']->insert("INSERT INTO `{prefix_links}` SET `url` = ?, `text` = ?, `banner` = ?, `beschreibung` = ?;",
-                  array(stringParser::encode(common::links($_POST['link'])),stringParser::encode($_POST['text']),stringParser::encode($_POST['banner']),stringParser::encode($_POST['beschreibung'])));
+                  [stringParser::encode(common::links($_POST['link'])),stringParser::encode($_POST['text']),stringParser::encode($_POST['banner']),stringParser::encode($_POST['beschreibung'])]);
             $show = common::info(_link_added, "?admin=links");
         }
     break;
     case 'edit':
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_links}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_links}` WHERE `id` = ?;", [(int)($_GET['id'])]);
         
         $tchecked = (!$get['banner'] ? 'checked="checked"' : '');
         $bchecked = ($get['banner'] ? 'checked="checked"' : '');
@@ -78,12 +78,12 @@ switch ($do) {
               $show = common::error(_links_empty_text, 1);
         } else {
             common::$sql['default']->update("UPDATE `{prefix_links}` SET `url` = ?, `text` = ?, `banner` = ?, `beschreibung` = ? WHERE id = ?;",
-                    array(stringParser::encode(common::links($_POST['link'])),stringParser::encode($_POST['text']),stringParser::encode($_POST['banner']),stringParser::encode($_POST['beschreibung']),(int)($_GET['id'])));
+                    [stringParser::encode(common::links($_POST['link'])),stringParser::encode($_POST['text']),stringParser::encode($_POST['banner']),stringParser::encode($_POST['beschreibung']),(int)($_GET['id'])]);
             $show = common::info(_link_edited, "?admin=links");
         }
     break;
     case 'delete':
-        common::$sql['default']->delete("DELETE FROM `{prefix_links}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_links}` WHERE `id` = ?;", [(int)($_GET['id'])]);
         $show = common::info(_link_deleted, "?admin=links");
     break;
     default:

@@ -18,7 +18,7 @@
 if(_adminMenu != 'true') exit;
 $where = $where.': '._config_activate_user;
 
-switch ($do) {
+switch (common::$do) {
     case 'activate':
         common::$sql['default']->update("UPDATE `{prefix_users}` SET `level` = 1, `status` = 1, `actkey` = '' WHERE `id` = ?;", [(int)$_GET['id']]);
         $show = common::info(_actived, "?admin=activate_user", 2);

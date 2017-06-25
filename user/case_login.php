@@ -17,7 +17,7 @@
 
 if(defined('_UserMenu')) {
     $where = _site_user_login;
-    if($do == "yes") {
+    if(common::$do == "yes") {
         ## Prufe ob der Secure Code aktiviert ist und richtig eingegeben wurde ##
         switch (isset($_GET['from']) ? $_GET['from'] : 'default') {
             case 'menu': common::$securimage->namespace = 'menu_login'; break;
@@ -30,7 +30,7 @@ if(defined('_UserMenu')) {
             $get = common::$sql['default']->fetch("SELECT `id`,`user`,`nick`,`pwd`,`pwd_encoder`,`email`,`level`,`time` "
                         . "FROM `{prefix_users}` "
                         . "WHERE `user` = ? AND `level` != 0;", 
-                array(stringParser::encode($_POST['user'])));
+                [stringParser::encode($_POST['user'])]);
 
             $login = false; $pwd = '';
             if($get['id'] >= 1 && !empty($_POST['pwd'])) {
@@ -43,8 +43,8 @@ if(defined('_UserMenu')) {
                     //Update Password encoding
                     if($get['pwd_encoder'] != settings::get('default_pwd_encoder')) {
                         common::$sql['default']->update("UPDATE `{prefix_users}` SET `pwd` = ?, `pwd_encoder` = ? "
-                                . "WHERE `id` = ?;", array(($pass = common::pwd_encoder($_POST['pwd'])), 
-                                    settings::get('default_pwd_encoder'), $get['id']));
+                                . "WHERE `id` = ?;", [($pass = common::pwd_encoder($_POST['pwd'])),
+                                    settings::get('default_pwd_encoder'), $get['id']]);
                         $get['pwd'] = $pass;
                         $get['pwd_encoder'] = settings::get('default_pwd_encoder');
                     }
@@ -54,7 +54,7 @@ if(defined('_UserMenu')) {
                         cookie::put('id', $get['id']);
                         $permanent_key = md5(common::mkpwd(8));
                         $gethostbyaddr = gethostbyaddr(common::$userip['v4']);
-                        if (common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `host` = ?;", array($gethostbyaddr)) >= 1) {
+                        if (common::$sql['default']->rows("SELECT `id` FROM `{prefix_autologin}` WHERE `host` = ?;", [$gethostbyaddr]) >= 1) {
                             //Update Autologin
                             common::$sql['default']->update("UPDATE `{prefix_autologin}` "
                                     . "SET `ssid` = ?,"
@@ -64,7 +64,7 @@ if(defined('_UserMenu')) {
                                     . "`update` = ?,"
                                     . "`expires` = ? "
                                     . "WHERE `host` = ?;",
-                            array(session_id(), $permanent_key, common::$userip['v4'], $time = time(), $time, autologin_expire, $gethostbyaddr));
+                            [session_id(), $permanent_key, common::$userip['v4'], $time = time(), $time, autologin_expire, $gethostbyaddr]);
                         } else {
                             //Insert Autologin
                             common::$sql['default']->insert("INSERT INTO `{prefix_autologin}` "
@@ -77,8 +77,8 @@ if(defined('_UserMenu')) {
                                     . "`date` = ?, "
                                     . "`update` = 0, "
                                     . "`expires` = ?;",
-                            array($get['id'], session_id(), $permanent_key, common::$userip['v4'],
-                                common::cut($gethostbyaddr, 20), $gethostbyaddr, time(), autologin_expire));
+                            [$get['id'], session_id(), $permanent_key, common::$userip['v4'],
+                                common::cut($gethostbyaddr, 20), $gethostbyaddr, time(), autologin_expire]);
                         }
 
                         cookie::put('pkey', $permanent_key);
@@ -92,14 +92,14 @@ if(defined('_UserMenu')) {
                     $_SESSION['ip'] = common::$userip['v4'];
 
                     common::userstats_increase('logins',$get['id']);
-                    common::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ipv4` = ? WHERE `id` = ?;", array(session_id(), common::$userip['v4'], $get['id']));
+                    common::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ipv4` = ? WHERE `id` = ?;", [session_id(), common::$userip['v4'], $get['id']]);
                     common::setIpcheck("login(" . $get['id'] . ")");
 
                     //-> Aktualisiere Ip-Count Tabelle
-                    $qry = common::$sql['default']->select("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ipv4` = ? AND `uid` = 0;", array(common::$userip['v4']));
+                    $qry = common::$sql['default']->select("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ipv4` = ? AND `uid` = 0;", [common::$userip['v4']]);
                     if (common::$sql['default']->rowCount() >= 1) {
                         foreach ($qry as $get_ci) {
-                            common::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ? WHERE `id` = ?;", array($get['id'], $get_ci['id']));
+                            common::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ? WHERE `id` = ?;", [$get['id'], $get_ci['id']]);
                         }
                     }
 
@@ -108,7 +108,7 @@ if(defined('_UserMenu')) {
                     $index = common::error(_login_banned);
                 }
             } else {
-                $get = common::$sql['default']->fetch("SELECT `id` FROM `{prefix_users}` WHERE `user` = ?;",array(stringParser::encode($_POST['user'])));
+                $get = common::$sql['default']->fetch("SELECT `id` FROM `{prefix_users}` WHERE `user` = ?;", [stringParser::encode($_POST['user'])]);
                 if(common::$sql['default']->rowCount()) {
                     common::setIpcheck("trylogin(".$get['id'].")");
                 }

@@ -105,11 +105,11 @@ class Crypt {
      */ 
     function __set($property, $value) { 
         switch ($property) { 
-            case 'Key' : return $this->SetKey($value); 
-            case 'Mode': return $this->SetMode($value); 
-            case 'Hash': return $this->SetHash($value); 
-        } 
-    } 
+            case 'Key' : $this->SetKey($value);
+            case 'Mode': $this->SetMode($value);
+            case 'Hash': $this->SetHash($value);
+        }
+    }
 
     /** 
      * Read methods for the class properties. 
@@ -124,7 +124,9 @@ class Crypt {
             case 'Key' : return $this->key; 
             case 'Mode': return $this->mode; 
             case 'Hash': return $this->hash; 
-        } 
+        }
+
+        return '';
     } 
 
     /** 
@@ -169,14 +171,12 @@ class Crypt {
      * 
      * @name        SupportedModes() 
      * @access      public 
-     * @static 
-     * @param       void 
-     * @return      void 
-     */ 
+     * @static
+     * @return      array
+     */
+
     public static function SupportedModes() { 
-        return array(CRYPT_MODE_BINARY, 
-                     CRYPT_MODE_BASE64, 
-                     CRYPT_MODE_HEXADECIMAL); 
+        return [CRYPT_MODE_BINARY,CRYPT_MODE_BASE64,CRYPT_MODE_HEXADECIMAL];
     } 
 
     /** 
@@ -186,11 +186,10 @@ class Crypt {
      * @access      public 
      * @static 
      * @param       void 
-     * @return      void 
+     * @return      array
      */ 
     public static function SupportedHashes() { 
-        return array(CRYPT_HASH_MD5, 
-                     CRYPT_HASH_SHA1); 
+        return [CRYPT_HASH_MD5, CRYPT_HASH_SHA1];
     } 
 
     /** 
@@ -200,8 +199,8 @@ class Crypt {
      * @access      public 
      * @static 
      * @param       $mode       integer 
-     * @return      void 
-     */ 
+     * @return      bool
+     */
     public static function IsSupportedMode($mode) {  
         return in_array($mode, Crypt::SupportedModes()); 
     } 
@@ -213,8 +212,8 @@ class Crypt {
      * @access      public 
      * @static 
      * @param       $mode       integer 
-     * @return      void 
-     */ 
+     * @return      bool
+     */
     public static function IsSupportedHash($hash) {  
         return in_array($hash, Crypt::SupportedHashes()); 
     } 
@@ -237,7 +236,9 @@ class Crypt {
         if ($this->mode == CRYPT_MODE_BASE64) 
             return @$encrypt; 
         if ($this->mode == CRYPT_MODE_HEXADECIMAL) 
-            return $this->EncodeHexadecimal(@$encrypt); 
+            return $this->EncodeHexadecimal(@$encrypt);
+
+       return '';
     } 
     
     /** 

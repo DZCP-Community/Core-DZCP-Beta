@@ -17,7 +17,7 @@
 
 final class cookie {
     private static $cname = "";
-    private static $val = array();
+    private static $val = [];
     private static $expires;
     private static $dir = '/';
     private static $site = '';
@@ -30,7 +30,7 @@ final class cookie {
         self::$expires = ($cexpires ? $cexpires : (time()+cookie_expires));
         self::$dir=(empty($cdir) ? '/' : cookie_dir);
         self::$site=(empty($csite) ? '' : cookie_domain);
-        self::$val=array();
+        self::$val= [];
         self::extract();
     }
 
@@ -74,7 +74,7 @@ final class cookie {
     * Leert das Cookie
     */
     public final static function clear()
-    { self::$val=array(); self::save(); }
+    { self::$val= []; self::save(); }
 
     /**
     * Loscht einen Wert aus dem Cookie

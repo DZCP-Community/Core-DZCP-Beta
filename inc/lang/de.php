@@ -179,6 +179,7 @@ define("_forum_go", 'Los');
 define("_forum_from", 'Von');
 define("_forum_admin_editby", 'der Nachricht "<span class="fontWichtig">zuletzt editiert</span>" anh&auml;ngen?');
 define('_forum_thread_lpost', 'von {$nick}<br />am {$date}{lang msgID="uhr"}');
+define('_forum_search_word', 'Forensuche nach...');
 
 //Startpage
 define('_profil_startpage', 'Startseite');
@@ -306,7 +307,7 @@ define('_eintrag_titel', '<span class="fontBold">#{$postid}</span> am {$datum} u
 ## ADDED / REDEFINED FOR 1.5.1
 define('_config_double_post', 'Forum Doppelpost');
 define('_config_fotum_vote', 'Forum-Vote');
-define('_config_fotum_vote_info', '<center>Zeigt die Forum-Votes auch unter Umfragen an.</center>');
+define('_config_fotum_vote_info', '<div style="text-align: center;">Zeigt die Forum-Votes auch unter Umfragen an.</div>');
 
 ## ADDED / REDEFINED FOR 1.5
 define('_search_sites', 'Unterseiten');
@@ -526,7 +527,7 @@ define('_login_secure_help', 'Gib den zweistelligen Zahlencode in das Feld ein u
 define('_online_head_guests', 'G&auml;ste online');
 define('_admin_first', 'als erstes');
 define('_admin_squads_nav', 'Navigation');
-define('_admin_squad_show_info', '<center>Definiert, ob ein Team in der Team&uuml;bersicht standardm&auml;&szlig;ig ein- oder aufgeklappt ist</center>');
+define('_admin_squad_show_info', '<div style="text-align: center;">Definiert, ob ein Team in der Team&uuml;bersicht standardm&auml;&szlig;ig ein- oder aufgeklappt ist</div>');
 //Edited
 define('_dl_getfile', '{$file} jetzt herunterladen');
 define('_partners_link_add', 'Partnerbutton hinzuf&uuml;gen');
@@ -602,6 +603,7 @@ define('_sep', 'September');
 define('_okt', 'Oktober');
 define('_nov', 'November');
 define('_dez', 'Dezember');
+
 ## Laenderliste ##
 define('_country_list', '
 <option value="eg"> &Auml;gypten</option>
@@ -772,6 +774,7 @@ define('_country_list', '
 <option value="zm"> Zambia</option>
 <option value="cf"> Zentralafrikan. Republik</option>
 <option value="cy"> Zypern</option>');
+
 ## Globale Userraenge ##
 define('_status_banned', 'gesperrt');
 define('_status_unregged', 'unregistriert');
@@ -779,12 +782,15 @@ define('_status_user', 'User');
 define('_status_trial', 'Trial');
 define('_status_member', 'Member');
 define('_status_admin', 'Administrator');
+
 ## Userliste ##
 define('_acc_banned', 'Gesperrt');
 define('_ulist_acc_banned', 'Gesperrte Accounts');
+
 ## Navigation: Kalender ##
 define('_kal_birthday', 'Geburtstag von ');
 define('_kal_event', 'Event: ');
+
 //-> Allgemein
 define('_years', 'Jahre');
 define('_year', 'Jahr');
@@ -800,20 +806,7 @@ define('_minutes', 'Minuten');
 define('_minute', 'Minute');
 define('_seconds', 'Sekunden');
 define('_second', 'Sekunde');
-//-> Admin
-define('_linkus_admin_head', 'Neues LinkUs definieren');
-define('_linkus_link', 'Ziellink');
-define('_linkus_bsp_target', 'http://www.domain.tld');
-define('_linkus_bsp_bannerurl', 'http://www.domain.tld/banner.jpg');
-define('_linkus_bsp_desc', 'Beispielclan - Beschreibung');
-define('_linkus_beschreibung', 'Title');
-define('_linkus_text', 'Bannerlink');
-define('_linkus_empty_beschreibung', 'Du musst einen Title-Tag angeben!');
-define('_linkus_empty_link', 'Du musst eine Link-URL angeben!');
-define('_linkus_added', 'Das LinkUs wurde erfolgreich hinzugef&uuml;gt!');
-define('_linkus_edited', 'Das LinkUs wurde erfolgreich editiert!');
-define('_linkus_deleted', 'Das LinkUs wurde erfolgreich gel&ouml;scht!');
-define('_linkus', 'LinkUs');
+
 ## News ##
 define('_news_kommentar', 'Kommentar');
 define('_news_kommentare', 'Kommentare');
@@ -840,7 +833,8 @@ define('_forum_admin_head', 'Admin');
 define('_forum_admin_addsticky', 'als <span class="fontWichtig">wichtig</span> markieren?');
 define('_forum_katname_intern', '<span class="fontWichtig">Intern:</span> {$katname}');
 define('_forum_sticky', 'Wichtig');
-define('_forum_sticky_global', 'Global und Wichtig');
+define('_forum_global', 'Global');
+define('_forum_closed', 'Geschlossen');
 define('_forum_head_skat_search', 'In dieser Kategorie suchen');
 define('_forum_head_threads', 'Themen');
 define('_forum_replys', 'Antworten');
@@ -1177,6 +1171,7 @@ define('_upload_userpic_info', 'Nur jpg, gif oder png Dateien mit einer maximale
 define('_upload_ava_head', 'Useravatar');
 define('_upload_userava_info', 'Nur jpg, gif oder png Dateien mit einer maximalen Gr&ouml;&szlig;e von {$userpicsize}KB!<br />Die empfohlene Gr&ouml;&szlig;e ist 100px * 100px ');
 define('_upload_newskats_head', 'Kategoriebilder');
+define('_upload_usergallery_info', 'Nur jpg, gif oder png Dateien mit einer maximalen Gr&ouml;&szlig;e von {$userpicsize}KB!');
 
 ## Unzugeordnet ##
 define('_forum_no_last_post', 'Der letzte Post kann leider nicht angezeigt werden!');
@@ -1200,7 +1195,6 @@ define('_lobby_new_artc_2', 'neue Artikelkommentare');
 define('_profil_nletter', 'Newsletter empfangen?');
 define('_forum_admin_addglobal', '<span class="fontWichtig">Globaler</span> Eintrag? (In allen Foren und Subforen)');
 define('_forum_admin_global', '<span class="fontWichtig">Globaler</span> Eintrag?');
-define('_forum_global', 'Global');
 define('_admin_config_badword', 'Badword-Filter');
 define('_admin_config_badword_info', 'Hier kannst du W&ouml;rter angeben, die bei Eingabe mit **** versehen werden. Die W&ouml;rter m&uuml;ssen mit Komma getrennt werden!');
 define('_iplog_info', '<span class="fontBold">Hinweis:</span> Aus Sicherheitsgr&uuml;nden wird deine IP geloggt!');

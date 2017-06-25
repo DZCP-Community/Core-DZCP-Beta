@@ -15,7 +15,7 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function smarty_function_welcome($params, &$smarty) {
+function smarty_function_welcome($params,Smarty_Internal_Template &$smarty) {
     $return = "<script language=\"javascript\" type=\"text/javascript\">
                  date = new Date();
                  hour = date.getHours();

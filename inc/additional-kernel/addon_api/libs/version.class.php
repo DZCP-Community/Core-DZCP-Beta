@@ -90,8 +90,8 @@ class dzcp_version extends dzcp_event
                 break;
                 case 'jsonp':
                 default:
-                    common::$gump->validation_rules(array('dzcp' => 'required|min_len,1'));
-                    common::$gump->filter_rules(array('dzcp' => 'json_encode'));
+                    common::$gump->validation_rules(['dzcp' => 'required|min_len,1']);
+                    common::$gump->filter_rules(['dzcp' => 'json_encode']);
                     $output = [
                         'dzcp' => [
                             'version' => stringParser::decode($get['version']),

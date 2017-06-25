@@ -44,8 +44,8 @@ function secure($string) {
 
 function secure_global_imput($string) {
     return str_ireplace(
-            array('=','?','\'','"','','<','>',
-                '(',')',';',',','.','+'), 
+            ['=','?','\'','"','','<','>',
+                '(',')',';',',','.','+'],
             '', strtolower(trim($string)));
 }
 
@@ -71,7 +71,7 @@ if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
                     &&
                     ($end == 'jpg' || $end == 'jpeg' || $end == 'gif' || $end == 'png')
                     &&
-                    $value['error'] == 0)
+                    !$val['error'])
                         $_FILES[$key] = $val;
                     else {
                         @unlink($val['tmp_name']);
@@ -91,7 +91,7 @@ if(function_exists('set_magic_quotes_runtime')
     @ini_set('magic_quotes_sybase', 0);
 }
 
-foreach (array('_GET', '_POST') AS $arrayname) {
+foreach (['_GET', '_POST'] AS $arrayname) {
     if (isset($GLOBALS["$arrayname"]['do']))
         $GLOBALS["$arrayname"]['do'] = trim($GLOBALS["$arrayname"]['do']);
 

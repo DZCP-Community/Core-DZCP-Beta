@@ -15,7 +15,7 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function smarty_function_sponsors($params, &$smarty) {
+function smarty_function_sponsors($params,Smarty_Internal_Template &$smarty) {
     $params['only_id'] = !array_key_exists('only_id',$params) ? 0 : (int)$params['only_id'];
     $params['begin_id'] = !array_key_exists('begin_id',$params) ? 1 : (int)$params['begin_id'];
     $params['end_id'] = !array_key_exists('end_id',$params) ? 0 : (int)$params['end_id'];

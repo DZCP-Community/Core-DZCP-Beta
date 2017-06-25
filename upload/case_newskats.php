@@ -17,7 +17,7 @@
 
 if(defined('_Upload')) {
     if(common::permission('news') || common::permission('artikel')) {
-        switch ($do) {
+        switch (common::$do) {
             case 'upload':
                 $tmpname = $_FILES['file']['tmp_name'];
                 $name = $_FILES['file']['name'];

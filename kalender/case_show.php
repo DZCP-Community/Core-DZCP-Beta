@@ -17,7 +17,7 @@
 
 if (!defined('_Kalender')) exit();
 
-$qry = common::$sql['default']->select("SELECT * FROM `{prefix_events}` WHERE DATE_FORMAT(FROM_UNIXTIME(datum), '%d.%m.%Y') = ? ORDER BY `datum`;",array(date("d.m.Y",(int)($_GET['time']))));
+$qry = common::$sql['default']->select("SELECT * FROM `{prefix_events}` WHERE DATE_FORMAT(FROM_UNIXTIME(datum), '%d.%m.%Y') = ? ORDER BY `datum`;", [date("d.m.Y",(int)($_GET['time']))]);
 $events = '';
 foreach($qry as $get) {
     $edit = '';

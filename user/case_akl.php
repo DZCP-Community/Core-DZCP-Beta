@@ -16,21 +16,21 @@
  */
 
 if(defined('_UserMenu')) {
-    switch ($do) {
+    switch (common::$do) {
         case 'send':
             if (isset($_SESSION['akl_id']) && !empty($_SESSION['akl_id'])) {
                 $get = common::$sql['default']->fetch("SELECT `user`,`id`,`email`,`level`,`actkey` FROM `{prefix_users}` WHERE `id` = ?;",
-                        array($_SESSION['akl_id']));
+                        [$_SESSION['akl_id']]);
             } else {
                 $get = common::$sql['default']->fetch("SELECT `user`,`id`,`email`,`level`,`actkey` FROM `{prefix_users}` WHERE `email` = ?;",
-                        array(isset($_GET['email']) ? stringParser::encode($_GET['email']) : ''));
+                        [isset($_GET['email']) ? stringParser::encode($_GET['email']) : '']);
             }
 
             if(common::$sql['default']->rowCount()) {
                 if(!$get['level'] && !empty($get['actkey'])) {
                     common::userstats_increase('akl',$get['id']);
                     common::$sql['default']->update("UPDATE `{prefix_users}` SET `actkey` = ? WHERE `id` = ?;",
-                            array(stringParser::encode($guid = common::GenGuid()),$get['id']));
+                            [stringParser::encode($guid = common::GenGuid()),$get['id']]);
                     $akl_link = 'http://'.common::$httphost.'/user/?action=akl&do=activate&key='.$guid;
                     $akl_link_page = 'http://'.common::$httphost.'/user/?action=akl&do=activate';
 
@@ -52,7 +52,7 @@ if(defined('_UserMenu')) {
                 } else if (!$get['level'] && empty($get['actkey'])) {
                     $index = common::info(_reg_akl_locked, "../news/", 5, false);
                 } else {
-                    common::$sql['default']->update("UPDATE `{prefix_users}` SET `actkey` = '' WHERE `id` = ?;", array($get['id']));
+                    common::$sql['default']->update("UPDATE `{prefix_users}` SET `actkey` = '' WHERE `id` = ?;", [$get['id']]);
                     $index = common::info(_reg_akl_activated, "../news/", 5, false);
                 }
             } else
@@ -61,10 +61,10 @@ if(defined('_UserMenu')) {
         case 'activate':
             if ((isset($_GET['key']) && !empty($_GET['key'])) || (isset($_POST['key']) && !empty($_POST['key']))) {
                 $get = common::$sql['default']->fetch("SELECT `id` FROM `{prefix_users}` WHERE `actkey` = ?;",
-                    array(strtoupper(trim(isset($_POST['key']) ? $_POST['key'] : $_GET['key']))));
+                    [strtoupper(trim(isset($_POST['key']) ? $_POST['key'] : $_GET['key']))]);
                 if (common::$sql['default']->rowCount()) {
                     common::$sql['default']->update("UPDATE `{prefix_users}` SET `level` = 1, `status` = 1, `actkey` = '' WHERE `id` = ?;",
-                        array($get['id']));
+                        [$get['id']]);
                     $index = common::info(_reg_akl_valid, "../user/?action=login");
                 } else {
                     $index = common::info(_reg_akl_invalid, "../user/?action=akl");

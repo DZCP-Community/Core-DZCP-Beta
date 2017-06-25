@@ -16,11 +16,11 @@
  */
 
 if(defined('_Forum')) {
-    if($do == "fabo") {
+    if(common::$do == "fabo") {
         if(isset($_POST['f_abo'])) {
-            common::$sql['default']->insert("INSERT INTO `{prefix_forum_abo}` SET `user` = ?, `fid` = ?, `datum` = ?",array((int)(common::$userid),(int)($_GET['id']),time()));
+            common::$sql['default']->insert("INSERT INTO `{prefix_forum_abo}` SET `user` = ?, `fid` = ?, `datum` = ?", [(int)(common::$userid),(int)($_GET['id']),time()]);
         } else {
-            common::$sql['default']->delete("DELETE FROM `{prefix_forum_abo}` WHERE `user` = ? AND `fid` = ?",array((int)(common::$userid),(int)($_GET['id'])));
+            common::$sql['default']->delete("DELETE FROM `{prefix_forum_abo}` WHERE `user` = ? AND `fid` = ?", [(int)(common::$userid),(int)($_GET['id'])]);
         }
         
         $index = common::info(_forum_fabo_do, "?action=showthread&amp;id=".$_GET['id']."");

@@ -18,7 +18,7 @@
 if(_adminMenu != 'true') exit;
 $where = $where.': '._votes_head;
 
-switch ($do) {
+switch (common::$do) {
     case 'new':
         $error = '';
         if($_POST) {
@@ -36,13 +36,13 @@ switch ($do) {
                 $smarty->clearAllAssign();
             } else {
                 common::$sql['default']->insert("INSERT INTO `{prefix_votes}` SET `datum` = ?, `titel` = ?, `intern` = ?, `von` = ?",
-                      array(time(),stringParser::encode($_POST['question']),(int)($_POST['intern']),(int)(common::$userid)));
+                      [time(),stringParser::encode($_POST['question']),(int)($_POST['intern']),(int)(common::$userid)]);
 
                 $vid = common::$sql['default']->lastInsertId();
                 for($i=1; $i<=10; $i++) {
                     if(!empty($_POST['a'.$i])) {
                         common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}` SET `vid` = ?, `what` = ?, `sel` = ?;",
-                            array($vid,'a'.$i,stringParser::encode($_POST['a'.$i])));
+                            [$vid,'a'.$i,stringParser::encode($_POST['a'.$i])]);
                     }
                 }
 
@@ -75,23 +75,23 @@ switch ($do) {
         $smarty->clearAllAssign();
     break;
     case 'delete':
-        common::$sql['default']->delete("DELETE FROM `{prefix_votes}` WHERE `id` = ?;",array((int)($_GET['id'])));
-        common::$sql['default']->delete("DELETE FROM `{prefix_vote_results}` WHERE `vid` = ?;",array((int)($_GET['id'])));
-        common::$sql['default']->delete("DELETE FROM `{prefix_ip_action}` WHERE `what` = ?;",array('vid_'.(int)($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_votes}` WHERE `id` = ?;", [(int)($_GET['id'])]);
+        common::$sql['default']->delete("DELETE FROM `{prefix_vote_results}` WHERE `vid` = ?;", [(int)($_GET['id'])]);
+        common::$sql['default']->delete("DELETE FROM `{prefix_ip_action}` WHERE `what` = ?;", ['vid_'.(int)($_GET['id'])]);
         $show = common::info(_vote_admin_delete_successful, "?admin=votes");
     break;
     case 'editvote':
-        $get = common::$sql['default']->fetch("SELECT `id` FROM `{prefix_vote_results}` WHERE `vid` = ?;",array((int)($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT `id` FROM `{prefix_vote_results}` WHERE `vid` = ?;", [(int)($_GET['id'])]);
         if(common::$sql['default']->rowCount()) {
             common::$sql['default']->update("UPDATE `{prefix_votes}` SET `titel`  = ?, `intern` = ?, `closed` = ? WHERE `id` = ?;",
-                    array(stringParser::encode($_POST['question']),(int)($_POST['intern']),(int)($_POST['closed']),$get['id']));
+                    [stringParser::encode($_POST['question']),(int)($_POST['intern']),(int)($_POST['closed']),$get['id']]);
 
             for($i=1; $i<=10; $i++) {
               if(!empty($_POST['a'.$i.''])) {
-                if(common::cnt("{prefix_vote_results}", " WHERE `vid` = ? AND `what` = ?;","id",array((int)($_GET['id']),'a'.$i)) != 0) {
-                    common::$sql['default']->update("UPDATE `{prefix_vote_results}` SET `sel` = ? WHERE `what` = ? AND `vid` = ?;",array(stringParser::encode($_POST['a'.$i]),'a'.$i,$get['id']));
+                if(common::cnt("{prefix_vote_results}", " WHERE `vid` = ? AND `what` = ?;","id", [(int)($_GET['id']),'a'.$i]) != 0) {
+                    common::$sql['default']->update("UPDATE `{prefix_vote_results}` SET `sel` = ? WHERE `what` = ? AND `vid` = ?;", [stringParser::encode($_POST['a'.$i]),'a'.$i,$get['id']]);
                 } else {
-                    common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}` SET `vid` = ?, `what` = ?, `sel` = ?;",array($get['id'],'a'.$i,stringParser::encode($_POST['a'.$i.''])));
+                    common::$sql['default']->insert("INSERT INTO `{prefix_vote_results}` SET `vid` = ?, `what` = ?, `sel` = ?;", [$get['id'],'a'.$i,stringParser::encode($_POST['a'.$i.''])]);
                 }
               }
 
@@ -105,7 +105,7 @@ switch ($do) {
         }
     break;
     case 'edit':
-        $get = common::$sql['default']->fetch("SELECT `id`,`titel`,`intern` FROM `{prefix_votes}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT `id`,`titel`,`intern` FROM `{prefix_votes}` WHERE `id` = ?;", [(int)($_GET['id'])]);
         $intern = ($get['intern'] ? 'checked="checked"' : '');
         $isclosed = ($get['intern'] ? 'checked="checked"' : '');
         $what = "&amp;do=editvote&amp;id=".$_GET['id']."";
@@ -136,16 +136,16 @@ switch ($do) {
         $smarty->clearAllAssign();
     break;
     case 'menu':
-        if(common::$sql['default']->rows("SELECT `intern` FROM `{prefix_votes}` WHERE `id` = ? AND `intern` = 1;",array((int)($_GET['id'])))) {
+        if(common::$sql['default']->rows("SELECT `intern` FROM `{prefix_votes}` WHERE `id` = ? AND `intern` = 1;", [(int)($_GET['id'])])) {
           $show = common::error(_vote_admin_menu_isintern, 1);
         } else {
-          $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_votes}` WHERE `id` = ?;",array((int)($_GET['id'])));
+          $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_votes}` WHERE `id` = ?;", [(int)($_GET['id'])]);
           if($get['menu'] == 1) {
               common::$sql['default']->update("UPDATE `{prefix_votes}` SET menu = 0;");
                 header("Location: ?admin=votes");
             } else {
               common::$sql['default']->update("UPDATE `{prefix_votes}` SET `menu` = 0;");
-              common::$sql['default']->update("UPDATE `{prefix_votes}` SET `menu` = 1 WHERE `id` = ?;",array((int)($_GET['id'])));
+              common::$sql['default']->update("UPDATE `{prefix_votes}` SET `menu` = 1 WHERE `id` = ?;", [(int)($_GET['id'])]);
                 header("Location: ?admin=votes");
             }
         }

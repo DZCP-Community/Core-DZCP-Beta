@@ -27,11 +27,12 @@ if(defined('_News')) {
                    FROM `{prefix_news}`
                    ".$intern."
                    ".common::orderby_sql(["datum","autor","titel","kat"], 'ORDER BY datum DESC')."
-                   LIMIT ".($page - 1)*settings::get('m_archivnews').",".settings::get('m_archivnews').";");
+                   LIMIT ".(common::$page - 1)*settings::get('m_archivnews').",".settings::get('m_archivnews').";");
     $entrys = common::cnt('{prefix_news}', " ".$intern);
 
     //News
     if(common::$sql['default']->rowCount()) {
+        $show = ''; $color = 0;
         foreach ($qry as $get) {
             $getk = common::$sql['default']->fetch("SELECT `kategorie` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get['kat']]);
 
@@ -70,6 +71,7 @@ if(defined('_News')) {
     $smarty->assign('order_titel',common::orderby('titel'));
     $smarty->assign('order_autor',common::orderby('autor'));
     $smarty->assign('order_kat',common::orderby('kat'));
+    /** @var TYPE_NAME $show */
     $smarty->assign('show',$show);
     $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/archiv.tpl');
     $smarty->clearAllAssign();

@@ -18,8 +18,8 @@
 if(defined('_UserMenu')) {
     $where = _site_user_logout;
     if(common::$chkMe && common::$userid) {
-        common::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 0, `sessid` = '' WHERE `id` = ?;",array(common::$userid));
-        common::$sql['default']->delete("DELETE FROM `{prefix_autologin}` WHERE `ssid` = ?;",array(session_id()));
+        common::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 0, `sessid` = '' WHERE `id` = ?;", [common::$userid]);
+        common::$sql['default']->delete("DELETE FROM `{prefix_autologin}` WHERE `ssid` = ?;", [session_id()]);
         common::setIpcheck("logout(".common::$userid.")");
         common::dzcp_session_destroy();
     }

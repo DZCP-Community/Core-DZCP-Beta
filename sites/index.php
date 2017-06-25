@@ -23,10 +23,8 @@ include(basePath."/inc/common.php");
 
 ## Include PHP-Code ##
 function phpParser($code,$php=false) {
-    global $designpath;
     if($php && php_code_enabled) {
         ob_start(); unset($php);
-        $dir = $designpath;
         $html = preg_replace_callback("/\[php\](.*?)\[\/php\]/",
                 create_function('$code','$code[1] = strip_tags($code[1]); return \'[base64]\'.base64_encode($code[1]).\'[/base64]\';'), $code);
         $code_output = trim("echo \"".addslashes($html)."\";"); unset($html);
@@ -47,7 +45,7 @@ $where = "";
 $smarty = common::getSmarty(); //Use Smarty
 
 ## SECTIONS ##
-switch ($action):
+switch (common::$action):
 default:
     $get = common::$sql['default']->fetch("SELECT s1.*,s2.`internal` "
                             . "FROM `{prefix_sites}` AS `s1` "

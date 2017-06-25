@@ -15,7 +15,7 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function smarty_function_counter($params, &$smarty) {
+function smarty_function_counter($params,Smarty_Internal_Template &$smarty) {
     global $where;
     $params['js'] = !array_key_exists('js',$params) ? true : $params['js'];
     if($params['js']) {

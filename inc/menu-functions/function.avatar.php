@@ -21,7 +21,7 @@
  * @param $smarty
  * @return string
  */
-function smarty_function_avatar($params, &$smarty) {
+function smarty_function_avatar($params,Smarty_Internal_Template &$smarty) {
     $avatar = '';
     if(common::$chkMe >= 1) {
         $params['id'] = (array_key_exists('id',$params) ? (int)$params['id'] : 0);

@@ -17,7 +17,7 @@
 
 if(defined('_Forum')) {
     if(common::$userid && common::$chkMe >= 1) {
-        switch ($do) {
+        switch (common::$do) {
             case 'edit':
                 $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumposts}` WHERE `id` = ?;", [(int)($_GET['id'])]);
                 if (common::$sql['default']->rowCount() && ($get['reg'] == common::$userid || common::permission("forum"))) {
@@ -29,20 +29,20 @@ if(defined('_Forum')) {
                     if (array_key_exists('eintrag', $_POST)) {
                         if (!$get['reg']) {
                             //validation
-                            common::$gump->validation_rules(array('eintrag' => 'required',
+                            common::$gump->validation_rules(['eintrag' => 'required',
                                 'nick' => 'required|alpha_numeric',
-                                'email' => 'required|valid_email'));
+                                'email' => 'required|valid_email']);
 
                             //filter
-                            common::$gump->filter_rules(array('eintrag' => 'trim',
+                            common::$gump->filter_rules(['eintrag' => 'trim',
                                 'nick' => 'trim|sanitize_string',
-                                'email' => 'trim|sanitize_email'));
+                                'email' => 'trim|sanitize_email']);
                         } else {
                             //validation
-                            common::$gump->validation_rules(array('eintrag' => 'required|min_len,1'));
+                            common::$gump->validation_rules(['eintrag' => 'required|min_len,1']);
 
                             //filter
-                            common::$gump->filter_rules(array('eintrag' => 'trim'));
+                            common::$gump->filter_rules(['eintrag' => 'trim']);
                         }
 
                         $validated_post_data = common::$gump->run($_POST);
@@ -65,7 +65,7 @@ if(defined('_Forum')) {
 
                             send_forum_abo(false, $get['sid'], $_POST['eintrag'], true);
 
-                            $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?", "id", [$getp['sid']]);
+                            $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?", "id", [$getp['sid']]); //TODO: FIX $getp
                             $pagenr = !$entrys ? 1 : ceil($entrys / settings::get('m_fposts'));
                             $index = common::info(_forum_editpost_successful, '?action=showthread&amp;id=' . $getp['sid'] . '&amp;page=' . $pagenr . '#p' . ($entrys + 1));
                         } else {
@@ -136,10 +136,10 @@ if(defined('_Forum')) {
                                  */
                                 if (array_key_exists('eintrag', $_POST)) {
                                     //validation
-                                    common::$gump->validation_rules(array('eintrag' => 'required|min_len,1'));
+                                    common::$gump->validation_rules(['eintrag' => 'required|min_len,1']);
 
                                     //filter
-                                    common::$gump->filter_rules(array('eintrag' => 'trim'));
+                                    common::$gump->filter_rules(['eintrag' => 'trim']);
 
                                     $validated_post_data = common::$gump->run($_POST);
                                     if ($validated_post_data !== false && $id >= 1) {
@@ -148,7 +148,7 @@ if(defined('_Forum')) {
 
                                         $double_post = 0;
                                         if (common::$sql['default']->rowCount()) {
-                                            $gettdp = array();
+                                            $gettdp = [];
                                             if (common::$userid >= 1) {
                                                 $double_post = (common::$userid == $getdp['reg'] && settings::get('double_post')) ? common::FORUM_DOUBLE_POST_TH_ADD : 0;
                                             } else {
@@ -238,13 +238,13 @@ if(defined('_Forum')) {
                                     $zitat = "";
                                     if (isset($_GET['zitat'])) {
                                         $getzitat = common::$sql['default']->fetch("SELECT `nick`,`reg`,`text` FROM `{prefix_forumposts}` WHERE `id` = ?;",
-                                            array((int)($_GET['zitat'])));
+                                            [(int)($_GET['zitat'])]);
 
                                         $nick = (!$getzitat['reg'] ? $getzitat['nick'] : common::autor($getzitat['reg']));
                                         $zitat = bbcode_base::zitat($nick, $getzitat['text']);
                                     } else if (isset($_GET['zitat_thread'])) {
                                         $getzitat = common::$sql['default']->fetch("SELECT `t_nick`,`t_reg`,`t_text` FROM `{prefix_forumthreads}` WHERE `id` = ?;",
-                                            array((int)($_GET['zitat_thread'])));
+                                            [(int)($_GET['zitat_thread'])]);
 
                                         $nick = (!$getzitat['t_reg'] ? $getzitat['t_nick'] : stringParser::decode(common::data("nick", $getzitat['t_reg'])));
                                         $zitat = bbcode_base::zitat($nick, $getzitat['t_text']);
@@ -312,6 +312,7 @@ if(defined('_Forum')) {
 
                                         $class = 'class="commentsRight"';
                                         if (!empty($_GET['hl']) && $_SESSION['search_type'] == 'autor') {
+                                            /** @var TYPE_NAME $nick */
                                             if (preg_match("#" . $_GET['hl'] . "#i", $nick))
                                                 $class = 'class="highlightSearchTarget"';
                                         }
@@ -320,7 +321,7 @@ if(defined('_Forum')) {
                                         $smarty->assign('nick', common::cleanautor($get['reg'], '', $get['nick'], stringParser::decode($get['email'])));
                                         $smarty->assign('chkme', common::$chkMe);
                                         $smarty->assign('postnr', "");
-                                        $smarty->assign('p', ($page - 1 * settings::get('m_fposts')));
+                                        $smarty->assign('p', (common::$page - 1 * settings::get('m_fposts')));
                                         $smarty->assign('text', bbcode_base::parse_html((string)$get['text']));
                                         $smarty->assign('class', $class);
                                         $smarty->assign('pn', $pn);
@@ -408,7 +409,7 @@ if(defined('_Forum')) {
                                         $smarty->assign('nick', common::cleanautor($get['t_reg'], '', $get['t_nick'], stringParser::decode($get['t_email'])));
                                         $smarty->assign('chkme', common::$chkMe);
                                         $smarty->assign('postnr', "");
-                                        $smarty->assign('p', ($page - 1 * settings::get('m_fposts')));
+                                        $smarty->assign('p', (common::$page - 1 * settings::get('m_fposts')));
                                         $smarty->assign('text', bbcode_base::parse_html((string)$get['t_text']));
                                         $smarty->assign('class', $ftxt['class']);
                                         $smarty->assign('pn', $pn);

@@ -28,9 +28,8 @@ define('_Artikel', true);
 $smarty = common::getSmarty(); //Use Smarty
 
 ## SECTIONS ##
-$action = empty($action) ? 'default' : $action;
-if (file_exists(basePath . "/artikel/case_" . $action . ".php")) {
-    require_once(basePath . "/artikel/case_" . $action . ".php");
+if (file_exists(basePath . "/artikel/case_" . common::$action . ".php")) {
+    require_once(basePath . "/artikel/case_" . common::$action . ".php");
 }
 
 ## INDEX OUTPUT ##

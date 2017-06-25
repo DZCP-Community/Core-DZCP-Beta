@@ -33,9 +33,8 @@ if(isset($_GET['kid']) && !empty($_GET['kid'])) {
     $_SESSION['kid'] = (int)$_GET['kid'];
 }
 
-$action = empty($action) ? 'default' : $action;
-if (file_exists(basePath . "/forum/case_" . $action . ".php")) {
-    require_once(basePath . "/forum/case_" . $action . ".php");
+if (file_exists(basePath . "/forum/case_" . common::$action . ".php")) {
+    require_once(basePath . "/forum/case_" . common::$action . ".php");
 }
 
 ## INDEX OUTPUT ##

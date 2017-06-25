@@ -30,7 +30,7 @@ if(defined('_News')) {
     //Sticky News
     $qry = common::$sql['default']->select("SELECT * FROM `{prefix_news}` WHERE `sticky` >= ? AND `datum` <= ? AND "
             . "`public` = 1 ".(common::permission("intnews") ? "" : "AND `intern` = 0")." ".$n_kat." "
-            . "ORDER BY `datum` DESC LIMIT ".(($page - 1)*settings::get('m_news')).",".settings::get('m_news').";",
+            . "ORDER BY `datum` DESC LIMIT ".((common::$page - 1)*settings::get('m_news')).",".settings::get('m_news').";",
             [($time=time()),$time]);
 
     $show_sticky = '';
@@ -45,7 +45,7 @@ if(defined('_News')) {
             //Bild
             $newsimage = '../inc/images/uploads/newskat/'.stringParser::decode(common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;",
                     [$get['kat']],'katimg'));
-            foreach(["jpg", "gif", "png"] as $tmpendung) {
+            foreach(common::SUPPORTED_PICTURE as $tmpendung) {
                 if(file_exists(basePath."/inc/images/uploads/news/".$get['id'].".".$tmpendung)) {
                     $newsimage = '../inc/images/uploads/news/'.$get['id'].'.'.$tmpendung;
                     break;
@@ -60,14 +60,14 @@ if(defined('_News')) {
             $smarty->assign('comments',common::cnt('{prefix_newscomments}', " WHERE `news` = ?","id",[(int)($get['id'])]));
             $smarty->assign('showmore','');
             $smarty->assign('dp','none');
-            $smarty->assign('dir',$designpath);
+            $smarty->assign('dir',common::$designpath);
             $smarty->assign('intern',boolval($get['intern']));
             $smarty->assign('sticky',_news_sticky);
             $smarty->assign('more',bbcode_base::parse_html((string)$get['klapptext']));
             $smarty->assign('viewed',$viewed);
             $smarty->assign('text',bbcode_base::parse_html((string)$get['text']));
             $smarty->assign('datum',date("d.m.y H:i", $get['datum']));
-            $smarty->assign('links',$links);
+            $smarty->assign('links',$links); //TODO: Missing!
             $smarty->assign('autor',common::autor($get['autor']));
             $show_sticky .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/news_show.tpl',common::getSmartyCacheHash('news_'.$get['id']));
             $smarty->clearAllAssign();
@@ -79,8 +79,8 @@ if(defined('_News')) {
     //News
     $qry = common::$sql['default']->select("SELECT * FROM `{prefix_news}` WHERE `sticky` < ? AND `datum` <= ? "
             . "AND `public` = 1 ".(common::permission("intnews") ? "" : "AND `intern` = 0")." ".$n_kat." "
-            . "ORDER BY `datum` DESC LIMIT ".($page - 1)*settings::get('m_news').",".settings::get('m_news').";",
-            [($time=time()),$time]);
+            . "ORDER BY `datum` DESC LIMIT ".(common::$page - 1)*settings::get('m_news').",".settings::get('m_news').";",
+            [($time=time()),$time]); $show = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qry as $get) {
             //-> Viewed
@@ -90,9 +90,9 @@ if(defined('_News')) {
             $smarty->clearAllAssign();
 
             //-> News-Kategorie Bild
-            foreach(["jpg", "gif", "png"] as $end) {
+            foreach(common::SUPPORTED_PICTURE as $end) {
                 if (file_exists(basePath . "/inc/images/nopic." . $end)) {
-                    $newsimage = '../inc/images/uploads/nopic.' . $end;
+                    $newsimage = '../inc/images/nopic.' . $end;
                     break;
                 }
             }
@@ -103,7 +103,7 @@ if(defined('_News')) {
             }
 
             //-> News Bild by ID
-            foreach(["jpg", "gif", "png"] as $tmpendung) {
+            foreach(common::SUPPORTED_PICTURE as $tmpendung) {
                 //-> News Bild by ID
                 if(file_exists(basePath."/inc/images/uploads/news/".$get['id'].".".$tmpendung)) {
                     $newsimage = '../inc/images/uploads/news/'.$get['id'].'.'.$tmpendung;
@@ -138,8 +138,7 @@ if(defined('_News')) {
     $kategorien = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qrykat as $getkat) {
-            $sel = (isset($_GET['kat']) && (int)($_GET['kat']) == $getkat['id'] ? 'selected' : '');
-            $kategorien .= "<option value='".$getkat['id']."' ".$sel.">".$getkat['kategorie']."</option>";
+            $kategorien .= common::select_field($getkat['id'],(isset($_GET['kat']) && (int)($_GET['kat']) == $getkat['id']),stringParser::decode($getkat['kategorie']));
         }
     }
 

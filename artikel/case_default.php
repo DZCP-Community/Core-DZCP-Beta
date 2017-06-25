@@ -19,9 +19,10 @@ if(defined('_Artikel')) {
     $qry = common::$sql['default']->select("SELECT `id`,`kat`,`titel`,`datum`,`autor` "
             . "FROM `{prefix_artikel}` "
             . "WHERE `public` = 1 ".common::orderby_sql(["artikel","titel","datum","kat"], 'ORDER BY `datum` DESC')." "
-            . "LIMIT ".($page - 1)*settings::get('m_artikel').",".settings::get('m_artikel').";");
+            . "LIMIT ".(common::$page - 1)*settings::get('m_artikel').",".settings::get('m_artikel').";");
 
     if(common::$sql['default']->rowCount()) {
+        $show = ''; $color = 0;
         foreach($qry as $get) {
             $getk = common::$sql['default']->fetch("SELECT `kategorie` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get['kat']]);
             $titel = '<a style="display:block" href="?action=show&amp;id='.$get['id'].'">'.stringParser::decode($get['titel']).'</a>';
@@ -46,6 +47,7 @@ if(defined('_Artikel')) {
 
     $seiten = common::nav(common::cnt("{prefix_artikel}"),settings::get('m_artikel'),"?page".(isset($_GET['show']) ? $_GET['show'] : 0).common::orderby_nav());
     $smarty->caching = false;
+    /** @var TYPE_NAME $show */
     $smarty->assign('show',$show);
     $smarty->assign('nav',$seiten);
     $smarty->assign('order_autor',common::orderby('autor'));

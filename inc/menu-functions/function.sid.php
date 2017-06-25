@@ -15,6 +15,6 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function smarty_function_sid($params, &$smarty) {
+function smarty_function_sid($params,Smarty_Internal_Template &$smarty) {
     return (int)common::$sid;
 }

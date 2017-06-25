@@ -9,7 +9,7 @@ ob_start();
   function getIcons($dir)
   {
     $dp = @opendir($dir);
-    $allicons = array();
+    $allicons = [];
     while($icons = @readdir($dp))
     {
       if($icons != '.' && $icons != '..')
@@ -30,4 +30,3 @@ ob_start();
     echo "}";
   }
 ob_end_flush();
-?>

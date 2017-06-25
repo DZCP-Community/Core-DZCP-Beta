@@ -27,8 +27,8 @@ $dir = "sponsors";
 define('_Sponsors', true);
 $smarty = common::getSmarty(); //Use Smarty
 
-if(file_exists(basePath."/sponsors/case_".$action.".php"))
-    require_once(basePath."/sponsors/case_".$action.".php");
+if(file_exists(basePath."/sponsors/case_".common::$action.".php"))
+    require_once(basePath."/sponsors/case_".common::$action.".php");
 
 ## INDEX OUTPUT ##
 $title = common::$pagetitle." - ".$where;

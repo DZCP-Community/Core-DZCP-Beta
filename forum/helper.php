@@ -15,7 +15,7 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function fvote_question(array $answers = array()) {
+function fvote_question(array $answers = []) {
     $smarty = common::getSmarty(true);
     $answers_tpl = '';
     if(count($answers) >= 1) {

@@ -24,13 +24,13 @@ if(defined('_UserMenu')) {
 
         if ($do == "add" && !common::$chkMe && common::isIP(common::$userip['v4']) && !common::$CrawlerDetect->isCrawler()) {
             $check_user = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `user`= ?;",
-                array(stringParser::encode($_POST['user'])));
+                [stringParser::encode($_POST['user'])]);
 
             $check_nick = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `nick`= ?;",
-                array(stringParser::encode($_POST['nick'])));
+                [stringParser::encode($_POST['nick'])]);
 
             $check_email = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `email`= ?;",
-                array(stringParser::encode($_POST['email'])));
+                [stringParser::encode($_POST['email'])]);
 
             if(empty($_POST['user']) || empty($_POST['nick']) || empty($_POST['email'])
                 || ($_POST['pwd'] != $_POST['pwd2']) || (settings::get("regcode") &&
@@ -100,7 +100,7 @@ if(defined('_UserMenu')) {
                     . "`profile_access` = 1,"
                     . "`time`     = ".$time.", "
                     . "`status`   = ?;",
-                    array(stringParser::encode(trim($_POST['user'])),
+                    [stringParser::encode(trim($_POST['user'])),
                         stringParser::encode(trim($_POST['nick'])),
                         stringParser::encode(trim($_POST['email'])),
                         common::$userip['v4'],
@@ -108,16 +108,16 @@ if(defined('_UserMenu')) {
                         settings::get('default_pwd_encoder'),
                         (settings::get('use_akl') ? ($guid=common::GenGuid()) : ''),
                         (settings::get('use_akl') ? 0 : 1),
-                        (settings::get('use_akl') >= 1 ? 0 : 1)));
+                        (settings::get('use_akl') >= 1 ? 0 : 1)]);
 
                 ## Lese letzte ID aus ##
                 $insert_id = common::$sql['default']->lastInsertId();
 
                 ## Lege User in der Permissions Tabelle an ##
-                common::$sql['default']->insert("INSERT INTO `{prefix_permissions}` SET `user` = ?;",array($insert_id));
+                common::$sql['default']->insert("INSERT INTO `{prefix_permissions}` SET `user` = ?;", [$insert_id]);
 
                 ## Lege User in der User-Statistik Tabelle an ##
-                common::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?, `lastvisit` = ?;",array($insert_id,$time));
+                common::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?, `lastvisit` = ?;", [$insert_id,$time]);
 
                 ## Ereignis in den Adminlog schreiben ##
                 common::setIpcheck("reg(".$insert_id.")");

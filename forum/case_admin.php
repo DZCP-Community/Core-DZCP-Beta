@@ -18,13 +18,13 @@
 if(defined('_Forum')) {
   if(common::permission("forum"))
   {
-    if($do == "mod")
+    if(common::$do == "mod")
     {
       if(isset($_POST['delete']))
       {
          $getv = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE id = '".(int)($_GET['id'])."'");
         
-        $userPostReduction = array();
+        $userPostReduction = [];
 		    $userPostReduction[$getv['t_reg']] = 1;
 
         if(!empty($getv['vote']))

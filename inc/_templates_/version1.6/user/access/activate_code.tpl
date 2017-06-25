@@ -10,7 +10,7 @@
   <td class="contentMainFirst" align="center">
     <input name="key" type="text" class="inputField_dis"
     onfocus="this.className='inputField_en';"
-    onblur="this.className='inputField_dis';" required id="key" />  </td>
+    onblur="this.className='inputField_dis';" required id="key" /><label for="key"> </label></td>
 </tr>
 <tr>
   <td class="contentBottom" colspan="2"><input id="contentSubmit" type="submit" value="{lang msgID="button_value_activate"}" class="submit" name="send" /></td>

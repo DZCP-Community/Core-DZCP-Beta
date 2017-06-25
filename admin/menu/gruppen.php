@@ -18,14 +18,14 @@
 if(_adminMenu != 'true') exit;
 $where = $where.': '._member_admin_header;
 
-switch ($do) {
+switch (common::$do) {
     case "add":
         if(isset($_POST)) {
             if(empty($_POST['group']))
                 $show = common::error(_admin_squad_no_squad, 1);
             else {
                 common::$sql['default']->insert("INSERT INTO `{prefix_groups}` SET `name` = ?,`beschreibung` = ?",
-                    array(stringParser::encode($_POST['group']),stringParser::encode($_POST['beschreibung'])));
+                    [stringParser::encode($_POST['group']),stringParser::encode($_POST['beschreibung'])]);
 
                 $show = common::info(_admin_squad_add_successful, "?admin=gruppen");
             }
@@ -37,8 +37,8 @@ switch ($do) {
 
     break;
     case 'delete':
-        common::$sql['default']->delete("DELETE FROM `{prefix_groups}` WHERE `id` = ?;",array((int)($_GET['id'])));
-        common::$sql['default']->delete("DELETE FROM `{prefix_groupuser}` WHERE `group` = ?;",array((int)($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_groups}` WHERE `id` = ?;", [(int)($_GET['id'])]);
+        common::$sql['default']->delete("DELETE FROM `{prefix_groupuser}` WHERE `group` = ?;", [(int)($_GET['id'])]);
         $show = common::info(_admin_squad_deleted, "?admin=gruppen");
     break;
     case 'edit':
@@ -47,7 +47,7 @@ switch ($do) {
                 $show = common::error(_admin_squad_no_squad, 1);
             else {
                 common::$sql['default']->update("UPDATE `{prefix_groups}` SET `name` = ?, `beschreibung` = ? WHERE `id` = ?;",
-                    array(stringParser::encode($_POST['group']),stringParser::encode($_POST['beschreibung']),(int)($_GET['id'])));
+                    [stringParser::encode($_POST['group']),stringParser::encode($_POST['beschreibung']),(int)($_GET['id'])]);
 
                 $show = common::info(_admin_squad_edit_successful, "?admin=gruppen");
             }

@@ -90,12 +90,12 @@ class bbcode_base
          * [youtube height=200 width=300]xxxxx[/youtube] or
          * [youtube height=200 width=300 autoplay=1]xxxxx[/youtube]
          */
-        self::$BBCode->AddRule('youtube', Array(
+        self::$BBCode->AddRule('youtube', [
             'mode' => BBCODE_MODE_CALLBACK,
             'method' => 'bbcode_base::callback_youtube',
             'class' => 'block',
-            'allow_in' => Array('listitem', 'block', 'columns'),
-        ));
+            'allow_in' => ['listitem', 'block', 'columns'],
+        ]);
 
         /*
          * ##############################
@@ -107,12 +107,12 @@ class bbcode_base
          * [divx height=200 width=300]http://xxx.xx/video123.divx[/divx] or
          * [divx height=200 width=300 autoplay=1]http://xxx.xx/video123.divx[/divx]
          */
-        self::$BBCode->AddRule('divx', Array(
+        self::$BBCode->AddRule('divx', [
             'mode' => BBCODE_MODE_CALLBACK,
             'method' => 'bbcode_base::callback_divx',
             'class' => 'block',
-            'allow_in' => Array('listitem', 'block', 'columns'),
-        ));
+            'allow_in' => ['listitem', 'block', 'columns'],
+        ]);
 
         /*
          * ##############################
@@ -124,12 +124,12 @@ class bbcode_base
          * [video height=200 width=300]http://xxx.xx/video123.mp4[/video] or
          * [video height=200 width=300 autoplay=1]http://xxx.xx/video123.mp4[/video]
          */
-        self::$BBCode->AddRule('video', Array(
+        self::$BBCode->AddRule('video', [
             'mode' => BBCODE_MODE_CALLBACK,
             'method' => 'bbcode_base::callback_video',
             'class' => 'block',
-            'allow_in' => Array('listitem', 'block', 'columns'),
-        ));
+            'allow_in' => ['listitem', 'block', 'columns'],
+        ]);
 
         /*
          * ##############################
@@ -141,12 +141,12 @@ class bbcode_base
          * [vimeo height=200 width=300]xxxxxxxx[/vimeo] or
          * [vimeo height=200 width=300 autoplay=1]xxxxxxxx[/vimeo]
          */
-        self::$BBCode->AddRule('vimeo', Array(
+        self::$BBCode->AddRule('vimeo', [
             'mode' => BBCODE_MODE_CALLBACK,
             'method' => 'bbcode_base::callback_vimeo',
             'class' => 'block',
-            'allow_in' => Array('listitem', 'block', 'columns'),
-        ));
+            'allow_in' => ['listitem', 'block', 'columns'],
+        ]);
 
         /*
          * ##############################
@@ -158,12 +158,12 @@ class bbcode_base
          * [golem height=200 width=300]xxxxxxxx[/golem] or
          * [golem height=200 width=300 autoplay=1]xxxxxxxx[/golem]
          */
-        self::$BBCode->AddRule('golem', Array(
+        self::$BBCode->AddRule('golem', [
             'mode' => BBCODE_MODE_CALLBACK,
             'method' => 'bbcode_base::callback_golem',
             'class' => 'block',
-            'allow_in' => Array('listitem', 'block', 'columns'),
-        ));
+            'allow_in' => ['listitem', 'block', 'columns'],
+        ]);
 
         /*
          * ##############################
@@ -176,12 +176,12 @@ class bbcode_base
          * [hide level=3]Text1234 show on >= level 3[/hide] or
          * [hide level=4]Text1234 show on == level 4[/hide]
          */
-        self::$BBCode->AddRule('hide', Array(
+        self::$BBCode->AddRule('hide', [
             'mode' => BBCODE_MODE_CALLBACK,
             'method' => 'bbcode_base::callback_hide',
             'class' => 'block',
-            'allow_in' => Array('listitem', 'block', 'columns'),
-        ));
+            'allow_in' => ['listitem', 'block', 'columns'],
+        ]);
     }
 
     /**
@@ -369,8 +369,8 @@ class bbcode_base
             $autoplay = isset($params['autoplay']) ? $params['autoplay'] : 0;
 
             return "<object width=\"".$width."\" height=\"".$height."\" wmode=\"opaque\"></param><param name=\"wmode\" value=\"opaque\">"
-            . "<param name=\"movie\" value=\"http://video.golem.de/player/videoplayer.swf?id=".$content."&autoPl=".($autoplay ? 'true' : 'false')."\"></param><param name=\"allowFullScreen\" value=\"true\">"
-            . "</param><param name=\"AllowScriptAccess\" value=\"always\"><embed src=\"http://video.golem.de/player/videoplayer.swf?id=".$content."&autoPl=".($autoplay ? 'true' : 'false')."\" "
+            . "<param name=\"movie\" value=\"http://video.golem.de/player/videoplayer.swf?id=".$content."&autoPl=".($autoplay ? 'true' : 'false')."\"><param name=\"allowFullScreen\" value=\"true\">"
+            . "<param name=\"AllowScriptAccess\" value=\"always\"><embed src=\"http://video.golem.de/player/videoplayer.swf?id=".$content."&autoPl=".($autoplay ? 'true' : 'false')."\" "
             . "type=\"application/x-shockwave-flash\" allowfullscreen=\"true\" AllowScriptAccess=\"always\" width=\"".$width."\" height=\"".$height."\"></embed></object>";
         }
 
@@ -455,8 +455,8 @@ class bbcode_base
      * @return string (html-code)
      */
     public static function zitat($nick,$zitat) {
-        $search  = array(chr(145),chr(146),"'",chr(147),chr(148),chr(10),chr(13));
-        $replace = array(chr(39),chr(39),"&#39;",chr(34),chr(34)," "," ");
+        $search  = [chr(145),chr(146),"'",chr(147),chr(148),chr(10),chr(13)];
+        $replace = [chr(39),chr(39),"&#39;",chr(34),chr(34)," "," "];
         $zitat = preg_replace("#[\n\r]+#", "<br />", str_replace($search, $replace, $zitat));
         return '<br /><br /><br /><blockquote><b>'.$nick.' '._wrote.':</b><br />'.stringParser::decode($zitat).'</blockquote>';
     }

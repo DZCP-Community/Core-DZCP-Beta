@@ -18,7 +18,7 @@
 if(_adminMenu != 'true') exit;
 
     $where = $where.': '._nletter;
-        if($do == 'preview')
+        if(common::$do == 'preview')
     {
         $smarty->caching = false;
         $smarty->assign('head',_nletter_prev_head);
@@ -26,7 +26,7 @@ if(_adminMenu != 'true') exit;
         $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/nletter_prev.tpl');
         $smarty->clearAllAssign();
       exit('<table class="mainContent" cellspacing="1">'.$show.'</table>');
-    } elseif($do == "send") {
+    } elseif(common::$do == "send") {
         if(empty($_POST['eintrag']) || $_POST['to'] == "-")
           {
             if(empty($_POST['eintrag'])) $error = _empty_eintrag;
@@ -73,7 +73,6 @@ if(_adminMenu != 'true') exit;
               $smarty->assign('posteintrag',stringParser::decode($_POST['eintrag']));
               $smarty->assign('titel',_nletter_head);
               $smarty->assign('nickhead',_nick);
-              $smarty->assign('bbcodehead',_bbcode);
               $smarty->assign('error',$error);
               $smarty->assign('eintraghead',_eintrag);
               $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/nletter.tpl');
@@ -161,7 +160,6 @@ if(_adminMenu != 'true') exit;
             $smarty->assign('titel',_nletter_head);
             $smarty->assign('value',_button_value_nletter);
             $smarty->assign('nickhead',_nick);
-            $smarty->assign('bbcodehead',_bbcode);
             $smarty->assign('eintraghead',_eintrag);
             $smarty->assign('error','');
             $smarty->assign('posteintrag','');

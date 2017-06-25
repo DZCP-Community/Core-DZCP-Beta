@@ -17,7 +17,7 @@
 
 if(defined('_News') && common::$chkMe >= 1) {
     //-> Edit news comment
-    if($do == 'edit') {
+    if(common::$do == 'edit') {
         $get = common::$sql['default']->fetch("SELECT `reg`,`datum` FROM `{prefix_newscomments}` WHERE `id` = ?;", [(int)($_GET['cid'])]);
         $get_postid = isset($_GET['cid']) && $_GET['cid'] >= 1 ? $_GET['cid'] : 1;
         $get_userid = $get['reg'];

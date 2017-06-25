@@ -18,10 +18,10 @@
 if(_adminMenu != 'true') exit;
 $where = $where.': '._admin_dlkat;
 
-switch ($do) {
+switch (common::$do) {
     case 'edit':
         $get = common::$sql['default']->fetch("SELECT `name` FROM `{prefix_download_kat}` WHERE `id` = ?;",
-                array((int)($_GET['id'])));
+                [(int)($_GET['id'])]);
         $smarty->caching = false;
         $smarty->assign('newhead',_dl_edit_head);
         $smarty->assign('do',"editkat&amp;id=".$_GET['id']."");
@@ -36,13 +36,13 @@ switch ($do) {
             $show = common::error(_dl_empty_kat,1);
         } else {
             common::$sql['default']->update("UPDATE `{prefix_download_kat}` SET `name` = ? WHERE `id` = ?;",
-                    array(stringParser::encode($_POST['kat']),(int)($_GET['id'])));
+                    [stringParser::encode($_POST['kat']),(int)($_GET['id'])]);
             $show = common::info(_dl_admin_edited, "?admin=dlkats");
         }
     break;
     case 'delete':
         common::$sql['default']->delete("DELETE FROM `{prefix_download_kat}` WHERE `id` = ?;",
-                array((int)($_GET['id'])));
+                [(int)($_GET['id'])]);
         $show = common::info(_dl_admin_deleted, "?admin=dlkats");
     break;
     case 'new':
@@ -60,7 +60,7 @@ switch ($do) {
             $show = common::error(_dl_empty_kat,1);
         } else {
             common::$sql['default']->insert("INSERT INTO `{prefix_download_kat}` SET `name` = ?;",
-                  array(stringParser::encode($_POST['kat'])));
+                  [stringParser::encode($_POST['kat'])]);
             $show = common::info(_dl_admin_added, "?admin=dlkats");
         }
     break;

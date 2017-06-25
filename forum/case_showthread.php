@@ -35,7 +35,7 @@ if(defined('_Forum')) {
             }
 
             $qryp = common::$sql['default']->select("SELECT * FROM `{prefix_forumposts}` WHERE sid = ? ".
-                "ORDER BY id LIMIT ".($page - 1)*($m_fposts=settings::get('m_fposts')).",".$m_fposts.";",
+                "ORDER BY id LIMIT ".(common::$page - 1)*($m_fposts=settings::get('m_fposts')).",".$m_fposts.";",
                 [(int)($_GET['id'])]);
 
             //Button "Zum letzten Eintrag"
@@ -94,10 +94,10 @@ if(defined('_Forum')) {
 
                 //Titel
                 $smarty->caching = false;
-                $smarty->assign('postid', $i+($page-1)*settings::get('m_fposts'));
+                $smarty->assign('postid', $i+(common::$page-1)*settings::get('m_fposts'));
                 $smarty->assign('datum',date("d.m.Y", $getp['date']));
                 $smarty->assign('zeit',date("H:i", $getp['date']));
-                $smarty->assign('url','?action=showthread&amp;id='.(int)($_GET['id']).'&amp;page='.$page.'#p'.($i+($page-1)*settings::get('m_fposts')));
+                $smarty->assign('url','?action=showthread&amp;id='.(int)($_GET['id']).'&amp;page='.common::$page.'#p'.($i+(common::$page-1)*settings::get('m_fposts')));
                 $smarty->assign('edit',$edit);
                 $smarty->assign('delete',$delete);
                 $titel = $smarty->fetch('string:'._eintrag_titel_forum);
@@ -144,8 +144,8 @@ if(defined('_Forum')) {
                 $smarty->caching = false;
                 $smarty->assign('nick',$nick);
                 $smarty->assign('chkme',common::$chkMe);
-                $smarty->assign('postnr',"#".($i+($page-1)*settings::get('m_fposts')));
-                $smarty->assign('p',($i+($page-1)*settings::get('m_fposts')));
+                $smarty->assign('postnr',"#".($i+(common::$page-1)*settings::get('m_fposts')));
+                $smarty->assign('p',($i+(common::$page-1)*settings::get('m_fposts')));
                 $smarty->assign('text',$text);
                 $smarty->assign('class',stringParser::decode($ftxt['class']));
                 $smarty->assign('pn',$pn);

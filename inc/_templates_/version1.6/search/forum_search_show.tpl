@@ -11,7 +11,7 @@
   </td>
 </tr>
 <tr>
-  <td class="contentMainTop"><span class="fontBold">{lang msgID="forum_thread"}</span></td>
+  <td class="contentMainTop" width="50%"><span class="fontBold">{lang msgID="forum_thread"}</span></td>
   <td class="contentMainTop"><span class="fontBold">{lang msgID="autor"}</span></td>
   <td class="contentMainTop"><span class="fontBold">{lang msgID="forum_lpost"}</span></td>
   <td class="contentMainTop" width="1%"><span class="fontBold">#</span></td>

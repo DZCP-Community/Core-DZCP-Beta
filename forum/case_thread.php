@@ -17,7 +17,7 @@
 
 if(defined('_Forum')) {
     if(common::$userid && common::$chkMe >= 1) {
-        switch ($do) {
+        switch (common::$do) {
             case 'edit':
                 /*
                  * ########################################################
@@ -27,19 +27,19 @@ if(defined('_Forum')) {
 
                 if (array_key_exists('eintrag', $_POST)) {
                     //validation
-                    common::$gump->validation_rules(array(
-                        'topic' => 'required|alpha_numeric|max_len,150|min_len,1',
+                    common::$gump->validation_rules([
+                        'topic' => 'required|max_len,150|min_len,1',
                         'eintrag' => 'required|min_len,1'
-                    ));
+                    ]);
 
                     //filter
-                    common::$gump->filter_rules(array(
+                    common::$gump->filter_rules([
                         'topic' => 'trim',
                         'subtopic' => 'trim',
                         'sticky' => 'sanitize_numbers',
                         'global' => 'sanitize_numbers',
                         'eintrag' => 'trim'
-                    ));
+                    ]);
 
                     $validated_post_data = common::$gump->run($_POST);
                     if ($validated_post_data !== false && (int)($_GET['id']) >= 1) {
@@ -48,11 +48,11 @@ if(defined('_Forum')) {
                         //#####################
                         //Update Forum-Vote
                         //#####################
-                        common::$gump->validation_rules(array(
+                        common::$gump->validation_rules([
                             'question' => 'required|alpha_numeric|min_len,1',
                             'answer_1' => 'required|alpha_numeric|min_len,1',
                             'answer_2' => 'required|alpha_numeric|min_len,1'
-                        ));
+                        ]);
 
                         $validated_vote_data = common::$gump->run($validated_post_data);
                         if ($validated_vote_data !== false) {
@@ -70,7 +70,7 @@ if(defined('_Forum')) {
                                     . "ON s2.`sid` = s1.`id` "
                                     . "WHERE s2.`id` = ?;", [$_SESSION['kid']]);
 
-                                $validated_vote_data['closed'] = (array_key_exists($validated_vote_data, 'closed') ? $validated_vote_data['closed'] : 0);
+                                $validated_vote_data['closed'] = (array_key_exists($validated_vote_data,'closed') ? $validated_vote_data['closed'] : 0);
                                 if (common::$sql['default']->rows("SELECT `id` FROM `{prefix_votes}` WHERE `id` = ?;", [$get['vote']])) {
                                     common::$sql['default']->update("UPDATE `{prefix_votes}` SET `titel`  = ?," .
                                         ($fgetvote['intern'] ? " `intern` = 1," : " `intern` = " . (int)($validated_vote_data['intern']) . ",") . " `closed` = ? WHERE `id` = ?;",
@@ -86,12 +86,12 @@ if(defined('_Forum')) {
                                 unset($fgetvote);
 
                                 //Loop answers
-                                $answers = array();
+                                $answers = [];
                                 for ($x = 1; $x <= 10; $x++) {
                                     if ($get['vote'] >= 1) {
-                                        $answers[] = array('answer' => common::voteanswer("a" . $x, $get['vote']), 'key' => 'answer_' . $x);
+                                        $answers[] = ['answer' => common::voteanswer("a" . $x, $get['vote']), 'key' => 'answer_' . $x];
                                     } else {
-                                        $answers[] = array('answer' => isset($_POST['answer_' . $x]) ? $_POST['answer_' . $x] : '', 'key' => 'answer_' . $x);
+                                        $answers[] = ['answer' => isset($_POST['answer_' . $x]) ? $_POST['answer_' . $x] : '', 'key' => 'answer_' . $x];
                                     }
                                 }
 
@@ -185,12 +185,12 @@ if(defined('_Forum')) {
                         $fget = common::$sql['default']->fetch("SELECT s1.`intern`,s2.`id` FROM `{prefix_forumkats}` AS s1 LEFT JOIN `{prefix_forumsubkats}` AS s2 ON s2.`sid` = s1.`id` WHERE s2.`id` = ?;", [$get['kid']]);
 
                         //Loop answers
-                        $answers = array();
+                        $answers = [];
                         for ($x = 1; $x <= 10; $x++) {
                             if ($getv['id'] >= 1) {
-                                $answers[] = array('answer' => common::voteanswer("a" . $x, $getv['id']), 'key' => 'answer_' . $x);
+                                $answers[] = ['answer' => common::voteanswer("a" . $x, $getv['id']), 'key' => 'answer_' . $x];
                             } else {
-                                $answers[] = array('answer' => isset($_POST['answer_' . $x]) ? $_POST['answer_' . $x] : '', 'key' => 'answer_' . $x);
+                                $answers[] = ['answer' => isset($_POST['answer_' . $x]) ? $_POST['answer_' . $x] : '', 'key' => 'answer_' . $x];
                             }
                         }
 
@@ -230,9 +230,9 @@ if(defined('_Forum')) {
                 break;
             case 'add':
                 //Loop answers
-                $answers = array();
+                $answers = [];
                 for ($x = 1; $x <= 10; $x++) {
-                    $answers[] = array('answer' => isset($_POST['answer_' . $x]) ? $_POST['answer_' . $x] : '', 'key' => 'answer_' . $x);
+                    $answers[] = ['answer' => isset($_POST['answer_' . $x]) ? $_POST['answer_' . $x] : '', 'key' => 'answer_' . $x];
                 }
 
                 /*
@@ -243,19 +243,19 @@ if(defined('_Forum')) {
 
                 if (array_key_exists('eintrag', $_POST)) {
                     //validation
-                    common::$gump->validation_rules(array(
+                    common::$gump->validation_rules([
                         'topic' => 'required|alpha_numeric|max_len,150|min_len,1',
                         'eintrag' => 'required|min_len,1'
-                    ));
+                    ]);
 
                     //filter
-                    common::$gump->filter_rules(array(
+                    common::$gump->filter_rules([
                         'topic' => 'trim',
                         'subtopic' => 'trim',
                         'sticky' => 'sanitize_numbers',
                         'global' => 'sanitize_numbers',
                         'eintrag' => 'trim'
-                    ));
+                    ]);
 
                     $validated_post_data = common::$gump->run($_POST);
                     if ($validated_post_data !== false) {
@@ -263,11 +263,11 @@ if(defined('_Forum')) {
                         //Insert Forum-Vote
                         //#####################
                         $vid = 0; //Set 0 for forum votes
-                        common::$gump->validation_rules(array(
+                        common::$gump->validation_rules([
                             'question' => 'required|alpha_numeric|min_len,1',
                             'answer_1' => 'required|alpha_numeric|min_len,1',
                             'answer_2' => 'required|alpha_numeric|min_len,1'
-                        ));
+                        ]);
 
                         $validated_vote_data = common::$gump->run($validated_post_data);
                         if ($validated_vote_data !== false) {
@@ -374,7 +374,7 @@ if(defined('_Forum')) {
                         $smarty->assign('is_edit', false);
                         $smarty->assign('id', 0);
                         $smarty->assign('kid', $_SESSION['kid']);
-                        $smarty->assign('form', common::editor_is_reg(array('reg' => common::$userid)));
+                        $smarty->assign('form', common::editor_is_reg(['reg' => common::$userid]));
                         $smarty->assign('posttopic', isset($_POST['topic']) ? stringParser::decode($_POST['topic']) : '');
                         $smarty->assign('postsubtopic', isset($_POST['subtopic']) ? stringParser::decode($_POST['subtopic']) : '');
                         $smarty->assign('admin', $admin);

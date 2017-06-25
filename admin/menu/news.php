@@ -18,26 +18,21 @@
 if(_adminMenu != 'true') exit;
 $where = $where.': '._config_newskats_edit_head;
 
-switch($do) {
+switch(common::$do) {
     case 'delete':
-        $get = fetch("SELECT `id`,`katimg` FROM `{prefix_newskat}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT `id`,`katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [(int)($_GET['id'])]);
         if(common::$sql['default']->rowCount()) {
             if(file_exists(basePath."/inc/images/uploads/newskat/".stringParser::decode($get['katimg']))) {
                 unlink(basePath."/inc/images/uploads/newskat/".stringParser::decode($get['katimg']));
             }
-            common::$sql['default']->delete("DELETE FROM `{prefix_newskat}` WHERE `id` = ?;",array((int)($get['id'])));
+            common::$sql['default']->delete("DELETE FROM `{prefix_newskat}` WHERE `id` = ?;", [(int)($get['id'])]);
             $show = common::info(_config_newskat_deleted, "?admin=news");
         }
     break;
     case 'add':
         $files = common::get_files(basePath.'/inc/images/uploads/newskat/',false,true); $img = "";
         for($i=0; $i<count($files); $i++) {
-            $smarty->caching = false;
-            $smarty->assign('value',$files[$i]);
-            $smarty->assign('sel','');
-            $smarty->assign('what',$files[$i]);
-            $img .= $smarty->fetch('string:'._select_field);
-            $smarty->clearAllAssign();
+            $img .= common::select_field($files[$i],false,$files[$i]);
         }
 
         $smarty->caching = false;
@@ -56,21 +51,15 @@ switch($do) {
             $show = common::error(_config_empty_katname,1);
         } else {
             common::$sql['default']->insert("INSERT INTO `{prefix_newskat}` SET `katimg` = ?, `kategorie` = ?;",
-                    array(stringParser::encode($_POST['img']),stringParser::encode($_POST['kat'])));
+                    [stringParser::encode($_POST['img']),stringParser::encode($_POST['kat'])]);
             $show = common::info(_config_newskats_added, "?admin=news");
         }
     break;
     case 'edit':
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_newskat}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_newskat}` WHERE `id` = ?;", [(int)($_GET['id'])]);
         $files = common::get_files(basePath.'/inc/images/uploads/newskat/',false,true); $img = '';
         for($i=0; $i<count($files); $i++) {
-            $sel = ($get['katimg'] == $files[$i] ? 'selected="selected"' : '');
-            $smarty->caching = false;
-            $smarty->assign('value',$files[$i]);
-            $smarty->assign('sel',$sel);
-            $smarty->assign('what',$files[$i]);
-            $img .= $smarty->fetch('string:'._select_field);
-            $smarty->clearAllAssign();
+            $img .= common::select_field($files[$i],($get['katimg'] == $files[$i]),$files[$i]);
         }
 
         $smarty->caching = false;
@@ -95,7 +84,7 @@ switch($do) {
         } else {
             $katimg = ($_POST['img'] == "lazy" ? "" : "`katimg` = '".stringParser::encode($_POST['img'])."',");
             common::$sql['default']->update("UPDATE `{prefix_newskat}` SET ".$katimg." `kategorie` = ? WHERE id = ?;",
-                    array(stringParser::encode($_POST['kat']),(int)($_GET['id'])));
+                    [stringParser::encode($_POST['kat']),(int)($_GET['id'])]);
             $show = common::info(_config_newskats_edited, "?admin=news");
         }
     break;

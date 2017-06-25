@@ -29,7 +29,7 @@
   <td class="contentHead" align="center" colspan="2"><span class="fontBold">{lang msgID="dl_info"}</span></td>
 </tr>
 <tr>
-  <td width="30%" class="contentMainTop"><span class="fontBold">{lang msgID="dl_loaded}:</span></td>
+  <td width="30%" class="contentMainTop"><span class="fontBold">{lang msgID="dl_loaded"}:</span></td>
   <td class="contentMainFirst">{$loaded}</td>
 </tr>
 {$br1}

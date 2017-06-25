@@ -15,7 +15,7 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function smarty_function_getrank($params, &$smarty) {
+function smarty_function_getrank($params,Smarty_Internal_Template &$smarty) {
     $params['userid'] = !array_key_exists('userid',$params) ? 0 : $params['userid'];
     $params['squad'] = !array_key_exists('squad',$params) ? 0 : $params['squad'];
     return common::getrank($params['userid'],$params['squad'],true);

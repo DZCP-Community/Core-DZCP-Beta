@@ -21,7 +21,7 @@
  * @param $smarty
  * @return mixed|string
  */
-function smarty_function_lang($params, &$smarty) {
+function smarty_function_lang($params,Smarty_Internal_Template &$smarty) {
     /** @var TYPE_NAME $params */
     $params['msgID']='_'.$params['msgID'];
     if(!defined($params['msgID'])) {

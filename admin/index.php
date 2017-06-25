@@ -76,7 +76,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['id']) || !common::admin_perms($_
                 if ($ora && common::$chkMe == 4 && common::rootAdmin())
                     $permission = true;
 
-                foreach (["jpg", "gif", "png"] AS $end) {
+                foreach (common::SUPPORTED_PICTURE as $end) {
                     if (file_exists(basePath . '/admin/menu/' . str_replace('.xml', '', $file_xml) . '.' . $end))
                         break;
                 }

@@ -34,12 +34,12 @@ $smarty = common::getSmarty(); //Use Smarty
  */
 function check_buddy($buddy) {
     return !common::$sql['default']->rows("SELECT `buddy` FROM `{prefix_userbuddys}` WHERE `user` = ? AND `buddy` = ?;",
-            array((int)(common::$userid),(int)($buddy))) ? true : false;
+            [(int)(common::$userid),(int)($buddy)]) ? true : false;
 }
 
 //Load Index
-if (file_exists(basePath . "/user/case_" . $action . ".php")) {
-    require_once(basePath . "/user/case_" . $action . ".php");
+if (file_exists(basePath . "/user/case_" . common::$action . ".php")) {
+    require_once(basePath . "/user/case_" . common::$action . ".php");
 }
 
 ## INDEX OUTPUT ##

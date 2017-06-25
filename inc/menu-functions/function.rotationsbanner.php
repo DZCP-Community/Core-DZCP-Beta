@@ -21,7 +21,7 @@
  * @param $smarty
  * @return string
  */
-function smarty_function_rotationsbanner($params, &$smarty) {
+function smarty_function_rotationsbanner($params,Smarty_Internal_Template &$smarty) {
     $qry = common::$sql['default']->select("SELECT `id`,`link`,`bend`,`blink` FROM `{prefix_sponsoren}` WHERE `banner` = 1 ORDER BY RAND() LIMIT 1;");
     $rotationbanner = '';
     if(common::$sql['default']->rowCount()) {

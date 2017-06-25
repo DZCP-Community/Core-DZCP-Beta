@@ -139,12 +139,12 @@ class WavFile
     /** @var array Log base modifier lookup table for a given threshold (in 0.05 steps) used by normalizeSample.
      * Adjusts the slope (1st derivative) of the log function at the threshold to 1 for a smooth transition
      * from linear to logarithmic amplitude output. */
-    protected static $LOOKUP_LOGBASE = array(
+    protected static $LOOKUP_LOGBASE = [
         2.513, 2.667, 2.841, 3.038, 3.262,
         3.520, 3.819, 4.171, 4.589, 5.093,
         5.711, 6.487, 7.483, 8.806, 10.634,
         13.302, 17.510, 24.970, 41.155, 96.088
-    );
+    ];
 
     /** @var int The actual physical file size */
     protected $_actualSize;
@@ -386,7 +386,7 @@ class WavFile
             $numChannels = strlen($sampleBlock) / $sampleBytes;
         }
 
-        $samples = array();
+        $samples = [];
         for ($i = 0; $i < $numChannels; $i++) {
             $sampleBinary = substr($sampleBlock, $i * $sampleBytes, $sampleBytes);
             $samples[$i + 1] = self::unpackSample($sampleBinary, $bitDepth);
@@ -708,7 +708,7 @@ class WavFile
     }
 
     public function setBitsPerSample($bitsPerSample) {
-        if (!in_array($bitsPerSample, array(8, 16, 24, 32))) {
+        if (!in_array($bitsPerSample, [8, 16, 24, 32])) {
             throw new WavFileException('Unsupported bits per sample. Only 8, 16, 24 and 32 bits are supported.');
         } elseif ($this->_samples !== '') {
             trigger_error('Wav already has sample data. Changing the bits per sample does not convert and may corrupt the data.', E_USER_NOTICE);
@@ -1112,9 +1112,9 @@ class WavFile
             throw new WavFormatException('Invalid sample rate in "fmt " subchunk.', 15);
         }
 
-        if (   ($fmt['AudioFormat'] == self::WAVE_FORMAT_PCM && !in_array($fmt['BitsPerSample'], array(8, 16, 24)))
+        if (   ($fmt['AudioFormat'] == self::WAVE_FORMAT_PCM && !in_array($fmt['BitsPerSample'], [8, 16, 24]))
             || ($fmt['AudioFormat'] == self::WAVE_FORMAT_IEEE_FLOAT && $fmt['BitsPerSample'] != 32)
-            || ($fmt['AudioFormat'] == self::WAVE_FORMAT_EXTENSIBLE && !in_array($fmt['BitsPerSample'], array(8, 16, 24, 32))))
+            || ($fmt['AudioFormat'] == self::WAVE_FORMAT_EXTENSIBLE && !in_array($fmt['BitsPerSample'], [8, 16, 24, 32])))
         {
             throw new WavFormatException('Only 8, 16 and 24-bit PCM and 32-bit IEEE FLOAT (EXTENSIBLE) audio is supported.', 16);
         }
@@ -1165,7 +1165,7 @@ class WavFile
                 throw new WavFormatException('Unsupported audio format. Only PCM or IEEE FLOAT (EXTENSIBLE) audio is supported.', 13);
             }
 
-            if (   ($extensibleFmt['SubFormat'] == self::WAVE_SUBFORMAT_PCM && !in_array($fmt['BitsPerSample'], array(8, 16, 24)))
+            if (   ($extensibleFmt['SubFormat'] == self::WAVE_SUBFORMAT_PCM && !in_array($fmt['BitsPerSample'], [8, 16, 24]))
                 || ($extensibleFmt['SubFormat'] == self::WAVE_SUBFORMAT_IEEE_FLOAT && $fmt['BitsPerSample'] != 32))
             {
                 throw new WavFormatException('Only 8, 16 and 24-bit PCM and 32-bit IEEE FLOAT (EXTENSIBLE) audio is supported.', 16);
@@ -1209,8 +1209,8 @@ class WavFile
 
 
         // read additional subchunks until "data" subchunk is found
-        $factSubchunk = array();
-        $dataSubchunk = array();
+        $factSubchunk = [];
+        $dataSubchunk = [];
 
         while (!feof($this->_fp)) {
             $subchunkHeader = fread($this->_fp, 8);
@@ -1272,7 +1272,7 @@ class WavFile
         $numBlocks = (int)($dataSubchunk['SubchunkSize'] / $fmt['BlockAlign']);
 
         if (empty($factSubchunk)) {  // construct fake "fact" subchunk
-            $factSubchunk = array('SubchunkSize' => 0, 'SampleLength' => $numBlocks);
+            $factSubchunk = ['SubchunkSize' => 0, 'SampleLength' => $numBlocks];
         }
 
         if ($factSubchunk['SampleLength'] != $numBlocks) {
@@ -1584,9 +1584,10 @@ class WavFile
      *  );
      *  </code>
      *
-     * @param array $filters  (Required) An array of 1 or more audio processing filters.
-     * @param int $blockOffset  (Optional) The block number to start precessing from.
-     * @param int $numBlocks  (Optional) The maximum  number of blocks to process.
+     * @param array $filters (Required) An array of 1 or more audio processing filters.
+     * @param int $blockOffset (Optional) The block number to start precessing from.
+     * @param int $numBlocks (Optional) The maximum  number of blocks to process.
+     * @return $this
      * @throws WavFileException
      */
     public function filter($filters, $blockOffset = 0, $numBlocks = null)
@@ -1606,7 +1607,7 @@ class WavFile
         if (array_key_exists(self::FILTER_MIX, $filters)) {
             if (!is_array($filters[self::FILTER_MIX])) {
                 // assume the 'wav' parameter
-                $filters[self::FILTER_MIX] = array('wav' => $filters[self::FILTER_MIX]);
+                $filters[self::FILTER_MIX] = ['wav' => $filters[self::FILTER_MIX]];
             }
 
             $mix_wav = @$filters[self::FILTER_MIX]['wav'];
@@ -1735,10 +1736,10 @@ class WavFile
      * @throws WavFileException
      */
     public function mergeWav(WavFile $wav, $normalizeThreshold = null) {
-        return $this->filter(array(
+        return $this->filter([
             WavFile::FILTER_MIX       => $wav,
             WavFile::FILTER_NORMALIZE => $normalizeThreshold
-        ));
+        ]);
     }
 
     /**
@@ -1770,9 +1771,9 @@ class WavFile
      */
     public function degrade($quality = 1.0)
     {
-        return $this->filter(self::FILTER_DEGRADE, array(
+        return $this->filter(self::FILTER_DEGRADE, [
             WavFile::FILTER_DEGRADE => $quality
-        ));
+        ]);
     }
 
     /**
@@ -1818,7 +1819,7 @@ class WavFile
 
         $tempWav = new WavFile($this->getNumChannels(), $this->getSampleRate(), $bitsPerSample);
         $tempWav->filter(
-            array(self::FILTER_MIX => $this),
+            [self::FILTER_MIX => $this],
             0,
             $this->getNumBlocks()
         );

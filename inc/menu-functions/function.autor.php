@@ -15,7 +15,7 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function smarty_function_autor($params, &$smarty) {
+function smarty_function_autor($params,Smarty_Internal_Template &$smarty) {
     $params['userid'] = !array_key_exists('userid',$params) ? 0 : $params['userid'];
     return common::autor($params['userid']);
 }

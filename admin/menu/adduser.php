@@ -104,7 +104,7 @@ if(isset($_POST['user'])) {
 
             if($tmpname) {
                 $imageinfo = getimagesize($tmpname);
-                foreach(["jpg", "gif", "png"] as $tmpendung) {
+                foreach(common::SUPPORTED_PICTURE as $tmpendung) {
                     if(file_exists(basePath."/inc/images/uploads/userpics/".$insert_id.".".$tmpendung)) {
                         @unlink(basePath."/inc/images/uploads/userpics/".$insert_id.".".$tmpendung);
                     }
@@ -126,7 +126,7 @@ if(isset($_POST['user'])) {
 
             if($tmpname) {
                 $imageinfo = getimagesize($tmpname);
-                foreach(["jpg", "gif", "png"] as $tmpendung) {
+                foreach(common::SUPPORTED_PICTURE as $tmpendung) {
                     if(file_exists(basePath."/inc/images/uploads/useravatare/".$insert_id.".".$tmpendung)) {
                         @unlink(basePath."/inc/images/uploads/useravatare/".$insert_id.".".$tmpendung);
                     }
@@ -151,21 +151,18 @@ if(empty($show)) {
     foreach($qrygroups as $getgroups) {
         $qrypos = common::$sql['default']->select("SELECT `id`,`position` FROM `{prefix_positions}` ORDER BY `pid`;"); $posi = "";
         foreach($qrypos as $getpos) {
-            $smarty->caching = false;
-            $smarty->assign('value',$getpos['id']);
-            $smarty->assign('sel','');
-            $smarty->assign('what',stringParser::decode($getpos['position']));
-            $posi .= $smarty->fetch('string:'._select_field_posis);
-            $smarty->clearAllAssign();
+            $posi .= common::select_field($getpos['id'],false,stringParser::decode($getpos['position']));
         }
+
         $smarty->caching = false;
         $smarty->assign('id',$getgroups['id']);
         $smarty->assign('check','');
         $smarty->assign('eposi',$posi);
         $smarty->assign('squad',stringParser::decode($getgroups['name']));
-        $egroups .= $smarty->fetch('string:'._checkfield_squads);
+        $esquads .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin/admin_checkfield_squads.tpl');
         $smarty->clearAllAssign();
     }
+
     $smarty->caching = false;
     $smarty->assign('groups',$egroups);
     $smarty->assign('getpermissions',common::getPermissions());

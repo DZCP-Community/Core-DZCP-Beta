@@ -12,7 +12,6 @@
   <td class="contentMainTop" colspan="3" id="more1" {$style}>
     <form id="search" name="search" action="" method="get" onsubmit="return(DZCP.submitButton())">
     <input type="hidden" name="do" value="search" />
-    <input type="hidden" name="si_board" value="true" />
     <table class="hperc" cellspacing="2">
       <tr>
         <td><span class="fontBold">{lang msgID="search_word"}:</span></td>
@@ -65,7 +64,7 @@
                   <tr>
                     <td>
                       <fieldset class="search">
-								        <legend class="search"><span class="fontBold">_search_type</span></legend>
+								        <legend class="search"><span class="fontBold">{lang msgID="search_type"}</span></legend>
 									      <input type="radio" name="type" class="checkbox" value="text" {$tcheck1} />
                           {lang msgID="search_type_text"}<br />
       									<input type="radio" name="type" class="checkbox" value="autor" {$tcheck2} />

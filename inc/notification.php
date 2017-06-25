@@ -17,7 +17,7 @@
 
 //-> Generiert die Infobox bei Fehlern oder Erfolg etc. / neuer Ersatz fur function info() & error()
 class notification {
-    static public $notification_index = array('global' => array());
+    static public $notification_index = ['global' => []];
     static private $notification_success = false;
     static private $smarty = NULL;
 
@@ -77,7 +77,7 @@ class notification {
 
     //Private
     private static function import($status, $msg, $link, $time, $index) {
-        $data = array('status' => strtolower($status), 'msg' => $msg, 'link' => $link, 'time' => $time);
+        $data = ['status' => strtolower($status), 'msg' => $msg, 'link' => $link, 'time' => $time];
         self::$notification_index[$index][] = $data;
     }
 }

@@ -15,7 +15,7 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function smarty_function_events($params, &$smarty) {
+function smarty_function_events($params,Smarty_Internal_Template &$smarty) {
     $qry = common::$sql['default']->select("SELECT `id`,`datum`,`title`,`event` "
         . "FROM `{prefix_events}` "
         . "WHERE `datum` > ? "

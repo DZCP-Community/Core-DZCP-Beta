@@ -52,12 +52,8 @@ require_once(basePath.'/inc/notification.php');
 
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 
-//-> Global
-if(!is_api) {
-    $action = isset($_GET['action']) ? secure_global_imput($_GET['action']) : (isset($_POST['action']) ? secure_global_imput($_POST['action']) : 'default');
-    $page = isset($_GET['page']) ? (int)(trim($_GET['page'])) : (isset($_POST['page']) ? (int)(trim($_POST['page'])) : 1);
-    $do = isset($_GET['do']) ? secure_global_imput($_GET['do']) : (isset($_POST['do']) ? secure_global_imput($_POST['do']) : '');
-} $index = ''; $show = ''; $color = 0;
+//Global Strings
+$index = ''; $show = ''; $color = 0;
 
 new common(); //Main Construct
 require_once(basePath.'/inc/sfs.php');
@@ -90,6 +86,10 @@ class common {
     public static $less = NULL;
     public static $mobile = NULL;
     public static $cache = NULL;
+    public static $action = 'default';
+    public static $page = 1;
+    public static $do = '';
+    public static $search_forum = false;
 
     //Private
     private static $menu_index = [];
@@ -101,6 +101,8 @@ class common {
 
     const IPV6_NULL_ADDR = 'xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx';
     const IPV4_NULL_ADDR = '0.0.0.0';
+
+    const SUPPORTED_PICTURE = ["jpg", "gif", "png"];
 
     //Functions
     /**
@@ -143,6 +145,15 @@ class common {
                 }
             }
         }
+
+        //-> Global
+        if(!is_api) {
+            self::$action = isset($_GET['action']) ? secure_global_imput($_GET['action']) : (isset($_POST['action']) ? secure_global_imput($_POST['action']) : 'default');
+            self::$page = isset($_GET['page']) ? (int)(trim($_GET['page'])) : (isset($_POST['page']) ? (int)(trim($_POST['page'])) : 1);
+            self::$do = isset($_GET['do']) ? secure_global_imput($_GET['do']) : (isset($_POST['do']) ? secure_global_imput($_POST['do']) : '');
+        }
+		
+		self::$search_forum = false;
 
         //->Crawler Detect
         self::$CrawlerDetect = new CrawlerDetect();
@@ -196,7 +207,7 @@ class common {
         }
 
         //Less Parser
-        $options = array( 'compress' => true, 'sourceMap' => false );
+        $options = ['compress' => true, 'sourceMap' => false];
         self::$less = new Less_Parser($options);
 
         //Set User IP & einzelne Definitionen
@@ -505,6 +516,9 @@ class common {
     }
 
     /**
+     * @name        getSmarty()
+     * @access      public
+     * @static
      * @param bool $new_instance (optional) Erstellt eine neue unabhängige Smarty-Instanz.
      * @return null|Smarty
      */
@@ -537,6 +551,9 @@ class common {
     }
 
     /**
+     * @name        getSmartyCacheHash()
+     * @access      public
+     * @static
      * @param string $tag
      * @return string
      */
@@ -571,6 +588,9 @@ class common {
 
     /**
      * Nickausgabe mit Profillink oder Emaillink (reg/nicht reg)
+     * @name        autor()
+     * @access      public
+     * @static
      * @param int $uid
      * @param string $class (optional)
      * @param string $nick (optional)
@@ -605,6 +625,9 @@ class common {
 
     /**
      * Nickausgabe mit Profillink (reg + position farbe)
+     * @name        autorcolerd()
+     * @access      public
+     * @static
      * @param int $uid
      * @param string $class (optional)
      * @param int $cut (optional)
@@ -634,9 +657,14 @@ class common {
             $smarty->clearAllAssign();
             return $autor;
         }
+
+        return '';
     }
 
     /**
+     * @name        cleanautor()
+     * @access      public
+     * @static
      * @param int $uid
      * @param string $class (optional)
      * @param string $nick (optional)
@@ -663,6 +691,9 @@ class common {
     }
 
     /**
+     * @name        rawautor()
+     * @access      public
+     * @static
      * @param int $uid
      * @param bool $refresh (optional)
      * @return string
@@ -681,6 +712,9 @@ class common {
 
     /**
      * Nickausgabe ohne Profillink oder Emaillink fr das ForenAbo
+     * @name        fabo_autor()
+     * @access      public
+     * @static
      * @param int $uid
      * @param bool $refresh (optional)
      * @return mixed|string
@@ -834,7 +868,6 @@ class common {
      * @return string
      */
     public static function nav(int $entrys,int $perpage,string $urlpart='',int $recall = 0) {
-        global $page;
         if(!$entrys || !$perpage) {
             $entrys = 1;
             $perpage = 10;
@@ -843,25 +876,25 @@ class common {
         $total_pages  = ceil($entrys / $perpage);
         $maximum_links = ((9 - $recall) / 2);
         $no_recall = !$recall ? false : true;
-        $offset_izq = ($page - $maximum_links) < 0 ? $page - $maximum_links : 0;
-        $offset_der = ($total_pages - $page) < $maximum_links ? $maximum_links - ($total_pages - $page) : 0;
+        $offset_izq = (self::$page - $maximum_links) < 0 ? self::$page - $maximum_links : 0;
+        $offset_der = ($total_pages - self::$page) < $maximum_links ? $maximum_links - ($total_pages - self::$page) : 0;
         $pagination =""; $urlpart_extended = empty($urlpart) ? '?' : '&amp;'; $recall = 0;
 
         if(!show_empty_paginator && $total_pages == 1) {
             return '';
         }
 
-        if ($page == 1) {
+        if (self::$page == 1) {
             $pagination.= "<div class='pagination active'>"._paginator_previous."</div>";
         } else {
-            $pagina_anterior = $page - 1;
+            $pagina_anterior = self::$page - 1;
             $pagination .= "<a href='".$urlpart.$urlpart_extended."page=".$pagina_anterior."' class='pagination'>"._paginator_previous."</a>";
         }
 
         $pager = []; $pagination_f = '';
         for ($i = 1; $i <= $total_pages; $i++) {
-            if ($i <= ($page - $maximum_links) - $offset_der || $i > ($page + $maximum_links) - $offset_izq) { $pager[$i] = false; continue; }
-            $pagination_f .= ($i == $page ? "<div class='pagination active'>" .$i. "</div>" : "<a href='".$urlpart.$urlpart_extended."page=".$i."' class='pagination'>".$i."</a>");
+            if ($i <= (self::$page - $maximum_links) - $offset_der || $i > (self::$page + $maximum_links) - $offset_izq) { $pager[$i] = false; continue; }
+            $pagination_f .= ($i == self::$page ? "<div class='pagination active'>" .$i. "</div>" : "<a href='".$urlpart.$urlpart_extended."page=".$i."' class='pagination'>".$i."</a>");
             $pager[$i] = true;
         }
 
@@ -872,9 +905,9 @@ class common {
         }
 
         $pagination.= $pagination_f;
-        if(!$pager[$total_pages]) {
+        if(!array_key_exists((int)$total_pages,$pager)) {
             $pagination.= "<div class='pagination active'>...</div>";
-            $pagination.= "<a href='".$urlpart.$urlpart_extended."page=".$total_pages."' class='pagination'>".$total_pages."</a>";
+            $pagination.= "<a href='".$urlpart.$urlpart_extended."page=".(int)$total_pages."' class='pagination'>".(int)$total_pages."</a>";
             $recall = ($recall+1);
         }
 
@@ -882,10 +915,10 @@ class common {
             return self::nav($entrys, $perpage, $urlpart, $recall);
         }
 
-        if ($page == $total_pages) {
+        if (self::$page == (int)$total_pages) {
             $pagination.= "<div class='pagination active'>"._paginator_next."</div>";
         } else {
-            $pagina_posterior = $page + 1;
+            $pagina_posterior = self::$page + 1;
             $pagination.= "<a href='".$urlpart.$urlpart_extended."page=".$pagina_posterior."' class='pagination'>"._paginator_next."</a>";
         }
 
@@ -1023,6 +1056,8 @@ class common {
                 }
             }
         }
+
+        return 0;
     }
 
     /**
@@ -1086,7 +1121,7 @@ class common {
      */
     public static function userpic(int $uid,int $width=170,int $height=210) {
         $smarty = self::getSmarty(true);
-        foreach (["jpg", "gif", "png"] as $endung) {
+        foreach (common::SUPPORTED_PICTURE as $endung) {
             if (file_exists(basePath . "/inc/images/uploads/userpics/" . $uid . "." . $endung)) {
                 $smarty->caching = true;
                 $smarty->cache_lifetime = 300;
@@ -1121,7 +1156,7 @@ class common {
     public static function useravatar(int $uid=0, int $width=100,int $height=100) {
         $smarty = self::getSmarty(true);
         $uid = ($uid == 0 ? self::$userid : $uid);
-        foreach(["jpg", "gif", "png"] as $endung) {
+        foreach(common::SUPPORTED_PICTURE as $endung) {
             if (file_exists(basePath . "/inc/images/uploads/useravatare/" . $uid . "." . $endung)) {
                 $smarty->caching = true;
                 $smarty->cache_lifetime = 300;
@@ -1198,23 +1233,6 @@ class common {
         }
 
         return '';
-    }
-
-    /**
-     * Konvertiert Platzhalter in die jeweiligen bersetzungen
-     * @param $name
-     * @return string
-     */
-    public static function navi_name(string $name) {
-        $name = trim($name);
-        if(preg_match("#^_(.*?)_$#Uis",$name)) {
-            $name = preg_replace("#_(.*?)_#Uis", "$1", $name);
-            if (defined("_" . $name)) {
-                return constant("_" . $name);
-            }
-        }
-
-        return $name;
     }
 
     /**
@@ -1357,66 +1375,71 @@ class common {
      * @return string
      */
     public static function dropdown(string $what, int $wert, int $age = 0) {
-        if($what == "day") {
-            $return = ($age == 1 ? '<option value="" class="dropdownKat">'._day.'</option>'."\n" : '');
-            for($i=1; $i<32; $i++) {
-                if ($i == $wert) {
-                    $return .= "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>\n";
-                } else {
-                    $return .= "<option value=\"" . $i . "\">" . $i . "</option>\n";
-                }
-            }
-        } else if($what == "month") {
-            $return = ($age == 1 ? '<option value="" class="dropdownKat">'._month.'</option>'."\n" : '');
-            for($i=1; $i<13; $i++) {
-                if ($i == $wert) {
-                    $return .= "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>\n";
-                } else {
-                    $return .= "<option value=\"" . $i . "\">" . $i . "</option>\n";
-                }
-            }
-        } else if($what == "year") {
-            if($age == 1) {
-                $return ='<option value="" class="dropdownKat">'._year.'</option>'."\n";
-                for($i=date("Y",time())-80; $i<date("Y",time())-10; $i++) {
+        $return = '';
+        switch(strtolower($what)) {
+            case 'day':
+                $return = ($age == 1 ? '<option value="" class="dropdownKat">'._day.'</option>'."\n" : '');
+                for($i=1; $i<32; $i++) {
                     if ($i == $wert) {
                         $return .= "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>\n";
                     } else {
                         $return .= "<option value=\"" . $i . "\">" . $i . "</option>\n";
                     }
                 }
-            } else {
-                $return = '';
-                for($i=date("Y",time())-3; $i<date("Y",time())+3; $i++) {
+            break;
+            case 'month':
+                $return = ($age == 1 ? '<option value="" class="dropdownKat">'._month.'</option>'."\n" : '');
+                for($i=1; $i<13; $i++) {
                     if ($i == $wert) {
                         $return .= "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>\n";
                     } else {
                         $return .= "<option value=\"" . $i . "\">" . $i . "</option>\n";
                     }
                 }
-            }
-        } else if($what == "hour") {
-            $return = '';
-            for($i=0; $i<24; $i++) {
-                if ($i == $wert) {
-                    $return .= "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>\n";
+            break;
+            case 'year':
+                if($age == 1) {
+                    $return ='<option value="" class="dropdownKat">'._year.'</option>'."\n";
+                    for($i=date("Y",time())-80; $i<date("Y",time())-10; $i++) {
+                        if ($i == $wert) {
+                            $return .= "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>\n";
+                        } else {
+                            $return .= "<option value=\"" . $i . "\">" . $i . "</option>\n";
+                        }
+                    }
                 } else {
-                    $return .= "<option value=\"" . $i . "\">" . $i . "</option>\n";
+                    for($i=date("Y",time())-3; $i<date("Y",time())+3; $i++) {
+                        if ($i == $wert) {
+                            $return .= "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>\n";
+                        } else {
+                            $return .= "<option value=\"" . $i . "\">" . $i . "</option>\n";
+                        }
+                    }
                 }
-            }
-        } else if($what == "minute") {
-            $return = '';
-            for($i="00"; $i<60; $i++) {
-                if($i == 0 || $i == 15 || $i == 30 || $i == 45) {
+            break;
+            case 'hour':
+                for($i=0; $i<24; $i++) {
                     if ($i == $wert) {
                         $return .= "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>\n";
                     } else {
                         $return .= "<option value=\"" . $i . "\">" . $i . "</option>\n";
                     }
                 }
-            }
+            break;
+            case 'minute':
+                for($i="00"; $i<60; $i++) {
+                    if($i == 0 || $i == 15 || $i == 30 || $i == 45) {
+                        if ($i == $wert) {
+                            $return .= "<option value=\"" . $i . "\" selected=\"selected\">" . $i . "</option>\n";
+                        } else {
+                            $return .= "<option value=\"" . $i . "\">" . $i . "</option>\n";
+                        }
+                    }
+                }
+            break;
         }
 
+        unset($i);
         return $return;
     }
 
@@ -1441,8 +1464,13 @@ class common {
 
         $ending = $dots || !empty($ending) ? (!empty($ending) ? $ending : '...') : '';
 
-        if(!$html)
+        if(!$html) {
+            if(strlen($text) <= $length) {
+                return $text;
+            }
+
             return substr($text, 0, $length).$ending;
+        }
 
         if ($considerHtml) {
             // if the plain text is shorter than the maximum length, return the whole text
@@ -1453,7 +1481,7 @@ class common {
             // splits all html-tags to scanable lines
             preg_match_all('/(<.+?>)?([^<>]*)/s', $text, $lines, PREG_SET_ORDER);
             $total_length = strlen($ending);
-            $open_tags = array();
+            $open_tags = [];
             $truncate = '';
             foreach ($lines as $line_matchings) {
                 // if there is any html-tag in this line, handle it and add it (uncounted) to the output
@@ -1603,6 +1631,8 @@ class common {
                 }
             }
         }
+
+        return '';
     }
 
     /**
@@ -1627,6 +1657,9 @@ class common {
 
     /**
      * Funktion um Dateien aus einem Verzeichnis auszulesen
+     * @name        get_files()
+     * @access      public
+     * @static
      * @param string|null $dir
      * @param bool $only_dir (optional)
      * @param bool $only_files (optional)
@@ -1634,7 +1667,7 @@ class common {
      * @param bool $preg_match (optional)
      * @param array $blacklist (optional)
      * @param bool $blacklist_word (optional)
-     * @return array
+     * @return array|bool
      */
     public static function get_files(string $dir=null, bool $only_dir=false, bool $only_files=false, array $file_ext= [], bool $preg_match=false, array $blacklist= [], bool $blacklist_word=false) {
         /* CACHE */
@@ -2307,8 +2340,6 @@ class common {
                 .substr($charid,20,12);
             return $uuid;
         }
-
-        return '';
     }
 
     /**
@@ -2432,7 +2463,7 @@ class common {
             return '<img src="../inc/images/flaggen/nocountry.gif" alt="" class="icon" />';
         }
 
-        foreach(["jpg", "gif", "png"] as $end) {
+        foreach(common::SUPPORTED_PICTURE as $end) {
             if (file_exists(basePath . "/inc/images/flaggen/" . $code . "." . $end)) {
                 break;
             }
@@ -2454,7 +2485,7 @@ class common {
             return '<img src=../inc/images/flaggen/nocountry.gif alt= class=icon />';
         }
 
-        foreach(["jpg", "gif", "png"] as $end) {
+        foreach(common::SUPPORTED_PICTURE as $end) {
             if (file_exists(basePath . "/inc/images/flaggen/" . $code . "." . $end)) {
                 break;
             }
@@ -2626,11 +2657,12 @@ class common {
      * @param string $url
      * @param int $timeout (optional)
      * @param bool $direct_refresh (optional)
-     * @return mixed|string|void
+     * @return mixed|string
      */
     public static function info(string $msg,string $url,int $timeout = 5,bool $direct_refresh = true) {
         if (settings::get('direct_refresh') && $direct_refresh) {
-            return header('Location: ' . str_replace('&amp;', '&', $url));
+            header('Location: ' . str_replace('&amp;', '&', $url));
+            exit();
         }
 
         $u = parse_url($url); $parts = '';
@@ -2752,7 +2784,7 @@ class common {
     public static function less() {
         //TODO: Use Cache
         $main_dir = basePath . "/inc/_templates_/" . self::$sdir."/_less";
-        $auto_imports = array();
+        $auto_imports = [];
         if($auto_import = common::get_files(basePath . "/inc/_templates_/" . self::$sdir."/_less/auto_imports/",false,true, ['php'])) {
             foreach($auto_import AS $dir)
             {
@@ -2774,7 +2806,7 @@ class common {
      * @param array $get
      * @return string
      */
-    public static function editor_is_reg(array $get = array()) {
+    public static function editor_is_reg(array $get = []) {
         $get['reg'] = (array_key_exists('reg',$get) ? $get['reg'] : (array_key_exists('t_reg',$get) ? $get['t_reg'] : self::$userid)); //Fix for thread/post
         $smarty = self::getSmarty(true);
         $smarty->caching = false;
@@ -3054,9 +3086,9 @@ class common {
      * @return string
      */
     public static function parser_filesize(int $bytes, int $decimals = 2) {
-        $size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
+        $size = ['B','kB','MB','GB','TB','PB','EB','ZB','YB'];
         $factor = floor((strlen($bytes) - 1) / 3);
-        return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];
+        return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . (array_key_exists((int)$factor,$size) ? $size[(int)$factor] : '');
     }
 
     /**
@@ -3114,7 +3146,7 @@ class common {
 
         //Check Wartungsmodus
         if(settings::get("wmodus") && self::$chkMe != 4) {
-            $index = wmodus($title);
+            $index = self::wmodus($title);
         } else {
             $where = preg_replace_callback("#autor_(.*?)$#",
                 create_function('$id', 'return stringParser::decode(common::data("nick","$id[1]"));'),

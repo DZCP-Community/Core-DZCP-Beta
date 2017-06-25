@@ -23,15 +23,16 @@ if(defined('_Forum')) {
                 $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE `id` = ?;",
                     [(int)($_GET['id'])]);
 
-                if(!$get['t_reg'])
+                if(!$get['t_reg']) {
                     $guestCheck = false;
-                else {
+                    $pUId = 0;
+                } else {
                     $guestCheck = true;
                     $pUId = $get['t_reg'];
                 }
 
                 //-> Editby Text
-                if(isset($_POST[editby])) {
+                if(isset($_POST['editby'])) {
                     $smarty->caching = false;
                     $smarty->assign('autor', common::cleanautor(common::$userid));
                     $smarty->assign('time', date("d.m.Y H:i", time()));
@@ -158,7 +159,7 @@ if(defined('_Forum')) {
         break;
         default:
         case 'post':
-            if($do == 'editpost')
+            if(common::$do == 'editpost')
             {
                 $get = common::$sql['default']->fetch("SELECT `date`,`reg`,`sid` FROM `{prefix_forumposts}` WHERE `id` = ?;",[(int)($_GET['id'])]);
 
@@ -170,7 +171,7 @@ if(defined('_Forum')) {
                 }
 
                 $smarty->caching = false;
-                $smarty->assign('autor',common::cleanautor($userid));
+                $smarty->assign('autor',common::cleanautor(common::$userid));
                 $smarty->assign('time',date("d.m.Y H:i", time()));
                 $editedby = $smarty->fetch('string:'._edited_by);
                 $smarty->clearAllAssign();
@@ -234,8 +235,8 @@ if(defined('_Forum')) {
             $smarty->caching = false;
             $smarty->assign('nick', common::cleanautor($pUId, '', $_POST['nick'], $_POST['email']));
             $smarty->assign('chkme', common::$chkMe);
-            $smarty->assign('postnr', "#".($i+($page-1)*settings::get('m_fposts')));
-            $smarty->assign('p', ($i+($page-1)*settings::get('m_fposts')));
+            $smarty->assign('postnr', "#".($i+(common::$page-1)*settings::get('m_fposts')));
+            $smarty->assign('p', ($i+(common::$page-1)*settings::get('m_fposts')));
             $smarty->assign('text', bbcode_base::parse_html((string)($_POST['eintrag']).$editedby));
             $smarty->assign('class', 'class="commentsRight"');
             $smarty->assign('pn', $pn);

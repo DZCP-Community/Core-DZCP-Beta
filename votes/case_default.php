@@ -41,7 +41,7 @@ if(defined('_Votes')) {
         }
 
         $results = ''; $color2 = 0;
-        $ipcheck = !common::count_clicks('vote',$get['id'],0,false);
+        $ipcheck = !common::count_clicks('vote',$get['id'],false);
         foreach($qryv as $getv) {
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             if($ipcheck || cookie::get('vid_'.$get['id']) != false || $get['closed']) {
@@ -103,12 +103,14 @@ if(defined('_Votes')) {
         $smarty->assign('titel',$titel);
         $smarty->assign('vid',$get['id']);
         $smarty->assign('display',$display);
+        /** @var TYPE_NAME $result_head */
         $smarty->assign('result_head',$result_head);
         $smarty->assign('results',$results);
         $smarty->assign('show',$showVoted);
         $smarty->assign('closed',$closed);
         $smarty->assign('autor', common::autor($get['von']));
         $smarty->assign('class',$class);
+        /** @var TYPE_NAME $votebutton */
         $smarty->assign('votebutton',$votebutton);
         $smarty->assign('stimmen',$stimmen);
         $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/votes_show.tpl');

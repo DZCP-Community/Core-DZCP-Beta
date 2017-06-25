@@ -15,7 +15,7 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-function smarty_function_vote($params, &$smarty) {
+function smarty_function_vote($params,Smarty_Internal_Template &$smarty) {
     $params['js'] = !array_key_exists('js',$params) ? false : true;
     $get = common::$sql['default']->fetch("SELECT `id`,`closed`,`titel`,`intern` FROM `{prefix_votes}` WHERE `menu` = 1 AND `forum` = 0;"); $vote = '';
     if(common::$sql['default']->rowCount()) {
@@ -23,7 +23,7 @@ function smarty_function_vote($params, &$smarty) {
             $qryv = common::$sql['default']->select("SELECT `id`,`stimmen`,`sel` FROM `{prefix_vote_results}` WHERE `vid` = ? ORDER BY `what`;", [$get['id']]);
             $results = '';
             foreach($qryv as $getv) {
-                $ipcheck = !common::count_clicks('vote',$get['id'],0,false);
+                $ipcheck = !common::count_clicks('vote',$get['id'],false);
                 $stimmen = common::sum("{prefix_vote_results}", " WHERE `vid` = '".$get['id']."'", "stimmen", [$get['id']]);
                 if($stimmen != 0) {
                     if($ipcheck || cookie::get('vid_'.$get['id']) != false || $get['closed']) {

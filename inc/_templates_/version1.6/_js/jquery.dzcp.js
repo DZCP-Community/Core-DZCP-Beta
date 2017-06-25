@@ -25,9 +25,16 @@ var config_ckeditor_bbcode_only = {
     ],
 
     //{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
-    extraPlugins: 'bbcode',
-    language: dzcp_config.lng,
-    coreStyles_bold: { element : 'b', overrides : 'strong' }
+    extraPlugins: 'bbcode,smiley,font,colorbutton',
+    removePlugins: 'filebrowser,format,horizontalrule,pastetext,pastefromword,scayt,showborders,stylescombo,table,tabletools,wsc',
+    removeButtons: 'Anchor,BGColor,Font,Strike,Subscript,Superscript',
+    smiley_images: [
+        'regular_smile.png', 'sad_smile.png', 'wink_smile.png', 'teeth_smile.png', 'tongue_smile.png',
+        'embarrassed_smile.png', 'omg_smile.png', 'whatchutalkingabout_smile.png', 'angel_smile.png',
+        'shades_smile.png', 'cry_smile.png', 'kiss.png'
+    ],
+    disableObjectResizing: true,
+    language: dzcp_config.lng
 };
 
 var config_ckeditor_standard = {

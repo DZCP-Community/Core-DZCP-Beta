@@ -17,13 +17,13 @@
 
 if(_adminMenu != 'true') exit;
 
-switch ($do) {
+switch (common::$do) {
     case 'delete':
-        common::$sql['default']->delete("DELETE FROM `{prefix_startpage}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        common::$sql['default']->delete("DELETE FROM `{prefix_startpage}` WHERE `id` = ?;", [(int)($_GET['id'])]);
         notification::add_success(_admin_startpage_deleted, "?admin=startpage");
     break;
     case 'edit':
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_startpage}` WHERE `id` = ?;",array((int)($_GET['id'])));
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_startpage}` WHERE `id` = ?;", [(int)($_GET['id'])]);
         if(isset($_POST['name']) && isset($_POST['url']) && isset($_POST['level'])) {
             if(empty($_POST['name']))
                 notification::add_error(_admin_startpage_no_name);
@@ -31,7 +31,7 @@ switch ($do) {
                 notification::add_error(_admin_startpage_no_url);
             else {
                 common::$sql['default']->update("UPDATE `{prefix_startpage}` SET `name` = ?, `url` = ?, `level` = ? WHERE `id` = ?;",
-                        array(stringParser::encode($_POST['name']),stringParser::encode($_POST['url']),(int)($_POST['level']),(int)($_GET['id'])));
+                        [stringParser::encode($_POST['name']),stringParser::encode($_POST['url']),(int)($_POST['level']),(int)($_GET['id'])]);
                 
                 notification::add_success(_admin_startpage_editd, "?admin=startpage");
             }
@@ -70,7 +70,7 @@ switch ($do) {
                 notification::add_error(_admin_startpage_no_url);
             else {
                 common::$sql['default']->insert("INSERT INTO `{prefix_startpage}` SET `name` = ?, `url` = ?, `level` = ?;",
-                        array(stringParser::encode($_POST['name']),stringParser::encode($_POST['url']),(int)($_POST['level'])));
+                        [stringParser::encode($_POST['name']),stringParser::encode($_POST['url']),(int)($_POST['level'])]);
                 
                 notification::add_success(_admin_startpage_added, "?admin=startpage");
             }

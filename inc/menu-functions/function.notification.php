@@ -21,7 +21,7 @@
  * @param $smarty
  * @return string
  */
-function smarty_function_notification($params, &$smarty) {
+function smarty_function_notification($params,Smarty_Internal_Template &$smarty) {
     $params['tr'] = !array_key_exists('tr',$params) ? 0 : $params['tr'];
     if(array_key_exists($params['index'],notification::$notification_index))
         return notification::get($params['index'],(bool)$params['tr']);
