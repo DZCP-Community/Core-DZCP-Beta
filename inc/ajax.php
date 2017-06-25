@@ -43,11 +43,13 @@ ob_implicit_flush(false);
             require_once(basePath . "/inc/menu-functions/function.kalender.php");
             $month = (isset($_GET['month']) ? $_GET['month'] : '');
             $year = (isset($_GET['year']) ? $_GET['year'] : '');
-            echo smarty_function_kalender(['js' => false,'month' => $month,'year' => $year],common::getSmarty());
+            echo smarty_function_kalender(['js' => false,'month' => $month,'year' => $year],
+                new Smarty_Internal_Template('kalender',common::getSmarty(true)));
         break;
         case 'counter':
             require_once(basePath . "/inc/menu-functions/function.counter.php");
-            echo smarty_function_counter(['js' => false],common::getSmarty());
+            echo smarty_function_counter(['js' => false],
+                new Smarty_Internal_Template('counter',common::getSmarty(true)));
         break;
         case 'conjob':
             $version = new dzcp_version(false);
