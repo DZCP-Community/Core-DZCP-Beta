@@ -210,10 +210,6 @@ if(defined('_Forum')) {
                         $smarty->clearAllAssign();
 
                         //Forum thread
-
-                      //  var_dump(stringParser::decode($get['t_text']));
-                      //  die();
-
                         $smarty->caching = false;
                         $smarty->assign('is_edit', true);
                         $smarty->assign('kid', $_SESSION['kid']);
@@ -223,7 +219,7 @@ if(defined('_Forum')) {
                         $smarty->assign('postsubtopic', stringParser::decode($get['subtopic']));
                         $smarty->assign('admin', $admin);
                         $smarty->assign('vote', $vote);
-                        $smarty->assign('posteintrag', file_get_contents('test.txt'));//stringParser::decode($get['t_text']));
+                        $smarty->assign('posteintrag', stringParser::decode($get['t_text']));
                         $smarty->assign('notification', notification::get('global', true));
                         $index = $smarty->fetch('file:[' . common::$tmpdir . ']' . $dir . '/thread.tpl');
                         $smarty->clearAllAssign();
@@ -244,7 +240,6 @@ if(defined('_Forum')) {
                  * POST
                  * ########################################################
                  */
-
                 if (array_key_exists('eintrag', $_POST)) {
                     //validation
                     common::$gump->validation_rules([
