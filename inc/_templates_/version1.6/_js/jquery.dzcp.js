@@ -6,33 +6,28 @@
 // GLOBAL VARS
 var doc = document, ie4 = document.all, opera = window.opera;
 var innerLayer, layer, x, y, offsetX = 15, offsetY = 5;
-var tickerc = 0, mTimer = new Array(), tickerTo = new Array(), tickerSpeed = new Array();
 var jQueryV = "1.11.3", $ = jQuery;
 
 function changeme(that) {document.location.href="index.php?kat=" + that.value;}
 
 /*
- * CKEditor - WYSIWYG Options
+ * CKEditor - WYSIWYG Options [bbcode]
  */
 var config_ckeditor_bbcode_only = {
     toolbar: [
-        ['Undo','Redo','-','RemoveFormat'],
+        ['Cut','PasteFromWord','Undo','Redo','-','RemoveFormat'],
         ['Bold','Italic','Underline','Strike'],
-        ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
+        ['NumberedList','BulletedList','-','Blockquote'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-        ['Link','Unlink','Image','-','TextColor'],['Maximize','SpellChecker', 'Scayt'],
-        ['Source']
+        ['Link','Unlink','Image','FontSize','TextColor'],
+        ['Maximize','SpellChecker', 'Scayt','BGColor', '-','Source'],
+        ['Youtube','Smiley'],
     ],
 
-    //{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
     extraPlugins: 'bbcode,smiley,font,colorbutton',
     removePlugins: 'filebrowser,format,horizontalrule,pastetext,pastefromword,scayt,showborders,stylescombo,table,tabletools,wsc',
     removeButtons: 'Anchor,BGColor,Font,Strike,Subscript,Superscript',
-    smiley_images: [
-        'regular_smile.png', 'sad_smile.png', 'wink_smile.png', 'teeth_smile.png', 'tongue_smile.png',
-        'embarrassed_smile.png', 'omg_smile.png', 'whatchutalkingabout_smile.png', 'angel_smile.png',
-        'shades_smile.png', 'cry_smile.png', 'kiss.png'
-    ],
+    fontSize_sizes: "80/80%;100/100%;120/120%;150/150%;200/200%;300/300%;400/400%;500/500%",
     disableObjectResizing: true,
     language: dzcp_config.lng
 };
@@ -48,22 +43,6 @@ var config_ckeditor_standard = {
         ['Styles','Format','Font','FontSize'],
         ['TextColor','BGColor'],
         ['Maximize', '-','Source']
-    ],
-
-    //{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
-
-    language: dzcp_config.lng,
-    coreStyles_bold: { element : 'b', overrides : 'strong' }
-};
-
-var config_ckeditor_mini = {
-    toolbar: [
-        ['Cut','Paste','-', 'SpellChecker', 'Scayt'],
-        ['Undo','Redo'],
-        ['Bold','Italic','Underline','Strike'],
-        ['NumberedList','BulletedList'],
-        ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-        ['Link','Unlink','Image']
     ],
 
     //{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
@@ -530,44 +509,6 @@ var DZCP = {
         $('#' + submitID).css('color', '#909090');
         $('#' + submitID).css('cursor', 'default');
         return true;
-    },
-
-    // Newticker
-    initTicker: function(objID, to, ms) {
-        // set settings
-        if(!DZCP.jQueryCheck(false)) return false;
-        DZCP.DebugLogger('Initiation Newticker');
-        tickerTo[tickerc] = (to === 'h' || to === 'v') ? to : 'v';
-        tickerSpeed[tickerc] = (parseInt(ms) <= 10) ? 10 : parseInt(ms);
-
-        // prepare  object
-        var orgData = $('#' + objID).html();
-        var newData  = '  <div id="scrollDiv' + tickerc +'" class="scrollDiv" style="position:relative;left:0;z-index:1">';
-        newData += '    <table id="scrollTable' + tickerc +'" class="scrolltable"  cellpadding="0" cellspacing="0">';
-        newData += '      <tr>';
-        newData += '        <td onmouseover="clearTimeout(mTimer[' + tickerc +'])" onmouseout="DZCP.startTickerDiv(' + tickerc +')">';
-        for(var i=0;i<10;i++) newData += orgData;
-        newData += '        </td>';
-        newData += '      </tr>';
-        newData += '    </table>';
-        newData += '  </div>';
-
-        $('#' + objID).html(newData);
-
-        // start ticker
-        window.setTimeout("DZCP.startTickerDiv("+tickerc+");",1500);
-        tickerc++;
-    },
-
-    startTickerDiv: function(subID) {
-        if(!DZCP.jQueryCheck(false)) return false;
-        tableObj        = $('#scrollTable' + subID)[0];
-        obj             = tableObj.parentNode;
-        objWidth        = (tickerTo[subID] === 'h') ? tableObj.offsetWidth : tableObj.offsetHeight;
-        newWidth        = (Math.floor(objWidth/2)*2)+2;
-        obj.style.width = newWidth;
-
-        mTimer[subID] = setInterval("DZCP.moveDiv('"+obj.id+"', " + newWidth + ", " + subID + ");", tickerSpeed[subID]);
     },
 
     moveDiv: function(obj, width, subID) {

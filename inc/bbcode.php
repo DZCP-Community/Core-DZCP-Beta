@@ -79,7 +79,7 @@ class BBCode extends common
                 'size' => '1',
             ],
             'class' => 'block',
-            'allow_in' => ['listitem', 'block', 'columns'],
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
         ]);
 
         /*
@@ -96,7 +96,7 @@ class BBCode extends common
             'mode' => Nbbc\BBCode::BBCODE_MODE_CALLBACK,
             'method' => 'BBCode::callback_youtube',
             'class' => 'block',
-            'allow_in' => ['listitem', 'block', 'columns'],
+            'allow_in' => ['listitem', 'block', 'columns', 'inline'],
         ]);
 
         /*
@@ -113,7 +113,7 @@ class BBCode extends common
             'mode' => Nbbc\BBCode::BBCODE_MODE_CALLBACK,
             'method' => 'BBCode::callback_divx',
             'class' => 'block',
-            'allow_in' => ['listitem', 'block', 'columns'],
+            'allow_in' => ['listitem', 'block', 'columns', 'inline'],
         ]);
 
         /*
@@ -130,7 +130,7 @@ class BBCode extends common
             'mode' => Nbbc\BBCode::BBCODE_MODE_CALLBACK,
             'method' => 'BBCode::callback_video',
             'class' => 'block',
-            'allow_in' => ['listitem', 'block', 'columns'],
+            'allow_in' => ['listitem', 'block', 'columns', 'inline'],
         ]);
 
         /*
@@ -147,7 +147,7 @@ class BBCode extends common
             'mode' => Nbbc\BBCode::BBCODE_MODE_CALLBACK,
             'method' => 'BBCode::callback_vimeo',
             'class' => 'block',
-            'allow_in' => ['listitem', 'block', 'columns'],
+            'allow_in' => ['listitem', 'block', 'columns', 'inline'],
         ]);
 
         /*
@@ -164,7 +164,7 @@ class BBCode extends common
             'mode' => Nbbc\BBCode::BBCODE_MODE_CALLBACK,
             'method' => 'BBCode::callback_golem',
             'class' => 'block',
-            'allow_in' => ['listitem', 'block', 'columns'],
+            'allow_in' => ['listitem', 'block', 'columns', 'inline'],
         ]);
 
         /*
@@ -182,7 +182,25 @@ class BBCode extends common
             'mode' => Nbbc\BBCode::BBCODE_MODE_CALLBACK,
             'method' => 'BBCode::callback_hide',
             'class' => 'block',
-            'allow_in' => ['listitem', 'block', 'columns'],
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
+        ]);
+
+        /*
+         * ##############################
+         * Text Hiden TAG
+         * ##############################
+         *
+         * Usage:
+         * [hide]Text1234 show on >= level 1[/hide] or
+         * [hide level=2]Text1234 show on >= level 2[/hide] or
+         * [hide level=3]Text1234 show on >= level 3[/hide] or
+         * [hide level=4]Text1234 show on == level 4[/hide]
+         */
+        self::$BBCode->AddRule('size', [
+            'mode' => Nbbc\BBCode::BBCODE_MODE_CALLBACK,
+            'method' => 'BBCode::callback_size',
+            'class' => 'inline',
+            'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
         ]);
     }
 
@@ -403,6 +421,51 @@ class BBCode extends common
         }
 
         return $content;
+    }
+
+    /**
+     * Format a [size] tag by producing a <span> with a style with a different font-size.
+     *
+     * @param BBCode $bbcode The {@link BBCode} object doing the parsing.
+     * @param int $action The current action being performed on the tag.
+     * @param string $name The name of the tag.
+     * @param string $default The default value passed to the tag in the form: `[tag=default]`.
+     * @param array $params All of the parameters passed to the tag.
+     * @param string $content The content of the tag. Only available when {@link $action} is **BBCODE_OUTPUT**.
+     * @return string Returns a span with the font size CSS.
+     */
+    public function callback_size($bbcode, $action, $name, $default, $params, $content) {
+        switch ($default) {
+            case '80':
+                $size = '.80em';
+                break;
+            case '100':
+                $size = '1.0em';
+                break;
+            case '120':
+                $size = '1.20em';
+                break;
+            case '150':
+                $size = '1.5em';
+                break;
+            case '200':
+                $size = '2.0em';
+                break;
+            case '300':
+                $size = '3.0em';
+                break;
+            case '400':
+                $size = '4.0em';
+                break;
+            case '500':
+                $size = '5.0em';
+                break;
+            default:
+                $size = '1.0em';
+                break;
+        }
+
+        return '<span style="font-size:'.$size.'">'.$content.'</span>';
     }
 
     /*
