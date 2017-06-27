@@ -40,7 +40,7 @@ if(defined('_Forum')) {
                     $smarty->clearAllAssign();
                 }
 
-                $tID = $get['id'];
+                $tID = (int)$get['id'];
             } else {
                 $get['t_date'] = time();
 
@@ -51,7 +51,7 @@ if(defined('_Forum')) {
                     $pUId = common::$userid;
                 }
 
-                $tID = $_SESSION['kid'];
+                $tID = (int)$_SESSION['kid'];
             }
 
             //Titel
@@ -104,11 +104,9 @@ if(defined('_Forum')) {
                 }
             }
 
-            $getw = common::$sql['default']->fetch("SELECT s1.kid,s1.topic,s2.kattopic,s2.sid
-                FROM `{prefix_forumthreads}` AS s1
-                LEFT JOIN `{prefix_forumsubkats}` AS s2
-                ON s1.kid = s2.id
-                WHERE s1.id = '".(int)($tID)."'");
+            $getw = common::$sql['default']->fetch("SELECT s1.`kid`,s1.`topic`,s2.`kattopic`,s2.`sid` "
+                ."FROM `{prefix_forumthreads}` AS `s1` LEFT JOIN `{prefix_forumsubkats}` AS `s2` ON s1.`kid` = s2.`id` "
+                ."WHERE s1.`id` = ?;",[$tID]);
 
             //Breadcrumbs
             $kat = common::$sql['default']->fetch("SELECT `name` FROM `{prefix_forumkats}` WHERE `id` = ?;",[$getw['sid']]);
@@ -161,8 +159,8 @@ if(defined('_Forum')) {
         case 'post':
             if(common::$do == 'editpost')
             {
-                $get = common::$sql['default']->fetch("SELECT `date`,`reg`,`sid` FROM `{prefix_forumposts}` WHERE `id` = ?;",[(int)($_GET['id'])]);
-
+                $get = common::$sql['default']->fetch("SELECT `date`,`reg`,`sid` FROM `{prefix_forumposts}` WHERE `id` = ?;",
+                    [(int)($_GET['id'])]);
                 if($get['reg'] == 0)
                     $guestCheck = false;
                 else {
@@ -187,7 +185,7 @@ if(defined('_Forum')) {
                     $pUId = common::$userid;
                 }
 
-                $tID = $_GET['id'];
+                $tID = (int)$_GET['id'];
                 $cnt = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[(int)($_GET['id'])])+2;
             }
 
@@ -203,7 +201,7 @@ if(defined('_Forum')) {
             $smarty->clearAllAssign();
 
             if($guestCheck) {
-                $getu = common::$sql['default']->fetch("SELECT `nick`,`hp`,`email` FROM `{prefix_users}` WHERE `id` = ?;",[(int)($pUId)]);
+                $getu = common::$sql['default']->fetch("SELECT `nick`,`hp`,`email` FROM `{prefix_users}` WHERE `id` = ?;", [$pUId]);
                 $email = common::CryptMailto(stringParser::decode($getu['email']),_emailicon_forum);
                 $pn = _forum_pn_preview;
 
