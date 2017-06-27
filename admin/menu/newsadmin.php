@@ -46,9 +46,6 @@ switch (common::$do) {
                     $datum = "`datum` = ?,";
                 }
 
-                var_dump($_POST['newstext']);
-                die();
-
                 common::$sql['default']->insert("INSERT INTO `{prefix_news}` SET `autor` = ?,`kat` = ?,`titel` = ?,`text` = ?,`more` = ?,"
                         . "`link1` = ?,`link2` = ?,`link3` = ?,`url1` = ?,`url2` = ?,`url3` = ?,`intern` = ?,".$timeshift."".$public."".$datum."`sticky` = ?;",
                         array_merge([(int)(common::$userid),(int)($_POST['kat']),stringParser::encode($_POST['titel']),stringParser::encode($_POST['newstext']),
@@ -166,7 +163,7 @@ switch (common::$do) {
             $_SESSION['editID'] = 0;
         }
         
-        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_news}` WHERE id = ".$_SESSION['editID'].";");
+        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_news}` WHERE `id` = ?;",[$_SESSION['editID']]);
         if(isset($_POST['titel'])) {
             if(empty($_POST['titel']) || empty($_POST['newstext'])) {
                 if(empty($_POST['newstext'])) {
@@ -273,23 +270,27 @@ switch (common::$do) {
             }
         }
         
-        $qryk = common::$sql['default']->select("SELECT id,kategorie FROM `{prefix_newskat}`"); $kat = '';
+        $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_newskat}`"); $kat = '';
         foreach($qryk as $getk) {
             $kat .= common::select_field($getk['id'],($get['kat'] == $getk['id']),stringParser::decode($getk['kategorie']));
-        }
+        } unset($qryk,$getk);
 
         $int = ($get['intern'] ? 'checked="checked"' : '');
         $timeshift = ($get['timeshift'] ? 'checked="checked"' : '');
         $sticky = ($get['sticky'] ? 'checked="checked"' : '');
 
+        //dropdown_date
         $smarty->caching = false;
+        $smarty->assign('nr', "ts");
         $smarty->assign('day',common::dropdown("day",date("d")));
         $smarty->assign('month',common::dropdown("month",date("m")));
         $smarty->assign('year',common::dropdown("year",date("Y")));
         $dropdown_date = $smarty->fetch('string:'._dropdown_date_ts);
         $smarty->clearAllAssign();
 
+        //dropdown_time
         $smarty->caching = false;
+        $smarty->assign('nr', "ts");
         $smarty->assign('hour', common::dropdown("hour",date("H")));
         $smarty->assign('minute',common::dropdown("minute",date("i")));
         $smarty->assign('uhr',_uhr);
@@ -305,7 +306,6 @@ switch (common::$do) {
                 common::dropdown("minute",date("i",$get['sticky'])));
         }
 
-
         $smarty->caching = false;
         $smarty->assign('nr', "ts");
         $smarty->assign('day', common::dropdown("day",date("d")));
@@ -319,7 +319,7 @@ switch (common::$do) {
         $smarty->assign('hour', common::dropdown("hour",date("H")));
         $smarty->assign('minute',common::dropdown("minute",date("i")));
         $smarty->assign('uhr',_uhr);
-        $dropdown_time = $smarty->fetch('string:'._dropdown_time_ts);
+        $timeshift_time = $smarty->fetch('string:'._dropdown_time_ts);
         $smarty->clearAllAssign();
 
         if($get['timeshift']) {

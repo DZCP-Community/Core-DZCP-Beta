@@ -15,11 +15,9 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-ob_start();
 define('is_api', true);
 define('basePath', dirname(__FILE__));
 include(basePath."/inc/common.php");
 $news = new dzcp_news();
 $news->getContentType();
 $news->getOldNews();
-ob_end_flush();

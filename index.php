@@ -15,26 +15,31 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-ob_start();
-    define('basePath', dirname(__FILE__));
-    include(basePath."/inc/common.php");
+## OUTPUT BUFFER START ##
+if(!ob_start("ob_gzhandler")) ob_start();
+define('basePath', dirname(__FILE__));
 
-    /**
-     * Startseite fur einen User abrufen
-     * @return string
-     */
-    function startpage() {
-        $startpageID = (common::$userid >= 1 ? common::data('startpage') : 0);
-        if(!$startpageID) { return 'user/?action=userlobby'; }
-        $get = common::$sql['default']->fetch("SELECT `url`,`level` FROM `{prefix_startpage}` WHERE `id` = ? LIMIT 1", [$startpageID]);
-        if(!common::$sql['default']->rowCount()) {
-            common::$sql['default']->update("UPDATE `{prefix_users}` SET `startpage` = 0 WHERE `id` = ?;", [common::$userid]);
-            return 'user/?action=userlobby';
-        }
+## INCLUDES ##
+include(basePath . "/inc/common.php");
 
-        $page = $get['level'] <= common::$chkMe ? stringParser::decode($get['url']) : 'user/?action=userlobby';
-        return (!empty($page) ? $page : 'news/');
+/**
+ * Startseite fur einen User abrufen
+ * @return string
+ */
+function startpage()
+{
+    $startpageID = (common::$userid >= 1 ? common::data('startpage') : 0);
+    if (!$startpageID) {
+        return 'user/?action=userlobby';
+    }
+    $get = common::$sql['default']->fetch("SELECT `url`,`level` FROM `{prefix_startpage}` WHERE `id` = ? LIMIT 1", [$startpageID]);
+    if (!common::$sql['default']->rowCount()) {
+        common::$sql['default']->update("UPDATE `{prefix_users}` SET `startpage` = 0 WHERE `id` = ?;", [common::$userid]);
+        return 'user/?action=userlobby';
     }
 
-    header('Location: '.(common::$chkMe ? startpage() : 'news/'));
-ob_end_flush();
+    $page = $get['level'] <= common::$chkMe ? stringParser::decode($get['url']) : 'user/?action=userlobby';
+    return (!empty($page) ? $page : 'news/');
+}
+
+header('Location: ' . (common::$chkMe ? startpage() : 'news/'));

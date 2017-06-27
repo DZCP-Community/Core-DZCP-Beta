@@ -210,6 +210,10 @@ if(defined('_Forum')) {
                         $smarty->clearAllAssign();
 
                         //Forum thread
+
+                      //  var_dump(stringParser::decode($get['t_text']));
+                      //  die();
+
                         $smarty->caching = false;
                         $smarty->assign('is_edit', true);
                         $smarty->assign('kid', $_SESSION['kid']);
@@ -219,7 +223,7 @@ if(defined('_Forum')) {
                         $smarty->assign('postsubtopic', stringParser::decode($get['subtopic']));
                         $smarty->assign('admin', $admin);
                         $smarty->assign('vote', $vote);
-                        $smarty->assign('posteintrag', stringParser::decode($get['t_text']));
+                        $smarty->assign('posteintrag', file_get_contents('test.txt'));//stringParser::decode($get['t_text']));
                         $smarty->assign('notification', notification::get('global', true));
                         $index = $smarty->fetch('file:[' . common::$tmpdir . ']' . $dir . '/thread.tpl');
                         $smarty->clearAllAssign();
@@ -350,9 +354,7 @@ if(defined('_Forum')) {
                         }
 
                         //Forum Vote Public/Intern
-                        $fget = common::$sql['default']->fetch("SELECT s1.intern,s2.id FROM `{prefix_forumkats}` AS s1
-                       LEFT JOIN `{prefix_forumsubkats}` AS s2 ON s2.`sid` = s1.id
-                       WHERE s2.`id` = ?;", [$_SESSION['kid']]);
+                        $fget = common::$sql['default']->fetch("SELECT s1.intern,s2.id FROM `{prefix_forumkats}` AS s1 LEFT JOIN `{prefix_forumsubkats}` AS s2 ON s2.`sid` = s1.id WHERE s2.`id` = ?;", [$_SESSION['kid']]);
 
                         //Forum Vote Form
                         $smarty->caching = false;

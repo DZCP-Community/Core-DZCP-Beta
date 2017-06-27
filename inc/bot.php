@@ -16,8 +16,8 @@
  */
 
 ## OUTPUT BUFFER START #
+if (!ob_start("ob_gzhandler")) ob_start();
 define('basePath', dirname(dirname(__FILE__).'../'));
-ob_start();
 
 ## INCLUDES ##
 require(basePath."/inc/debugger.php");
@@ -33,4 +33,3 @@ if(!common::$sql['default']->rows("SELECT `id` FROM `{prefix_ipban}` WHERE `ipv4
             [time(),common::$userip['v4'],serialize($data_array)]);
     common::check_ip(); // IP Prufung * No IPV6 Support *
 }
-ob_end_flush();

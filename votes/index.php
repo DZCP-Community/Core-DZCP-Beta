@@ -16,7 +16,8 @@
  */
 
 ## OUTPUT BUFFER START ##
-include("../inc/buffer.php");
+if(!ob_start("ob_gzhandler")) ob_start();
+define('basePath', dirname(dirname(__FILE__).'../'));
 
 ## INCLUDES ##
 include(basePath."/inc/common.php");

@@ -3212,7 +3212,7 @@ class common {
             DebugConsole::save_log();
         } //Debug save to file
         $output = view_error_reporting || DebugConsole::get_warning_enable() ? DebugConsole::show_logs().$index : $index; //Debug Console + Index Out
-        gz_output($output); // OUTPUT BUFFER END
+        exit($output); //Exit
     }
 }
 

@@ -23,7 +23,10 @@ final class stringParser {
      * @param string $txt
      */
     public static function encode($txt='',$htmlentities=true) {
-        return utf8_encode(stripcslashes(($htmlentities ? htmlentities($txt, ENT_COMPAT, 'UTF-8') : $txt)));
+        $txt = str_replace(["\r\n", "\r", "\n"], ["[nr]","[r]","[n]"], $txt);
+        $txt = ($htmlentities ? htmlentities($txt, ENT_COMPAT, 'UTF-8') : $txt);
+        $txt = utf8_encode($txt);
+        return $txt;
     }
 
     /**
@@ -32,6 +35,9 @@ final class stringParser {
      * @param utf8 string $txt
      */
     public static function decode($txt='') {
-        return trim(stripslashes(html_entity_decode(utf8_decode($txt), ENT_COMPAT, 'UTF-8')));
+        $txt = utf8_decode($txt);
+        $txt = html_entity_decode($txt, ENT_COMPAT, 'UTF-8');
+        $txt = str_replace(['[nr]','[r]','[n]'],["\r\n","\r","\n"], $txt);
+        return $txt;
     }
 }

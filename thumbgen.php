@@ -15,10 +15,12 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
-ob_start();
+if(!ob_start("ob_gzhandler")) ob_start();
 
 define('basePath', dirname(__FILE__));
 define('is_thumbgen',true);
+
+## INCLUDES ##
 include(basePath."/inc/debugger.php");
 include(basePath."/inc/config.php");
 
@@ -96,5 +98,3 @@ if ($picture_build && is_resource($neuesBild)) {
 if (thumbgen_cache && file_exists($file_cache)) {
     echo file_get_contents($file_cache);
 }
-
-ob_end_flush();
