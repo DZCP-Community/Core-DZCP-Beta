@@ -94,7 +94,7 @@ class sfs extends common {
 
     protected static function call_json() {
         if(view_error_reporting && debug_save_to_file) {
-            $fp = fopen(basePath."/inc/_logs/fsf_ips.log", "a+");
+            $fp = fopen(basePath."/inc/_logs_/fsf_ips.log", "a+");
             fwrite($fp, self::$url); 
             fclose($fp);
         }

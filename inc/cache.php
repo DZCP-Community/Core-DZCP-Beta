@@ -27,6 +27,7 @@ class Cache extends CacheManager {
     const TIME_ONLINE_CHECK = 15; //function onlinecheck()
     const TIME_TEMPLATE_XML = 300; //function smarty_function_templateswitch() & function sysTemplateswitch()
     const TIME_IPS_BLOCKING = 30; //function check_ip()
+    const TIME_FILEMAN_IMG_STATS = 30; //fileman:function fileslist()
 
     //Class Stuff
     private $cache_index = null;

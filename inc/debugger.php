@@ -50,9 +50,9 @@ class DebugConsole {
     public static final function initCon() { 
         self::$log_array= [[]];
         self::$file_data=''; 
-        if(!is_dir(basePath.'/inc/_logs') || 
-            !file_exists(basePath.'/inc/_logs')) {
-            @mkdir(basePath.'/inc/_logs', 0777, true);
+        if(!is_dir(basePath.'/inc/_logs_') ||
+            !file_exists(basePath.'/inc/_logs_')) {
+            @mkdir(basePath.'/inc/_logs_', 0777, true);
         }
     }
 
@@ -89,14 +89,14 @@ class DebugConsole {
         'Query   = '.$query.EOL.
         'Params   = '.json_encode($params).EOL.       
         '#####################################################################'.EOL.EOL;
-        $fp = fopen(basePath."/inc/_logs/sql_error.log", "a+");
+        $fp = fopen(basePath."/inc/_logs_/sql_error.log", "a+");
         fwrite($fp, $message); fclose($fp);
     }
     
     public static final function save_log() {
         foreach(self::$log_array as $file => $msg_array)
         { foreach($msg_array as $msg) { self::$file_data .= strip_tags('"'.$file.'" => "'.$msg.'"')."\n"; } }
-        if(!empty(self::$file_data)) file_put_contents(basePath.'/inc/_logs/debug_'.date("s-i-h").'_'.date("d_m_Y").'.log', self::$file_data);
+        if(!empty(self::$file_data)) file_put_contents(basePath.'/inc/_logs_/debug_'.date("s-i-h").'_'.date("d_m_Y").'.log', self::$file_data);
     }
 
     public static final function show_logs() {
@@ -118,7 +118,7 @@ class DebugConsole {
     }
 
     public static final function wire_log($input_level, $input_maxlevel=9, $input_file_name='', $input_content = "",$input_customlevel = "") {
-        $file = basePath."/inc/_logs/".date("Y-m-d",time())."_".$input_file_name.".log"; $status = [];
+        $file = basePath."/inc/_logs_/".date("Y-m-d",time())."_".$input_file_name.".log"; $status = [];
         if ($input_maxlevel > 0) {
             $string =
             "#############################".EOL.

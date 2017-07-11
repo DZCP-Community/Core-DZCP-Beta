@@ -45,13 +45,17 @@ require_once(basePath."/inc/sfs.php");
 require_once(basePath."/inc/bbcode.php");
 require_once(basePath."/inc/cache.php");
 
+if(is_ajax || is_api) {
+    require_once(basePath . "/inc/fileman.php");
+}
+
 if(!is_api) {
     require_once(basePath . '/inc/securimage/securimage_color.php');
     require_once(basePath . '/inc/securimage/securimage.php');
+    require_once(basePath . '/inc/notification.php');
 }
 
 require_once(basePath.'/inc/settings.php');
-require_once(basePath.'/inc/notification.php');
 
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 
@@ -106,7 +110,7 @@ class common {
     const IPV6_NULL_ADDR = 'xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx';
     const IPV4_NULL_ADDR = '0.0.0.0';
 
-    const SUPPORTED_PICTURE = ["jpg", "gif", "png"];
+    const SUPPORTED_PICTURE = ["jpg", "jpeg", "gif", "png"];
 
     //Functions
     /**
@@ -1460,6 +1464,7 @@ class common {
      * @param string  $text String to truncate.
      * @param integer $length Length of returned string, including ellipsis.
      * @param bool    $dots Using dots on end of string.
+     * @param bool    $html use as HTML txt.
      * @param string  $ending Ending to be appended to the trimmed string.
      * @param boolean $exact If false, $text will not be cut mid-word
      * @param boolean $considerHtml If true, HTML tags would be handled correctly
@@ -1671,18 +1676,20 @@ class common {
      * @param bool $only_dir (optional)
      * @param bool $only_files (optional)
      * @param array $file_ext (optional)
+     * @param bool $refresh (optional)
      * @param bool $preg_match (optional)
      * @param array $blacklist (optional)
      * @param bool $blacklist_word (optional)
      * @return array|bool
      */
-    public static function get_files(string $dir=null, bool $only_dir=false, bool $only_files=false, array $file_ext= [], bool $preg_match=false, array $blacklist= [], bool $blacklist_word=false) {
+    public static function get_files(string $dir=null, bool $only_dir=false, bool $only_files=false, array $file_ext= [], bool $refresh = false, bool $preg_match=false, array $blacklist= [], bool $blacklist_word=false) {
         /* CACHE */
         $ext_cache = '';
         foreach ($file_ext as $ext) {
             $ext_cache .= $ext;
         }
 
+        $dir = self::FixPath($dir);
         $cache_hash = md5($dir.$only_dir.$only_files.$ext_cache.$preg_match.$blacklist_word);
         unset($ext_cache,$ext);
         /* CACHE */
@@ -1691,7 +1698,7 @@ class common {
         if (!file_exists($dir) && !is_dir($dir))
             return $files;
 
-        if(!self::$cache->MemExists($cache_hash) || !config::$use_system_cache) {
+        if(!self::$cache->MemExists($cache_hash) || !config::$use_system_cache || $refresh) {
             if ($handle = @opendir($dir)) {
                 if ($only_dir) {
                     while (false !== ($file = readdir($handle))) {
@@ -1751,6 +1758,15 @@ class common {
         } else {
             return self::$cache->MemGet($cache_hash);
         }
+    }
+
+    /**
+     * Ersetzt backslashs gegen forward slashs
+     * @param string $path
+     * @return string
+     */
+    public static function FixPath(string $path) {
+        return mb_ereg_replace('[\\\/]+', '/', $path);
     }
 
     /**
@@ -2352,6 +2368,7 @@ class common {
     /**
      * Adminberechtigungen ueberpruefen
      * @param int $userid (optional)
+     * @param bool $refresh (optional)
      * @return bool
      */
     public static function admin_perms(int $userid = 0, bool $refresh = false) {
@@ -3138,11 +3155,22 @@ class common {
      * @param string $index
      * @param string $title (optional)
      * @param string $where (optional)
-     * @param string $index_templ (optional)
+     * @param string $template (optional)
      */
     public static final function page(string $index,string $title='',string $where='',string $template='index') {
-        //JS SetOptions
-        javascript::set('lng',($_SESSION['language']=='deutsch'?'de':'en'));
+        //JS SetOptions & lang ckeditor
+        switch ($_SESSION['language']) {
+            case 'uk': javascript::set('lng','en'); break;
+            default:
+                if(file_exists(basePath.'/vendor/ckeditor/ckeditor/lang/'.
+                    strtolower($_SESSION['language']).'.js')) {
+                    javascript::set('lng',$_SESSION['language']);
+                } else {
+                    javascript::set('lng','en');
+                }
+            break;
+        }
+
         javascript::set('maxW',settings::get('maxwidth'));
         javascript::set('autoRefresh',1);  // Enable Auto-Refresh for Ajax
         javascript::set('debug',view_javascript_debug);  // Enable JS Debug

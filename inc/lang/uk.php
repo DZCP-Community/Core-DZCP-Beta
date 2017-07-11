@@ -17,6 +17,31 @@
 
 setlocale(LC_ALL, "en_US.utf8");
 
+## Fileman ##
+define('_fileman_uploads_' , '## Global ##');
+define('_fileman_group_' , '## Groups ##');
+define('_fileman_public_' , '## Public ##');
+define('_fileman_users_' , '## User ##');
+define('_fileman_error_unknown' , 'Unknown error');
+define('_fileman_error_zip_creating' , 'Error creating zip archive.');
+define('_fileman_error_permissons' , 'You have no permissions to make a change here');
+define('_fileman_error_permissons_root' , 'Das ROOT-Verzeichnis kann nicht ge&auml;ndert werden!');
+define('_fileman_error_create_dir_invalid_path' , 'Cannot create directory - path doesn\'t exist');
+define('_fileman_error_create_dir_failed' , 'Error creating directory');
+define('_fileman_error_create_dir_exists_failed' , 'Der Ordner "{$dir}" existiert bereits!');
+define('_fileman_error_cannot_delete_root' , 'Cannot delete root folder');
+define('_fileman_error_cannot_delete_dir' , 'Error deleting directory "{$dir}"');
+define('_fileman_error_delete_dir_invalid_path' , 'Cannot delete directory - the path doesn\'t exist "{$dir}"');
+define('_fileman_error_rename_file' , 'Error renaming file "{$dir}"');
+define('_fileman_error_rename_file_invalid_path' , 'Cannot rename file - file doesn\'t exist "{$dir}"');
+define('_fileman_error_rename_dir' , 'Error renaming folder "{$dir}"');
+define('_fileman_error_rename_dir_invalid_path' , 'Cannot rename folder - folder doesn\'t exist "{$dir}"');
+define('_fileman_error_copy_dir_invalid_path' , 'Cannot copy directory - folder doesn\'t exist "{$dir}"');
+define('_fileman_error_copy_dir' , 'Error on folder copy "{$dir}"');
+define('_fileman_error_upload_extension' , 'Dateitypen können nicht bearbeitet werden - ungültige extensions');
+define('_fileman_error_upload_all' , 'Fehler beim uploaden einiger dateien');
+define('_fileman_error_upload_no_files' , 'Keine Dateien zum uploaden oder Datei zu gross.');
+
 ## DEV ##
 define('_config_test_menu_template','Test in Template Menu');
 
@@ -51,6 +76,8 @@ define('_lang_de', 'German');
 define('_lang_uk', 'English');
 define('_template', 'Template');
 define('_perm_editby', 'Editby verwalten');
+define('_private' , 'Private');
+define('_group' , 'Group');
 
 ## Lost Password ##
 define('_admin_lpwd_subj', 'Subject: Reset password');

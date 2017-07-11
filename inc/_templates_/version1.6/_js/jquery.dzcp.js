@@ -24,12 +24,15 @@ var config_ckeditor_bbcode_only = {
         ['Youtube','Smiley'],
     ],
 
+    filebrowserBrowseUrl:'/inc/ajax.php?i=fileman&run',
+    filebrowserImageBrowseUrl:'/inc/ajax.php?i=fileman&run&type=image',
     extraPlugins: 'bbcode,smiley,font,colorbutton',
-    removePlugins: 'filebrowser,format,horizontalrule,pastetext,pastefromword,scayt,showborders,stylescombo,table,tabletools,wsc',
+    removePlugins: 'format,horizontalrule,pastetext,pastefromword,scayt,showborders,stylescombo,table,tabletools,tableselection,wsc',
     removeButtons: 'Anchor,BGColor,Font,Strike,Subscript,Superscript',
+    removeDialogTabs: 'link:upload;image:upload',
     fontSize_sizes: "80/80%;100/100%;120/120%;150/150%;200/200%;300/300%;400/400%;500/500%",
     disableObjectResizing: true,
-    language: dzcp_config.lng
+    language: dzcp_config.lng,
 };
 
 var config_ckeditor_standard = {
@@ -42,13 +45,14 @@ var config_ckeditor_standard = {
         ['Link','Unlink','Image','HorizontalRule','Anchor'],
         ['Styles','Format','Font','FontSize'],
         ['TextColor','BGColor'],
-        ['Maximize', '-','Source']
+        ['Maximize', '-','Source'],
     ],
 
-    //{ name: 'clipboard', groups: [ 'clipboard', 'undo' ], items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
-
+    filebrowserBrowseUrl:'/inc/ajax.php?i=fileupload',
+    filebrowserImageBrowseUrl:'/inc/ajax.php?i=fileupload&type=image',
+    removeDialogTabs: 'link:upload;image:upload',
+    coreStyles_bold: { element : 'b', overrides : 'strong' },
     language: dzcp_config.lng,
-    coreStyles_bold: { element : 'b', overrides : 'strong' }
 };
 
 // DZCP JAVASCRIPT LIBARY FOR JQUERY >= V1.11.3

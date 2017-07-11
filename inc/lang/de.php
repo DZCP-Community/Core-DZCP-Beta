@@ -17,6 +17,31 @@
 
 setlocale(LC_ALL, "de_DE.utf8");
 
+## Fileman ##
+define('_fileman_uploads_' , '## Stammverzeichnis ##');
+define('_fileman_group_' , '## Gruppen ##');
+define('_fileman_public_' , '## &Ouml;ffentlich ##');
+define('_fileman_users_' , '## Benutzer ##');
+define('_fileman_error_unknown' , 'Unbekannter Fehler');
+define('_fileman_error_zip_creating' , 'Error creating zip archive.');
+define('_fileman_error_permissons' , 'Du hast keine Berechtigungen um hier eine &Auml;nderung auszuf&uuml;hren!');
+define('_fileman_error_permissons_root' , 'Das ROOT-Verzeichnis kann nicht ge&auml;ndert werden!');
+define('_fileman_error_create_dir_invalid_path' , 'Das Verzeichnis kann nicht erstellt werden, der Pfad existiert nicht!');
+define('_fileman_error_create_dir_failed' , 'Unbekannter Fehler bei erstellen des Verzeichnisses!');
+define('_fileman_error_create_dir_exists_failed' , 'Das Verzeichnisses "{$dir}" existiert bereits!');
+define('_fileman_error_cannot_delete_root' , 'Der Root-Ordner kann nicht gel&ouml;scht werden');
+define('_fileman_error_cannot_delete_dir' , 'Fehler beim l&ouml;schen vom Verzeichnis "{$dir}"');
+define('_fileman_error_delete_dir_invalid_path' , 'Verzeichnis kann nicht gel&ouml;scht werden, der Pfad existiert nicht "{$dir}"');
+define('_fileman_error_rename_file' , 'Fehler bei Dateiumbenennung "{$dir}"');
+define('_fileman_error_rename_file_invalid_path' , 'Datei kann nicht umbenannt werden, die Datei "{$dir}" existiert nicht');
+define('_fileman_error_rename_dir' , 'Fehler bei Ordnerumbenennung "{$dir}"');
+define('_fileman_error_rename_dir_invalid_path' , 'Ordner kann nicht umbenannt werden, der Ordner "{$dir}" existiert nicht');
+define('_fileman_error_copy_dir_invalid_path' , 'Verzeichnis kann nicht kopiert werden, der Ordner "{$dir}" existiert nicht');
+define('_fileman_error_copy_dir' , 'Fehler bei dem kopieren des Verzeichnisses "{$dir}"');
+define('_fileman_error_upload_extension' , 'Gesperrter Datentyp');
+define('_fileman_error_upload_all' , 'Fehler beim uploaden einiger dateien');
+define('_fileman_error_upload_no_files' , 'Keine Dateien zum uploaden oder Datei zu gross.');
+
 ## DEV ##
 define('_config_test_menu_template','Test in Template Menu');
 
@@ -51,6 +76,8 @@ define('_lang_de', 'Deutsch');
 define('_lang_uk', 'Englisch');
 define('_template', 'Design');
 define('_perm_editby', 'Editby verwalten');
+define('_private' , 'Privat');
+define('_group' , 'Gruppe');
 
 ## Lost Password ##
 define('_admin_lpwd_subj', 'Betreff: Passwort zur&uuml;cksetzen');

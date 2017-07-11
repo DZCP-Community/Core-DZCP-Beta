@@ -18,7 +18,6 @@
 ## OUTPUT BUFFER START ##
 if (!ob_start("ob_gzhandler")) ob_start();
 define('basePath', dirname(dirname(__FILE__) . '../'));
-
 define('is_ajax', true);
 
 ## INCLUDES ##
@@ -50,6 +49,16 @@ switch ($mod):
         require_once(basePath . "/inc/menu-functions/function.counter.php");
         echo smarty_function_counter(['js' => false],
             new Smarty_Internal_Template('counter', common::getSmarty(true)));
+        break;
+    case 'fileman':
+        if(!isset($_GET['run'])) {
+            $fileman = new fileman();
+            $fileman->run();
+        } else {
+            $smarty = common::getSmarty(true);
+            $smarty->caching = false;
+            exit($smarty->fetch('file:['.common::$tmpdir.']fileman/fileman.tpl'));
+        }
         break;
     case 'conjob':
         $version = new dzcp_version(false);

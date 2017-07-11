@@ -559,7 +559,7 @@ class Securimage {
             $audio = $this->getAudibleCode();
         }
         catch (Exception $ex) {
-            if (($fp = @fopen(basePath.'/inc/_logs/si.error.log', 'a+')) !== false) {
+            if (($fp = @fopen(basePath.'/inc/_logs_/si.error.log', 'a+')) !== false) {
                 fwrite($fp, date('Y-m-d H:i:s') . ': Securimage audio error "' . $ex->getMessage() . '"' . "\n");
                 fclose($fp);
             }

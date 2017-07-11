@@ -21,10 +21,12 @@
             <link rel="alternate" type="application/rss+xml" href="../rss.xml" title="{$clanname} RSS-Feed" />
             <link rel="icon" href="{dir}/favicon.ico" />
             <link rel="home" href="/" title="Home" />
+			<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+			<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
             <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.js"></script>
             <script language="javascript" type="text/javascript" src="{dir}/_js/bootstrap.js"></script>
             <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.less.js"></script>
-	    	<script language="javascript" type="text/javascript" src="{dir}/_js/jquery.tools.js"></script>
+	    	<script language="javascript" type="text/javascript" src="{dir}/_js/jquery.tools.min.js"></script>
 	    	<script language="javascript" type="text/javascript" src="{dir}/_js/jquery-ui.js"></script>
             {$java_vars}
             <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.colorpicker.js"></script>

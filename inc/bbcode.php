@@ -36,7 +36,7 @@ class BBCode extends common
         self::$BBCode->SetSmileyDir(basePath.'/vendor/nbbc/smileys'); //default
         self::$BBCode->SetSmileyURL('../vendor/nbbc/smileys');
         if(is_dir(basePath.'/inc/_templates_/'.common::$tmpdir.'/images/smileys')) { //Check Template
-            $smileyadd = common::get_files(basePath.'/inc/_templates_/'.common::$tmpdir.'/images/smileys',false,true, ['gif','png','jpg']);
+            $smileyadd = common::get_files(basePath.'/inc/_templates_/'.common::$tmpdir.'/images/smileys',false,true, common::SUPPORTED_PICTURE);
             if($smileyadd && count($smileyadd) >= 1) {
                 self::$BBCode->SetSmileyDir(basePath . '/inc/_templates_/' . common::$tmpdir . '/images/smileys');
                 self::$BBCode->SetSmileyURL(common::$designpath . '/images/smileys');
@@ -48,7 +48,7 @@ class BBCode extends common
                 } unset($tag, $smiley);
 
                 //Add new Smileys from Template
-                if ($smileys = common::get_files(basePath . '/inc/_templates_/' . common::$tmpdir . '/images/smileys/',false,true, ['gif', 'png', 'jpg'])) {
+                if ($smileys = common::get_files(basePath . '/inc/_templates_/' . common::$tmpdir . '/images/smileys/',false,true, common::SUPPORTED_PICTURE)) {
                     foreach ($smileys as $smiley) {
                         $smiley_file = strtolower($smiley);
                         $smiley_name = str_replace(['.gif', '.png', '.jpg'], '', $smiley_file);
