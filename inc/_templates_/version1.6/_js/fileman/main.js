@@ -737,26 +737,6 @@ function getPreselectedFile() {
                 catch (ex) {
                 }
                 break;
-            case 'tinymce3':
-                try {
-                    var win = tinyMCEPopup.getWindowArg("window");
-                    filePath = win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value;
-                    if (filePath.indexOf('..') == 0)
-                        filePath = filePath.substr(2);
-                }
-                catch (ex) {
-                }
-                break;
-            case 'tinymce4':
-                try {
-                    var win = (window.opener ? window.opener : window.parent);
-                    filePath = win.document.getElementById(RoxyUtils.GetUrlParam('input')).value;
-                    if (filePath.indexOf('..') == 0)
-                        filePath = filePath.substr(2);
-                }
-                catch (ex) {
-                }
-                break;
             default:
                 filePath = GetSelectedValue();
                 break;
@@ -858,14 +838,6 @@ $(function () {
             dropFiles(e, true);
         };
     }
-
-    if (getFilemanIntegration() == 'tinymce3') {
-        try {
-            $('body').append('<script src="js/tiny_mce_popup.js"><\/script>');
-        }
-        catch (ex) {
-        }
-    }
 });
 function getFilemanIntegration() {
     var integration = RoxyUtils.GetUrlParam('integration');
@@ -891,29 +863,6 @@ function setFile() {
         case 'ckeditor':
             window.opener.CKEDITOR.tools.callFunction(RoxyUtils.GetUrlParam('CKEditorFuncNum'), insertPath);
             self.close();
-            break;
-        case 'tinymce3':
-            var win = tinyMCEPopup.getWindowArg("window");
-            win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = insertPath;
-            if (typeof(win.ImageDialog) != "undefined") {
-                if (win.ImageDialog.getImageData)
-                    win.ImageDialog.getImageData();
-
-                if (win.ImageDialog.showPreviewImage)
-                    win.ImageDialog.showPreviewImage(insertPath);
-            }
-            tinyMCEPopup.close();
-            break;
-        case 'tinymce4':
-            var win = (window.opener ? window.opener : window.parent);
-            win.document.getElementById(RoxyUtils.GetUrlParam('input')).value = insertPath;
-            if (typeof(win.ImageDialog) != "undefined") {
-                if (win.ImageDialog.getImageData)
-                    win.ImageDialog.getImageData();
-                if (win.ImageDialog.showPreviewImage)
-                    win.ImageDialog.showPreviewImage(insertPath);
-            }
-            win.tinyMCE.activeEditor.windowManager.close();
             break;
         default:
             FileSelected(f);

@@ -212,19 +212,8 @@ RoxyUtils.SelectText = function (field_id, start, end) {
 };
 
 function RoxyFilemanConf() { }
-//TODO: Load from DZCP
 RoxyUtils.LoadConfig = function () {
-    $.ajax({
-        url: 'conf.json',
-        dataType: 'json',
-        async: false,
-        success: function (data) {
-            RoxyFilemanConf = data;
-        },
-        error: function (data) {
-            alert(t('E_LoadingConf'));
-        }
-    });
+    RoxyFilemanConf = config;
 };
 
 function RoxyLang() {

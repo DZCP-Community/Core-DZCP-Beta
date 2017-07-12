@@ -192,12 +192,10 @@ class common {
         }
 
         //-> Cookie initialisierung
-        if(!is_api && !is_thumbgen) {
-            cookie::init('dzcp_' . settings::get('prev'));
-        }
+        cookie::init('dzcp_' . settings::get('prev'));
 
         //-> JS initialisierung
-        if(!is_api && !is_thumbgen) {
+        if(!is_api && !is_thumbgen && !is_ajax) {
             javascript::set('AnchorMove', '');
             javascript::set('debug', (view_error_reporting && view_javascript_debug));
         }
@@ -234,24 +232,6 @@ class common {
 
         //Nachrichten Check
         self::check_msg_emal();
-
-        //-> Laden der Menus
-        if(!is_api) {
-            if ($menu_functions_index = self::get_files(basePath . '/inc/menu-functions', false, true, ['php'])) {
-                foreach ($menu_functions_index as $mfphp) {
-                    $file = str_replace('.php', '', $mfphp);
-                    if ($file != 'navi') {
-                        self::$menu_index[$file] = file_exists(basePath . '/inc/menu-functions/' . $file . '.php');
-                    }
-                }
-                unset($menu_functions_index, $file, $mfphp);
-            }
-        }
-
-        //-> Navigation einbinden
-        if (!is_api && file_exists(basePath . '/inc/menu-functions/navi.php')) {
-            include_once(basePath . '/inc/menu-functions/navi.php');
-        }
 
         //Smarty Template-system
         self::$smarty = self::getSmarty(true);

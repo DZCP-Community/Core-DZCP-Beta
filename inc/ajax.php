@@ -55,8 +55,11 @@ switch ($mod):
             $fileman = new fileman();
             $fileman->run();
         } else {
+            $fileman = new fileman();
             $smarty = common::getSmarty(true);
             $smarty->caching = false;
+            $smarty->assign('js_config','<script language="javascript" type="text/javascript">var json=\''.
+                javascript::encode().'\',config=JSON&&JSON.parse(json)||$.parseJSON(json);</script>');
             exit($smarty->fetch('file:['.common::$tmpdir.']fileman/fileman.tpl'));
         }
         break;

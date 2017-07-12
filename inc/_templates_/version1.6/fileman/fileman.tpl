@@ -1,33 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <!--
-      RoxyFileman - web based file manager. Ready to use with CKEditor, TinyMCE.
-      Can be easily integrated with any other WYSIWYG editor or CMS.
-
-      Copyright (C) 2013, RoxyFileman.com - Lyubomir Arsov. All rights reserved.
-      For licensing, see LICENSE.txt or http://RoxyFileman.com/license
-
-      This program is free software: you can redistribute it and/or modify
-      it under the terms of the GNU General Public License as published by
-      the Free Software Foundation, either version 3 of the License.
-
-      This program is distributed in the hope that it will be useful,
-      but WITHOUT ANY WARRANTY; without even the implied warranty of
-      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-      GNU General Public License for more details.
-
-      You should have received a copy of the GNU General Public License
-      along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-      Contact: Lyubomir Arsov, liubo (at) web-lobby.com
-    -->
     <meta http-equiv="pragma" content="No-Cache" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>Roxy file manager</title>
     <link href="{dir}/_css/jquery-ui.css" rel="stylesheet" type="text/css" />
     <link href="{dir}/_css/jquery-ui.theme.css" rel="stylesheet" type="text/css" />
     <link href="{dir}/_css/fileman.css" rel="stylesheet" type="text/css" />
+    {$js_config}
     <script type="text/javascript" src="{dir}/_js/jquery.js"></script>
     <script type="text/javascript" src="{dir}/_js/jquery-ui.js"></script>
     <script type="text/javascript" src="{dir}/_js/fileman/filetypes.js"></script>
@@ -107,7 +87,6 @@
 </table>
 
 <!-- Forms and other components -->
-<iframe name="frmUploadFile" id="frmUploadFile" width="800" height="600"></iframe>
 <div id="dlgAddFile">
     <form name="addfile" id="frmUpload" method="post" target="frmUploadFile" enctype="multipart/form-data">
         <input type="hidden" name="d" id="hdDir" />
@@ -120,6 +99,7 @@
         </div>
     </form>
 </div>
+
 <div id="menuFile" class="contextMenu">
     <a href="#" onclick="setFile()" data-lang="SelectFile" id="mnuSelectFile">Select</a><hr>
     <a href="#" onclick="previewFile()" data-lang="Preview" id="mnuPreview">Preview</a><hr>
@@ -130,6 +110,7 @@
     <a href="#" onclick="renameFile()" data-lang="RenameFile" id="mnuRenameFile">Rename</a><hr>
     <a href="#" onclick="deleteFile()" data-lang="DeleteFile" id="mnuDeleteFile">Delete</a><hr>
 </div>
+
 <div id="menuDir" class="contextMenu">
     <a href="#" onclick="downloadDir()" data-lang="Download" id="mnuDownloadDir">Download</a><hr>
     <a href="#" onclick="addDir()" data-lang="T_CreateDir" id="mnuCreateDir">Create new</a><hr>
@@ -139,13 +120,17 @@
     <a href="#" onclick="renameDir()" data-lang="RenameDir" id="mnuRenameDir">Rename</a><hr>
     <a href="#" onclick="deleteDir()" data-lang="DeleteDir" id="mnuDeleteDir">Delete</a>
 </div>
+
 <div id="pnlRenameFile" class="dialog">
     <span class="name"></span><br>
     <input type="text" id="txtFileName">
 </div>
+
 <div id="pnlDirName" class="dialog">
     <span class="name"></span><br>
     <input type="text" id="txtDirName">
 </div>
+
+<iframe name="frmUploadFile" id="frmUploadFile" style="display: none;" width="800" height="600"></iframe>
 </body>
 </html>

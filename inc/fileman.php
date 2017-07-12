@@ -15,9 +15,38 @@ class fileman extends common
 
     public function __construct()
     {
-        //Test
-        //self::$chkMe = 4;
-        //self::$userid = 6;
+        //Set JS Config
+        javascript::set('RETURN_URL_PREFIX','');
+        javascript::set('THUMBS_VIEW_WIDTH',140);
+        javascript::set('THUMBS_VIEW_HEIGHT',120);
+        javascript::set('PREVIEW_THUMB_WIDTH',100);
+        javascript::set('PREVIEW_THUMB_HEIGHT',100);
+        javascript::set('MAX_IMAGE_WIDTH',1000);
+        javascript::set('MAX_IMAGE_HEIGHT',1000);
+        javascript::set('INTEGRATION','ckeditor');
+        javascript::set('DIRLIST',"../inc/ajax.php?i=fileman&call=dirtree");
+        javascript::set('CREATEDIR',"../inc/ajax.php?i=fileman&call=createdir");
+        javascript::set('DELETEDIR',"../inc/ajax.php?i=fileman&call=deletedir");
+        javascript::set('MOVEDIR','../inc/ajax.php?i=fileman&call=movedir');
+        javascript::set('COPYDIR','../inc/ajax.php?i=fileman&call=copydir');
+        javascript::set('RENAMEDIR','../inc/ajax.php?i=fileman&call=renamedir');
+        javascript::set('FILESLIST','../inc/ajax.php?i=fileman&call=fileslist');
+        javascript::set('UPLOAD','../inc/ajax.php?i=fileman&call=upload');
+        javascript::set('DOWNLOAD','../inc/ajax.php?i=fileman&call=download');
+        javascript::set('DOWNLOADDIR','../inc/ajax.php?i=fileman&call=downloaddir');
+        javascript::set('DELETEFILE','../inc/ajax.php?i=fileman&call=deletefile');
+        javascript::set('MOVEFILE','../inc/ajax.php?i=fileman&call=movefile');
+        javascript::set('COPYFILE','../inc/ajax.php?i=fileman&call=copyfile');
+        javascript::set('RENAMEFILE','../inc/ajax.php?i=fileman&call=renamefile');
+        javascript::set('GENERATETHUMB','../inc/ajax.php?i=fileman&call=thumb');
+        javascript::set('DEFAULTVIEW','list');
+        javascript::set('FORBIDDEN_UPLOADS','js jsp jsb mhtml mht xhtml xht php phtml php3 php4 php5 phps shtml jhtml pl '
+            .'sh py cgi exe application gadget hta cpl msc jar vb jse ws wsf wsc wsh ps1 ps2 psc1 psc2 msh msh1 msh2 inf '
+            .'reg scf msp scr dll msi vbs bat com pif cmd vxd cpl htpasswd htaccess');
+        javascript::set('ALLOWED_UPLOADS','');
+        javascript::set('LANG','auto');
+        javascript::set('DATEFORMAT','dd.MM.yyyy - HH:mm');
+        javascript::set('OPEN_LAST_DIR','yes');
 
         //Settings
         $this->is_user_dir = (self::$userid >= 1); // is a user
@@ -27,11 +56,10 @@ class fileman extends common
         $this->upload_dir = $this->getFilesPath(); //BasePath to upload dir
     }
 
-    public function run()
-    { //2#
+    public function run() {
         $output = [];
         if ((self::$chkMe >= 1 && self::$userid >= 1) || self::permission('fileman')) {
-            $this->input = self::$gump->sanitize($_POST);
+            $this->input = self::$gump->sanitize($_REQUEST);
             foreach ($this->input as $key => $var) {
                 $this->input[$key] = trim($var); //Global Trim
             }
@@ -106,6 +134,7 @@ class fileman extends common
                     $output += $this->renamefile();
                     break;
                 case 'thumb':
+                    //TODO: create thumb
                     break;
             }
         }
@@ -957,7 +986,7 @@ class fileman extends common
         }
 
         $this->input['f'] = str_replace('../', '/', $this->input['f']);
-        if(is_file(basePath.self::FixPath($this->input['f']))){
+        if(is_file(self::FixPath(basePath.$this->input['f']))){
             $file = urldecode(basename($this->input['f']));
             header('Content-Disposition: attachment; filename="'.$file.'"');
             header('Content-Type: application/force-download');

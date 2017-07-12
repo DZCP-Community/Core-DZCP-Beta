@@ -285,6 +285,22 @@ var DZCP = {
         window.location.href = url;
     },
 
+    // Roxy Fileman
+    openCustomRoxy: function(){
+        $('#roxyCustomPanel').dialog({
+            modal:true,
+            width:875,
+            height:600,
+            resizable: false,
+            position: { my: 'top', at: 'top+100' },
+            closeOnEscape: false
+        });
+    },
+
+    closeCustomRoxy: function(){
+        $('#roxyCustomPanel').dialog('close');
+    },
+
     // Templateswitch
     tempswitch: function() {
         var url = doc.form.tempswitch.options[doc.form.tempswitch.selectedIndex].value;
