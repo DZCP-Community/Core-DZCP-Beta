@@ -5,7 +5,7 @@
             <meta http-equiv="title" content="{$title}" />
             <meta http-equiv="pragma" content="No-Cache" />
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-            <link rel="stylesheet" type="text/css" href="../inc/ajax.php?i=less&type=page" />
+            <link rel="stylesheet" type="text/css" href="../inc/ajax.php?i=less" />
             <link rel="alternate" type="application/rss+xml" href="../rss.xml" title="{$clanname} RSS-Feed" />
             <link rel="icon" href="{dir}/favicon.ico" />
             <link rel="home" href="/" title="Home" />

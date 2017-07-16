@@ -2782,22 +2782,41 @@ class common {
         }
     }
 
-    public static function less() {
-        //TODO: Use Cache
-        $main_dir = basePath . "/inc/_templates_/".self::$sdir."/_less";
-        $auto_imports = [];
-        $auto_imports[basePath.'/inc/_templates_/'.self::$sdir.'/_less/_auto_imports_/'] =
-            '../inc/_templates_/'.self::$sdir.'/_less/_auto_imports_/';
+    public static function less($template='template',$regen=false) {
+        $cache_hash = md5($template);
+        if(config::$use_less_cache && !$regen && config::$use_system_cache &&
+            config::$use_network_cache && self::$cache->AutoMemExists($cache_hash)) {
+            return self::$cache->AutoMemGet($cache_hash);
+        }
 
-        if(count($auto_imports) >= 1) {
+        if(config::$use_less_cache && !$regen && config::$use_system_cache &&
+            !config::$use_network_cache && self::$cache->FileExists($cache_hash)) {
+            return self::$cache->FileGet($cache_hash);
+        }
+
+        $main_dir = basePath . "/inc/_templates_/" . self::$sdir . "/_less";
+        $auto_imports = [];
+        $auto_imports[basePath . '/inc/_templates_/' . self::$sdir . '/_less/_auto_imports_/'] =
+            '../inc/_templates_/' . self::$sdir . '/_less/_auto_imports_/';
+
+        if (count($auto_imports) >= 1) {
             self::$less->SetImportDirs($auto_imports);
         }
 
-        if(file_exists($main_dir.'/template.less')) {
-            self::$less->parseFile($main_dir . '/template.less', "/inc/_templates_/" . self::$sdir . "/_less/");
+        if (file_exists($main_dir . '/' . $template . '.less')) {
+            self::$less->parseFile($main_dir . '/' . $template . '.less', "/inc/_templates_/" . self::$sdir . "/_less/");
         }
 
-        return self::$less->getCss();
+        $css = self::$less->getCss();
+        if(config::$use_less_cache && config::$use_system_cache && config::$use_network_cache) {
+            self::$cache->AutoMemSet($cache_hash, $css, Cache::TIME_LESS);
+        }
+
+        if(config::$use_less_cache && config::$use_system_cache && !config::$use_network_cache) {
+            self::$cache->FileSet($cache_hash, $css, Cache::TIME_LESS);
+        }
+
+        return $css;
     }
 
     /**

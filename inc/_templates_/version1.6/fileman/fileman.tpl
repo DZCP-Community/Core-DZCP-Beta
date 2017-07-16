@@ -4,7 +4,7 @@
     <meta http-equiv="pragma" content="No-Cache" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>RoxyFile Manager</title>
-    <link rel="stylesheet" type="text/css" href="../inc/ajax.php?i=less&type=fileman" />
+    <link rel="stylesheet" type="text/css" href="../inc/ajax.php?i=less&less=template.fileman" />
     {$js_config}
     <script type="text/javascript" src="{dir}/_js/jquery.js"></script>
     <script type="text/javascript" src="{dir}/_js/jquery-ui.js"></script>

@@ -69,7 +69,7 @@ switch ($mod):
         break;
     case 'less':
         header('Content-type: text/css');
-        exit(common::less());
+        exit(common::less(isset($_GET['less']) ? $_GET['less'] : 'template',isset($_GET['regen'])));
         break;
     case 'securimage':
         if (!headers_sent()) {
