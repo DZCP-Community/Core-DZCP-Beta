@@ -58,6 +58,7 @@ if(!is_api) {
 require_once(basePath.'/inc/settings.php');
 
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
+use Phine\Country\Loader\Loader;
 
 //Global Strings
 $index = ''; $show = ''; $color = 0;
@@ -98,6 +99,7 @@ class common {
     public static $do = '';
     public static $search_forum = false;
     public static $BBCode = NULL;
+    public static $country = NULL;
 
     //Consts
     const FORUM_DOUBLE_POST_INSERT = 0;
@@ -215,6 +217,9 @@ class common {
         //Less Parser
         $options = ['compress' => true, 'sourceMap' => false];
         self::$less = new Less_Parser($options);
+
+        //Country class
+        self::$country = new Loader();
 
         //Set User IP & einzelne Definitionen
         self::$userip = self::visitorIp();
@@ -918,11 +923,12 @@ class common {
      * @param string $i
      * @return string
      */
-    public static function show_countrys(string $i="") {
-        if (!empty($i)) {
-            $options = preg_replace('#<option value="' . $i . '">(.*?)</option>#', '<option value="' . $i . '" selected="selected"> \\1</option>', _country_list);
-        } else {
-            $options = preg_replace('#<option value="de"> Deutschland</option>#', '<option value="de" selected="selected"> Deutschland</option>', _country_list);
+    public static function show_countrys(string $selected_country="") {
+        $countries = self::$country->loadCountries(); $options = '';
+        foreach ($countries as $country) {
+            $selected = ($selected_country == strtolower($country->getAlpha2Code()) ? ' selected="selected"' :
+                (empty($selected_country) && strtolower($country->getAlpha2Code()) == 'de' ? ' selected="selected"' : ''));
+            $options .= '<option'.$selected.' value="'.strtolower($country->getAlpha2Code()).'">'.$country->getShortName().'</option>';
         }
 
         return '<select id="land" name="land" class="dropdown">'.$options.'</select>';
