@@ -5,19 +5,7 @@
             <meta http-equiv="title" content="{$title}" />
             <meta http-equiv="pragma" content="No-Cache" />
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	    	<link rel="stylesheet/less" type="text/css" href="{dir}/_less/all.less">
-            <link rel="stylesheet" type="text/css" href="{dir}/_css/jquery-ui.css" media="screen" />
-            <link rel="stylesheet" type="text/css" href="{dir}/_css/jquery-ui.theme.uncompressed.css" media="screen" />
-	    	<link rel="stylesheet" type="text/css" href="{dir}/_css/bootstrap.css" media="screen">
-	    	<link rel="stylesheet" type="text/css" href="{dir}/_css/bootstrap-theme.css" media="screen">
-            <link rel="stylesheet" type="text/css" href="{dir}/_css/stylesheet.css" media="screen" />
-            <link rel="stylesheet" type="text/css" href="{dir}/_css/paginator.css" media="screen" />
-            <link rel="stylesheet" type="text/css" href="{dir}/_css/notification.css" media="screen" />
-            <link rel="stylesheet" type="text/css" href="{dir}/_css/colorpicker.css" media="screen" />
-            <link rel="stylesheet" type="text/css" href="{dir}/_css/forum.css" media="screen" />
-            <link rel="stylesheet" type="text/css" href="{dir}/_css/magnific-popup.css" media="screen" />
-            <link rel="stylesheet" type="text/css" href="{dir}/_css/highlighter.css" />
-            <link rel="stylesheet" type="text/css" href="{dir}/_css/icons.php" media="screen" />
+            <link rel="stylesheet" type="text/css" href="../inc/ajax.php?i=less&type=page" />
             <link rel="alternate" type="application/rss+xml" href="../rss.xml" title="{$clanname} RSS-Feed" />
             <link rel="icon" href="{dir}/favicon.ico" />
             <link rel="home" href="/" title="Home" />

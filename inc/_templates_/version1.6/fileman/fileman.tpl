@@ -4,9 +4,7 @@
     <meta http-equiv="pragma" content="No-Cache" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <title>RoxyFile Manager</title>
-    <link href="{dir}/_css/jquery-ui.css" rel="stylesheet" type="text/css" />
-    <link href="{dir}/_css/jquery-ui.theme.css" rel="stylesheet" type="text/css" />
-    <link href="{dir}/_css/fileman.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../inc/ajax.php?i=less&type=fileman" />
     {$js_config}
     <script type="text/javascript" src="{dir}/_js/jquery.js"></script>
     <script type="text/javascript" src="{dir}/_js/jquery-ui.js"></script>
@@ -78,7 +76,7 @@
     </tr>
     <tr>
         <td class="bottomLine">
-            &nbsp;&nbsp;&nbsp;<a href="http://www.roxyfileman.com" target="_blank">&copy; 2013 - <span id="copyYear"></span> RoxyFileman</a>
+            &nbsp;&nbsp;&nbsp;<a href="http://www.roxyfileman.com" target="_blank">&copy; 2013 - <span id="copyYear"></span> RoxyFileman | Frontend</a>
         </td>
         <td class="bottomLine">
             <div id="pnlStatus">Status bar</div>

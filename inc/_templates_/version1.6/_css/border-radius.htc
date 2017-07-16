@@ -140,4 +140,3 @@ function window_resize() {
 	if (typeof(window.previous_onresize) == 'function') { window.previous_onresize(); }
 }
 </script>
-

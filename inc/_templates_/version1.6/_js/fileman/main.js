@@ -497,9 +497,9 @@ function tooltipContent() {
 
         console.info(imgUrl);
         html = '<img src="' + imgUrl + '" class="imgPreview"><br>' + f.name + ' <br><span class="filesize">' + t('Size') + ': ' + RoxyUtils.FormatFileSize(f.size) + ' ' + t('Dimensions') + ': ' + f.width + 'x' + f.height + '</span>';
+    } else {
+        html = RoxyUtils.GetFilename(f.fullPath) + ' <span class="filesize">' + t('Size') + ': ' + RoxyUtils.FormatFileSize(f.size) + '</span>';
     }
-    else
-        html = f.fullPath + ' <span class="filesize">' + t('Size') + ': ' + RoxyUtils.FormatFileSize(f.size) + '</span>';
 
     return html;
 }

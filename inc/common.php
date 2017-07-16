@@ -99,9 +99,6 @@ class common {
     public static $search_forum = false;
     public static $BBCode = NULL;
 
-    //Private
-    private static $menu_index = [];
-
     //Consts
     const FORUM_DOUBLE_POST_INSERT = 0;
     const FORUM_DOUBLE_POST_TH_ADD = 1;
@@ -2787,21 +2784,19 @@ class common {
 
     public static function less() {
         //TODO: Use Cache
-        $main_dir = basePath . "/inc/_templates_/" . self::$sdir."/_less";
+        $main_dir = basePath . "/inc/_templates_/".self::$sdir."/_less";
         $auto_imports = [];
-        if($auto_import = common::get_files(basePath . "/inc/_templates_/" . self::$sdir."/_less/auto_imports/",false,true, ['php'])) {
-            foreach($auto_import AS $dir)
-            {
-                $auto_imports[basePath.'/inc/_templates_/'.self::$sdir.'/_less/auto_imports/'.$dir.'/'] = '/inc/_templates_/'.self::$sdir.'/_less/auto_imports/'.$dir.'/';
-            }
-            unset($auto_import,$dir);
-        }
+        $auto_imports[basePath.'/inc/_templates_/'.self::$sdir.'/_less/_auto_imports_/'] =
+            '../inc/_templates_/'.self::$sdir.'/_less/_auto_imports_/';
 
         if(count($auto_imports) >= 1) {
             self::$less->SetImportDirs($auto_imports);
         }
 
-        self::$less->parseFile( $main_dir.'/theme.less', "/inc/_templates_/" . self::$sdir."/_less/");
+        if(file_exists($main_dir.'/template.less')) {
+            self::$less->parseFile($main_dir . '/template.less', "/inc/_templates_/" . self::$sdir . "/_less/");
+        }
+
         return self::$less->getCss();
     }
 
@@ -3150,7 +3145,7 @@ class common {
                 }
             break;
         }
-        
+
         javascript::set('maxW',settings::get('maxwidth'));
         javascript::set('autoRefresh',1);  // Enable Auto-Refresh for Ajax
         javascript::set('debug',view_javascript_debug);  // Enable JS Debug

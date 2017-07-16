@@ -186,7 +186,6 @@ RoxyUtils.FormatFileSize = function (x) {
 
 RoxyUtils.AddParam = function (url, n, v) {
     url += (url.indexOf('?') > -1 ? '&' : '?') + n + '=' + encodeURIComponent(v);
-
     return url;
 };
 

@@ -67,6 +67,10 @@ switch ($mod):
         $version = new dzcp_version(false);
         $version->runUpdate();
         break;
+    case 'less':
+        header('Content-type: text/css');
+        exit(common::less());
+        break;
     case 'securimage':
         if (!headers_sent()) {
             common::$securimage->background_directory = basePath . '/inc/images/securimage/background/';
