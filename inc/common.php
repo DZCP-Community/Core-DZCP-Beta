@@ -3150,7 +3150,7 @@ class common {
                 }
             break;
         }
-
+        
         javascript::set('maxW',settings::get('maxwidth'));
         javascript::set('autoRefresh',1);  // Enable Auto-Refresh for Ajax
         javascript::set('debug',view_javascript_debug);  // Enable JS Debug

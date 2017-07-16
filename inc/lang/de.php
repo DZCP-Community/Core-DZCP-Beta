@@ -994,6 +994,7 @@ define('_dl_traffic', 'verursachter Traffic');
 define('_dl_loaded', 'bisherige Downloads');
 define('_dl_date', 'Uploaddatum');
 define('_dl_wait', 'Download der Datei: ');
+define('_dl_fileman', 'Fileman &ouml;ffnen');
 
 ## User ##
 define('_profil_head', '<span class="fontBold">Userprofil von {$nick}</span> [{$profilhits} mal angesehen]');

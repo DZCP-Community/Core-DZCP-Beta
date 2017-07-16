@@ -1006,6 +1006,7 @@ define('_dl_traffic' , 'Caused traffic');
 define('_dl_loaded' , 'Downloaded');
 define('_dl_date' , 'Upload date');
 define('_dl_wait' , 'Download of file: ');
+define('_dl_fileman', 'Open Fileman');
 
 define('_contact_pflichtfeld' , '<span class="fontWichtig">*</span> = Required field');
 

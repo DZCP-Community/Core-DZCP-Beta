@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="pragma" content="No-Cache" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Roxy file manager</title>
+    <title>RoxyFile Manager</title>
     <link href="{dir}/_css/jquery-ui.css" rel="stylesheet" type="text/css" />
     <link href="{dir}/_css/jquery-ui.theme.css" rel="stylesheet" type="text/css" />
     <link href="{dir}/_css/fileman.css" rel="stylesheet" type="text/css" />

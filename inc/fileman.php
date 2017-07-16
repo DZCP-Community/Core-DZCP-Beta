@@ -4,8 +4,7 @@
  * Class fileman
  * Roxy Fileman PHP Backend for DZCP
  */
-class fileman extends common
-{
+class fileman extends common {
     private $buffer = array();
     private $upload_dir = '';
     private $is_user_dir = false;
@@ -13,10 +12,8 @@ class fileman extends common
     private $input = [];
     private $zip = null;
 
-    public function __construct()
-    {
+    public function __construct() {
         //Set JS Config
-        javascript::set('RETURN_URL_PREFIX','');
         javascript::set('THUMBS_VIEW_WIDTH',140);
         javascript::set('THUMBS_VIEW_HEIGHT',120);
         javascript::set('PREVIEW_THUMB_WIDTH',100);
@@ -39,12 +36,21 @@ class fileman extends common
         javascript::set('COPYFILE','../inc/ajax.php?i=fileman&call=copyfile');
         javascript::set('RENAMEFILE','../inc/ajax.php?i=fileman&call=renamefile');
         javascript::set('GENERATETHUMB','../inc/ajax.php?i=fileman&call=thumb');
-        javascript::set('DEFAULTVIEW','list');
-        javascript::set('FORBIDDEN_UPLOADS','js jsp jsb mhtml mht xhtml xht php phtml php3 php4 php5 phps shtml jhtml pl '
-            .'sh py cgi exe application gadget hta cpl msc jar vb jse ws wsf wsc wsh ps1 ps2 psc1 psc2 msh msh1 msh2 inf '
-            .'reg scf msp scr dll msi vbs bat com pif cmd vxd cpl htpasswd htaccess');
-        javascript::set('ALLOWED_UPLOADS','');
-        javascript::set('LANG','auto');
+        javascript::set('FORBIDDEN_UPLOADS',config::$upload_forbidden_uploads);
+        javascript::set('ALLOWED_UPLOADS',config::$upload_allowed_uploads);
+
+        switch ($_SESSION['language']) {
+            case 'uk': javascript::set('LANG','en'); break;
+            default:
+                if(file_exists(basePath.'/inc/lang/fileman/'.
+                    strtolower($_SESSION['language']).'.json')) {
+                    javascript::set('LANG',$_SESSION['language']);
+                } else {
+                    javascript::set('LANG','auto');
+                }
+                break;
+        }
+
         javascript::set('DATEFORMAT','dd.MM.yyyy - HH:mm');
         javascript::set('OPEN_LAST_DIR','yes');
 
@@ -134,7 +140,9 @@ class fileman extends common
                     $output += $this->renamefile();
                     break;
                 case 'thumb':
-                    //TODO: create thumb
+                    @ignore_user_abort(true);
+                    @set_time_limit(0);
+                    $this->thumb();
                     break;
             }
         }
@@ -1100,6 +1108,93 @@ class fileman extends common
     }
 
     /**
+     * Generate thumb
+     */
+    private function thumb() {
+        $path = str_replace('../', '/',
+            array_key_exists('f',$this->input) ? $this->input['f'] : '');
+
+        if(!extension_loaded('gd'))
+            die('"gd" extension not loaded');
+
+        if(file_exists(basePath.$path) && $this->IsImage($path)) {
+            $size = getimagesize(basePath . $path);
+            $file_exp = explode('.', $file = urldecode(basename($path)));
+            $breite = $size[0]; $hoehe = $size[1];
+
+            $neueBreite = array_key_exists('width', $this->input) ? $this->input['width'] : 100;
+            $neueHoehe = ((int)($hoehe * $neueBreite / $breite));
+
+            @chmod(common::FixPath(basePath . dirname($path)), octdec(config::$upload_dir_permissions));
+            @chmod(common::FixPath(basePath . $path), octdec(config::$upload_file_permissions));
+
+            $file_cache = basePath . '/' . $file_exp[0] . '_fileman_minimize_' . $neueBreite . 'x' . $neueHoehe;
+            $picture_build = false;
+
+            switch ($size[2]) {
+                case 1: ## GIF ##
+                    header("Content-Type: image/gif");
+                    $file_cache = $file_cache . '.gif';
+                    if (!thumbgen_cache || !file_exists($file_cache) || time() - filemtime($file_cache) > thumbgen_cache_time) {
+                        $altesBild = imagecreatefromgif(basePath . $path);
+                        $neuesBild = imagecreatetruecolor($neueBreite, $neueHoehe);
+                        $CT = imagecolortransparent($altesBild);
+                        imagepalettecopy($neuesBild, $altesBild);
+                        imagefill($neuesBild, 0, 0, $CT);
+                        imagecolortransparent($neuesBild, $CT);
+                        imageantialias($neuesBild, true);
+                        imagecopyresampled($neuesBild, $altesBild, 0, 0, 0, 0, $neueBreite, $neueHoehe, $breite, $hoehe);
+                        thumbgen_cache ? imagegif($neuesBild, $file_cache) : imagegif($neuesBild);
+                        $picture_build = true;
+                    }
+                    break;
+                default:
+                case 2: ## JPEG ##
+                    header("Content-Type: image/jpeg");
+                    $file_cache = $file_cache . '.jpg';
+                    if (!thumbgen_cache || !file_exists($file_cache) || time() - @filemtime($file_cache) > thumbgen_cache_time) {
+                        $altesBild = imagecreatefromjpeg(basePath . $path);
+                        $neuesBild = imagecreatetruecolor($neueBreite, $neueHoehe);
+                        imageantialias($neuesBild, true);
+                        imagecopyresampled($neuesBild, $altesBild, 0, 0, 0, 0, $neueBreite, $neueHoehe, $breite, $hoehe);
+                        thumbgen_cache ? imagejpeg($neuesBild, $file_cache, 100) : imagejpeg($neuesBild, null, 100);
+                        $picture_build = true;
+                    }
+                    break;
+                case 3: ## PNG ##
+                    header("Content-Type: image/png");
+                    $file_cache = $file_cache . '.png';
+                    if (!thumbgen_cache || !file_exists($file_cache) || time() - @filemtime($file_cache) > thumbgen_cache_time) {
+                        header("Content-Type: image/png");
+                        $altesBild = imagecreatefrompng(basePath . $path);
+                        $neuesBild = imagecreatetruecolor($neueBreite, $neueHoehe);
+                        imagealphablending($neuesBild, false);
+                        imagesavealpha($neuesBild, true);
+                        imageantialias($neuesBild, true);
+                        imagecopyresampled($neuesBild, $altesBild, 0, 0, 0, 0, $neueBreite, $neueHoehe, $breite, $hoehe);
+                        thumbgen_cache ? imagepng($neuesBild, $file_cache) : imagepng($neuesBild);
+                        $picture_build = true;
+                    }
+                    break;
+            }
+
+            if ($picture_build && is_resource($altesBild)) {
+                imagedestroy($altesBild);
+            }
+
+            if ($picture_build && is_resource($neuesBild)) {
+                imagedestroy($neuesBild);
+            }
+
+            if (thumbgen_cache && file_exists($file_cache)) {
+                echo file_get_contents($file_cache);
+            }
+        }
+
+        exit();
+    }
+
+    /**
      * ###################################################
      *  CORE FUNCTIONS
      * ###################################################
@@ -1109,8 +1204,7 @@ class fileman extends common
      * @param string $fileName
      * @return bool
      */
-    private function IsImage(string $fileName)
-    {
+    private function IsImage(string $fileName) {
         $ext = $this->GetExtension($fileName);
         if (in_array($ext, self::SUPPORTED_PICTURE)) {
             $hash = md5($fileName);
@@ -1134,8 +1228,7 @@ class fileman extends common
      * @param string $filename
      * @return string
      */
-    private function GetExtension(string $filename)
-    {
+    private function GetExtension(string $filename) {
         $ext = '';
         if (mb_strrpos($filename, '.') !== false) {
             $ext = mb_substr($filename, mb_strrpos($filename, '.') + 1);
@@ -1148,8 +1241,7 @@ class fileman extends common
      * @param string $ext_path
      * @return mixed|string
      */
-    private function getFilesPath(string $ext_path = '')
-    {
+    private function getFilesPath(string $ext_path = '') {
         $ret = (isset($_SESSION['fileman_path']) && !empty($_SESSION['fileman_path']) ? $_SESSION['fileman_path'] : '');
         if (empty($ret)) {
             $ret = self::FixPath(basePath . '/inc/_uploads_' . $ext_path);
@@ -1169,8 +1261,7 @@ class fileman extends common
      * @param string $type
      * @return array
      */
-    private function getFilesNumber(string $fullPath, string $type)
-    {
+    private function getFilesNumber(string $fullPath, string $type) {
         $files_c = 0;
         $dirs_c = 0;
         $files = self::get_files(basePath . $fullPath, false, false, [], true);

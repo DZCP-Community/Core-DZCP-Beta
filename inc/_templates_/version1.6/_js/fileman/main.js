@@ -485,7 +485,8 @@ function tooltipContent() {
     if ($('#hdViewType').val() == 'thumb' && f.IsImage()) {
         html = f.fullPath + '<br><span class="filesize">' + t('Size') + ': ' + RoxyUtils.FormatFileSize(f.size) + ' ' + t('Dimensions') + ': ' + f.width + 'x' + f.height + '</span>';
     }
-    else if (f.IsImage()) {
+    else if (f.IsImage())
+    {
         if (RoxyFilemanConf.GENERATETHUMB) {
             imgUrl = RoxyUtils.AddParam(RoxyFilemanConf.GENERATETHUMB, 'f', f.fullPath);
             imgUrl = RoxyUtils.AddParam(imgUrl, 'width', RoxyFilemanConf.PREVIEW_THUMB_WIDTH);
@@ -493,10 +494,13 @@ function tooltipContent() {
         }
         else
             imgUrl = f.fullPath;
+
+        console.info(imgUrl);
         html = '<img src="' + imgUrl + '" class="imgPreview"><br>' + f.name + ' <br><span class="filesize">' + t('Size') + ': ' + RoxyUtils.FormatFileSize(f.size) + ' ' + t('Dimensions') + ': ' + f.width + 'x' + f.height + '</span>';
     }
     else
         html = f.fullPath + ' <span class="filesize">' + t('Size') + ': ' + RoxyUtils.FormatFileSize(f.size) + '</span>';
+
     return html;
 }
 function filterFiles() {
@@ -742,14 +746,6 @@ function getPreselectedFile() {
                 break;
         }
     }
-    if (RoxyFilemanConf.RETURN_URL_PREFIX) {
-        var prefix = RoxyFilemanConf.RETURN_URL_PREFIX;
-        if (filePath.indexOf(prefix) == 0) {
-            if (prefix.substr(-1) == '/')
-                prefix = prefix.substr(0, prefix.length - 1);
-            filePath = filePath.substr(prefix.length);
-        }
-    }
 
     return filePath;
 }
@@ -797,8 +793,10 @@ $(function () {
     });
 
     var viewType = RoxyUtils.GetCookie('roxyview');
+
     if (!viewType)
-        viewType = RoxyFilemanConf.DEFAULTVIEW;
+        viewType = 'list';
+
     if (viewType)
         switchView(viewType);
 
@@ -853,12 +851,7 @@ function setFile() {
         return;
     }
     var insertPath = f.fullPath;
-    if (RoxyFilemanConf.RETURN_URL_PREFIX) {
-        var prefix = RoxyFilemanConf.RETURN_URL_PREFIX;
-        if (prefix.substr(-1) == '/')
-            prefix = prefix.substr(0, prefix.length - 1);
-        insertPath = prefix + (insertPath.substr(0, 1) != '/' ? '/' : '') + insertPath;
-    }
+
     switch (getFilemanIntegration()) {
         case 'ckeditor':
             window.opener.CKEDITOR.tools.callFunction(RoxyUtils.GetUrlParam('CKEditorFuncNum'), insertPath);

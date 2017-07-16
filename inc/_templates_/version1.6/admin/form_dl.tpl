@@ -46,7 +46,7 @@
           onblur="this.className='inputField_dis';" />
         </td>
         <td style="padding-left:3px">
-          <a title="Fileman" href="javascript:DZCP.openCustomRoxy()"><img src="../inc/images/fileman/file-add.png" id="customRoxyImage" style="max-width:650px;"></a>
+          <a title="{lang msgID="dl_fileman"}" href="javascript:DZCP.openCustomRoxy()"><img src="../inc/images/fileman/file-add.png" id="customRoxyImage" style="max-width:650px;"></a>
           <div id="roxyCustomPanel" style="display: none;">
             <iframe src="../inc/ajax.php?i=fileman&run&integration=custom&txtFieldId=url" style="width:100%;height:100%" frameborder="0"></iframe>
           </div>
