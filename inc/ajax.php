@@ -71,6 +71,15 @@ switch ($mod):
         header('Content-type: text/css');
         exit(common::less(isset($_GET['less']) ? $_GET['less'] : 'template',isset($_GET['regen'])));
         break;
+	case 'bbcode':
+			if($_GET['get'] == 'smileys') {
+                $smileys = bbcode::smiley_map();
+				$smileys['smiley_columns'] = 10;
+				$smileys['smiley_path'] = '..\inc\_templates_\version1.6\images\smileys\\';
+                header('Content-Type: application/json');
+				exit(json_encode($smileys));
+			}
+        break;
     case 'securimage':
         if (!headers_sent()) {
             common::$securimage->background_directory = basePath . '/inc/images/securimage/background/';

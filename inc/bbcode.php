@@ -22,6 +22,7 @@ class BBCode extends common
 {
     private static $words = null;
     private static $string = null;
+    private static $smileys = null;
 
     /**
      * BBCode constructor.
@@ -54,10 +55,12 @@ class BBCode extends common
                         $smiley_name = str_replace(['.gif', '.png', '.jpg'], '', $smiley_file);
                         if (file_exists(basePath . '/inc/_templates_/' . common::$tmpdir . '/images/smileys/'.$smiley_name.'.xml')) { //Load XML
                             $xml = simplexml_load_file(basePath . '/inc/_templates_/' . common::$tmpdir . '/images/smileys/' . $smiley_name . '.xml');
+                            self::$smileys[$smiley_file] = ['description' => (string)$smiley_name, 'map' => (string)$xml->tag[0]];
                             foreach ($xml->tag as $tag) {
                                 self::$BBCode->AddSmiley(':'.str_replace(' ','_',(string)$tag[0]).':', $smiley_file);
                             } unset($xml,$tag);
                         } else {
+                            self::$smileys[$smiley_file] = ['description' => (string)$smiley_name, 'map' => ':'.(string)$smiley_name.':'];
                             self::$BBCode->AddSmiley(':'.str_replace(' ','_',$smiley_name).':', $smiley_file);
                         }
                     }
@@ -550,5 +553,21 @@ class BBCode extends common
 
         self::__construct(true);
         return self::$BBCode;
+    }
+
+    public static function smiley_map($reint=false) {
+        if (count(self::$smileys) >= 1 || $reint) {
+            $smileys = ['smiley_images' => [], 'smiley_descriptions' => [], 'smiley_map' => []];
+            foreach (self::$smileys as $image => $data) {
+                array_push($smileys['smiley_images'],$image);
+                array_push($smileys['smiley_descriptions'],$data['description']);
+                array_push($smileys['smiley_map'][$data['description']] = $data['map']);
+            }
+
+            return $smileys;
+        }
+
+        self::__construct(true);
+        return self::smiley_map(true);
     }
 }

@@ -65,7 +65,7 @@ if(defined('_Forum')) {
             $titel = $smarty->fetch('string:'._eintrag_titel_forum);
             $smarty->clearAllAssign();
 
-            if($guestCheck)
+            if(!$guestCheck)
             {
                 $getu = common::$sql['default']->fetch("SELECT nick,hp,email FROM `{prefix_users}` WHERE id = '".$pUId."'");
                 $email = common::CryptMailto(stringParser::decode($getu['email']),_emailicon_forum);
