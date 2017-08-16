@@ -29,6 +29,7 @@ $where = _forum_search_head;
 $smarty = common::getSmarty(); //Use Smarty
 
 ## SECTIONS ##
+$showartikel = ''; $showsites = '';
 switch (common::$action):
     default:
         common::$search_forum = true;
@@ -321,6 +322,7 @@ case 'site';
         $qry = common::$sql['default']->select("SELECT `id`,`titel` FROM `{prefix_artikel}` WHERE (`titel` LIKE '%" .
             stringParser::encode($_GET['searchword']) . "%' AND `titel` != '') OR (`text` LIKE '%" .
             stringParser::encode($_GET['searchword']) . "%' AND `text` != '') ORDER BY `titel` ASC;");
+        $color = 0; $showartikel = '';
         foreach ($qry as $get) {
             $class = ($color % 2) ? "contentMainFirst" : "contentMainSecond";
             $color++;
