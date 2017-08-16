@@ -93,7 +93,15 @@ class BBCode extends common
          * Usage:
          * [youtube]xxxxx[/youtube] or
          * [youtube height=200 width=300]xxxxx[/youtube] or
-         * [youtube height=200 width=300 autoplay=1]xxxxx[/youtube]
+		 *  Options:
+         * [youtube autoplay=1]xxxxx[/youtube]
+		 * [youtube allowfullscreen=1]xxxxx[/youtube]
+		 * [youtube nocookie=1]xxxxx[/youtube]
+		 * [youtube rel=0]xxxxx[/youtube]
+		 * [youtube controls=0]xxxxx[/youtube]
+		 * [youtube responsive=1]xxxxx[/youtube]
+         *
+         * [youtube autoplay=1 allowfullscreen=1 nocookie=1 rel=0 controls=0 responsive=1 height=200 width=300]1MLRCczBKn8[/youtube]
          */
         self::$BBCode->AddRule('youtube', [
             'mode' => Nbbc\BBCode::BBCODE_MODE_CALLBACK,
@@ -231,22 +239,61 @@ class BBCode extends common
 
                 if (isset($params['start']) && !preg_match('/^[1-9][0-9]*$/', $params['start']))
                     return false;
-
+				
+				if (isset($params['allowfullscreen']) && !preg_match('/^[0-1]*$/', $params['allowfullscreen']))
+                    return false;
+				
+				if (isset($params['nocookie']) && !preg_match('/^[0-1]*$/', $params['nocookie']))
+                    return false;
+				
+				if (isset($params['rel']) && !preg_match('/^[0-1]*$/', $params['rel']))
+                    return false;
+				
+				if (isset($params['controls']) && !preg_match('/^[0-1]*$/', $params['controls']))
+                    return false;
+				
+				if (isset($params['responsive']) && !preg_match('/^[0-1]*$/', $params['responsive']))
+                    return false;
+				
                 return true;
             }
 
+            $responsiveStyle = ''; $responsive = ['start' => '', 'end' => ''];
             $width = isset($params['width']) ? $params['width'] : 640;
             $height = isset($params['height']) ? $params['height'] : 385;
-            $autoplay = isset($params['autoplay']) ? $params['autoplay'] : 0;
-            $start = isset($params['start']) ? $params['start'] : 0;
+			$nocookie = isset($params['nocookie']) ? 'youtube-nocookie' : 'youtube';
+			
+			//build_query 
+			$build_query = [];
+			if(isset($params['autoplay'])) {
+				$build_query['autoplay'] = $params['autoplay'];
+			}
+			
+			if(isset($params['start'])) {
+				$build_query['start'] = (int)$params['start'];
+			}
+			
+			if(isset($params['rel'])) {
+				$build_query['rel'] = (int)$params['rel'];
+			}
+			
+			if(isset($params['controls']))
+				$build_query['controls'] = (int)$params['controls'];
+			}
+			
+			if(isset($params['responsive'])) {
+				$responsive['start'] = '<div class="youtube-embed-wrapper" style="position:relative;padding-bottom:56.25%;padding-top:30px;height:0;overflow:hidden">';
+				$responsive['end'] = '</div>';
+				$responsiveStyle = 'style="position:absolute;top:0;left:0;width:100%;height:100%"';
+			}
 
-            return '<iframe class="youtube-player" type="text/html" width="' . $width . '" height="' .
-                $height . '" src="http://www.youtube.com/embed/' . $content .
-                ($autoplay ? '?autoplay=1' : '')
-                .($autoplay && $start ? '&start='.$start : '')
-                .(!$autoplay && $start ? '?start='.$start : '')
-                . '" frameborder="0"></iframe>';
-        }
+			$query = http_build_query($build_query);
+            return $responsive['start'].
+			'<iframe class="youtube-player" type="text/html" width="' . $width . '" height="' .
+                $height . '" src="http://www.'.$nocookie.'.com/embed/' . 
+				$content . (!empty($query) ? '?'.$query : ''). 
+				'"'.$responsiveStyle.' frameborder="0"'.(isset($params['allowfullscreen']) ? ' allowfullscreen': '').'></iframe>'.
+			$responsive['end'];
 
         return $content;
     }
