@@ -15,6 +15,8 @@
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
 
+//TODO: New Download Page
+
 ## OUTPUT BUFFER START ##
 if(!ob_start("ob_gzhandler")) ob_start();
 define('basePath', dirname(dirname(__FILE__).'../'));

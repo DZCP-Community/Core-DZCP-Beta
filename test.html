@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Unbenanntes Dokument</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+
+<body>
+<script language="javascript">
+    Object.prototype.hasAttr = function(attr) {
+        if(this.attr) {
+            var _attr = this.attr(attr);
+        } else {
+            var _attr = this.getAttribute(attr);
+        }
+        return (typeof _attr !== "undefined" && _attr !== false && _attr !== null);
+    };
+
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    $( document ).ready(function() {
+        //IS responsive
+        var responsive = ($("div.youtube-embed-wrapper").length);
+
+        //Player
+        if ($("iframe.youtube-player").length) {
+            var width = 0, height = 0, src = "";
+            var player = $("iframe.youtube-player");
+
+            //Get width
+            if(!responsive && player.width()) {
+                width = player.width();
+            }
+
+            //Get height
+            if(!responsive && player.height()) {
+                height = player.height();
+            }
+
+            var allowfullscreen = (player.hasAttr('allowfullscreen'));
+            if(player.hasAttr('src')) {
+                src = player.attr('src');
+
+                var control_parameter = getParameterByName("controls",src);
+                var controls = (control_parameter !== null && control_parameter == 0);
+
+                var rel_parameter = getParameterByName("rel",src);
+                var rel = (rel_parameter !== null && rel_parameter >= 1);
+
+                var autoplay_parameter = getParameterByName("autoplay",src);
+                var autoplay = (autoplay_parameter !== null && autoplay_parameter >= 1);
+
+                var time = false;
+                var time_parameter = getParameterByName("start",src);
+                if(time_parameter !== null) {
+                    time = time_parameter;
+                }
+
+                var nocookie = (src.toLocaleLowerCase().indexOf("youtube-nocookie") != -1);
+
+                //Extract ID
+                var res = src.split("embed/");
+                res = res[1].split("?");
+                var vid = res[0];
+
+                var obj_width = (width >= 1 ? " width="+width : "");
+                var obj_height = (height >= 1 ? " height="+height : "");
+                var obj_autoplay =  (autoplay ? " autoplay=1" : "");
+                var obj_allowfullscreen = (allowfullscreen ? " allowfullscreen=1" : "");
+                var obj_nocookie = (nocookie ? " nocookie=1" : "");
+                var obj_rel = (rel ? " rel=1" : "");
+                var obj_controls = (controls ? " controls=0" : "");
+                var obj_responsive = (responsive ? " responsive=1" : "");
+                var obj_time = (time != 0 ? " start="+time : "");
+
+                if ($("div.youtube-embed-wrapper").length) {
+                    $("div.youtube-embed-wrapper").replaceWith( "[youtube"+obj_width+obj_height+obj_autoplay+obj_allowfullscreen+
+                        obj_nocookie+obj_rel+obj_controls+obj_responsive+obj_time+"]"+vid+"[/youtube]" );
+                } else {
+                    player.replaceWith( "[youtube"+obj_width+obj_height+obj_autoplay+obj_allowfullscreen+
+                        obj_nocookie+obj_rel+obj_controls+obj_responsive+obj_time+"]"+vid+"[/youtube]" );
+                }
+            }
+        }
+    });
+</script>
+
+
+<iframe
+        class="youtube-player"
+        type="text/html"
+        width="300"
+        height="200"
+        src="http://www.youtube.com/embed/1MLRCczBKn8?autoplay=1&rel=1&start=40">
+</iframe>
+</body>
+</html>
