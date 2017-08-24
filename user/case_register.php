@@ -119,6 +119,9 @@ if(defined('_UserMenu')) {
                 ## Lege User in der User-Statistik Tabelle an ##
                 common::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?, `lastvisit` = ?;", [$insert_id,$time]);
 
+                ## Erstelle User-Upload Ordner ##
+                fileman::CreateUserDir($insert_id);
+
                 ## Ereignis in den Adminlog schreiben ##
                 common::setIpcheck("reg(".$insert_id.")");
 

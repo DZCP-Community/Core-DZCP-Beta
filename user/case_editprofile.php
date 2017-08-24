@@ -43,6 +43,9 @@ if(defined('_UserMenu')) {
                             common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;", [$getdel['id']]);
                             common::$sql['default']->delete("DELETE FROM `{prefix_clicks_ips}` WHERE `uid` = ?;", [$getdel['id']]);
 
+                            ## Losche User-Upload Ordner ##
+                            fileman::RemoveUserDir($getdel['id']);
+
                             $files = common::get_files(basePath."/inc/images/uploads/userpics/",false,true, common::SUPPORTED_PICTURE);
                             foreach ($files as $file) {
                                 if(preg_match("#".$getdel['id']."_(.*?).(gif|jpg|jpeg|png)#",strtolower($file))!= FALSE) {

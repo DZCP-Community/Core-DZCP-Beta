@@ -12,7 +12,15 @@ class fileman extends common {
     private $input = [];
     private $zip = null;
 
-    public function __construct() {
+    public static function getInstance(bool $no_init=false) {
+        $fileman = new fileman();
+        if(!$no_init)
+            $fileman->init();
+
+        return $fileman;
+    }
+
+    public function init() {
         //Set JS Config
         javascript::set('THUMBS_VIEW_WIDTH',140);
         javascript::set('THUMBS_VIEW_HEIGHT',120);
@@ -1348,7 +1356,7 @@ class fileman extends common {
      * Loescht Dateien und Ordner innerhalb eines Ordners
      * @param string $file Pfad zum Ordner, welcher geloescht werden soll
      */
-    private function deleteFolder(string $file)
+    public function deleteFolder(string $file)
     {
         @chmod(self::FixPath(basePath . $file), config::$upload_dir_permissions);
         if (is_dir(basePath . $file)) {
@@ -1543,5 +1551,35 @@ class fileman extends common {
             $ret = true;
 
         return $ret;
+    }
+
+    public static function CreateUserDir(int $uid) {
+        if(!$uid) return;
+        $dir = '/_uploads_/_users_/_user'.$uid.'_/';
+        $folders = ['Images','Forum','Addons'];
+        foreach ($folders as $folder) {
+            @mkdir(basePath . $dir.$folder, config::$upload_dir_permissions, true);
+        }
+    }
+
+    public static function RemoveUserDir(int $uid) {
+        if(!$uid) return;
+        $fileman = self::getInstance(true);
+        return $fileman->deleteFolder('/_uploads_/_users_/_user'.$uid.'_');
+    }
+
+    public static function CreateGroupDir(int $gid) {
+        if(!$gid) return;
+        $dir = '/_uploads_/_group_/_group'.$gid.'_/';
+        $folders = ['Documents','Images','Downloads'];
+        foreach ($folders as $folder) {
+            @mkdir(basePath . $dir.$folder, config::$upload_dir_permissions, true);
+        }
+    }
+
+    public static function RemoveGroupDir(int $gid) {
+        if(!$gid) return;
+        $fileman = self::getInstance(true);
+        return $fileman->deleteFolder('/_uploads_/_group_/_group'.$gid.'_');
     }
 }

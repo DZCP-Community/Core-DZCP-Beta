@@ -197,6 +197,10 @@ if(defined('_UserMenu')) {
                         common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;", [$delUID]);
                         common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;", [$delUID]);
                         common::$sql['default']->delete("DELETE FROM `{prefix_clicks_ips}` WHERE `uid` = ?;", [$delUID]);
+
+                        ## Losche User-Upload Ordner ##
+                        fileman::RemoveUserDir($delUID);
+
                         $index = common::info(_user_deleted, "?action=userlist", 5, false);
                     }
                 }
@@ -227,6 +231,10 @@ if(defined('_UserMenu')) {
                         common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;", [$delUID]);
                         common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;", [$delUID]);
                         common::$sql['default']->delete("DELETE FROM `{prefix_clicks_ips}` WHERE `uid` = ?;", [$delUID]);
+
+                        ## Losche User-Upload Ordner ##
+                        fileman::RemoveUserDir($delUID);
+
                         $index = common::info(_user_deleted, "?action=userlist", 5 ,false);
                     }
                 }

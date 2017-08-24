@@ -196,17 +196,6 @@ class BBCode extends common
             'allow_in' => ['listitem', 'block', 'columns', 'inline', 'link'],
         ]);
 
-        /*
-         * ##############################
-         * Text Hiden TAG
-         * ##############################
-         *
-         * Usage:
-         * [hide]Text1234 show on >= level 1[/hide] or
-         * [hide level=2]Text1234 show on >= level 2[/hide] or
-         * [hide level=3]Text1234 show on >= level 3[/hide] or
-         * [hide level=4]Text1234 show on == level 4[/hide]
-         */
         self::$BBCode->AddRule('size', [
             'mode' => Nbbc\BBCode::BBCODE_MODE_CALLBACK,
             'method' => 'BBCode::callback_size',

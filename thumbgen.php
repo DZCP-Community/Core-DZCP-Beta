@@ -22,7 +22,7 @@ define('is_thumbgen',true);
 
 ## INCLUDES ##
 include(basePath."/inc/debugger.php");
-include(basePath."/inc/config.php");
+include(basePath."/inc/configs/config.php");
 
 if(!isset($_GET['img']) || empty($_GET['img']) || !extension_loaded('gd'))
     die('"gd" extension not loaded or "img" is empty');

@@ -60,6 +60,7 @@ if(isset($_POST['user'])) {
                 (!$bday ? 0 : strtotime($bday)),stringParser::encode($_POST['city']),stringParser::encode($_POST['land']),$time=time(),(int)$_POST['level'],$time]);
 
         $insert_id = common::$sql['default']->lastInsertId();
+
         common::setIpcheck("createuser(".$_SESSION['id']."_".$insert_id.")");
 
         //Insert Permissions
@@ -72,7 +73,14 @@ if(isset($_POST['user'])) {
             $permissions = ', '.substr($permissions, 0, -2);
         }
 
+        ## Lege User in der Permissions Tabelle an ##
         common::$sql['default']->insert("INSERT INTO `{prefix_permissions}` SET `user` = ?".$permissions.";", [$insert_id]);
+
+        ## Lege User in der User-Statistik Tabelle an ##
+        common::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?, `lastvisit` = ?;", [$insert_id,$time]);
+
+        ## Erstelle User-Upload Ordner ##
+        fileman::CreateUserDir($insert_id);
 
         // internal boardpermissions
         if(!empty($_POST['board'])) {

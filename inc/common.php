@@ -841,10 +841,16 @@ class common {
     /**
      * Bilder verkleinern
      * @param string $img
+     * @param int $group
+     * @param int $picID
      * @return string
      */
-    public static function img_size(string $img) {
-        return "<a href=\"../".$img."\" rel=\"lightbox[l_".(int)($img)."]\"><img src=\"../thumbgen.php?img=".$img."\" alt=\"\" /></a>";
+    private static $IMG_AUTO_INT = 0;
+    public static function img_size(string $img, int $group = 1, int $picID = 0) {
+        if(!$picID)
+            self::$IMG_AUTO_INT++;
+
+        return "<a href=\"../".$img."\" rel=\"lightbox[".$group."_".($picID >= 1 ? $picID : self::$IMG_AUTO_INT)."]\"><img src=\"../thumbgen.php?img=".$img."\" alt=\"\" /></a>";
     }
 
     /**

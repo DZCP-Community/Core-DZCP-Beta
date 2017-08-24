@@ -52,10 +52,10 @@ switch ($mod):
         break;
     case 'fileman':
         if(!isset($_GET['run'])) {
-            $fileman = new fileman();
+            $fileman = fileman::getInstance();
             $fileman->run();
         } else {
-            $fileman = new fileman();
+            $fileman = fileman::getInstance();
             $smarty = common::getSmarty(true);
             $smarty->caching = false;
             $smarty->assign('js_config','<script language="javascript" type="text/javascript">var json=\''.
