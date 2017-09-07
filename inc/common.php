@@ -44,10 +44,7 @@ require_once(basePath."/inc/stringParser.php");
 require_once(basePath."/inc/sfs.php");
 require_once(basePath."/inc/bbcode.php");
 require_once(basePath."/inc/cache.php");
-
-if(is_ajax || is_api) {
-    require_once(basePath . "/inc/fileman.php");
-}
+require_once(basePath."/inc/fileman.php");
 
 if(!is_api) {
     require_once(basePath . '/inc/securimage/securimage_color.php');

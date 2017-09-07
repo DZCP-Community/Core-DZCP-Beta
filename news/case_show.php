@@ -218,9 +218,8 @@ if(defined('_News') && isset($_GET['id']) && !empty($_GET['id'])) {
                 $i--;
             }
 
-            if (settings::get("reg_newscomments") && !common::$chkMe) {
-                $add = _error_unregistered_nc;
-            } else {
+            $add = false;
+            if (settings::get("reg_newscomments") && common::$chkMe) {
                 if (!common::ipcheck("ncid(".$_GET['id'].")", settings::get('f_newscom')) && empty($add)) {
                     $smarty->caching = false;
                     $smarty->assign('nick',common::autor(common::$userid));

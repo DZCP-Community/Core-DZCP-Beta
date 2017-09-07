@@ -943,3 +943,6 @@ CREATE TABLE `dzcp_vote_results` (
   KEY `vid` (`vid`) USING BTREE,
   KEY `what` (`what`) USING BTREE
 ) ENGINE=Aria AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 PAGE_CHECKSUM=0 TRANSACTIONAL=0;
+
+-- Updates
+ALTER TABLE `dzcp_users` ADD `status` INT(1) NOT NULL DEFAULT '0' AFTER `startpage`;

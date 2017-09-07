@@ -254,9 +254,8 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                 $i--;
             }
 
-            if (settings::get("reg_artikel") && !common::$chkMe) {
-                $add = _error_unregistered_nc;
-            } else {
+            $add = false;
+            if (settings::get("reg_artikel") && common::$chkMe) {
                 if (!common::ipcheck("artid(".$_GET['id'].")", settings::get('f_artikelcom')) && empty($add)) {
                     $smarty->caching = false;
                     $smarty->assign('nick',common::autor(common::$userid));

@@ -10,5 +10,13 @@
   </td>
 </tr>
 {$show}
-{$add}
+{if !$add}
+  <tr>
+    <td class="contentMainFirst" align="center" colspan="2">
+      <span class="fontBold">{lang msgID="error_unregistered_nc"}</span>
+    </td>
+  </tr>
+{else}
+    {$add}
+{/if}
 <!-- end comments.tpl -->

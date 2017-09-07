@@ -1435,11 +1435,6 @@ define('_news_get_sticky' , 'Announce news?');
 define('_news_sticky_till' , 'until:');
 define('_forum_lp_head' , 'Last post');
 define('_forum_previews' , 'Preview');
-define('_error_unregistered_nc' , '
-<tr>
-  <td class="contentMainFirst" colspan="2" align="center">
-    <span class="fontBold">You have to be registered to write a comment!</span>
-  </td>
-</tr>');
+define('_error_unregistered_nc' , 'You have to be registered to write a comment!');
 define('_upload_partners_head' , 'Partnerbuttons');
 define('_upload_partners_info' , 'Only jpg, gif or png files. Recommended dimensions: 88px * 31px');

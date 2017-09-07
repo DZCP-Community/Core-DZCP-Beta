@@ -1432,11 +1432,6 @@ define('_news_get_sticky', 'News anheften?');
 define('_news_sticky_till', 'bis zum:');
 define('_forum_lp_head', 'Letzter Forenpost');
 define('_forum_previews', 'Vorschau');
-define('_error_unregistered_nc', '
-<tr>
-  <td class="contentMainFirst" align="center" colspan="2">
-    <span class="fontBold">Du musst registriert sein um einen Kommentar schreiben zu k&ouml;nnen!</span>
-  </td>
-</tr>');
+define('_error_unregistered_nc', 'Du musst registriert sein um einen Kommentar schreiben zu k&ouml;nnen!');
 define('_upload_partners_head', 'Partnerbuttons');
 define('_upload_partners_info', 'Nur jpg, gif oder png Dateien. Empfohlene Gr&ouml;e: 88px * 31px');
