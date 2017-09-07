@@ -54,7 +54,7 @@ var config_ckeditor_standard = {
     language: dzcp_config.lng,
 };
 
-// DZCP JAVASCRIPT LIBARY FOR JQUERY >= V1.11.3
+// DZCP JAVASCRIPT LIBARY FOR JQUERY >= V3.2.1
 var DZCP = {
     jQueryCheck: function(error) {
         if (typeof jQuery !== 'undefined' && $().jquery >= jQueryV) {
@@ -66,9 +66,9 @@ var DZCP = {
     init: function() {
         DZCP.DebugLogger('Initiation DZCP-Libary');
 
-        doc.body.id = 'dzcp-engine-1.7';
+        doc.body.id = 'dzcp-engine';
         DZCP.DebugLogger("jQuery Version: " + $().jquery + " is loaded!");
-        DZCP.DebugLogger('Load DZCP-Engine 1.7');
+        DZCP.DebugLogger('Load DZCP-Engine V1.7.1');
 
         $('body').append('<div id="infoDiv"></div>');
         $('body').append('<div id="dialog"></div>');
@@ -92,6 +92,17 @@ var DZCP = {
             DZCP.initAutoRefresh();
         }
 
+        DZCP.Barrating(false);
+
+        //Conjob
+        var request = $.ajax({ url: "../inc/ajax.php?i=conjob"});
+        request.done();
+
+        DZCP.initCodeHighlighting();
+    },
+
+    // init bar rating
+    Barrating: function(userstyle) {
         if ($(".bar-rating-readonly").length) {
             $(".bar-rating-readonly").barrating('show', {
                 theme: 'bootstrap-stars',
@@ -100,16 +111,23 @@ var DZCP = {
         }
 
         if ($(".bar-rating").length) {
+            var theme = dzcp_config.rating_by_user || userstyle ? 'bootstrap-stars-user' : 'bootstrap-stars';
             $(".bar-rating").barrating('show', {
-                theme: 'bootstrap-stars',
+                theme: theme,
+                onSelect: function(value, text, event) {
+                    if (typeof(event) !== 'undefined') {
+                        var url = "../inc/ajax.php?i=rating&page=tutorials&rating="+value+"&id="+DZCP.getUrlParameters('id',true);
+                        DZCP.DebugLogger('Rating by User: \'' + value + '\' / URL: \'' + url + '\'');
+                        var request = $.ajax({ url: url});
+                        request.done(function(msg) {
+                            msg = '<select class="bar-rating">'+msg+'</select>';
+                            $('#barrating').html( msg );
+                            DZCP.Barrating(true);
+                        });
+                    }
+                }
             });
         }
-
-        //Conjob
-        var request = $.ajax({ url: "../inc/ajax.php?i=conjob"});
-        request.done();
-
-        DZCP.initCodeHighlighting();
     },
 
     // init jquery-ui
@@ -589,9 +607,23 @@ var DZCP = {
         $("#" + formId).submit();
     },
 
-    BooleanToString: function(boolean) {
-        return (boolean ? 'true' : 'false');
-    }
+    getUrlParameters: function (parameter, decode){
+        var currLocation = window.location.search,
+            parArr = currLocation.split("?")[1].split("&"),
+            returnBool = true;
+
+        for(var i = 0; i < parArr.length; i++){
+            parr = parArr[i].split("=");
+            if(parr[0] == parameter){
+                return (decode) ? decodeURIComponent(parr[1]) : parr[1];
+                returnBool = true;
+            }else{
+                returnBool = false;
+            }
+        }
+
+        if(!returnBool) return false;
+    },
 };
 
 // load global events

@@ -69,7 +69,13 @@ switch ($mod):
         break;
     case 'less':
         header('Content-type: text/css');
-        exit(common::less(isset($_GET['less']) ? $_GET['less'] : 'template',isset($_GET['regen'])));
+        exit(common::less(isset($_GET['less']) ? $_GET['less'] : 'template',isset($_GET['refresh'])));
+        break;
+    case 'rating':
+            if($_GET['page'] == 'tutorials') {
+                tutorials::set_user_rating((int)$_GET['id'],(int)$_GET['rating']);
+                exit(tutorials::get_html_user_rating((int)$_GET['id']));
+            }
         break;
 	case 'bbcode':
 			if($_GET['get'] == 'smileys') {

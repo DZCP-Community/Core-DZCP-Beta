@@ -5,23 +5,20 @@
             <meta http-equiv="title" content="{$title}" />
             <meta http-equiv="pragma" content="No-Cache" />
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-            <link rel="stylesheet" type="text/css" href="../inc/ajax.php?i=less" />
+            <link rel="stylesheet" type="text/css" href="../inc/ajax.php?i=less{$regen}" />
             <link rel="alternate" type="application/rss+xml" href="../rss.xml" title="{$clanname} RSS-Feed" />
             <link rel="icon" href="{dir}/favicon.ico" />
             <link rel="home" href="/" title="Home" />
-            <link rel="stylesheet" href="{dir}/bootstrap-stars.css">
-			<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
-			<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+            <script language="javascript" type="text/javascript" src="{dir}/_js/highlight.min.js"></script>
             <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.min.js"></script>
             <script language="javascript" type="text/javascript" src="{dir}/_js/bootstrap.min.js"></script>
-            <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.less.min.js"></script>
 	    	<script language="javascript" type="text/javascript" src="{dir}/_js/jquery.tools.min.js"></script>
 	    	<script language="javascript" type="text/javascript" src="{dir}/_js/jquery-ui.min.js"></script>
             {$java_vars}
             <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.colorpicker.min.js"></script>
             <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.magnific-popup.min.js"></script>
             <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.highlighter.min.js"></script>
-			<script language="javascript" type="text/javascript" src="{dir}/_js/jquery.barrating.js"></script>
+			<script language="javascript" type="text/javascript" src="{dir}/_js/jquery.barrating.min.js"></script>
             <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.dzcp.js"></script>
         </head>
 	<body>

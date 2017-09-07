@@ -2842,8 +2842,8 @@ class common {
 
         $main_dir = basePath . "/inc/_templates_/" . self::$sdir . "/_less";
         $auto_imports = [];
-        $auto_imports[basePath . '/inc/_templates_/' . self::$sdir . '/_less/_auto_imports_/'] =
-            '../inc/_templates_/' . self::$sdir . '/_less/_auto_imports_/';
+        $auto_imports[basePath . '/inc/_templates_/' . self::$sdir . '/_less/imports/'] =
+            '../inc/_templates_/' . self::$sdir . '/_less/imports';
 
         if (count($auto_imports) >= 1) {
             self::$less->SetImportDirs($auto_imports);
@@ -3257,6 +3257,7 @@ class common {
             $smarty->assign('clanname',stringParser::decode(settings::get("clanname")));
             $smarty->assign('title',strip_tags($title));
             $smarty->assign('java_vars',$java_vars);
+            $smarty->assign('regen',isset($_GET['less_regen']) ? '&refresh=1' : '');
             $smarty->assign('where',$where);
             if($template != 'index' && file_exists(self::$designpath.'/'.$template.'.tpl')) {
                 $index = $smarty->fetch('file:['.common::$tmpdir.']'.$template.'.tpl');
