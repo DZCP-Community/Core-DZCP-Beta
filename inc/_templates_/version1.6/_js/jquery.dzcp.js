@@ -67,7 +67,7 @@ var DZCP = {
         DZCP.DebugLogger('Initiation DZCP-Libary');
 
         doc.body.id = 'dzcp-engine-1.7';
-        DZCP.DebugLogger("jQuery Version: "+$().jquery+" is loaded!");
+        DZCP.DebugLogger("jQuery Version: " + $().jquery + " is loaded!");
         DZCP.DebugLogger('Load DZCP-Engine 1.7');
 
         $('body').append('<div id="infoDiv"></div>');
@@ -88,14 +88,22 @@ var DZCP = {
         $("#colorpicker").colorpicker();
 
         // init Auto-Refresh
-        if(dzcp_config.autoRefresh) {
+        if (dzcp_config.autoRefresh) {
             DZCP.initAutoRefresh();
         }
 
-        $(".bar-rating-readonly").barrating('show', {
-            theme: 'bootstrap-stars',
-            readonly: true,
-        });
+        if ($(".bar-rating-readonly").length) {
+            $(".bar-rating-readonly").barrating('show', {
+                theme: 'bootstrap-stars',
+                readonly: true,
+            });
+        }
+
+        if ($(".bar-rating").length) {
+            $(".bar-rating").barrating('show', {
+                theme: 'bootstrap-stars',
+            });
+        }
 
         //Conjob
         var request = $.ajax({ url: "../inc/ajax.php?i=conjob"});
@@ -106,9 +114,8 @@ var DZCP = {
 
     // init jquery-ui
     initJQueryUI: function() {
-        $(".tabs2").tabs(".switchs2 > div", { effect: 'fade', rotate: true });
-        $(".slidetabs").tabs(".images > div", { effect: 'fade', rotate: true }).slideshow({ autoplay: true, interval: 6000 });
-        $(".tabs").tabs("> .switchs", { effect: 'fade' });
+        //$(".tabs").tabs(" > .switchs", { effect: 'fade' }); //Fucked CODE!!! Replace !!!!
+
         $(".nav" ).button({ text: true });
         $( "#rerun" ).button().click(function() { return false; }).next().button({ text: false, icons: { primary: "ui-icon-triangle-1-s" } }).click(function() {
             var menu = $( this ).parent().next().show().position({ my: "left top", at: "left bottom", of: this });
