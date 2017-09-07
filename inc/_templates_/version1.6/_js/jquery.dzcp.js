@@ -6,7 +6,7 @@
 // GLOBAL VARS
 var doc = document, ie4 = document.all, opera = window.opera;
 var innerLayer, layer, x, y, offsetX = 15, offsetY = 5;
-var jQueryV = "1.11.3", $ = jQuery;
+var jQueryV = "3.2.1", $ = jQuery;
 
 function changeme(that) {document.location.href="index.php?kat=" + that.value;}
 
@@ -64,6 +64,8 @@ var DZCP = {
 
     //init
     init: function() {
+        DZCP.DebugLogger('Initiation DZCP-Libary');
+
         doc.body.id = 'dzcp-engine-1.7';
         DZCP.DebugLogger("jQuery Version: "+$().jquery+" is loaded!");
         DZCP.DebugLogger('Load DZCP-Engine 1.7');
@@ -89,6 +91,11 @@ var DZCP = {
         if(dzcp_config.autoRefresh) {
             DZCP.initAutoRefresh();
         }
+
+        $(".bar-rating-readonly").barrating('show', {
+            theme: 'bootstrap-stars',
+            readonly: true,
+        });
 
         //Conjob
         var request = $.ajax({ url: "../inc/ajax.php?i=conjob"});
@@ -581,6 +588,20 @@ var DZCP = {
 };
 
 // load global events
-$(document).ready(function() { if(DZCP.jQueryCheck(true)) { DZCP.init(); }});
-$(window).load(function() { if(DZCP.jQueryCheck(false)) { DZCP.resizeImages(); DZCP.GoToAnchor(); }});
-$(window).resize(function() { DZCP.resizeImages(); DZCP.UpdateJQueryUI(); });
+$( document ).ready(function () {
+    if(DZCP.jQueryCheck(true)) {
+        DZCP.init();
+    }
+});
+
+$(window).on('load', function () {
+    if(DZCP.jQueryCheck(true)) {
+        DZCP.resizeImages();
+        DZCP.GoToAnchor();
+    }
+});
+
+$( window ).resize(function () {
+        DZCP.resizeImages();
+        DZCP.UpdateJQueryUI();
+});

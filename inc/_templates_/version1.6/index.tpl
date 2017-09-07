@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
         <head>
             <title>{$title}</title>
             <meta http-equiv="title" content="{$title}" />
@@ -9,17 +9,18 @@
             <link rel="alternate" type="application/rss+xml" href="../rss.xml" title="{$clanname} RSS-Feed" />
             <link rel="icon" href="{dir}/favicon.ico" />
             <link rel="home" href="/" title="Home" />
+            <link rel="stylesheet" href="{dir}/bootstrap-stars.css">
 			<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
 			<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
-            <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.js"></script>
-            <script language="javascript" type="text/javascript" src="{dir}/_js/bootstrap.js"></script>
-            <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.less.js"></script>
+            <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.min.js"></script>
+            <script language="javascript" type="text/javascript" src="{dir}/_js/bootstrap.min.js"></script>
+            <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.less.min.js"></script>
 	    	<script language="javascript" type="text/javascript" src="{dir}/_js/jquery.tools.min.js"></script>
-	    	<script language="javascript" type="text/javascript" src="{dir}/_js/jquery-ui.js"></script>
+	    	<script language="javascript" type="text/javascript" src="{dir}/_js/jquery-ui.min.js"></script>
             {$java_vars}
-            <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.colorpicker.js"></script>
-            <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.magnific-popup.js"></script>
-            <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.highlighter.js"></script>
+            <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.colorpicker.min.js"></script>
+            <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.magnific-popup.min.js"></script>
+            <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.highlighter.min.js"></script>
 			<script language="javascript" type="text/javascript" src="{dir}/_js/jquery.barrating.js"></script>
             <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.dzcp.js"></script>
         </head>
