@@ -43,7 +43,7 @@ if(defined('_Forum')) {
 
                     $validated_post_data = common::$gump->run($_POST);
                     if ($validated_post_data !== false && (int)($_GET['id']) >= 1) {
-                        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE `id` = ?;", [(int)($_GET['id'])]);
+                        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forum_threads}` WHERE `id` = ?;", [(int)($_GET['id'])]);
 
                         //#####################
                         //Update Forum-Vote
@@ -65,8 +65,8 @@ if(defined('_Forum')) {
                             } else {
                                 //Update forum vote
                                 $fgetvote = common::$sql['default']->fetch("SELECT s1.`intern`,s2.`id` "
-                                    . "FROM `{prefix_forumkats}` AS s1 "
-                                    . "LEFT JOIN `{prefix_forumsubkats}` AS s2 "
+                                    . "FROM `{prefix_forum_kats}` AS s1 "
+                                    . "LEFT JOIN `{prefix_forum_sub_kats}` AS s2 "
                                     . "ON s2.`sid` = s1.`id` "
                                     . "WHERE s2.`id` = ?;", [$_SESSION['kid']]);
 
@@ -140,7 +140,7 @@ if(defined('_Forum')) {
                         $validated_post_data['subtopic'] = array_key_exists('subtopic', $validated_post_data) ? $validated_post_data['subtopic'] : '';
 
                         //Update thread
-                        common::$sql['default']->update("UPDATE `{prefix_forumthreads}` SET `topic` = ?, `subtopic` = ?, `t_text` = ?," .
+                        common::$sql['default']->update("UPDATE `{prefix_forum_threads}` SET `topic` = ?, `subtopic` = ?, `t_text` = ?," .
                             "`sticky` = ?, `global` = ?, `vote` = ?, `edited` = ? WHERE `id` = ?;",
                             [stringParser::encode($validated_post_data['topic']), stringParser::encode($validated_post_data['subtopic']),
                                 stringParser::encode($validated_post_data['eintrag']), $validated_post_data['sticky'], $validated_post_data['global'], $get['vote'],
@@ -168,7 +168,7 @@ if(defined('_Forum')) {
                  */
 
                 if (empty($index)) {
-                    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE `id` = ?;", [(int)($_GET['id'])]);
+                    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forum_threads}` WHERE `id` = ?;", [(int)($_GET['id'])]);
                     if ($get['t_reg'] == common::$userid || common::permission("forum")) {
                         //Admin Options
                         $admin = "";
@@ -182,7 +182,7 @@ if(defined('_Forum')) {
                         }
 
                         $getv = common::$sql['default']->fetch("SELECT `id`,`closed`,`titel` FROM `{prefix_votes}` WHERE `id` = ?;", [$get['vote']]);
-                        $fget = common::$sql['default']->fetch("SELECT s1.`intern`,s2.`id` FROM `{prefix_forumkats}` AS s1 LEFT JOIN `{prefix_forumsubkats}` AS s2 ON s2.`sid` = s1.`id` WHERE s2.`id` = ?;", [$get['kid']]);
+                        $fget = common::$sql['default']->fetch("SELECT s1.`intern`,s2.`id` FROM `{prefix_forum_kats}` AS s1 LEFT JOIN `{prefix_forum_sub_kats}` AS s2 ON s2.`sid` = s1.`id` WHERE s2.`id` = ?;", [$get['kid']]);
 
                         //Loop answers
                         $answers = [];
@@ -271,8 +271,8 @@ if(defined('_Forum')) {
                         $validated_vote_data = common::$gump->run($validated_post_data);
                         if ($validated_vote_data !== false) {
                             $fgetvote = common::$sql['default']->fetch("SELECT s1.`intern`,s2.`id` "
-                                . "FROM `{prefix_forumkats}` AS s1 "
-                                . "LEFT JOIN `{prefix_forumsubkats}` AS s2 "
+                                . "FROM `{prefix_forum_kats}` AS s1 "
+                                . "LEFT JOIN `{prefix_forum_sub_kats}` AS s2 "
                                 . "ON s2.`sid` = s1.`id` "
                                 . "WHERE s2.`id` = ?;", [$_SESSION['kid']]);
 
@@ -306,7 +306,7 @@ if(defined('_Forum')) {
                         $validated_post_data['subtopic'] = array_key_exists('subtopic', $validated_post_data) ? $validated_post_data['subtopic'] : '';
 
                         //Insert thread
-                        common::$sql['default']->insert("INSERT INTO `{prefix_forumthreads}` SET `kid` = ?, `t_date` = ?,`topic` = ?, `subtopic` = ?, `t_reg` = ?, `t_text` = ?," .
+                        common::$sql['default']->insert("INSERT INTO `{prefix_forum_threads}` SET `kid` = ?, `t_date` = ?,`topic` = ?, `subtopic` = ?, `t_reg` = ?, `t_text` = ?," .
                             "`sticky` = ?, `global` = ?, `ipv4` = ?, `vote` = ?, `first` = 1;",
                             [$_SESSION['kid'], time(), stringParser::encode($validated_post_data['topic']), stringParser::encode($validated_post_data['subtopic']),
                                 common::$userid, stringParser::encode($validated_post_data['eintrag']), $validated_post_data['sticky'], $validated_post_data['global'],
@@ -349,7 +349,7 @@ if(defined('_Forum')) {
                         }
 
                         //Forum Vote Public/Intern
-                        $fget = common::$sql['default']->fetch("SELECT s1.intern,s2.id FROM `{prefix_forumkats}` AS s1 LEFT JOIN `{prefix_forumsubkats}` AS s2 ON s2.`sid` = s1.id WHERE s2.`id` = ?;", [$_SESSION['kid']]);
+                        $fget = common::$sql['default']->fetch("SELECT s1.intern,s2.id FROM `{prefix_forum_kats}` AS s1 LEFT JOIN `{prefix_forum_sub_kats}` AS s2 ON s2.`sid` = s1.id WHERE s2.`id` = ?;", [$_SESSION['kid']]);
 
                         //Forum Vote Form
                         $smarty->caching = false;

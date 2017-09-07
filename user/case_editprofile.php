@@ -25,22 +25,22 @@ if(defined('_UserMenu')) {
                     if(!common::rootAdmin(common::$userid)) {
                         $getdel = common::$sql['default']->fetch("SELECT `id`,`nick`,`email`,`hp` FROM `{prefix_users}` WHERE `id` = ?;", [common::$userid]);
                         if(common::$sql['default']->rowCount()) {
-                            common::$sql['default']->update("UPDATE `{prefix_forumthreads}` SET `t_nick` = ?, `t_email` = ?, `t_hp` = ?, `t_reg` = 0, WHERE t_reg = ?;",
+                            common::$sql['default']->update("UPDATE `{prefix_forum_threads}` SET `t_nick` = ?, `t_email` = ?, `t_hp` = ?, `t_reg` = 0, WHERE t_reg = ?;",
                             [$getdel['nick'],$getdel['email'],stringParser::encode(common::links($getdel['hp'])),$getdel['id']]);
-                            common::$sql['default']->update("UPDATE `{prefix_forumposts}` SET `nick` = ?, `email` = ?, `hp` = ?, WHERE `reg` = ?;",
+                            common::$sql['default']->update("UPDATE `{prefix_forum_posts}` SET `nick` = ?, `email` = ?, `hp` = ?, WHERE `reg` = ?;",
                             [$getdel['nick'],$getdel['email'],stringParser::encode(common::links($getdel['hp'])),$getdel['id']]);
-                            common::$sql['default']->update("UPDATE `{prefix_newscomments}` SET `nick` = ?,`email` = ?, `hp` = ?, `reg` = 0, WHERE `reg` = ?;",
+                            common::$sql['default']->update("UPDATE `{prefix_news_comments}` SET `nick` = ?,`email` = ?, `hp` = ?, `reg` = 0, WHERE `reg` = ?;",
                             [$getdel['nick'],$getdel['email'],stringParser::encode(common::links($getdel['hp'])),$getdel['id']]);
-                            common::$sql['default']->update("UPDATE `{prefix_acomments}` SET `nick` = ?, `email` = ?, `hp` = ?, `reg` = 0, WHERE `reg` = ?;",
+                            common::$sql['default']->update("UPDATE `{prefix_artikel_comments}` SET `nick` = ?, `email` = ?, `hp` = ?, `reg` = 0, WHERE `reg` = ?;",
                             [$getdel['nick'],$getdel['email'],stringParser::encode(common::links($getdel['hp'])),$getdel['id']]);
                             common::$sql['default']->delete("DELETE FROM `{prefix_messages}` WHERE `von` = ? OR   `an`  = ?;", [$getdel['id'],$getdel['id']]);
                             common::$sql['default']->delete("DELETE FROM `{prefix_news}` WHERE `autor` = ?;", [$getdel['id']]);
                             common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `user` = ?;", [$getdel['id']]);
-                            common::$sql['default']->delete("DELETE FROM `{prefix_groupuser}` WHERE `user` = ?;", [$getdel['id']]);
-                            common::$sql['default']->delete("DELETE FROM `{prefix_userbuddys}` WHERE `user` = ? OR `buddy` = ?;", [$getdel['id'],$getdel['id']]);
-                            common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;", [$getdel['id']]);
+                            common::$sql['default']->delete("DELETE FROM `{prefix_group_user}` WHERE `user` = ?;", [$getdel['id']]);
+                            common::$sql['default']->delete("DELETE FROM `{prefix_user_buddys}` WHERE `user` = ? OR `buddy` = ?;", [$getdel['id'],$getdel['id']]);
+                            common::$sql['default']->delete("DELETE FROM `{prefix_user_stats}` WHERE `user` = ?;", [$getdel['id']]);
                             common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;", [$getdel['id']]);
-                            common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;", [$getdel['id']]);
+                            common::$sql['default']->delete("DELETE FROM `{prefix_user_stats}` WHERE `user` = ?;", [$getdel['id']]);
                             common::$sql['default']->delete("DELETE FROM `{prefix_clicks_ips}` WHERE `uid` = ?;", [$getdel['id']]);
 
                             ## Losche User-Upload Ordner ##

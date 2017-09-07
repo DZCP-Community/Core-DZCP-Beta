@@ -80,7 +80,7 @@ function fvote($id, $ajax=false) {
             }
         }
 
-        $getf = common::$sql['default']->fetch("SELECT `id`,`kid` FROM `{prefix_forumthreads}` WHERE `vote` = ?;", [$get['id']]);
+        $getf = common::$sql['default']->fetch("SELECT `id`,`kid` FROM `{prefix_forum_threads}` WHERE `vote` = ?;", [$get['id']]);
 
         $smarty->caching = false;
         $smarty->assign('titel',stringParser::decode($get['titel']));
@@ -105,8 +105,8 @@ function send_forum_abo(bool $is_thread = false, int $id,string $eintrag,bool $e
 
     foreach ($checkabo as $getabo) {
         if (common::$userid != $getabo['user']) {
-            $gettopic = common::$sql['default']->fetch("SELECT `topic` FROM `{prefix_forumthreads}` WHERE `id` = ;",[$id]);
-            $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?;",'id',[$id]);
+            $gettopic = common::$sql['default']->fetch("SELECT `topic` FROM `{prefix_forum_threads}` WHERE `id` = ;",[$id]);
+            $entrys = common::cnt("{prefix_forum_posts}", " WHERE `sid` = ?;",'id',[$id]);
 
             $smarty->caching = false;
             $smarty->assign('titel',$title);

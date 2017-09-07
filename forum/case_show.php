@@ -21,8 +21,8 @@
 
 if(defined('_Forum')) {
     $kategorie  = common::$sql['default']->fetch("SELECT s2.`id`,s1.`intern`,s1.`name` "
-            . "FROM `{prefix_forumkats}` AS `s1` "
-            . "LEFT JOIN `{prefix_forumsubkats}` AS `s2` "
+            . "FROM `{prefix_forum_kats}` AS `s1` "
+            . "LEFT JOIN `{prefix_forum_sub_kats}` AS `s2` "
             . "ON s2.`sid` = s1.`id` "
             . "WHERE s2.`id` = ?;",
         [$_SESSION['kid']]);
@@ -74,7 +74,7 @@ if(defined('_Forum')) {
 
         if(empty($_POST['suche'])) {
             $sortby = str_replace('s1.','',$sortby);
-            $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forumthreads}` "
+            $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forum_threads}` "
                     . "WHERE `kid` = ? OR `global` = 1 "
                     . "ORDER BY ".$sortby." "
                     . "LIMIT ".((common::$page - 1)*settings::get('m_fthreads')).",".settings::get('m_fthreads').";",
@@ -86,7 +86,7 @@ if(defined('_Forum')) {
             common::$gump->sanitize($_POST);
             $filters = ['suche' => 'trim|addslashes|sanitize_string'];
             $qry = common::$sql['default']->select("SELECT s1.global,s1.topic,s1.subtopic,s1.t_text,s1.t_email,s1.hits,s1.t_reg,s1.t_date,s1.closed,s1.sticky,s1.id,s1.lp,s1.t_nick "
-                    . "FROM `{prefix_forumthreads}` AS s1 "
+                    . "FROM `{prefix_forum_threads}` AS s1 "
                     . "WHERE s1.topic LIKE ? AND s1.kid = ? OR s1.subtopic LIKE ? AND s1.kid = ? OR s1.t_text LIKE ? AND s1.kid = ? "
                     . "ORDER BY ".$sortby." "
                     . "LIMIT ".(common::$page - 1)*settings::get('m_fthreads').",".settings::get('m_fthreads').";",
@@ -98,9 +98,9 @@ if(defined('_Forum')) {
 
         $threads = '';
         foreach($qry as $get) {
-            $cntpage = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[$get['id']]);
+            $cntpage = common::cnt("{prefix_forum_posts}", " WHERE `sid` = ?","id",[$get['id']]);
             $pagenr = !$cntpage ? '1' : ceil($cntpage/settings::get('m_fposts'));
-            $getlp = common::$sql['default']->fetch("SELECT `id`,`sid`,`kid`,`date`,`nick`,`reg`,`email` FROM `{prefix_forumposts}` WHERE `sid` = ? ORDER BY `date` DESC;", [$get['id']]);
+            $getlp = common::$sql['default']->fetch("SELECT `id`,`sid`,`kid`,`date`,`nick`,`reg`,`email` FROM `{prefix_forum_posts}` WHERE `sid` = ? ORDER BY `date` DESC;", [$get['id']]);
             $is_lp = common::$sql['default']->rowCount();
 
             //Check Unreaded
@@ -108,7 +108,7 @@ if(defined('_Forum')) {
                 $iconpic = "icon_topic_latest.gif";
                 if(common::$userid >= 1 && $_SESSION['lastvisit']) {
                     //Check in Posts
-                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumposts}` "
+                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_posts}` "
                             . "WHERE `date` >= ? AND `reg` != ? AND `id` = ?;",
                             [$_SESSION['lastvisit'],common::$userid,$getlp['id']])) {
                         $iconpic = "icon_topic_newest.gif";
@@ -135,21 +135,21 @@ if(defined('_Forum')) {
             $frompic = $get['closed'] ? "read_locked" : "read";
             if(common::$userid >= 1 && $_SESSION['lastvisit']) {
                 //Check new Threads
-                if(common::$sql['default']->rows($test="SELECT `id` FROM `{prefix_forumthreads}` "
+                if(common::$sql['default']->rows($test="SELECT `id` FROM `{prefix_forum_threads}` "
                         . "WHERE (`t_date` >= ? || `lp` >= ?) AND `t_reg` != ? AND `id` = ?;",
                         [$lastvisit=$_SESSION['lastvisit'],$lastvisit,common::$userid,$get['id']])) {
                     $frompic = $get['closed'] ? "unread_locked" : "unread";
                 }
 
                 //Check new Posts
-                if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumposts}` "
+                if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_posts}` "
                         . "WHERE `date` >= ? AND `reg` != ? AND `sid` = ?;",
                         [$_SESSION['lastvisit'],common::$userid,$get['id']])) {
                     $frompic = $get['closed'] ? "unread_locked" : "unread";
                 }
             }
             
-            $gets = common::$sql['default']->fetch("SELECT `id` FROM `{prefix_forumsubkats}` WHERE `id` = ?;", [$get['id']]);
+            $gets = common::$sql['default']->fetch("SELECT `id` FROM `{prefix_forum_sub_kats}` WHERE `id` = ?;", [$get['id']]);
 
             //List Threads
             $smarty->caching = false;
@@ -163,7 +163,7 @@ if(defined('_Forum')) {
             $smarty->assign('topic_title',strip_tags($topic_title));
             $smarty->assign('subtopic',common::cut(stringParser::decode($get['subtopic']),settings::get('l_forumsubtopic')));
             $smarty->assign('hits',$get['hits']);
-            $smarty->assign('replys',common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[$get['id']]));
+            $smarty->assign('replys',common::cnt("{prefix_forum_posts}", " WHERE `sid` = ?","id",[$get['id']]));
             $smarty->assign('lpost',$lpost);
             $smarty->assign('autor',common::autor($get['t_reg'], '', stringParser::decode($get['t_nick']), stringParser::decode($get['t_email']), 8));
             $threads .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_show_threads.tpl');
@@ -190,8 +190,8 @@ if(defined('_Forum')) {
         $smarty->clearAllAssign();
 
         $kat = common::$sql['default']->fetch("SELECT s1.`kattopic`,s2.`name` "
-                         . "FROM `{prefix_forumsubkats}` AS `s1` "
-                         . "LEFT JOIN `{prefix_forumkats}` AS `s2` "
+                         . "FROM `{prefix_forum_sub_kats}` AS `s1` "
+                         . "LEFT JOIN `{prefix_forum_kats}` AS `s2` "
                          . "ON s1.`sid` = s2.`id` "
                          . "WHERE s1.`id` = ?;", [$_SESSION['kid']]);
 

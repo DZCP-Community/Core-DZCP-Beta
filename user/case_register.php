@@ -117,7 +117,7 @@ if(defined('_UserMenu')) {
                 common::$sql['default']->insert("INSERT INTO `{prefix_permissions}` SET `user` = ?;", [$insert_id]);
 
                 ## Lege User in der User-Statistik Tabelle an ##
-                common::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?, `lastvisit` = ?;", [$insert_id,$time]);
+                common::$sql['default']->insert("INSERT INTO `{prefix_user_stats}` SET `user` = ?, `lastvisit` = ?;", [$insert_id,$time]);
 
                 ## Erstelle User-Upload Ordner ##
                 fileman::CreateUserDir($insert_id);

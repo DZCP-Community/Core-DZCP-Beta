@@ -18,7 +18,7 @@
 if(defined('_UserMenu')) {
     if(common::$userid) {
         $_SESSION['lastvisit'] = time();
-        common::$sql['default']->update("UPDATE `{prefix_userstats}` SET `lastvisit` = ? WHERE `user` = ?;",
+        common::$sql['default']->update("UPDATE `{prefix_user_stats}` SET `lastvisit` = ? WHERE `user` = ?;",
                 [(int)($_SESSION['lastvisit']),(int)(common::$userid)]);
     }
 

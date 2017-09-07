@@ -64,7 +64,7 @@ class fileman extends common {
 
         //Settings
         $this->is_user_dir = (self::$userid >= 1); // is a user
-        $this->is_group_dir = (self::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ?;",
+        $this->is_group_dir = (self::$sql['default']->rows("SELECT `id` FROM `{prefix_group_user}` WHERE `user` = ?;",
                 [self::$userid]) >= 1); // Check is user in a group
 
         $this->upload_dir = $this->getFilesPath(); //BasePath to upload dir
@@ -326,7 +326,7 @@ class fileman extends common {
         //Group Permissions
         if(preg_match("/\_group([1-9][0-9]*?)\_/", $path, $matches) && self::$chkMe != 4 && !self::permission('fileman')) {
             //Permissions for Admin / User with ID or permission => 'fileman'
-            if (!self::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",
+            if (!self::$sql['default']->rows("SELECT `id` FROM `{prefix_group_user}` WHERE `user` = ? AND `group` = ?;",
                    [self::$userid, $matches[1]])) {
                 return ['res' => 'error', 'msg' => html_entity_decode(_fileman_error_permissons)]; //error
             }
@@ -454,7 +454,7 @@ class fileman extends common {
         //Rename by Owner Groups or admin
         if(preg_match("/\_group([1-9][0-9]*?)\_/", $path, $matches) && self::$chkMe != 4 && !self::permission('fileman')) {
             //Permissions for Admin / User with ID or permission => 'fileman'
-            if (!self::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",
+            if (!self::$sql['default']->rows("SELECT `id` FROM `{prefix_group_user}` WHERE `user` = ? AND `group` = ?;",
                 [self::$userid, $matches[1]])) {
                 return ['res' => 'error', 'msg' => html_entity_decode(_fileman_error_permissons)]; //error
             }
@@ -667,7 +667,7 @@ class fileman extends common {
         //Rename by Owner Groups or admin
         if(preg_match("/\_group([1-9][0-9]*?)\_/", $dir_new, $matches) && self::$chkMe != 4 && !self::permission('fileman')) {
             //Permissions for Admin / User with ID or permission => 'fileman'
-            if (!self::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",
+            if (!self::$sql['default']->rows("SELECT `id` FROM `{prefix_group_user}` WHERE `user` = ? AND `group` = ?;",
                 [self::$userid, $matches[1]])) {
                 return ['res' => 'error', 'msg' => html_entity_decode(_fileman_error_permissons)]; //error
             }
@@ -747,7 +747,7 @@ class fileman extends common {
 
         if (preg_match("/\_group([1-9][0-9]*?)\_/", $path, $matches) && self::$chkMe != 4 && !self::permission('fileman')) {
             if (strtolower($dir) == strtolower(self::FixPath(basePath . $this->upload_dir . '/_group_' . '/_group' . $matches[1] . '_')) &&
-                !self::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",[self::$userid, $matches[1]])) {
+                !self::$sql['default']->rows("SELECT `id` FROM `{prefix_group_user}` WHERE `user` = ? AND `group` = ?;",[self::$userid, $matches[1]])) {
                 return ['res' => 'error', 'msg' => html_entity_decode(_fileman_error_permissons)]; //error
             }
         } unset($matches);
@@ -813,7 +813,7 @@ class fileman extends common {
         //Cannot delete Groups / only the admin can delete
         if (preg_match("/\_group([1-9][0-9]*?)\_/", $newPath, $matches) && self::$chkMe != 4 && !self::permission('fileman')) {
             if (strtolower($new_dir) == strtolower(self::FixPath(basePath . $this->upload_dir . '/_group_' . '/_group' . $matches[1] . '_')) &&
-                !self::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",[self::$userid, $matches[1]])) {
+                !self::$sql['default']->rows("SELECT `id` FROM `{prefix_group_user}` WHERE `user` = ? AND `group` = ?;",[self::$userid, $matches[1]])) {
                 return ['res' => 'error', 'msg' => html_entity_decode(_fileman_error_permissons)]; //error
             }
         } unset($matches);
@@ -896,7 +896,7 @@ class fileman extends common {
         //Cannot delete Groups / only the admin can delete
         if (preg_match("/\_group([1-9][0-9]*?)\_/", $newPath, $matches) && self::$chkMe != 4 && !self::permission('fileman')) {
             if (self::FixPath(basePath . $newPath) == self::FixPath(basePath . $this->upload_dir . '/_group_' . '/_group' . $matches[1] . '_') &&
-                !self::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",[self::$userid, $matches[1]])) {
+                !self::$sql['default']->rows("SELECT `id` FROM `{prefix_group_user}` WHERE `user` = ? AND `group` = ?;",[self::$userid, $matches[1]])) {
                 return ['res' => 'error', 'msg' => html_entity_decode(_fileman_error_cannot_delete_root)]; //error
             }
         }
@@ -970,7 +970,7 @@ class fileman extends common {
 
         if (preg_match("/\_group([1-9][0-9]*?)\_/", $this->input['d'], $matches) && self::$chkMe != 4 && !self::permission('fileman')) {
             if ($dir == self::FixPath(basePath . $this->upload_dir . '/_group_' . '/_group' . $matches[1] . '_') &&
-                !self::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",[self::$userid, $matches[1]])) {
+                !self::$sql['default']->rows("SELECT `id` FROM `{prefix_group_user}` WHERE `user` = ? AND `group` = ?;",[self::$userid, $matches[1]])) {
                 exit();
             }
         }
@@ -1062,7 +1062,7 @@ class fileman extends common {
 
         if (preg_match("/\_group([1-9][0-9]*?)\_/", $this->input['d'], $matches) && self::$chkMe != 4 && !self::permission('fileman')) {
             if ($dir == self::FixPath(basePath . $this->upload_dir . '/_group_' . '/_group' . $matches[1] . '_') &&
-                !self::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",[self::$userid, $matches[1]])) {
+                !self::$sql['default']->rows("SELECT `id` FROM `{prefix_group_user}` WHERE `user` = ? AND `group` = ?;",[self::$userid, $matches[1]])) {
                 $res = ['res' => 'error', 'msg' => html_entity_decode(_fileman_error_permissons)]; //error
                 if($isAjax){
                     return $res;
@@ -1317,7 +1317,7 @@ class fileman extends common {
             //Show only group dir
             if ($this->is_group_dir && self::$chkMe != 4 && !self::permission('fileman')) {
                 if (preg_match("/\_group([1-9][0-9]*?)\_/", $fullPath, $matches)) {
-                    if (!self::$sql['default']->rows("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = ? AND `group` = ?;",
+                    if (!self::$sql['default']->rows("SELECT `id` FROM `{prefix_group_user}` WHERE `user` = ? AND `group` = ?;",
                         [self::$userid, $matches[1]])
                     )
                         continue;

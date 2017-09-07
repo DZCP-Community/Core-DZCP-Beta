@@ -84,7 +84,7 @@ if(defined('_News')) {
         }
     }
     
-    $katimg = common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [(int)($_POST['kat'])],'katimg');
+    $katimg = common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_news_kats}` WHERE `id` = ?;", [(int)($_POST['kat'])],'katimg');
     if(!empty($katimg) && common::$sql['default']->rowCount() && file_exists(basePath.'/inc/images/uploads/newskat/'.stringParser::decode($katimg))) {
         $newsimage = '../inc/images/uploads/newskat/'.stringParser::decode($katimg);
     }

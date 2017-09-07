@@ -99,7 +99,7 @@ switch (common::$do) {
         }
         
         //Show
-        $qryk = common::$sql['default']->select("SELECT id,kategorie FROM `{prefix_newskat}`"); $kat = '';
+        $qryk = common::$sql['default']->select("SELECT id,kategorie FROM `{prefix_news_kats}`"); $kat = '';
         foreach($qryk as $getk) {
             $kat .= common::select_field($getk['id'],(isset($_POST['kat']) && $_POST['kat'] == $getk['id']),stringParser::decode($getk['kategorie']));
         }
@@ -270,7 +270,7 @@ switch (common::$do) {
             }
         }
         
-        $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_newskat}`"); $kat = '';
+        $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_news_kats}`"); $kat = '';
         foreach($qryk as $getk) {
             $kat .= common::select_field($getk['id'],($get['kat'] == $getk['id']),stringParser::decode($getk['kategorie']));
         } unset($qryk,$getk);
@@ -388,7 +388,7 @@ switch (common::$do) {
     break;
     case 'delete':
         common::$sql['default']->delete("DELETE FROM `{prefix_news}` WHERE id = '".(int)($_GET['id'])."'");
-        common::$sql['default']->delete("DELETE FROM `{prefix_newscomments}` WHERE news = '".(int)($_GET['id'])."'");
+        common::$sql['default']->delete("DELETE FROM `{prefix_news_comments}` WHERE news = '".(int)($_GET['id'])."'");
 
         //Remove Pic
         foreach(common::SUPPORTED_PICTURE as $tmpendung) {

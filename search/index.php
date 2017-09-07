@@ -57,15 +57,15 @@ switch (common::$action):
         }
 
         if(common::permission("intforum")) {
-            $qry = common::$sql['default']->select("SELECT `id`,`name`,`intern` FROM `{prefix_forumkats}` ORDER BY `kid`;");
+            $qry = common::$sql['default']->select("SELECT `id`,`name`,`intern` FROM `{prefix_forum_kats}` ORDER BY `kid`;");
         } else {
-            $qry = common::$sql['default']->select("SELECT `id`,`name`,`intern` FROM `{prefix_forumkats}` WHERE `intern` = 0 ORDER BY `kid`;");
+            $qry = common::$sql['default']->select("SELECT `id`,`name`,`intern` FROM `{prefix_forum_kats}` WHERE `intern` = 0 ORDER BY `kid`;");
         }
 
         $fkats = '';
         foreach($qry as $get) {
             $fkats .= '<li><label class="searchKat" style="text-align:center">'.stringParser::decode($get['name']).'</label></li>'; $showt = "";
-            $qrys = common::$sql['default']->select("SELECT `id`,`kattopic` FROM `{prefix_forumsubkats}` WHERE `sid` = ? ORDER BY `kattopic`;",[$get['id']]);
+            $qrys = common::$sql['default']->select("SELECT `id`,`kattopic` FROM `{prefix_forum_sub_kats}` WHERE `sid` = ? ORDER BY `kattopic`;",[$get['id']]);
             foreach($qrys as $gets) {
                 $intF = common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `user` = ? AND `forum` = ?;",[common::$userid,$gets['id']]);
                 if(!$get['intern'] || (($get['intern'] && $intF) || common::$chkMe == 4)) {
@@ -165,12 +165,12 @@ switch (common::$action):
             //SQL
             $qry = common::$sql['default']->select("SELECT s1.`id`,s1.`topic`,s1.`kid`,s1.`t_reg`,s1.`t_email`,"
                 ."s1.`t_nick`,s1.`hits`,s4.`intern`,s1.`sticky`,s1.`global`,s1.`closed`,s1.`lp`,s1.`subtopic` "
-                ."FROM `{prefix_forumthreads}` AS s1 "
-                ."LEFT JOIN `{prefix_forumposts}` AS s2 "
+                ."FROM `{prefix_forum_threads}` AS s1 "
+                ."LEFT JOIN `{prefix_forum_posts}` AS s2 "
                 ."ON s1.`id` = s2.`sid` "
-                ."LEFT JOIN `{prefix_forumsubkats}` AS s3 "
+                ."LEFT JOIN `{prefix_forum_sub_kats}` AS s3 "
                 ."ON s1.`kid` = s3.`id` "
-                ."LEFT JOIN `{prefix_forumkats}` AS s4 "
+                ."LEFT JOIN `{prefix_forum_kats}` AS s4 "
                 ."ON s3.`sid` = s4.`id` "
                 .$dosearch." "
                 ."GROUP by s1.`id` "
@@ -178,13 +178,13 @@ switch (common::$action):
                 ."LIMIT ".(common::$page - 1)*$maxfsearch.",".$maxfsearch.";");
 
             $entrys = common::$sql['default']->rows("SELECT s1.`id` "
-                ."FROM `{prefix_forumthreads}` AS s1 "
-                ."LEFT JOIN `{prefix_forumposts}` AS s2 "
+                ."FROM `{prefix_forum_threads}` AS s1 "
+                ."LEFT JOIN `{prefix_forum_posts}` AS s2 "
                 ."ON s1.`id` = s2.`sid` "
-                ."LEFT JOIN `{prefix_forumsubkats}` AS s3 "
+                ."LEFT JOIN `{prefix_forum_sub_kats}` AS s3 "
                 ."ON s2.`kid` = s3.`id` "
                 ."AND s1.`kid` = s3.`id` "
-                ."LEFT JOIN `{prefix_forumkats}` AS s4 "
+                ."LEFT JOIN `{prefix_forum_kats}` AS s4 "
                 ."ON s3.`sid` = s4.`id` "
                 .$dosearch." "
                 ."GROUP by s1.`id`;");
@@ -194,16 +194,16 @@ switch (common::$action):
                 $intF = common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `user` = ? AND `forum` = ?;",[common::$userid,$get['id']]);
                 if(($get['intern'] == 1 && !$intF && common::$chkMe != 4)) $entrys--;
                 if(!$get['intern'] || (($get['intern'] && $intF) || common::$chkMe == 4)) {
-                    $cntpage = common::cnt('{prefix_forumposts}', " WHERE `sid` = ?",'id',[$get['id']]);
+                    $cntpage = common::cnt('{prefix_forum_posts}', " WHERE `sid` = ?",'id',[$get['id']]);
                     $pagenr = $cntpage >= 1 ? ceil($cntpage/settings::get('m_ftopics')) : 1;
-                    $getlp = common::$sql['default']->fetch("SELECT `date`,`nick`,`reg`,`email`,`sid` FROM `{prefix_forumposts}` WHERE `sid` = ? ORDER BY `date` DESC;",[$get['id']]);
+                    $getlp = common::$sql['default']->fetch("SELECT `date`,`nick`,`reg`,`email`,`sid` FROM `{prefix_forum_posts}` WHERE `sid` = ? ORDER BY `date` DESC;",[$get['id']]);
                     $lpost = "-"; $lpdate = "";
                     if(common::$sql['default']->rowCount()) {
                         //Check Unreaded
                         $iconpic = "icon_topic_latest.gif";
                         if(common::$userid >= 1 && $_SESSION['lastvisit']) {
                             //Check in Threads
-                            if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumthreads}` "
+                            if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_threads}` "
                                 . "WHERE (`t_date` >= ? || `lp` >= ?) AND `t_reg` != ? AND `id` = ?;",
                                 [$_SESSION['lastvisit'],$_SESSION['lastvisit'],common::$userid,$getlp['sid']])) {
                                 $iconpic = "icon_topic_newest.gif";
@@ -243,7 +243,7 @@ switch (common::$action):
                     $smarty->assign('topic',$threadlink);
                     $smarty->assign('subtopic',common::cut(stringParser::decode($get['subtopic']),settings::get('l_forumsubtopic'),true,false));
                     $smarty->assign('hits',$get['hits']);
-                    $smarty->assign('replys',common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id", [$get['id']]));
+                    $smarty->assign('replys',common::cnt("{prefix_forum_posts}", " WHERE `sid` = ?","id", [$get['id']]));
                     $smarty->assign('color',$color);
                     $smarty->assign('lpost',$lpost);
                     $smarty->assign('autor',common::autor($get['t_reg'], '', stringParser::decode($get['t_nick']), stringParser::decode($get['t_email']), 50));

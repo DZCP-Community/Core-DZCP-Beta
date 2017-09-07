@@ -43,7 +43,7 @@ if(defined('_News')) {
             $smarty->clearAllAssign();
 
             //Bild
-            $newsimage = '../inc/images/uploads/newskat/'.stringParser::decode(common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;",
+            $newsimage = '../inc/images/uploads/newskat/'.stringParser::decode(common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_news_kats}` WHERE `id` = ?;",
                     [$get['kat']],'katimg'));
             foreach(common::SUPPORTED_PICTURE as $tmpendung) {
                 if(file_exists(basePath."/inc/images/uploads/news/".$get['id'].".".$tmpendung)) {
@@ -57,7 +57,7 @@ if(defined('_News')) {
             $smarty->assign('titel',stringParser::decode($get['titel']));
             $smarty->assign('kat',$newsimage);
             $smarty->assign('id',$get['id']);
-            $smarty->assign('comments',common::cnt('{prefix_newscomments}', " WHERE `news` = ?","id",[(int)($get['id'])]));
+            $smarty->assign('comments',common::cnt('{prefix_news_comments}', " WHERE `news` = ?","id",[(int)($get['id'])]));
             $smarty->assign('showmore','');
             $smarty->assign('dp','none');
             $smarty->assign('dir',common::$designpath);
@@ -97,7 +97,7 @@ if(defined('_News')) {
                 }
             }
 
-            $katimg = common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get['kat']],'katimg');
+            $katimg = common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_news_kats}` WHERE `id` = ?;", [$get['kat']],'katimg');
             if(!empty($katimg) && common::$sql['default']->rowCount() && file_exists(basePath.'/inc/images/uploads/newskat/'.stringParser::decode($katimg))) {
                 $newsimage = '../inc/images/uploads/newskat/'.stringParser::decode($katimg);
             }
@@ -116,7 +116,7 @@ if(defined('_News')) {
             $smarty->assign('titel',stringParser::decode($get['titel']));
             $smarty->assign('kat',$newsimage);
             $smarty->assign('id',$get['id']);
-            $smarty->assign('comments',common::cnt('{prefix_newscomments}', " WHERE `news` = ?","id",[(int)($get['id'])]));
+            $smarty->assign('comments',common::cnt('{prefix_news_comments}', " WHERE `news` = ?","id",[(int)($get['id'])]));
             $smarty->assign('showmore','');
             $smarty->assign('dir',common::$designpath);
             $smarty->assign('intern',boolval($get['intern']));
@@ -134,7 +134,7 @@ if(defined('_News')) {
     }
 
     //-> Kategorie Filter Menu
-    $qrykat = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_newskat}`;");
+    $qrykat = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_news_kats}`;");
     $kategorien = '';
     if(common::$sql['default']->rowCount()) {
         foreach($qrykat as $getkat) {

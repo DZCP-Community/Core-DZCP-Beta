@@ -20,7 +20,7 @@ $where = $where.': '._artikel;
 
 switch(common::$do) {
     case 'add':
-        $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_newskat}`;"); $kat = '';
+        $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_news_kats}`;"); $kat = '';
         foreach($qryk as $getk) {
             $kat .= common::select_field($getk['id'],false,stringParser::decode($getk['kategorie']));
         }
@@ -51,7 +51,7 @@ switch(common::$do) {
             if(empty($_POST['titel']))
                 $error = _empty_artikel_title;
 
-            $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_newskat}`;"); $kat = '';
+            $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_news_kats}`;"); $kat = '';
             foreach($qryk as $getk) {
                 $sel = ($_POST['kat'] == $getk['id'] ? 'selected="selected"' : '');
                 $kat .= common::select_field($getk['id'],($_POST['kat'] == $getk['id']),stringParser::decode($getk['kategorie']));
@@ -102,7 +102,7 @@ switch(common::$do) {
     break;
     case 'edit':
         $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_artikel}` WHERE `id` = ?;", [(int)($_GET['id'])]);
-        $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_newskat}`;"); $kat = '';
+        $qryk = common::$sql['default']->select("SELECT `id`,`kategorie` FROM `{prefix_news_kats}`;"); $kat = '';
         foreach($qryk as $getk) {
             $kat .= common::select_field($getk['id'],($get['kat'] == $getk['id']),stringParser::decode($getk['kategorie']));
         }
@@ -179,7 +179,7 @@ switch(common::$do) {
     break;
     case 'delete':
         common::$sql['default']->delete("DELETE FROM `{prefix_artikel}` WHERE `id` = ?;", [(int)($_GET['id'])]);
-        common::$sql['default']->delete("DELETE FROM `{prefix_acomments}` WHERE `artikel` = ?;", [(int)($_GET['id'])]);
+        common::$sql['default']->delete("DELETE FROM `{prefix_artikel_comments}` WHERE `artikel` = ?;", [(int)($_GET['id'])]);
 
         //Remove Pic
         foreach(common::SUPPORTED_PICTURE as $tmpendung) {

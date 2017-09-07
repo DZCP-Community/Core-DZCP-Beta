@@ -120,7 +120,7 @@ if(_adminMenu != 'true') exit;
 
             $subject =stringParser::decode(settings::get('eml_nletter_subj'));
 
-          $qry = common::$sql['default']->select("SELECT s2.email FROM `{prefix_groupuser}` AS s1
+          $qry = common::$sql['default']->select("SELECT s2.email FROM `{prefix_group_user}` AS s1
                      LEFT JOIN `{prefix_users}` AS s2
                      ON s1.user = s2.id
                      WHERE s1.group = '".$_POST['to']."'");

@@ -43,8 +43,8 @@ if(defined('_UserMenu')) {
 
             //Level & Group
             if ($get['level'] != 1 || isset($_GET['sq'])) {
-                $sq = common::$sql['default']->select("SELECT * FROM `{prefix_userposis}` WHERE `user` = ?;", [$get['id']]);
-                $cnt = common::cnt('{prefix_userposis}', " WHERE `user` = ?",'id', [$get['id']]); $i = 1;
+                $sq = common::$sql['default']->select("SELECT * FROM `{prefix_user_posis}` WHERE `user` = ?;", [$get['id']]);
+                $cnt = common::cnt('{prefix_user_posis}', " WHERE `user` = ?",'id', [$get['id']]); $i = 1;
 
                 if (common::$sql['default']->rowCount() && !isset($_GET['sq'])) {
                     $pos = '';

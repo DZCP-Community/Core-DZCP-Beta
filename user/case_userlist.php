@@ -100,7 +100,7 @@ if(defined('_UserMenu')) {
             $smarty->clearAllAssign();
         }
 
-        common::$sql['default']->fetch("SELECT `id` FROM `{prefix_groupuser}` WHERE `user` = 1;");
+        common::$sql['default']->fetch("SELECT `id` FROM `{prefix_group_user}` WHERE `user` = 1;");
         $edit = ""; $delete = ""; $full_delete = "";
         if(common::permission("editusers")) {
             //Bearbeiten link

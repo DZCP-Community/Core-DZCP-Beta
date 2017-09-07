@@ -16,36 +16,36 @@
  */
 
 if(defined('_Forum')) {
-    $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forumkats}` ORDER BY `kid` ASC;");
+    $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forum_kats}` ORDER BY `kid` ASC;");
     $_SESSION['kid'] = 0;
     foreach($qry as $get) {
         $showt = "";
-        $qrys = common::$sql['default']->select("SELECT * FROM `{prefix_forumsubkats}` WHERE `sid` = ? ORDER BY pos;", [$get['id']]);
+        $qrys = common::$sql['default']->select("SELECT * FROM `{prefix_forum_sub_kats}` WHERE `sid` = ? ORDER BY pos;", [$get['id']]);
         foreach($qrys as $gets) {
             if($get['intern'] == 0 || ($get['intern'] == 1 && common::forum_intern($gets['id']))) {
                 unset($lpost);
                 $getlt = common::$sql['default']->fetch("SELECT `id`,`kid`,`t_date`,`t_nick`,`t_email`,`t_reg`,`lp`,`first`,`topic` "
-                                . "FROM `{prefix_forumthreads}` "
+                                . "FROM `{prefix_forum_threads}` "
                                 . "WHERE `kid` = ? "
                                 . "ORDER BY `lp` DESC;",
                                 [$gets['id']]);
 
                 $getlp = common::$sql['default']->fetch("SELECT s1.`kid`,s1.`id`,s1.`date`,s1.`nick`,s1.`reg`,s1.`email`,s2.`kid`,s2.`id`,s2.`t_date`,s2.`lp`,s2.`first` "
-                                . "FROM `{prefix_forumposts}` AS `s1` "
-                                . "LEFT JOIN `{prefix_forumthreads}` AS `s2` "
+                                . "FROM `{prefix_forum_posts}` AS `s1` "
+                                . "LEFT JOIN `{prefix_forum_threads}` AS `s2` "
                                 . "ON s2.`lp` = s1.`date` "
                                 . "WHERE s2.`kid` = ? "
                                 . "ORDER BY s1.`date` DESC;", [$gets['id']]);
 
                 $lpost = "-"; $lpdate = 0;
-                if(common::cnt('{prefix_forumthreads}', " WHERE `kid` = ?","id", [$gets['id']])) {
+                if(common::cnt('{prefix_forum_threads}', " WHERE `kid` = ?","id", [$gets['id']])) {
                    $lpost = "";
                    if($getlt['first'] == 1) { //Only Thread
                         //Check Unreaded
                         $iconpic = "icon_topic_latest.gif";
                         if(common::$userid >= 1 && $_SESSION['lastvisit']) {
                             //Check in Threads
-                            if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumthreads}` "
+                            if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_threads}` "
                                     . "WHERE (`t_date` >= ? || `lp` >= ?) AND `t_reg` != ? AND `id` = ?;",
                                     [$_SESSION['lastvisit'],$_SESSION['lastvisit'],common::$userid,$getlt['id']])) {
                                 $iconpic = "icon_topic_newest.gif";
@@ -70,14 +70,14 @@ if(defined('_Forum')) {
                         $iconpic = "icon_topic_latest.gif";
                         if(common::$userid >= 1 && $_SESSION['lastvisit']) {
                             //Check in Posts
-                            if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumposts}` "
+                            if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_posts}` "
                                     . "WHERE `date` >= ? AND `reg` != ? AND `id` = ?;",
                                     [$_SESSION['lastvisit'],common::$userid,$getlp['id']])) {
                                 $iconpic = "icon_topic_newest.gif";
                             }
                         }
 
-                       $cntpage = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[$getlt['id']]);
+                       $cntpage = common::cnt("{prefix_forum_posts}", " WHERE `sid` = ?","id",[$getlt['id']]);
                        $pagenr = !$cntpage ? '1' : ceil($cntpage/settings::get('m_fposts'));
 
                        $smarty->caching = false;
@@ -100,22 +100,22 @@ if(defined('_Forum')) {
                 $frompic = "read";
                 if(common::$userid >= 1 && $_SESSION['lastvisit']) {
                     //Check new Threads
-                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumthreads}` "
+                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_threads}` "
                             . "WHERE (`t_date` >= ? || `lp` >= ?) AND `t_reg` != ? AND `kid` = ?;",
                             [$_SESSION['lastvisit'],$_SESSION['lastvisit'],common::$userid,$gets['id']])) {
                         $frompic = "unread";
                     }
                     
                     //Check new Posts
-                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumposts}` "
+                    if(common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_posts}` "
                             . "WHERE `date` >= ? AND `reg` != ? AND `kid` = ?;",
                             [$_SESSION['lastvisit'],common::$userid,$gets['id']])) {
                         $frompic = "unread";
                     }
                 }
 
-                $threads = common::cnt('{prefix_forumthreads}', " WHERE `kid` = ?","id", [$gets['id']]);
-                $posts = common::cnt('{prefix_forumposts}', " WHERE `kid` = ?","id", [$gets['id']]);
+                $threads = common::cnt('{prefix_forum_threads}', " WHERE `kid` = ?","id", [$gets['id']]);
+                $posts = common::cnt('{prefix_forum_posts}', " WHERE `kid` = ?","id", [$gets['id']]);
 
                 //Show
                 $smarty->caching = false;
@@ -150,7 +150,7 @@ if(defined('_Forum')) {
     }
     
     /* Stats */
-    $qrytp = common::$sql['default']->select("SELECT `id`,`user`,`forumposts` FROM `{prefix_userstats}` ORDER BY `forumposts` DESC LIMIT 5;");
+    $qrytp = common::$sql['default']->select("SELECT `id`,`user`,`forumposts` FROM `{prefix_user_stats}` ORDER BY `forumposts` DESC LIMIT 5;");
     $show_top = '';
     foreach($qrytp as $gettp) {
         if($gettp['forumposts'] >= 1) {
@@ -172,8 +172,8 @@ if(defined('_Forum')) {
 
     //Stats
     $smarty->caching = false;
-    $smarty->assign('total_posts',common::cnt("{prefix_forumposts}"));
-    $smarty->assign('total_topics',common::cnt("{prefix_forumthreads}"));
+    $smarty->assign('total_posts',common::cnt("{prefix_forum_posts}"));
+    $smarty->assign('total_topics',common::cnt("{prefix_forum_threads}"));
     $smarty->assign('total_members',common::cnt("{prefix_users}","WHERE `banned` = 0 AND `level` >= 1"));
     $smarty->assign('top_posts',$top_posts);
     $smarty->assign('newest_member',common::autor(common::$sql['default']->fetch("SELECT `id` FROM `{prefix_users}` WHERE `level` >= 1 AND `banned` = 0 ORDER BY `regdatum` DESC;",[],"id")));
@@ -181,12 +181,12 @@ if(defined('_Forum')) {
     $smarty->clearAllAssign();
 
     $smarty->caching = false;
-    $smarty->assign('threads',common::cnt("{prefix_forumthreads}"));
+    $smarty->assign('threads',common::cnt("{prefix_forum_threads}"));
     $threads = $smarty->fetch('string:'._forum_cnt_threads);
     $smarty->clearAllAssign();
 
     $smarty->caching = false;
-    $smarty->assign('posts',(common::cnt("{prefix_forumposts}")+common::cnt("{prefix_forumthreads}")));
+    $smarty->assign('posts',(common::cnt("{prefix_forum_posts}")+common::cnt("{prefix_forum_threads}")));
     $posts = $smarty->fetch('string:'._forum_cnt_posts);
     $smarty->clearAllAssign();
 

@@ -34,7 +34,7 @@ $smarty = common::getSmarty(); //Use Smarty
  * @return bool
  */
 function check_buddy($buddy) {
-    return !common::$sql['default']->rows("SELECT `buddy` FROM `{prefix_userbuddys}` WHERE `user` = ? AND `buddy` = ?;",
+    return !common::$sql['default']->rows("SELECT `buddy` FROM `{prefix_user_buddys}` WHERE `user` = ? AND `buddy` = ?;",
             [(int)(common::$userid),(int)($buddy)]) ? true : false;
 }
 

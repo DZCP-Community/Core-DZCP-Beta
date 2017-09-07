@@ -20,7 +20,7 @@ if(defined('_Forum')) {
     switch (strtolower($_GET['what'])) {
         case 'thread':
             if(strtolower($_GET['do']) == 'addthread') {
-                $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE `id` = ?;",
+                $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forum_threads}` WHERE `id` = ?;",
                     [(int)($_GET['id'])]);
 
                 if(!$get['t_reg']) {
@@ -105,11 +105,11 @@ if(defined('_Forum')) {
             }
 
             $getw = common::$sql['default']->fetch("SELECT s1.`kid`,s1.`topic`,s2.`kattopic`,s2.`sid` "
-                ."FROM `{prefix_forumthreads}` AS `s1` LEFT JOIN `{prefix_forumsubkats}` AS `s2` ON s1.`kid` = s2.`id` "
+                ."FROM `{prefix_forum_threads}` AS `s1` LEFT JOIN `{prefix_forum_sub_kats}` AS `s2` ON s1.`kid` = s2.`id` "
                 ."WHERE s1.`id` = ?;",[$tID]);
 
             //Breadcrumbs
-            $kat = common::$sql['default']->fetch("SELECT `name` FROM `{prefix_forumkats}` WHERE `id` = ?;",[$getw['sid']]);
+            $kat = common::$sql['default']->fetch("SELECT `name` FROM `{prefix_forum_kats}` WHERE `id` = ?;",[$getw['sid']]);
             $smarty->caching = false;
             $smarty->assign('wherepost',stringParser::decode($_POST['topic']));
             $smarty->assign('wherekat',stringParser::decode($getw['kattopic']));
@@ -159,7 +159,7 @@ if(defined('_Forum')) {
         case 'post':
             if(common::$do == 'editpost')
             {
-                $get = common::$sql['default']->fetch("SELECT `date`,`reg`,`sid` FROM `{prefix_forumposts}` WHERE `id` = ?;",
+                $get = common::$sql['default']->fetch("SELECT `date`,`reg`,`sid` FROM `{prefix_forum_posts}` WHERE `id` = ?;",
                     [(int)($_GET['id'])]);
                 if($get['reg'] == 0)
                     $guestCheck = false;
@@ -186,7 +186,7 @@ if(defined('_Forum')) {
                 }
 
                 $tID = (int)$_GET['id'];
-                $cnt = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id",[(int)($_GET['id'])])+2;
+                $cnt = common::cnt("{prefix_forum_posts}", " WHERE `sid` = ?","id",[(int)($_GET['id'])])+2;
             }
 
             //Titel
@@ -249,7 +249,7 @@ if(defined('_Forum')) {
             $smarty->assign('signatur', $sig);
             $smarty->assign('zitat', _forum_zitat_preview);
             $smarty->assign('onoff', $onoff);
-            $smarty->assign('lp', common::cnt("{prefix_forumposts}", " WHERE `sid` = ?", 'id', [$id]) + 1);
+            $smarty->assign('lp', common::cnt("{prefix_forum_posts}", " WHERE `sid` = ?", 'id', [$id]) + 1);
             $index = $smarty->fetch('file:[' . common::$tmpdir . ']' . $dir . '/forum_posts_show.tpl');
             $smarty->clearAllAssign();
 

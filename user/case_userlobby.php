@@ -21,7 +21,7 @@ if(defined('_UserMenu')) {
         $can_erase = false;
         if(isset($_POST['erase']) && (int)($_POST['erase']) == 1) {
             $_SESSION['lastvisit'] = time();
-            common::$sql['default']->update("UPDATE `{prefix_userstats}` "
+            common::$sql['default']->update("UPDATE `{prefix_user_stats}` "
                        . "SET `lastvisit` = ? "
                        . "WHERE `user` = ?;",
             [(int)($_SESSION['lastvisit']),common::$userid]);
@@ -31,8 +31,8 @@ if(defined('_UserMenu')) {
         $lastvisit = $_SESSION['lastvisit'];
 
         /** Neue Foreneintraege anzeigen */
-        $qrykat = common::$sql['default']->select("SELECT s1.`id`,s2.`kattopic`,s1.`intern`,s2.`id` FROM `{prefix_forumkats}` AS `s1` "
-                             . "LEFT JOIN `{prefix_forumsubkats}` AS `s2` "
+        $qrykat = common::$sql['default']->select("SELECT s1.`id`,s2.`kattopic`,s1.`intern`,s2.`id` FROM `{prefix_forum_kats}` AS `s1` "
+                             . "LEFT JOIN `{prefix_forum_sub_kats}` AS `s2` "
                              . "ON s1.`id` = s2.`sid` "
                              . "ORDER BY s1.`kid`,s2.`kattopic`;");
 
@@ -42,15 +42,15 @@ if(defined('_UserMenu')) {
                 unset($nthread,$post,$forumposts_show);
                 if (common::forum_intern((int)($getkat['id']))) {
                     $qrytopic = common::$sql['default']->select("SELECT `lp`,`id`,`topic`,`first`,`sticky` "
-                                           . "FROM `{prefix_forumthreads}` "
+                                           . "FROM `{prefix_forum_threads}` "
                                            . "WHERE `kid` = ? AND `lp` > ? "
                                            . "ORDER BY `lp` DESC LIMIT 150;",
                                 [$getkat['id'],$lastvisit]);
                     if (common::$sql['default']->rowCount()) {
                         $forumposts_show = '';
                         foreach($qrytopic as $gettopic) {
-                            $count = common::cnt('{prefix_forumposts}', " WHERE `date` > ? AND `sid` = ?",'id', [$lastvisit,$gettopic['id']]);
-                            $lp = common::cnt('{prefix_forumposts}', " WHERE `sid` = ?",'id', [$gettopic['id']]);
+                            $count = common::cnt('{prefix_forum_posts}', " WHERE `date` > ? AND `sid` = ?",'id', [$lastvisit,$gettopic['id']]);
+                            $lp = common::cnt('{prefix_forum_posts}', " WHERE `sid` = ?",'id', [$gettopic['id']]);
                             
                             if ($count == 0) {
                                 $cnt = 1;
@@ -164,12 +164,12 @@ if(defined('_UserMenu')) {
         if (common::$sql['default']->rowCount()) {
             foreach($qrycheckn as $getcheckn) {
                 $getnewsc = common::$sql['default']->fetch("SELECT `id`,`news`,`datum` "
-                                             . "FROM `{prefix_newscomments}` "
+                                             . "FROM `{prefix_news_comments}` "
                                              . "WHERE `news` = ? "
                                              . "ORDER BY `datum` DESC;",
                             [$getcheckn['id']]);
                 if (common::check_new((int)$getnewsc['datum'])) {
-                    $check = common::cnt("{prefix_newscomments}", " WHERE `datum` > ? AND `news` = ?",'id', [$lastvisit,$getnewsc['news']]);
+                    $check = common::cnt("{prefix_news_comments}", " WHERE `datum` > ? AND `news` = ?",'id', [$lastvisit,$getnewsc['news']]);
                     if ($check == "1") {
                         $cnt = "1";
                         $eintrag = _lobby_new_newsc_1;
@@ -274,12 +274,12 @@ if(defined('_UserMenu')) {
         if (common::$sql['default']->rowCount()) {
             foreach($qrychecka as $getchecka) {
                 $getartc = common::$sql['default']->fetch("SELECT `id`,`artikel`,`datum` "
-                                            . "FROM `{prefix_acomments}` "
+                                            . "FROM `{prefix_artikel_comments}` "
                                             . "WHERE `artikel` = ? "
                                             . "ORDER BY `datum` DESC;",
                             [$getchecka['id']]);
                 if (!empty($getartc) && common::check_new($getartc['datum'])) {
-                    $check = common::cnt('{prefix_acomments}', " WHERE `datum` > ? AND `artikel` = ?",'id', [$lastvisit,$getartc['artikel']]);
+                    $check = common::cnt('{prefix_artikel_comments}', " WHERE `datum` > ? AND `artikel` = ?",'id', [$lastvisit,$getartc['artikel']]);
                     if ($check == "1") {
                         $cnt = "1";
                         $eintrag = _lobby_new_artc_1;
@@ -300,18 +300,18 @@ if(defined('_UserMenu')) {
 
         /** Neue Forum Topics anzeigen */
         $qryft = common::$sql['default']->select("SELECT s1.`t_text`,s1.`id`,s1.`topic`,s1.`kid`,s2.`kattopic`,s3.`intern`,s1.`sticky` "
-                            . "FROM `{prefix_forumthreads}` as `s1`, `{prefix_forumsubkats}` as `s2`, `{prefix_forumkats}` as `s3` "
+                            . "FROM `{prefix_forum_threads}` as `s1`, `{prefix_forum_sub_kats}` as `s2`, `{prefix_forum_kats}` as `s3` "
                             . "WHERE s1.`kid` = s2.`id` AND s2.`sid` = s3.`id` "
                             . "ORDER BY s1.`lp` DESC LIMIT 10;");
         $ftopics = '';
         if (common::$sql['default']->rowCount()) {
             foreach($qryft as $getft) {
                 if (common::forum_intern($getft['kid'])) {
-                    $lp = common::cnt('{prefix_forumposts}', " WHERE `sid` = ?",'id', [$getft['id']]);
+                    $lp = common::cnt('{prefix_forum_posts}', " WHERE `sid` = ?",'id', [$getft['id']]);
                     $pagenr = ceil($lp / settings::get('m_fposts'));
                     $page = (!$pagenr ? 1 : $pagenr);
                     $getp = common::$sql['default']->fetch("SELECT `text` "
-                                             . "FROM `{prefix_forumposts}` "
+                                             . "FROM `{prefix_forum_posts}` "
                                              . "WHERE `kid` = ? AND `sid` = ? "
                                              . "ORDER BY `date` DESC LIMIT 1;",
                             [$getft['kid'],$getft['id']]);

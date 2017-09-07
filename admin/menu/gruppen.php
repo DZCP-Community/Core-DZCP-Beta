@@ -44,7 +44,7 @@ switch (common::$do) {
     break;
     case 'delete':
         common::$sql['default']->delete("DELETE FROM `{prefix_groups}` WHERE `id` = ?;", [(int)($_GET['id'])]);
-        common::$sql['default']->delete("DELETE FROM `{prefix_groupuser}` WHERE `group` = ?;", [(int)($_GET['id'])]);
+        common::$sql['default']->delete("DELETE FROM `{prefix_group_user}` WHERE `group` = ?;", [(int)($_GET['id'])]);
 
         ## Losche Gruppen-Upload Ordner ##
         fileman::RemoveGroupDir((int)($_GET['id']));

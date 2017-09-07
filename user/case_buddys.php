@@ -30,7 +30,7 @@ if(defined('_UserMenu')) {
                 } elseif(!check_buddy($_POST['users'])) {
                     $index = common::error(_error_buddy_already_in, 1);
                 } else {
-                    common::$sql['default']->insert("INSERT INTO `{prefix_userbuddys}` SET `user` = ?, `buddy` = ?;",
+                    common::$sql['default']->insert("INSERT INTO `{prefix_user_buddys}` SET `user` = ?, `buddy` = ?;",
                     [(int)(common::$userid),(int)($_POST['users'])]);
 
                     $smarty->caching = false;
@@ -58,7 +58,7 @@ if(defined('_UserMenu')) {
                 } elseif(!check_buddy($user)) {
                     $index = common::error(_error_buddy_already_in, 1);
                 } else {
-                    common::$sql['default']->insert("INSERT INTO `{prefix_userbuddys}` SET `user` = ?, `buddy` = ?;", [(int)(common::$userid),(int)($user)]);
+                    common::$sql['default']->insert("INSERT INTO `{prefix_user_buddys}` SET `user` = ?, `buddy` = ?;", [(int)(common::$userid),(int)($user)]);
 
                     $smarty->caching = false;
                     $smarty->assign('user',common::autor(common::$userid));
@@ -78,7 +78,7 @@ if(defined('_UserMenu')) {
             break;
             case 'delete':
                 if(isset($_GET['id']) && (int)($_GET['id']) >= 1) {
-                    common::$sql['default']->delete("DELETE FROM `{prefix_userbuddys}` "
+                    common::$sql['default']->delete("DELETE FROM `{prefix_user_buddys}` "
                                . "WHERE `buddy` = ? AND `user` = ?;", [(int)($_GET['id']),common::$userid]);
 
                     $smarty->caching = false;
@@ -98,7 +98,7 @@ if(defined('_UserMenu')) {
                 }
             break;
             default:
-                $qry = common::$sql['default']->select("SELECT `buddy` FROM `{prefix_userbuddys}` WHERE `user` = ?;", [common::$userid]);
+                $qry = common::$sql['default']->select("SELECT `buddy` FROM `{prefix_user_buddys}` WHERE `user` = ?;", [common::$userid]);
                 $too = ""; $buddys = ""; $usersNL= [];
                 foreach($qry as $get) {
                     //Private Massage
@@ -113,7 +113,7 @@ if(defined('_UserMenu')) {
                     $delete = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/buddys/buddys_delete.tpl');
                     $smarty->clearAllAssign();
 
-                    $too = common::$sql['default']->rows("SELECT `id` FROM `{prefix_userbuddys}` where `user` = ? AND `buddy` = ?;",
+                    $too = common::$sql['default']->rows("SELECT `id` FROM `{prefix_user_buddys}` where `user` = ? AND `buddy` = ?;",
                         [$get['buddy'],common::$userid]) ? _buddys_yesicon : _buddys_noicon;
                     $usersNL[$get['buddy']] = true;
 

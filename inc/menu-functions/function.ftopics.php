@@ -17,7 +17,7 @@
 
 function smarty_function_ftopics($params,Smarty_Internal_Template &$smarty) {
     $qry = common::$sql['default']->select("SELECT s1.*,s2.`kattopic`,s2.`id` as `subid` "
-        . "FROM `{prefix_forumthreads}` as `s1`, `{prefix_forumsubkats}` as `s2`, {prefix_forumkats} as `s3` "
+        . "FROM `{prefix_forum_threads}` as `s1`, `{prefix_forum_sub_kats}` as `s2`, {prefix_forum_kats} as `s3` "
         . "WHERE s1.`kid` = s2.`id` AND s2.`sid` = s3.`id` ORDER BY s1.`lp` DESC LIMIT 100;");
 
     $f = 0; $ftopics = '';
@@ -25,7 +25,7 @@ function smarty_function_ftopics($params,Smarty_Internal_Template &$smarty) {
         foreach($qry as $get) {
             if($f == settings::get('m_ftopics')) { break; }
             if(common::forum_intern($get['kid'])) {
-                $lp = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?","id", [$get['id']]);
+                $lp = common::cnt("{prefix_forum_posts}", " WHERE `sid` = ?","id", [$get['id']]);
                 $pagenr = ceil($lp/settings::get('m_fposts'));
                 $page = !$pagenr ? 1 : $pagenr;
                 $info = '';

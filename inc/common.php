@@ -399,7 +399,7 @@ class common {
 
         //-> User Hits und Lastvisit aktualisieren
         if(self::$userid >= 1 && !is_ajax && !is_thumbgen && !is_api && isset($_SESSION['lastvisit'])) {
-            self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `hits` = (hits+1), `lastvisit` = ? WHERE `user` = ?;",
+            self::$sql['default']->update("UPDATE `{prefix_user_stats}` SET `hits` = (hits+1), `lastvisit` = ? WHERE `user` = ?;",
                 [(int)($_SESSION['lastvisit']),(int)(self::$userid)]);
         }
     }
@@ -739,13 +739,13 @@ class common {
      */
     public static function forum_intern(int $id=0) {
         if(!self::$chkMe) {
-            $fget = self::$sql['default']->fetch("SELECT s1.`intern`,s2.`id` FROM `{prefix_forumkats}` AS `s1` LEFT JOIN `{prefix_forumsubkats}` AS `s2` ON s2.`sid` = s1.`id` WHERE s2.`id` = ?;",
+            $fget = self::$sql['default']->fetch("SELECT s1.`intern`,s2.`id` FROM `{prefix_forum_kats}` AS `s1` LEFT JOIN `{prefix_forum_sub_kats}` AS `s2` ON s2.`sid` = s1.`id` WHERE s2.`id` = ?;",
                 [(int)($id)]);
             return (!$fget['intern']);
         } else if(self::$chkMe == 4) {
             return true;
         } else {
-            $team = self::$sql['default']->rows("SELECT s1.`id` FROM `{prefix_forum_access}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi` WHERE s2.`user` = ? AND s2.`posi` != 0 AND s1.`forum` = ?;",
+            $team = self::$sql['default']->rows("SELECT s1.`id` FROM `{prefix_forum_access}` AS `s1` LEFT JOIN `{prefix_user_posis}` AS `s2` ON s1.`pos` = s2.`posi` WHERE s2.`user` = ? AND s2.`posi` != 0 AND s1.`forum` = ?;",
                 [(int)(self::$userid),(int)($id)]);
             $user = self::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_access}` WHERE `user` = ? AND `forum` = ?;",
                 [(int)(self::$userid),(int)($id)]);
@@ -1001,10 +1001,10 @@ class common {
         if (!$uid) { $uid = self::$userid; }
         $cache_hash = md5('userstats_'.$uid);
         if(!self::$cache->AutoMemExists($cache_hash) || !config::$use_system_cache || $refresh) {
-            $stats = self::$sql['default']->fetch("SELECT * FROM `{prefix_userstats}` WHERE `user` = ?;", [$uid]);
+            $stats = self::$sql['default']->fetch("SELECT * FROM `{prefix_user_stats}` WHERE `user` = ?;", [$uid]);
             if(!common::$sql['default']->rowCount()) {
-                self::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?;", [$uid]);
-                self::$cache->AutoMemSet($cache_hash, self::$sql['default']->fetch("SELECT * FROM `{prefix_userstats}` WHERE `user` = ?;",
+                self::$sql['default']->insert("INSERT INTO `{prefix_user_stats}` SET `user` = ?;", [$uid]);
+                self::$cache->AutoMemSet($cache_hash, self::$sql['default']->fetch("SELECT * FROM `{prefix_user_stats}` WHERE `user` = ?;",
                     [$uid]),cache::TIME_USERSTATS);
                 return 0;
             } else {
@@ -1026,32 +1026,32 @@ class common {
         $cache_hash = md5('userstats_'.$uid);
         if(self::$cache->AutoMemExists($cache_hash) && config::$use_system_cache) {
             //Update Database
-            self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `".$what."` = (".$what."+1) WHERE `user` = ?;", [$uid]);
+            self::$sql['default']->update("UPDATE `{prefix_user_stats}` SET `".$what."` = (".$what."+1) WHERE `user` = ?;", [$uid]);
 
             //Update Cache
             $data = self::$cache->AutoMemGet($cache_hash);
             $data[$what] = ($data[$what]+1);
             self::$cache->AutoMemSet($cache_hash, $data,cache::TIME_USERSTATS);
         } else {
-            self::$sql['default']->fetch("SELECT * FROM `{prefix_userstats}` WHERE `user` = ?;", [$uid]);
+            self::$sql['default']->fetch("SELECT * FROM `{prefix_user_stats}` WHERE `user` = ?;", [$uid]);
             if(!common::$sql['default']->rowCount()) {
                 //Update Database
-                self::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?;", [$uid]);
-                self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `".$what."` = (".$what."+1) WHERE `user` = ?;", [$uid]);
+                self::$sql['default']->insert("INSERT INTO `{prefix_user_stats}` SET `user` = ?;", [$uid]);
+                self::$sql['default']->update("UPDATE `{prefix_user_stats}` SET `".$what."` = (".$what."+1) WHERE `user` = ?;", [$uid]);
 
                 //Update Cache
                 if(config::$use_system_cache) {
-                    self::$cache->AutoMemSet($cache_hash, self::$sql['default']->fetch("SELECT * FROM `{prefix_userstats}` WHERE `user` = ?;",
+                    self::$cache->AutoMemSet($cache_hash, self::$sql['default']->fetch("SELECT * FROM `{prefix_user_stats}` WHERE `user` = ?;",
                         [$uid]),cache::TIME_USERSTATS);
                 }
                 return 0;
             } else {
                 //Update Database
-                self::$sql['default']->update("UPDATE `{prefix_userstats}` SET `".$what."` = (".$what."+1) WHERE `user` = ?;", [$uid]);
+                self::$sql['default']->update("UPDATE `{prefix_user_stats}` SET `".$what."` = (".$what."+1) WHERE `user` = ?;", [$uid]);
 
                 //Update Cache
                 if(config::$use_system_cache) {
-                    self::$cache->AutoMemSet($cache_hash, self::$sql['default']->fetch("SELECT * FROM `{prefix_userstats}` WHERE `user` = ?;",
+                    self::$cache->AutoMemSet($cache_hash, self::$sql['default']->fetch("SELECT * FROM `{prefix_user_stats}` WHERE `user` = ?;",
                         [$uid]), cache::TIME_USERSTATS);
                 }
             }
@@ -1242,13 +1242,19 @@ class common {
      * @return bool
      */
     public static function ipcheck(string $what,int $time = 0) {
-        $get = self::$sql['default']->fetch("SELECT `time`,`what` FROM `{prefix_ip_action}` WHERE `what` = ? AND `ipv4` = ? ORDER BY `time` DESC;", [$what,self::$userip['v4']]);
+        $get = self::$sql['default']->fetch("SELECT `time`,`what` FROM `{prefix_ip_action}` WHERE `what` = ? AND ".
+            "(`ipv4` = ? OR ( `ipv6` != ? AND `ipv6` = ?)) ".
+            "ORDER BY `time` DESC;",
+            [$what,self::$userip['v4'],self::IPV6_NULL_ADDR,self::$userip['v6']]);
         if(self::$sql['default']->rowCount()) {
             if (preg_match("#vid#", $get['what'])) {
                 return true;
             } else {
                 if($get['time'] + $time < time()) {
-                    self::$sql['default']->delete("DELETE FROM `{prefix_ip_action}` WHERE `what` = ? AND `ipv4` = ? AND time+?<?;", [$what,self::$userip['v4'],$time,time()]);
+                    self::$sql['default']->delete("DELETE FROM `{prefix_ip_action}` WHERE `what` = ? AND ".
+                        "(`ipv4` = ? OR ( `ipv6` != ? AND `ipv6` = ?)) ".
+                        "AND time+?<?;",
+                        [$what,self::$userip['v4'],self::IPV6_NULL_ADDR,self::$userip['v6'],$time,time()]);
                 }
 
                 return ($get['time'] + $time > time() ? true : false);
@@ -1300,7 +1306,8 @@ class common {
     }
 
     public static function check_msg_emal() {
-        if(!is_ajax && !is_thumbgen && !is_api && !self::$CrawlerDetect->isCrawler() && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;", [session_id()])) {
+        if(!is_ajax && !is_thumbgen && !is_api && !self::$CrawlerDetect->isCrawler() && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;",
+                [session_id()])) {
             $qry = self::$sql['default']->select("SELECT s1.`an`,s1.`page`,s1.`titel`,s1.`sendmail`,s1.`id` AS `mid`, "
                 . "s2.`id`,s2.`nick`,s2.`email`,s2.`pnmail` FROM `{prefix_messages}` AS `s1` "
                 . "LEFT JOIN `{prefix_users}` AS `s2` ON s2.`id` = s1.`an` WHERE `page` = 0 AND `sendmail` = 0;");
@@ -1320,7 +1327,7 @@ class common {
                         $smarty->assign('domain',self::$httphost);
                         $smarty->assign('titel',stringParser::decode($get['titel']));
                         $smarty->assign('clan',stringParser::decode(settings::get('clanname')));
-                        $message = $smarty->fetch('string:'.self::bbcode_email(settings::get('eml_pn')));
+                        $message = $smarty->fetch('string:'.BBCode::bbcode_email(settings::get('eml_pn')));
                         $smarty->clearAllAssign();
 
                         self::sendMail(stringParser::decode($get['email']), $subj, $message);
@@ -1578,10 +1585,10 @@ class common {
         if(!$tid) return '* No UserID! *';
         if($squad) {
             if ($profil) {
-                $qry = self::$sql['default']->select("SELECT s1.`posi`,s2.`name` FROM `{prefix_userposis}` AS `s1` LEFT JOIN `{prefix_groups}` AS `s2` ON s1.`group` = s2.`id` "
+                $qry = self::$sql['default']->select("SELECT s1.`posi`,s2.`name` FROM `{prefix_user_posis}` AS `s1` LEFT JOIN `{prefix_groups}` AS `s2` ON s1.`group` = s2.`id` "
                     . "WHERE s1.`user` = ? AND s1.`group` = ? AND s1.`posi` != 0;",[(int)($tid),(int)($squad)]);
             } else {
-                $qry = self::$sql['default']->select("SELECT `posi` FROM `{prefix_userposis}` WHERE `user` = ? AND `group` = ? AND `posi` != 0;", [(int)($tid),(int)($squad)]);
+                $qry = self::$sql['default']->select("SELECT `posi` FROM `{prefix_user_posis}` WHERE `user` = ? AND `group` = ? AND `posi` != 0;", [(int)($tid),(int)($squad)]);
             }
 
             if(self::$sql['default']->rowCount()) {
@@ -1609,7 +1616,7 @@ class common {
                 }
             }
         } else {
-            $get = self::$sql['default']->fetch("SELECT s1.*,s2.`position` FROM `{prefix_userposis}` AS `s1` LEFT JOIN `{prefix_positions}` AS `s2` "
+            $get = self::$sql['default']->fetch("SELECT s1.*,s2.`position` FROM `{prefix_user_posis}` AS `s1` LEFT JOIN `{prefix_positions}` AS `s2` "
                 . "ON s1.`posi` = s2.`id` WHERE s1.`user` = ? AND s1.`posi` != 0 ORDER BY s2.pid ASC;", [(int)($tid)]);
             if(self::$sql['default']->rowCount()) {
                 return $get['position'];
@@ -1765,6 +1772,33 @@ class common {
     public static function GenGuid() {
         $s = strtoupper(md5(uniqid(rand(),true)));
         return substr($s,0,8) .'-'.substr($s,8,4).'-'.substr($s,12,4).'-'.substr($s,16,4).'-'. substr($s,20);
+    }
+
+    /**
+     * Gibt die gespeicherte UserIP aus (IPv4 & IPv6)
+     * @param array $getc
+     * @return string
+     */
+    public static function getPostedIP(array $getc) {
+        if(self::$chkMe == 4 || self::permission('ipban')) {
+            $IP = '';
+            if(!empty($getc['ipv6']) && stringParser::decode($getc['ipv6']) != self::IPV6_NULL_ADDR) {
+                $IP .= 'IPv6: '.stringParser::decode($getc['ipv6']);
+            }
+
+            if(!empty($getc['ipv6']) && stringParser::decode($getc['ipv6']) != self::IPV6_NULL_ADDR &&
+                !empty($getc['ipv4']) && stringParser::decode($getc['ipv4']) != self::IPV4_NULL_ADDR) {
+                $IP .= ' <p> ';
+            }
+
+            if(!empty($getc['ipv4']) && stringParser::decode($getc['ipv4']) != self::IPV4_NULL_ADDR) {
+                $IP .= 'IPv4: '.stringParser::decode($getc['ipv4']);
+            }
+
+            return $IP;
+        }
+
+        return _logged;
     }
 
     /**
@@ -2224,30 +2258,33 @@ class common {
             }
 
             if(self::$chkMe != 'unlogged') {
-                if (self::$sql['default']->rows("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `uid` = ? AND `ids` = ? AND `side` = ?;", [(int)(self::$userid),(int)($clickedID),$side_tag])) {
+                if (self::$sql['default']->rows("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `uid` = ? AND `ids` = ? AND `side` = ?;",
+                    [(int)(self::$userid),(int)($clickedID),$side_tag])) {
                     return false;
                 }
 
-                if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ipv4` = ? AND `ids` = ? AND `side` = ?;", [self::$userip['v4'],(int)($clickedID),$side_tag])) {
+                if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_clicks_ips}` WHERE (`ipv4` = ? OR (`ipv6` != ? AND `ipv6` = ?)) AND `ids` = ? AND `side` = ?;",
+                    [self::$userip['v4'],self::IPV6_NULL_ADDR,self::$userip['v6'],(int)($clickedID),$side_tag])) {
                     if($update) {
-                        self::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ?, `time` = ? WHERE `ipv4` = ? AND `ids` = ? AND `side` = ?;",
-                            [(int)(self::$userid),(time()+count_clicks_expires),self::$userip['v4'],(int)($clickedID),$side_tag]);
+                        self::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ?, `time` = ? WHERE (`ipv4` = ? OR (`ipv6` != ? AND `ipv6` = ?)) AND `ids` = ? AND `side` = ?;",
+                            [(int)(self::$userid),(time()+count_clicks_expires),self::$userip['v4'],self::IPV6_NULL_ADDR,self::$userip['v6'],(int)($clickedID),$side_tag]);
                     }
 
                     return false;
                 } else {
                     if($update) {
-                        self::$sql['default']->insert("INSERT INTO `{prefix_clicks_ips}` SET `ipv4` = ?, `uid` = ?, `ids` = ?, `side` = ?, `time` = ?;",
-                            [self::$userip['v4'], (int)(self::$userid), (int)($clickedID), $side_tag, (time() + count_clicks_expires)]);
+                        self::$sql['default']->insert("INSERT INTO `{prefix_clicks_ips}` SET `ipv4` = ?, `ipv6` = ?, `uid` = ?, `ids` = ?, `side` = ?, `time` = ?;",
+                            [self::$userip['v4'], self::$userip['v6'], (int)(self::$userid), (int)($clickedID), $side_tag, (time() + count_clicks_expires)]);
                     }
 
                     return true;
                 }
             } else {
-                if(!self::$sql['default']->rows("SELECT id FROM `{prefix_clicks_ips}` WHERE `ipv4` = ? AND `ids` = ? AND `side` = ?;", [self::$userip['v4'],(int)($clickedID),$side_tag])) {
+                if(!self::$sql['default']->rows("SELECT id FROM `{prefix_clicks_ips}` WHERE (`ipv4` = ? OR (`ipv6` != ? AND `ipv6` = ?)) AND `ids` = ? AND `side` = ?;",
+                    [self::$userip['v4'],self::IPV6_NULL_ADDR,self::$userip['v6'],(int)($clickedID),$side_tag])) {
                     if($update) {
-                        self::$sql['default']->insert("INSERT INTO `{prefix_clicks_ips}` SET `ipv4` = ?, `uid` = 0, `ids` = ?, `side` = ?, `time` = ?;",
-                            [self::$userip['v4'],(int)($clickedID),$side_tag,(time()+count_clicks_expires)]);
+                        self::$sql['default']->insert("INSERT INTO `{prefix_clicks_ips}` SET `ipv4` = ?, `ipv6` = ?, `uid` = 0, `ids` = ?, `side` = ?, `time` = ?;",
+                            [self::$userip['v4'],self::$userip['v6'],(int)($clickedID),$side_tag,(time()+count_clicks_expires)]);
                     }
 
                     return true;
@@ -2311,14 +2348,14 @@ class common {
      */
     public static function getBoardPermissions(int $checkID = 0,int $pos = 0) {
         $break = 0; $i_forum = ''; $fkats = '';
-        $qry = self::$sql['default']->select("SELECT `id`,`name` FROM `{prefix_forumkats}` WHERE `intern` = 1 ORDER BY `kid` ASC;");
+        $qry = self::$sql['default']->select("SELECT `id`,`name` FROM `{prefix_forum_kats}` WHERE `intern` = 1 ORDER BY `kid` ASC;");
         if(self::$sql['default']->rowCount()) {
             foreach($qry as $get) {
                 unset($kats, $fkats, $break);
                 $kats = (empty($katbreak) ? '' : '<div style="clear:both">&nbsp;</div>').'<table class="hperc" cellspacing="1"><tr><td class="contentMainTop"><b>'.stringParser::decode($get["name"]).'</b></td></tr></table>';
                 $katbreak = 1; $break = 0; $fkats = '';
 
-                $qry2 = self::$sql['default']->select("SELECT `kattopic`,`id` FROM `{prefix_forumsubkats}` WHERE `sid` = ? ORDER BY `kattopic` ASC;", [$get['id'],]);
+                $qry2 = self::$sql['default']->select("SELECT `kattopic`,`id` FROM `{prefix_forum_sub_kats}` WHERE `sid` = ? ORDER BY `kattopic` ASC;", [$get['id'],]);
                 if(self::$sql['default']->rowCount()) {
                     foreach($qry2 as $get2) {
                         $br = ($break % 2) ? '<br />' : ''; $break++;
@@ -2393,7 +2430,7 @@ class common {
         }
 
         // check rank permission
-        $qry = self::$sql['default']->select("SELECT s1.* FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi` WHERE s2.`user` = ? AND s2.`posi` != 0;",
+        $qry = self::$sql['default']->select("SELECT s1.* FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_user_posis}` AS `s2` ON s1.`pos` = s2.`posi` WHERE s2.`user` = ? AND s2.`posi` != 0;",
             [(int)($userid)]);
         foreach($qry as $get) {
             foreach($get AS $v => $k) {
@@ -2593,7 +2630,7 @@ class common {
 
                     // check rank permission
                     if($check != 'xxxxx') {
-                        if (self::$sql['default']->rows("SELECT s1.`" . $check . "` FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi`"
+                        if (self::$sql['default']->rows("SELECT s1.`" . $check . "` FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_user_posis}` AS `s2` ON s1.`pos` = s2.`posi`"
                             . "WHERE s2.`user` = ? AND s1.`" . $check . "` = 1 AND s2.`posi` != 0;", [(int)($uid)])
                         ) {
                             return true;
@@ -2614,7 +2651,7 @@ class common {
 
                     if($check != 'xxxxx') {
                         // check rank permission
-                        if (self::$sql['default']->rows("SELECT s1.`" . $check . "` FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_userposis}` AS `s2` ON s1.`pos` = s2.`posi`"
+                        if (self::$sql['default']->rows("SELECT s1.`" . $check . "` FROM `{prefix_permissions}` AS `s1` LEFT JOIN `{prefix_user_posis}` AS `s2` ON s1.`pos` = s2.`posi`"
                             . "WHERE s2.`user` = ? AND s1.`" . $check . "` = 1 AND s2.`posi` != 0;", [(int)($uid)])
                         ) {
                             return true;
@@ -2896,7 +2933,7 @@ class common {
         $smarty->assign('id',$id);
         $smarty->assign('action',$action);
         $smarty->assign('title',$title);
-        $smarty->assign('del',$del);
+        $smarty->assign('del',str_replace(" ","+",$del));
         $delete = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_delete_single.tpl');
         $smarty->clearAllAssign();
         return $delete;

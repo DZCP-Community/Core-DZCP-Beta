@@ -77,7 +77,7 @@ if(isset($_POST['user'])) {
         common::$sql['default']->insert("INSERT INTO `{prefix_permissions}` SET `user` = ?".$permissions.";", [$insert_id]);
 
         ## Lege User in der User-Statistik Tabelle an ##
-        common::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?, `lastvisit` = ?;", [$insert_id,$time]);
+        common::$sql['default']->insert("INSERT INTO `{prefix_user_stats}` SET `user` = ?, `lastvisit` = ?;", [$insert_id,$time]);
 
         ## Erstelle User-Upload Ordner ##
         fileman::CreateUserDir($insert_id);
@@ -92,11 +92,11 @@ if(isset($_POST['user'])) {
         $groups = common::$sql['default']->select("SELECT * FROM `{prefix_groups}`;");
         foreach($groups as $get_group) {
             if(isset($_POST['group'.$get_group['id']])) {
-                common::$sql['default']->insert("INSERT INTO `{prefix_groupuser}` SET `user`  = ?, `group` = ?;", [$insert_id,(int)$_POST['squad'.$get_group['id']]]);
+                common::$sql['default']->insert("INSERT INTO `{prefix_group_user}` SET `user`  = ?, `group` = ?;", [$insert_id,(int)$_POST['squad'.$get_group['id']]]);
             }
 
             if(isset($_POST['group'.$get_group['id']])) {
-                common::$sql['default']->insert("INSERT INTO `{prefix_userposis}` SET `user` = ?, `posi` = ?, `group` = ?;", [$insert_id,(int)$_POST['sqpos'.$get_group['id']],$get_group['id']]);
+                common::$sql['default']->insert("INSERT INTO `{prefix_user_posis}` SET `user` = ?, `posi` = ?, `group` = ?;", [$insert_id,(int)$_POST['sqpos'.$get_group['id']],$get_group['id']]);
             }
         }
 
@@ -145,7 +145,7 @@ if(isset($_POST['user'])) {
             }
         }
 
-        common::$sql['default']->insert("INSERT INTO `{prefix_userstats}` SET `user` = ?, `lastvisit` = ?;", [$insert_id,time()]);
+        common::$sql['default']->insert("INSERT INTO `{prefix_user_stats}` SET `user` = ?, `lastvisit` = ?;", [$insert_id,time()]);
         $show = common::info(_uderadd_info, "../admin/");
     }
 }

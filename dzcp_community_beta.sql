@@ -562,10 +562,10 @@ CREATE TABLE `dzcp_news` (
 ) ENGINE=Aria AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Table structure for `dzcp_newscomments`
+-- Table structure for `dzcp_news_comments`
 -- ----------------------------
-DROP TABLE IF EXISTS `dzcp_newscomments`;
-CREATE TABLE `dzcp_newscomments` (
+DROP TABLE IF EXISTS `dzcp_news_comments`;
+CREATE TABLE `dzcp_news_comments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `news` int(10) NOT NULL DEFAULT '0',
   `nick` varchar(50) NOT NULL DEFAULT '',

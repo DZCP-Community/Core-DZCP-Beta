@@ -34,7 +34,7 @@ if(defined('_News')) {
     if(common::$sql['default']->rowCount()) {
         $show = ''; $color = 0;
         foreach ($qry as $get) {
-            $getk = common::$sql['default']->fetch("SELECT `kategorie` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get['kat']]);
+            $getk = common::$sql['default']->fetch("SELECT `kategorie` FROM `{prefix_news_kats}` WHERE `id` = ?;", [$get['kat']]);
 
             //News Link
             $smarty->caching = false;
@@ -51,7 +51,7 @@ if(defined('_News')) {
             $smarty->assign('titel', $titel);
             $smarty->assign('color',$color);
             $smarty->assign('kat', stringParser::decode($getk['kategorie']));
-            $smarty->assign('comments', common::cnt('{prefix_newscomments}', " WHERE `news` = ?","id",[$get['id']]));
+            $smarty->assign('comments', common::cnt('{prefix_news_comments}', " WHERE `news` = ?","id",[$get['id']]));
             $show .= $smarty->fetch('file:[' . common::$tmpdir . ']' . $dir . '/archiv_show.tpl', common::getSmartyCacheHash('news_archiv_show_' . $get['id']));
             $smarty->clearAllAssign(); $color++;
         }

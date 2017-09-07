@@ -27,7 +27,7 @@ switch (common::$do) {
         if(($id = isset($_GET['id']) ? $_GET['id'] : false) != false) {
             common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;", [(int)$id]);
             common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `user` = ?;", [(int)$id]);
-            common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;", [(int)$id]);
+            common::$sql['default']->delete("DELETE FROM `{prefix_user_stats}` WHERE `user` = ?;", [(int)$id]);
             $show = common::info(_user_deleted, "?admin=activate_user", 3);
         }
     break;
@@ -36,7 +36,7 @@ switch (common::$do) {
             foreach($_POST['userid'] as $id) {
                 common::$sql['default']->delete("DELETE FROM `{prefix_users}` WHERE `id` = ?;", [(int)$id]);
                 common::$sql['default']->delete("DELETE FROM `{prefix_permissions}` WHERE `user` = ?;", [(int)$id]);
-                common::$sql['default']->delete("DELETE FROM `{prefix_userstats}` WHERE `user` = ?;", [(int)$id]);
+                common::$sql['default']->delete("DELETE FROM `{prefix_user_stats}` WHERE `user` = ?;", [(int)$id]);
             }
 
             $show = common::info(_users_deleted, "?admin=activate_user", 4);

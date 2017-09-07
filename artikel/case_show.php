@@ -39,7 +39,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                                         notification::add_error(_empty_eintrag,'artikel');
                                     }
                                 } else {
-                                    common::$sql['default']->insert("INSERT INTO `{prefix_acomments}` SET `artikel` = ?,`datum` = ?,`nick` = ?,`email` = ?,`hp` = ?,`reg` = ?,`comment` = ?, `ipv4` = ?;",
+                                    common::$sql['default']->insert("INSERT INTO `{prefix_artikel_comments}` SET `artikel` = ?,`datum` = ?,`nick` = ?,`email` = ?,`hp` = ?,`reg` = ?,`comment` = ?, `ipv4` = ?;",
                                     [$artikel_id,time(),(isset($_POST['nick']) && !common::$userid ? stringParser::encode($_POST['nick']) : common::data('nick')),(isset($_POST['email']) && !common::$userid ? stringParser::encode($_POST['email']) : common::data('email')),
                                     (isset($_POST['hp']) && !common::$userid ? stringParser::encode(common::links($_POST['hp'])) : stringParser::encode(common::links(stringParser::decode(common::data('hp'))))),(int)(common::$userid),stringParser::encode($_POST['comment']),common::$userip['v4']]);
                                     common::setIpcheck("artid(" . $artikel_id . ")");
@@ -66,9 +66,9 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                     if(notification::has()) {
                         javascript::set('AnchorMove', 'notification-box');
                     }
-                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_acomments}` WHERE `id` = ?;", [($cid = (int)($_GET['cid']))],'reg');
+                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_artikel_comments}` WHERE `id` = ?;", [($cid = (int)($_GET['cid']))],'reg');
                     if ($reg == common::$userid || common::permission('artikel')) {
-                        common::$sql['default']->delete("DELETE FROM `{prefix_acomments}` WHERE `id` = ?;", [$cid]);
+                        common::$sql['default']->delete("DELETE FROM `{prefix_artikel_comments}` WHERE `id` = ?;", [$cid]);
                         notification::add_success(_comment_deleted);
                     } else {
                         notification::add_error(_error_wrong_permissions);
@@ -78,7 +78,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                     if(notification::has()) {
                         javascript::set('AnchorMove', 'notification-box');
                     }
-                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_acomments}` WHERE `id` = ?;", [($cid = (int)($_GET['cid']))],'reg');
+                    $reg = common::$sql['default']->fetch("SELECT `reg` FROM `{prefix_artikel_comments}` WHERE `id` = ?;", [($cid = (int)($_GET['cid']))],'reg');
                     if (common::$sql['default']->rowCount() && !empty($_POST['comment'])) {
                         if ($reg == common::$userid || common::permission('artikel')) {
                             //-> Editby Text
@@ -88,7 +88,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                             $editedby = $smarty->fetch('string:'._edited_by);
                             $smarty->clearAllAssign();
 
-                            common::$sql['default']->update("UPDATE `{prefix_acomments}` SET `nick` = ?, `email` = ?, `hp` = ?, `comment` = ?, `editby` = ?
+                            common::$sql['default']->update("UPDATE `{prefix_artikel_comments}` SET `nick` = ?, `email` = ?, `hp` = ?, `comment` = ?, `editby` = ?
                                           WHERE `id` = ?;", [(isset($_POST['nick']) ? stringParser::encode($_POST['nick']) : ''),
                                           (isset($_POST['email']) ? stringParser::encode($_POST['email']) : ''),
                                           (isset($_POST['hp']) ? stringParser::encode(common::links($_POST['hp'])) : ''),
@@ -105,7 +105,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                     }
                     break;
                 case 'edit':
-                    $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`comment` FROM `{prefix_acomments}` WHERE `id` = ?;", [(int)($_GET['cid'])]);
+                    $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`comment` FROM `{prefix_artikel_comments}` WHERE `id` = ?;", [(int)($_GET['cid'])]);
                     if (common::$userid >= 1 && ($get['reg'] == common::$userid || common::permission('artikel'))) {
                         if(notification::has()) {
                             javascript::set('AnchorMove', 'comForm');
@@ -178,11 +178,11 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
             }
 
             //Artikel Comments
-            $qryc = common::$sql['default']->select("SELECT * FROM `{prefix_acomments}` WHERE `artikel` = ? "
+            $qryc = common::$sql['default']->select("SELECT * FROM `{prefix_artikel_comments}` WHERE `artikel` = ? "
                 ."ORDER BY `datum` DESC LIMIT ".(common::$page - 1)*settings::get('m_comments').",".settings::get('m_comments').";",
                 [$artikel_id]);
 
-            $entrys = common::cnt('{prefix_acomments}', " WHERE `artikel` = ?","id",[$artikel_id]);
+            $entrys = common::cnt('{prefix_artikel_comments}', " WHERE `artikel` = ?","id",[$artikel_id]);
             $i = ($entrys - (common::$page - 1) * settings::get('m_comments')); $comments = '';
             foreach($qryc as $getc) {
                 $edit = ""; $delete = "";
@@ -238,7 +238,6 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                 $titel = $smarty->fetch('string:'._eintrag_titel);
                 $smarty->clearAllAssign();
 
-                $posted_ip = (common::$chkMe == 4 || common::permission('ipban') ? $getc['ipv4'] : _logged);
                 $smarty->caching = true;
                 $smarty->assign('titel',$titel);
                 $smarty->assign('comment',BBCode::parse_html((string)$getc['comment']));
@@ -249,7 +248,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
                 $smarty->assign('avatar',common::useravatar($getc['reg']));
                 $smarty->assign('onoff',$onoff);
                 $smarty->assign('rank',common::getrank($getc['reg']));
-                $smarty->assign('ip',$posted_ip);
+                $smarty->assign('ip',common::getPostedIP($getc));
                 $comments .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/comments_show.tpl',common::getSmartyCacheHash('artikel_comments_'.$getc['id']));
                 $smarty->clearAllAssign();
                 $i--;
@@ -293,7 +292,7 @@ if(defined('_Artikel') && isset($_GET['id']) && !empty($_GET['id'])) {
             $showmore = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/comments.tpl');
             $smarty->clearAllAssign();
 
-            $artikelimage = '../inc/images/uploads/newskat/'.common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_newskat}` WHERE `id` = ?;", [$get_artikel['kat']],'katimg');
+            $artikelimage = '../inc/images/uploads/newskat/'.common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_news_kats}` WHERE `id` = ?;", [$get_artikel['kat']],'katimg');
             foreach (common::SUPPORTED_PICTURE as $tmpendung) {
                 if (file_exists(basePath . "/inc/images/uploads/artikel/".$get_artikel['id'].".".$tmpendung)) {
                     $artikelimage = '../inc/images/uploads/artikel/'.$get_artikel['id'].'.'.$tmpendung;

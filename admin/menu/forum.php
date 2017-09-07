@@ -21,7 +21,7 @@ $where = $where.': '._config_forum_head;
 switch (common::$do) {
     case 'newkat':
         $positions = "";
-        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forumkats}` ORDER BY `kid`;");
+        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forum_kats}` ORDER BY `kid`;");
         foreach($qry as $get) {
             $positions .= common::select_field(($get['kid']+1),false,_nach.' '.stringParser::decode($get['name']));
         }
@@ -38,15 +38,14 @@ switch (common::$do) {
         $smarty->assign('kat','');
         $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/katform.tpl');
         $smarty->clearAllAssign();
-
     break;
     case 'addkat':
         if(!empty($_POST['kat'])) {
             $sign = (isset($_POST['kid']) && $_POST['kid'] == 1 
                     || $_POST['kid'] == 2 ? ">= " : "> ");
 
-            common::$sql['default']->update("UPDATE `{prefix_forumkats}` SET `kid` = (kid+1) WHERE kid ".$sign." ?;", [(int)($_POST['kid'])]);
-            common::$sql['default']->insert("INSERT INTO `{prefix_forumkats}` SET `kid` = ?, `name` = ?, `intern` = ?",
+            common::$sql['default']->update("UPDATE `{prefix_forum_kats}` SET `kid` = (kid+1) WHERE kid ".$sign." ?;", [(int)($_POST['kid'])]);
+            common::$sql['default']->insert("INSERT INTO `{prefix_forum_kats}` SET `kid` = ?, `name` = ?, `intern` = ?",
                     [(int)($_POST['kid']),stringParser::encode($_POST['kat']),(int)($_POST['intern'])]);
 
             $show = common::info(_config_forum_kat_added, "?admin=forum");
@@ -55,19 +54,19 @@ switch (common::$do) {
         }
     break;
     case 'delete':
-        $get = common::$sql['default']->fetch("SELECT id,sid FROM `{prefix_forumsubkats}` WHERE sid = '".(int)($_GET['id'])."'");
+        $get = common::$sql['default']->fetch("SELECT id,sid FROM `{prefix_forum_sub_kats}` WHERE sid = '".(int)($_GET['id'])."'");
         if(common::$sql['default']->rowCount()) {
-            common::$sql['default']->delete("DELETE FROM `{prefix_forumkats}` WHERE `id` = ?;", [$get['sid']]);
-            common::$sql['default']->delete("DELETE FROM `{prefix_forumthreads}` WHERE `kid` = ?;", [$get['sid']]);
-            common::$sql['default']->delete("DELETE FROM `{prefix_forumposts}` WHERE `kid` = ?;", [$get['sid']]);
-            common::$sql['default']->delete("DELETE FROM `{prefix_forumsubkats}` WHERE `sid` = ?;", [$get['sid']]);
+            common::$sql['default']->delete("DELETE FROM `{prefix_forum_kats}` WHERE `id` = ?;", [$get['sid']]);
+            common::$sql['default']->delete("DELETE FROM `{prefix_forum_threads}` WHERE `kid` = ?;", [$get['sid']]);
+            common::$sql['default']->delete("DELETE FROM `{prefix_forum_posts}` WHERE `kid` = ?;", [$get['sid']]);
+            common::$sql['default']->delete("DELETE FROM `{prefix_forum_sub_kats}` WHERE `sid` = ?;", [$get['sid']]);
             $show = common::info(_config_forum_kat_deleted, "?admin=forum");
         }
     break;
     case 'edit':
-        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forumkats}` WHERE id = '".(int)($_GET['id'])."'");
+        $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forum_kats}` WHERE id = '".(int)($_GET['id'])."'");
         foreach($qry as $get) {
-            $pos = common::$sql['default']->select("SELECT `kid`,`name` FROM `{prefix_forumkats}` ORDER BY kid;");
+            $pos = common::$sql['default']->select("SELECT `kid`,`name` FROM `{prefix_forum_kats}` ORDER BY kid;");
             foreach($pos as $getpos) {
                 if($get['name'] != $getpos['name']) {
                     $positions .= common::select_field(($getpos['kid']+1),false,_nach.' '.stringParser::decode($getpos['name']));
@@ -104,16 +103,16 @@ switch (common::$do) {
                 else
                     $sign = "> ";
 
-                common::$sql['default']->update("UPDATE `{prefix_forumkats}` SET `kid` = kid+1 WHERE `kid` ".$sign." '".(int)($_POST['kid'])."'");
+                common::$sql['default']->update("UPDATE `{prefix_forum_kats}` SET `kid` = kid+1 WHERE `kid` ".$sign." '".(int)($_POST['kid'])."'");
             }
 
-            common::$sql['default']->update("UPDATE `{prefix_forumkats}` SET `name`    = '".stringParser::encode($_POST['kat'])."', ".$kid." `intern`  = '".(int)($_POST['intern'])."' WHERE id = '".(int)($_GET['id'])."'");
+            common::$sql['default']->update("UPDATE `{prefix_forum_kats}` SET `name`    = '".stringParser::encode($_POST['kat'])."', ".$kid." `intern`  = '".(int)($_POST['intern'])."' WHERE id = '".(int)($_GET['id'])."'");
             $show = common::info(_config_forum_kat_edited, "?admin=forum");
         }
     break;
     case 'newskat':
         $positions = "";
-        $qry = common::$sql['default']->select("SELECT `pos`,`kattopic` FROM `{prefix_forumsubkats}` WHERE sid = " . (int) $_GET['id']." ORDER BY pos");
+        $qry = common::$sql['default']->select("SELECT `pos`,`kattopic` FROM `{prefix_forum_sub_kats}` WHERE sid = " . (int) $_GET['id']." ORDER BY pos");
         foreach($qry as $get) {
             $positions .= common::select_field(($get['pos']+1),false,_nach.' '.stringParser::decode($get['kattopic']));
         }
@@ -143,15 +142,15 @@ switch (common::$do) {
             else  
                 $sign = "> ";
 
-            common::$sql['default']->update("UPDATE `{prefix_forumsubkats}` SET `pos` = pos+1 WHERE `pos` ".$sign." '".(int)($_POST['order'])."'");
-            common::$sql['default']->insert("INSERT INTO `{prefix_forumsubkats}` SET `sid` = '".(int)($_GET['id'])."', `pos` = '".(int)($_POST['order'])."', `kattopic` = '".stringParser::encode($_POST['skat'])."', `subtopic` = '".stringParser::encode($_POST['stopic'])."'");
+            common::$sql['default']->update("UPDATE `{prefix_forum_sub_kats}` SET `pos` = pos+1 WHERE `pos` ".$sign." '".(int)($_POST['order'])."'");
+            common::$sql['default']->insert("INSERT INTO `{prefix_forum_sub_kats}` SET `sid` = '".(int)($_GET['id'])."', `pos` = '".(int)($_POST['order'])."', `kattopic` = '".stringParser::encode($_POST['skat'])."', `subtopic` = '".stringParser::encode($_POST['stopic'])."'");
             $show = common::info(_config_forum_skat_added, "?admin=forum&show=subkats&amp;id=".$_GET['id']."");
         }
     break;
     case 'editsubkat':
-        $qry = common::$sql['default']->select("SELECT `sid`,`kattopic` FROM `{prefix_forumsubkats}` WHERE `id` = ?;", [(int)($_GET['id'])]);
+        $qry = common::$sql['default']->select("SELECT `sid`,`kattopic` FROM `{prefix_forum_sub_kats}` WHERE `id` = ?;", [(int)($_GET['id'])]);
         foreach($qry as $get) {
-            $pos = common::$sql['default']->select("SELECT `kattopic`,`pos` FROM `{prefix_forumsubkats}` WHERE `sid` = ? ORDER BY `pos`;", [$get['sid']]);
+            $pos = common::$sql['default']->select("SELECT `kattopic`,`pos` FROM `{prefix_forum_sub_kats}` WHERE `sid` = ? ORDER BY `pos`;", [$get['sid']]);
             foreach($pos as $getpos) {
                 if($get['kattopic'] != $getpos['kattopic']) {
                     $positions .= common::select_field(($getpos['pos']+1),false,_nach.' '.stringParser::decode($getpos['kattopic']));
@@ -187,12 +186,12 @@ switch (common::$do) {
                 else  
                     $sign = "> ";
 
-                common::$sql['default']->update("UPDATE `{prefix_forumsubkats}` "
+                common::$sql['default']->update("UPDATE `{prefix_forum_sub_kats}` "
                         . "SET `pos` = (pos+1) "
                         . "WHERE `pos` ".$sign." '".(int)($_POST['order'])."';");
             }
 
-            common::$sql['default']->update("UPDATE `{prefix_forumsubkats}` SET "
+            common::$sql['default']->update("UPDATE `{prefix_forum_sub_kats}` SET "
                     . "`kattopic` = '".stringParser::encode($_POST['skat'])."', ".$order." "
                     . "`subtopic` = '".stringParser::encode($_POST['stopic'])."' "
                     . "WHERE id = '".(int)($_GET['id'])."'");
@@ -201,19 +200,19 @@ switch (common::$do) {
         }
     break;
     case 'deletesubkat':
-        $get = common::$sql['default']->fetch("SELECT `id`,`sid` FROM `{prefix_forumsubkats}` WHERE id = ?;", [(int)($_GET['id'])]);
+        $get = common::$sql['default']->fetch("SELECT `id`,`sid` FROM `{prefix_forum_sub_kats}` WHERE id = ?;", [(int)($_GET['id'])]);
         if(common::$sql['default']->rowCount()) {
-            common::$sql['default']->delete("DELETE FROM `{prefix_forumsubkats}` WHERE `id` = ?;", [(int)($get['id'])]);
-            common::$sql['default']->delete("DELETE FROM `{prefix_forumthreads}` WHERE `kid` = ?;", [(int)($get['id'])]);
-            common::$sql['default']->delete("DELETE FROM `{prefix_forumposts}` WHERE `kid` = ?;", [(int)($get['id'])]);
+            common::$sql['default']->delete("DELETE FROM `{prefix_forum_sub_kats}` WHERE `id` = ?;", [(int)($get['id'])]);
+            common::$sql['default']->delete("DELETE FROM `{prefix_forum_threads}` WHERE `kid` = ?;", [(int)($get['id'])]);
+            common::$sql['default']->delete("DELETE FROM `{prefix_forum_posts}` WHERE `kid` = ?;", [(int)($get['id'])]);
             $show = common::info(_config_forum_skat_deleted, "?admin=forum&show=subkats&amp;id=".$get['sid']."");
         }
     break;
     default:
         if(isset($_GET['show']) && strtolower($_GET['show']) == "subkats") {
             $qryk = common::$sql['default']->select("SELECT s1.`name`,s2.`id`,s2.`kattopic`,s2.`subtopic`,s2.`pos` "
-                               . "FROM `{prefix_forumkats}` AS `s1` "
-                               . "LEFT JOIN `{prefix_forumsubkats}` AS `s2` "
+                               . "FROM `{prefix_forum_kats}` AS `s1` "
+                               . "LEFT JOIN `{prefix_forum_sub_kats}` AS `s2` "
                                . "ON s1.`id` = s2.`sid` "
                                . "WHERE s1.`id` = ? ORDER BY s2.`pos`;",
                     [(int)($_GET['id'])]);
@@ -261,7 +260,7 @@ switch (common::$do) {
                 $smarty->clearAllAssign();
             }
         } else {
-            $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forumkats}` ORDER BY `kid`;");
+            $qry = common::$sql['default']->select("SELECT * FROM `{prefix_forum_kats}` ORDER BY `kid`;");
             foreach($qry as $get) {
                 $smarty->caching = false;
                 $smarty->assign('kat',stringParser::decode($get['name']));
@@ -280,7 +279,7 @@ switch (common::$do) {
                 $smarty->assign('class',$class);
                 $smarty->assign('kat',$kat);
                 $smarty->assign('status',$status);
-                $smarty->assign('skats',common::cnt('{prefix_forumsubkats}', " WHERE sid = ?","id", [(int)($get['id'])]));
+                $smarty->assign('skats',common::cnt('{prefix_forum_sub_kats}', " WHERE sid = ?","id", [(int)($get['id'])]));
                 $smarty->assign('edit',$edit);
                 $smarty->assign('delete',$delete);
                 $kats .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_show_kats.tpl');

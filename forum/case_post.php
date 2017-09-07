@@ -19,7 +19,7 @@ if(defined('_Forum')) {
     if(common::$userid && common::$chkMe >= 1) {
         switch (common::$do) {
             case 'edit':
-                $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumposts}` WHERE `id` = ?;", [(int)($_GET['id'])]);
+                $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forum_posts}` WHERE `id` = ?;", [(int)($_GET['id'])]);
                 if (common::$sql['default']->rowCount() && ($get['reg'] == common::$userid || common::permission("forum"))) {
                     /*
                      * ########################################################
@@ -55,17 +55,17 @@ if(defined('_Forum')) {
                             $smarty->clearAllAssign();
 
                             if (!$get['reg']) {
-                                common::$sql['default']->update("UPDATE `{prefix_forumposts}` SET `nick` = ?, `email`  = ?, `text` = ?, `hp` = ?, `edited` = ? WHERE `id` = ?;",
+                                common::$sql['default']->update("UPDATE `{prefix_forum_posts}` SET `nick` = ?, `email`  = ?, `text` = ?, `hp` = ?, `edited` = ? WHERE `id` = ?;",
                                     [stringParser::encode($_POST['nick']), stringParser::encode($_POST['email']), stringParser::encode($_POST['eintrag']),
                                         stringParser::encode(common::links($_POST['hp'])), stringParser::encode($editedby), $get['id']]);
                             } else {
-                                common::$sql['default']->update("UPDATE `{prefix_forumposts}` SET `text` = ?, `edited` = ? WHERE `id` = ?;",
+                                common::$sql['default']->update("UPDATE `{prefix_forum_posts}` SET `text` = ?, `edited` = ? WHERE `id` = ?;",
                                     [stringParser::encode($_POST['eintrag']), stringParser::encode($editedby), $get['id']]);
                             }
 
                             send_forum_abo(false, $get['sid'], $_POST['eintrag'], true);
 
-                            $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?", "id", [$getp['sid']]); //TODO: FIX $getp
+                            $entrys = common::cnt("{prefix_forum_posts}", " WHERE `sid` = ?", "id", [$getp['sid']]); //TODO: FIX $getp
                             $pagenr = !$entrys ? 1 : ceil($entrys / settings::get('m_fposts'));
                             $index = common::info(_forum_editpost_successful, '?action=showthread&amp;id=' . $getp['sid'] . '&amp;page=' . $pagenr . '#p' . ($entrys + 1));
                         } else {
@@ -113,16 +113,16 @@ if(defined('_Forum')) {
                 if (!common::$chkMe) {
                     $index = common::error(_error_unregistered, 1);
                 } else {
-                    common::$sql['default']->fetch("SELECT `id` FROM `{prefix_forumthreads}` WHERE `id` = ?;", [(int)$_GET['id']]);
+                    common::$sql['default']->fetch("SELECT `id` FROM `{prefix_forum_threads}` WHERE `id` = ?;", [(int)$_GET['id']]);
                     if (!common::$sql['default']->rowCount()) {
                         $index = common::error(_id_dont_exist, 1);
                     } else {
                         if (!common::ipcheck("fid(" . $_SESSION['kid'] . ")", settings::get('f_forum'))) {
                             $lastpost = '';
-                            $checks = common::$sql['default']->fetch("SELECT s2.`id`,s1.`intern` FROM `{prefix_forumkats}` AS s1 LEFT JOIN `{prefix_forumsubkats}` AS s2 ON s2.`sid` = s1.`id` WHERE s2.`id` = ?;",
+                            $checks = common::$sql['default']->fetch("SELECT s2.`id`,s1.`intern` FROM `{prefix_forum_kats}` AS s1 LEFT JOIN `{prefix_forum_sub_kats}` AS s2 ON s2.`sid` = s1.`id` WHERE s2.`id` = ?;",
                                 [$_SESSION['kid']]);
 
-                            if (common::$sql['default']->rows("SELECT `id` FROM `{prefix_forumthreads}` WHERE `id` = ? AND `closed` = 1;",
+                            if (common::$sql['default']->rows("SELECT `id` FROM `{prefix_forum_threads}` WHERE `id` = ? AND `closed` = 1;",
                                     [($id = (int)($_GET['id']))]) && common::$chkMe != 4 && !common::permission("forum")
                             ) {
                                 $index = common::error(_error_forum_closed);
@@ -143,7 +143,7 @@ if(defined('_Forum')) {
 
                                     $validated_post_data = common::$gump->run($_POST);
                                     if ($validated_post_data !== false && $id >= 1) {
-                                        $getdp = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumposts}` WHERE `kid` = ? AND `sid` = ? LIMIT 1;",
+                                        $getdp = common::$sql['default']->fetch("SELECT * FROM `{prefix_forum_posts}` WHERE `kid` = ? AND `sid` = ? LIMIT 1;",
                                             [$_SESSION['kid'], $id]);
 
                                         $double_post = 0;
@@ -155,7 +155,7 @@ if(defined('_Forum')) {
                                                 $double_post = (stringParser::encode($_POST['nick']) == $getdp['nick'] && settings::get('double_post')) ? common::FORUM_DOUBLE_POST_TH_ADD : 0;
                                             }
                                         } else {
-                                            $gettdp = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE `kid` = ? AND `id` = ?;",
+                                            $gettdp = common::$sql['default']->fetch("SELECT * FROM `{prefix_forum_threads}` WHERE `kid` = ? AND `id` = ?;",
                                                 [$_SESSION['kid'], $id]);
 
                                             if (common::$userid >= 1) {
@@ -174,9 +174,9 @@ if(defined('_Forum')) {
                                                 $text = $smarty->fetch('string:' . _forum_spam_text);
                                                 $smarty->clearAllAssign();
 
-                                                common::$sql['default']->update("UPDATE `{prefix_forumthreads}` SET `lp` = ? WHERE `kid` = ? AND `id` = ?;",
+                                                common::$sql['default']->update("UPDATE `{prefix_forum_threads}` SET `lp` = ? WHERE `kid` = ? AND `id` = ?;",
                                                     [time(), $_SESSION['kid'], $id]);
-                                                common::$sql['default']->update("UPDATE `{prefix_forumposts}` SET `date` = ?, `text` = ? WHERE `id` = ?;",
+                                                common::$sql['default']->update("UPDATE `{prefix_forum_posts}` SET `date` = ?, `text` = ? WHERE `id` = ?;",
                                                     [time(), $text, $getdp['id']]);
                                                 unset($getdp, $text);
                                                 break;
@@ -188,17 +188,17 @@ if(defined('_Forum')) {
                                                 $text = $smarty->fetch('string:' . _forum_spam_text);
                                                 $smarty->clearAllAssign();
 
-                                                common::$sql['default']->update("UPDATE `{prefix_forumthreads}` SET `lp`= ?, `t_text` = ?, `posts` = (posts+1)  WHERE `id` = ?;",
+                                                common::$sql['default']->update("UPDATE `{prefix_forum_threads}` SET `lp`= ?, `t_text` = ?, `posts` = (posts+1)  WHERE `id` = ?;",
                                                     [time(), $text, $gettdp['id']]);
                                                 unset($gettdp, $text);
                                                 break;
                                             default:
                                             case common::FORUM_DOUBLE_POST_INSERT:
-                                                common::$sql['default']->insert("INSERT INTO `{prefix_forumposts}` SET `kid` = ?, `sid` = ?, `date` = ?, `nick` = ?,`email` = ?,`reg` = ?,`text` = ?,`ipv4`= ?;",
+                                                common::$sql['default']->insert("INSERT INTO `{prefix_forum_posts}` SET `kid` = ?, `sid` = ?, `date` = ?, `nick` = ?,`email` = ?,`reg` = ?,`text` = ?,`ipv4`= ?;",
                                                     [$_SESSION['kid'], $id, time(), stringParser::encode($_POST['nick']), stringParser::encode($_POST['email']),
                                                         common::$userid, stringParser::encode($_POST['eintrag']), common::$userip['v4']]);
 
-                                                common::$sql['default']->update("UPDATE `{prefix_forumthreads}` SET `lp` = ?,`first` = 0,`posts` = (posts+1) WHERE id = ?;",
+                                                common::$sql['default']->update("UPDATE `{prefix_forum_threads}` SET `lp` = ?,`first` = 0,`posts` = (posts+1) WHERE id = ?;",
                                                     [time(), $id]);
                                                 break;
                                         }
@@ -208,7 +208,7 @@ if(defined('_Forum')) {
                                         common::userstats_increase('forumposts');
                                         send_forum_abo(false, $id, $_POST['eintrag']);
 
-                                        $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?", "id", [$id]);
+                                        $entrys = common::cnt("{prefix_forum_posts}", " WHERE `sid` = ?", "id", [$id]);
                                         $pagenr = !$entrys ? 1 : ceil($entrys / settings::get('m_fposts'));
                                         $index = common::info(_forum_newpost_successful, '?action=showthread&amp;id=' . $_GET['id'] . ($pagenr >= 2 ? '&amp;page=' . $pagenr : '') . '#p' . ($entrys + 1));
                                     } else {
@@ -237,13 +237,13 @@ if(defined('_Forum')) {
                                     //Zitat
                                     $zitat = "";
                                     if (isset($_GET['zitat'])) {
-                                        $getzitat = common::$sql['default']->fetch("SELECT `nick`,`reg`,`text` FROM `{prefix_forumposts}` WHERE `id` = ?;",
+                                        $getzitat = common::$sql['default']->fetch("SELECT `nick`,`reg`,`text` FROM `{prefix_forum_posts}` WHERE `id` = ?;",
                                             [(int)($_GET['zitat'])]);
 
                                         $nick = (!$getzitat['reg'] ? $getzitat['nick'] : common::autor($getzitat['reg']));
                                         $zitat = BBCode::zitat($nick, $getzitat['text']);
                                     } else if (isset($_GET['zitat_thread'])) {
-                                        $getzitat = common::$sql['default']->fetch("SELECT `t_nick`,`t_reg`,`t_text` FROM `{prefix_forumthreads}` WHERE `id` = ?;",
+                                        $getzitat = common::$sql['default']->fetch("SELECT `t_nick`,`t_reg`,`t_text` FROM `{prefix_forum_threads}` WHERE `id` = ?;",
                                             [(int)($_GET['zitat_thread'])]);
 
                                         $nick = (!$getzitat['t_reg'] ? $getzitat['t_nick'] : stringParser::decode(common::data("nick", $getzitat['t_reg'])));
@@ -251,7 +251,7 @@ if(defined('_Forum')) {
                                     }
 
                                     //Show last post
-                                    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumposts}` WHERE `kid` = ? AND `sid` = ? ORDER BY `date` DESC;",
+                                    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forum_posts}` WHERE `kid` = ? AND `sid` = ? ORDER BY `date` DESC;",
                                         [$_SESSION['kid'], $id]);
 
                                     if (common::$sql['default']->rowCount()) {
@@ -270,11 +270,10 @@ if(defined('_Forum')) {
 
                                         //User Online check
                                         $onoff = ($get['reg'] ? common::onlinecheck($get['reg']) : '');
-                                        $posted_ip = (common::$chkMe == 4 || common::permission('ipban') ? $get['ipv4'] : _logged);
 
                                         //Titel
                                         $smarty->caching = false;
-                                        $smarty->assign('postid', (common::cnt("{prefix_forumposts}", " WHERE sid = ?", "id", [$id]) + 1));
+                                        $smarty->assign('postid', (common::cnt("{prefix_forum_posts}", " WHERE sid = ?", "id", [$id]) + 1));
                                         $smarty->assign('datum', date("d.m.Y", $get['date']));
                                         $smarty->assign('zeit', date("H:i", $get['date']));
                                         $smarty->assign('url', '#');
@@ -329,20 +328,20 @@ if(defined('_Forum')) {
                                         $smarty->assign('email', $email);
                                         $smarty->assign('status', common::getrank($get['reg']));
                                         $smarty->assign('avatar', common::useravatar($get['reg']));
-                                        $smarty->assign('ip', $posted_ip);
+                                        $smarty->assign('ip', common::getPostedIP($get));
                                         $smarty->assign('edited', stringParser::decode($get['edited']));
                                         $smarty->assign('posts', $userposts);
                                         $smarty->assign('titel', $titel);
                                         $smarty->assign('signatur', $sig);
                                         $smarty->assign('zitat', $zitat);
                                         $smarty->assign('onoff', $onoff);
-                                        $smarty->assign('lp', common::cnt("{prefix_forumposts}", " WHERE `sid` = ?", 'id', [$id]) + 1);
+                                        $smarty->assign('lp', common::cnt("{prefix_forum_posts}", " WHERE `sid` = ?", 'id', [$id]) + 1);
                                         $lastpost = $smarty->fetch('file:[' . common::$tmpdir . ']' . $dir . '/forum_posts_show.tpl');
                                         $smarty->clearAllAssign();
                                     }
 
                                     if (empty($lastpost)) { //Show last forum thread ( if last post is empty )
-                                        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forumthreads}` WHERE `kid` = ? AND `id` = ?;", [$_SESSION['kid'], $id]);
+                                        $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forum_threads}` WHERE `kid` = ? AND `id` = ?;", [$_SESSION['kid'], $id]);
                                         $sig = (($signatur = common::data("signatur", $get['t_reg'])) ? _sig . BBCode::parse_html((string)$signatur) : '');
 
                                         //User Posts ( Uber Avatar )
@@ -359,7 +358,6 @@ if(defined('_Forum')) {
 
                                         $ftxt = hl($get['t_text'], (isset($_GET['hl']) ? $_GET['hl'] : ''));
                                         $text = isset($_GET['hl']) ? BBCode::parse_html((string)$ftxt['text']) : BBCode::parse_html((string)$get['t_text']);
-                                        $posted_ip = common::$chkMe == 4 || common::permission('ipban') ? $get['ipv4'] : _logged;
 
                                         //Titel
                                         $smarty->caching = false;
@@ -417,22 +415,22 @@ if(defined('_Forum')) {
                                         $smarty->assign('email', $email);
                                         $smarty->assign('status', common::getrank($get['t_reg']));
                                         $smarty->assign('avatar', common::useravatar($get['t_reg']));
-                                        $smarty->assign('ip', $posted_ip);
+                                        $smarty->assign('ip', common::getPostedIP($get));
                                         $smarty->assign('edited', stringParser::decode($get['edited']));
                                         $smarty->assign('posts', $userposts);
                                         $smarty->assign('titel', $titel);
                                         $smarty->assign('signatur', $sig);
                                         $smarty->assign('zitat', '');
                                         $smarty->assign('onoff', $onoff);
-                                        $smarty->assign('lp', common::cnt("{prefix_forumposts}", " WHERE `sid` = ?", 'id', [$id]) + 1);
+                                        $smarty->assign('lp', common::cnt("{prefix_forum_posts}", " WHERE `sid` = ?", 'id', [$id]) + 1);
                                         $lastpost = $smarty->fetch('file:[' . common::$tmpdir . ']' . $dir . '/forum_posts_show.tpl');
                                         $smarty->clearAllAssign();
                                     }
 
-                                    unset($get, $hp, $text, $pn, $ftxt, $email, $titel, $posted_ip, $page, $userposts, $sig, $onoff);
+                                    unset($get, $hp, $text, $pn, $ftxt, $email, $titel, $page, $userposts, $sig, $onoff);
 
                                     //Get topic for $where
-                                    $topic = common::$sql['default']->fetch("SELECT `topic` FROM `{prefix_forumthreads}` WHERE `kid` = ? AND `id` = ?;",
+                                    $topic = common::$sql['default']->fetch("SELECT `topic` FROM `{prefix_forum_threads}` WHERE `kid` = ? AND `id` = ?;",
                                         [$_SESSION['kid'], $id], 'topic');
                                     $where = $where . ' - ' . stringParser::decode($topic);
                                     unset($topic);
@@ -463,21 +461,21 @@ if(defined('_Forum')) {
                 }
                 break;
             case 'delete':
-                $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`sid`,`kid` FROM `{prefix_forumposts}` WHERE `id` = ?;", [(int)($_GET['id'])]);
+                $get = common::$sql['default']->fetch("SELECT `id`,`reg`,`sid`,`kid` FROM `{prefix_forum_posts}` WHERE `id` = ?;", [(int)($_GET['id'])]);
                 if (common::$sql['default']->rowCount() && ($get['reg'] == common::$userid || common::permission("forum"))) {
                     //Update forumstats
-                    common::$sql['default']->update("UPDATE `{prefix_forumthreads}` SET `posts` = (posts-1)  WHERE `id` = ?;", [$get['sid']]);
+                    common::$sql['default']->update("UPDATE `{prefix_forum_threads}` SET `posts` = (posts-1)  WHERE `id` = ?;", [$get['sid']]);
 
                     //Update userstats
-                    common::$sql['default']->update("UPDATE `{prefix_userstats}`SET `forumposts` = (forumposts-1) WHERE `user` = ?;", [$get['reg']]);
+                    common::$sql['default']->update("UPDATE `{prefix_user_stats}`SET `forumposts` = (forumposts-1) WHERE `user` = ?;", [$get['reg']]);
 
                     //Delete post
-                    common::$sql['default']->delete("DELETE FROM `{prefix_forumposts}` WHERE `id` = ?;", [$get['id']]);
+                    common::$sql['default']->delete("DELETE FROM `{prefix_forum_posts}` WHERE `id` = ?;", [$get['id']]);
 
                     //Update thread
-                    $entrys = common::cnt("{prefix_forumposts}", " WHERE `sid` = ?", "id", [$get['sid']]);
+                    $entrys = common::cnt("{prefix_forum_posts}", " WHERE `sid` = ?", "id", [$get['sid']]);
                     if (!$entrys) {
-                        common::$sql['default']->update("UPDATE `{prefix_forumthreads}` SET `first` = 1 WHERE `kid` = ?", [$get['kid']]);
+                        common::$sql['default']->update("UPDATE `{prefix_forum_threads}` SET `first` = 1 WHERE `kid` = ?", [$get['kid']]);
                     }
 
                     $pagenr = !$entrys ? 1 : ceil($entrys / settings::get('m_fposts'));
