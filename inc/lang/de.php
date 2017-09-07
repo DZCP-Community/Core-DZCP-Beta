@@ -18,6 +18,7 @@
 setlocale(LC_ALL, "de_DE.utf8");
 
 ## Fileman ##
+define('_perm_fileman' , 'Uploads verwalten');
 define('_fileman_uploads_' , '## Stammverzeichnis ##');
 define('_fileman_group_' , '## Gruppen ##');
 define('_fileman_public_' , '## &Ouml;ffentlich ##');

@@ -167,7 +167,7 @@ if(empty($show)) {
         $smarty->assign('check','');
         $smarty->assign('eposi',$posi);
         $smarty->assign('squad',stringParser::decode($getgroups['name']));
-        $esquads .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/admin/admin_checkfield_squads.tpl');
+        $egroups .= $smarty->fetch('file:['.common::$tmpdir.']user/admin/admin_checkfield_squads.tpl');
         $smarty->clearAllAssign();
     }
 

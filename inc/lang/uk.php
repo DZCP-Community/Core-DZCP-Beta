@@ -18,6 +18,7 @@
 setlocale(LC_ALL, "en_US.utf8");
 
 ## Fileman ##
+define('_perm_fileman' , 'manage uploads');
 define('_fileman_uploads_' , '## Global ##');
 define('_fileman_group_' , '## Groups ##');
 define('_fileman_public_' , '## Public ##');
