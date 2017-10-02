@@ -1,13 +1,3 @@
-@color_1: #DD7700;
-@color_2: #FFF;
-@color_3: #000;
-@color_4: #AAA;
-@font_family_1: Verdana;
-@background_color_1: #000099;
-@background_color_2: #DFD;
-@background_color_3: #DDD;
-@background_color_4: #EEE;
-
 /*
   RoxyFileman - web based file manager. Ready to use with CKEditor, TinyMCE.
   Can be easily integrated with any other WYSIWYG editor or CMS.
@@ -29,22 +19,10 @@
 
   Contact: Lyubomir Arsov, liubo (at) web-lobby.com
 */
-/* Search and order fields */
-/* END OF Search and order fields */
-/* Directory tree */
-/* END OF Directory tree */
-/* File list */
-/* END OF File list */
-/* Context menus */
-/* END OF Context menus */
-/* Buttons */
-/* END OF Buttons */
-/* File list views */
-/* END OF File list views */
-/* Upload dialog */
-/* END OF Upload dialog */
+@import "variables.less";
+
 body {
-  font-family: @font_family_1;
+  font-family: @font_family_verdana;
   font-size: 11px;
   padding: 0;
   margin: 0;
@@ -54,7 +32,7 @@ body {
 }
 a {
   text-decoration: none;
-  color: @color_1;
+  color: @orange-color;
 }
 ul {
   list-style: none;
@@ -82,8 +60,8 @@ ul {
   display: none;
   a {
     &:hover {
-      background-color: @background_color_1 !important;
-      color: @color_2;
+      background-color: @background_blue_color !important;
+      color: @white-color;
     }
   }
 }
@@ -115,11 +93,11 @@ ul {
     padding: 0 0 0 20px;
   }
   .selected {
-    background-color: @background_color_2 !important;
+    background-color: @background_light_green_color !important;
   }
   div.selected {
     &:hover {
-      background-color: @background_color_2 !important;
+      background-color: @background_light_green_color !important;
     }
   }
   margin-left: 4px;
@@ -153,18 +131,18 @@ ul {
 .contextMenu {
   a {
     &:hover {
-      background-color: @background_color_1 !important;
-      color: @color_2;
+      background-color: @background_blue_color !important;
+      color: @white-color;
     }
     background-repeat: no-repeat;
     background-position: 4px 6px;
     padding: 5px 25px 5px 20px;
     display: block;
-    color: @color_3;
+    color: @black-color;
     text-decoration: none;
   }
   position: absolute;
-  background-color: @background_color_3;
+  background-color: @background_light_gray_color;
   border: 1px solid #BBB;
   min-width: 100px;
   font-weight: bold;
@@ -172,11 +150,11 @@ ul {
 }
 #pnlFileList {
   .selected {
-    background-color: @background_color_1 !important;
-    color: @color_2;
+    background-color: @background_blue_color !important;
+    color: @white-color;
     &:hover {
-      background-color: @background_color_1 !important;
-      color: @color_2;
+      background-color: @background_blue_color !important;
+      color: @white-color;
     }
   }
   .icon {
@@ -269,7 +247,7 @@ input[type=text] {
 }
 hr {
   margin: 0;
-  color: @color_4;
+  color: @gray-color;
 }
 .actions {
   padding: 3px 0 10px 5px;
@@ -280,18 +258,18 @@ hr {
     height: 22px;
     font-size: 11px;
     border: 1px solid #CCC;
-    background-color: @background_color_4;
+    background-color: @background_light_white_color;
     border-radius: 3px;
     margin-bottom: 3px;
   }
   input[type=button] {
     &:hover {
-      background-color: @background_color_2;
+      background-color: @background_light_green_color;
       cursor: pointer;
     }
   }
   input.selected {
-    background-color: @background_color_2;
+    background-color: @background_light_green_color;
     cursor: pointer;
   }
 }
