@@ -20,17 +20,17 @@
     }
   ],
   "require": {
-    "ckeditor/ckeditor": "4.7.0",
+    "ckeditor/ckeditor": "4.7.3",
     "phpmailer/phpmailer": "v5.2.23",
     "smarty/smarty": "v3.1.31",
     "suin/php-rss-writer": "1.5.0",
     "jaybizzle/crawler-detect": "v1.2.46",
     "oyejorge/less.php": "v1.7.0.14",
-    "wixel/gump": "1.5.2",
+    "wixel/gump": "1.5.6",
     "pherum/snoopy": "2.0",
     "tan-tan-kanarek/github-php-client": "1.0.0",
-    "mobiledetect/mobiledetectlib": "2.8.25",
-    "phpfastcache/phpfastcache": "6.0.1",
+    "mobiledetect/mobiledetectlib": "2.8.26",
+    "phpfastcache/phpfastcache": "6.0.5",
     "vanilla/nbbc": "dev-master",
     "phine/country": "1.1.0"
   }

@@ -25,7 +25,7 @@ function smarty_function_languages($params,Smarty_Internal_Template &$smarty) {
     $lang="";
     $files = common::get_files(basePath.'/inc/lang/',false,true, ['php']);
     foreach ($files as $file) {
-        $file = str_replace('.php','',$file);
+        $file = preg_replace("#.php#", "",$file);
         if($file == 'global') continue;
         $image = '../inc/images/flaggen/nocountry.gif';
         foreach(common::SUPPORTED_PICTURE as $endung) {

@@ -256,6 +256,7 @@ switch(common::$do) {
             $smarty->assign('autor',common::autor($get['autor']));
             $smarty->assign('intnews','');
             $smarty->assign('sticky','');
+            $smarty->assign('id',$get['id']);
             $smarty->assign('public',$public);
             $smarty->assign('edit',$edit);
             $smarty->assign('delete',$delete);

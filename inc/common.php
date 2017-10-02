@@ -3217,7 +3217,6 @@ class common {
         javascript::set('dir',self::$designpath);  // Designpath
         javascript::set('dialog_button_00',_yes);
         javascript::set('dialog_button_01',_no);
-        javascript::set('onlyBBCode',true); // nur BBCode Verwenden
 
         //Check Wartungsmodus
         if(settings::get("wmodus") && self::$chkMe != 4) {
@@ -3234,7 +3233,7 @@ class common {
             }
 
             // JS-Dateine einbinden * json *
-            $java_vars = '<script language="javascript" type="text/javascript">var json=\''.javascript::encode().'\',dzcp_config=JSON&&JSON.parse(json)||$.parseJSON(json);</script>'."\n";
+            $java_vars = '<script language="javascript" type="text/javascript">var json=\''.javascript::encode().'\';</script>'."\n";
             $java_vars .= '<script language="javascript" type="text/javascript" src="../vendor/ckeditor/ckeditor/ckeditor.js"></script>'."\n";
             $java_vars .= '<script language="javascript" type="text/javascript" src="../vendor/ckeditor/ckeditor/adapters/jquery.js"></script>'."\n";
 
@@ -3256,7 +3255,7 @@ class common {
             $smarty->assign('index','<table class="mainContent" cellspacing="1">'.$index.'</table>');
             $smarty->assign('clanname',stringParser::decode(settings::get("clanname")));
             $smarty->assign('title',strip_tags($title));
-            $smarty->assign('java_vars',$java_vars);
+            $smarty->assign('java_vars',$java_vars,true);
             $smarty->assign('regen',isset($_GET['less_regen']) ? '&refresh=1' : '');
             $smarty->assign('where',$where);
             if($template != 'index' && file_exists(self::$designpath.'/'.$template.'.tpl')) {

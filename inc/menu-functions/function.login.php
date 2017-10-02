@@ -14,15 +14,17 @@
  * E-Mail: lbrucksch@codedesigns.de
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
-
 function smarty_function_login($params,Smarty_Internal_Template &$smarty) {
     $login = '';
     if(!common::$chkMe) {
-        $smarty->caching = false;
-        $secure = $smarty->fetch('file:[' . common::$tmpdir . ']menu/login/secure.tpl');
+        $secure = '';
+        if(settings::get('securelogin')) {
+            $smarty->caching = false;
+            $secure = $smarty->fetch('file:[' . common::$tmpdir . ']menu/login/secure.tpl');
+        }
 
         $smarty->caching = false;
-        $smarty->assign('secure', $secure);
+        $smarty->assign('secure', $secure, true);
         $login = $smarty->fetch('file:[' . common::$tmpdir . ']menu/login/login.tpl');
     }
 

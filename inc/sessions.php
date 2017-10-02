@@ -392,7 +392,7 @@ final class session {
     }
 
     public static function encode($data,$mcryptkey='',$binary=false,$hex=false) {
-        $crypt = new Crypt(CRYPT_MODE_BASE64,CRYPT_HASH_SHA1);
+        $crypt = new Crypt(Crypt::MODE_B64,$mcryptkey);
         if (empty($mcryptkey)) { $crypt->__set('Key', self::$securityKey_mcrypt); } 
         else { $crypt->__set('Key', $mcryptkey); }
         if($binary && !$hex) { $crypt->__set('Hash',CRYPT_MODE_BINARY); }
@@ -403,7 +403,7 @@ final class session {
     }
 
     public static function decode($data,$mcryptkey='',$binary=false,$hex=false) {
-        $crypt = new Crypt(CRYPT_MODE_BASE64,CRYPT_HASH_SHA1);
+        $crypt = new Crypt(Crypt::MODE_B64,$mcryptkey);
         if (empty($mcryptkey)) { $crypt->__set('Key', self::$securityKey_mcrypt); } 
         else { $crypt->__set('Key', $mcryptkey); }
         if($binary && !$hex) { $crypt->__set('Hash',CRYPT_MODE_BINARY); }

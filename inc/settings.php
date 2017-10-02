@@ -90,11 +90,11 @@ class settings extends common {
      * @param string $var
      * @return boolean
      */
-    public final static function set($what='',$var='', $default=true) {
+    public final static function set($what='',$var='',bool $default=true) {
         $what = utf8_encode(strtolower($what));
         if(self::is_exists($what)) {
             if(self::changed($what,$var)) {
-                $var = empty($var) && $default ? self::get_default($what) : $var;
+                $var = !is_integer($var) && empty($var) && $default ? self::get_default($what) : $var;
                 $data = self::$index[$what];
                 $data['value'] = ($data['length'] >= 1 ? self::cut($var,((int)$data['length']),false, false) : $var);
                 self::$index[$what] = $data;
@@ -119,7 +119,7 @@ class settings extends common {
         $what = utf8_encode(strtolower($what));
         if(self::is_exists($what)) {
             $data = self::$index[$what];
-            return ($data['value'] == utf8_encode($var) ? false : true);
+            return ($data['value'] == (is_integer($var) ? $var : utf8_encode($var)) ? false : true);
         }
 
         return false;

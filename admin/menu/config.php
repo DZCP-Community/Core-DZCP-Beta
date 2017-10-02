@@ -87,21 +87,22 @@ if($_POST) {
     if(settings::changed(($key='smtp_username'),($var=stringParser::encode($_POST['smtp_username'])))) settings::set($key,$var);
     if(settings::changed(($key='smtp_tls_ssl'),($var=(int)($_POST['smtp_tls_ssl'])))) settings::set($key,$var);
     if(settings::changed(($key='sendmail_path'),($var=stringParser::encode($_POST['sendmail_path'])))) settings::set($key,$var);
-    if(settings::changed(($key='urls_linked'),($var=stringParser::encode($_POST['urls_linked'])))) settings::set($key,$var);
-    if(settings::changed(($key='eml_lpwd_key'),($var=stringParser::encode($_POST['eml_lpwd'])))) settings::set($key,$var);
-    if(settings::changed(($key='eml_lpwd_key_subj'),($var=stringParser::encode($_POST['eml_lpwd_subj'])))) settings::set($key,$var);
-    if(settings::changed(($key='use_akl'),($var=(int)($_POST['akl'])))) settings::set($key,$var);
+    settings::set('urls_linked',stringParser::encode($_POST['urls_linked']));
+    settings::set('eml_lpwd_key',stringParser::encode($_POST['eml_lpwd']));
+    settings::set('eml_lpwd_key_subj',stringParser::encode($_POST['eml_lpwd_subj']));
+    settings::set('use_akl',(int)($_POST['akl']));
+    settings::set('securelogin',(int)($_POST['securelogin']));
     settings::load();
     notification::add_success(_config_set);
 }
 
-$files = common::get_files(basePath.'/inc/lang/languages/',false,true, ['php']); $lang = '';
+$files = common::get_files(basePath.'/inc/lang/',false,true, ['php']); $lang = '';
 foreach($files as $file) {
     $lng = preg_replace("#.php#", "",$file);
-    $lang .= common::select_field($lng,(stringParser::decode(settings::get('language')) == $lng),$lng);
-
-}
-unset($files,$file,$lng,$sel);
+    if($lng == 'global') continue;
+    $text = defined('_lang_'.$lng) ? constant('_lang_'.$lng) : $lng;
+    $lang .= common::select_field($lng,(stringParser::decode(settings::get('language')) == $lng),$text);
+} unset($files,$file,$lng,$sel);
 
 $tmplsel="";
 $tmps = common::get_files(basePath.'/inc/_templates_/',true);
@@ -141,10 +142,10 @@ foreach ($tmps as $tmp) {
 unset($data,$tmps,$tmp,$xml);
 
 $smarty->caching = false;
-$pwde_options = $smarty->fetch('string:<option '.(!settings::get('default_pwd_encoder') ? 'selected="selected"' : '').' value="0">MD5 [lang_pwd_encoder_algorithm]</option>'
-    . '<option '.(settings::get('default_pwd_encoder') == 1 ? 'selected="selected"' : '').' value="1">SHA1 [lang_pwd_encoder_algorithm]</option>'
-    . '<option '.(settings::get('default_pwd_encoder') == 2 ? 'selected="selected"' : '').' value="2">SHA256 [lang_pwd_encoder_algorithm]</option>'
-    . '<option '.(settings::get('default_pwd_encoder') == 3 ? 'selected="selected"' : '').' value="3">SHA512 [lang_pwd_encoder_algorithm]</option>');
+$pwde_options = $smarty->fetch('string:<option '.(!settings::get('default_pwd_encoder') ? 'selected="selected"' : '').' value="0">MD5 '._pwd_encoder_algorithm.'</option>'
+    . '<option '.(settings::get('default_pwd_encoder') == 1 ? 'selected="selected"' : '').' value="1">SHA1 '.constant('_pwd_encoder_algorithm').'</option>'
+    . '<option '.(settings::get('default_pwd_encoder') == 2 ? 'selected="selected"' : '').' value="2">SHA256 '.constant('_pwd_encoder_algorithm').'</option>'
+    . '<option '.(settings::get('default_pwd_encoder') == 3 ? 'selected="selected"' : '').' value="3">SHA512 '.constant('_pwd_encoder_algorithm').'</option>');
 
 $smarty->caching = false;
 $mail_options = $smarty->fetch('string:<option '.(settings::get('mail_extension') == 'mail' ? 'selected="selected"' : '').' value="mail">'._default.'</option>'
@@ -152,7 +153,7 @@ $mail_options = $smarty->fetch('string:<option '.(settings::get('mail_extension'
     . '<option '.(settings::get('mail_extension') == 'smtp' ? 'selected="selected"' : '').' value="smtp">SMTP</option>');
 
 $smarty->caching = false;
-$smtp_secure_options = $smarty->fetch('string:<option '.(!settings::get('smtp_tls_ssl') ? 'selected="selected"' : '').' value="0">[lang_default]</option>'
+$smtp_secure_options = $smarty->fetch('string:<option '.(!settings::get('smtp_tls_ssl') ? 'selected="selected"' : '').' value="0">'._default.'</option>'
     . '<option '.(settings::get('smtp_tls_ssl') == 1 ? 'selected="selected"' : '').' value="1">TLS</option>'
     . '<option '.(settings::get('smtp_tls_ssl') == 2 ? 'selected="selected"' : '').' value="2">SSL</option>');
 
