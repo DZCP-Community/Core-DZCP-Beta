@@ -9,10 +9,6 @@
       <tr>
         <td class="contentHead" colspan="2" align="center"><a name="eintragen"></a><span class="fontBold">{lang msgID="artikel_comments_write_head"}</span></td>
       </tr>
-      <tr>
-        <td class="contentMainTop" style="width:20%"><span class="fontBold">{lang msgID="nick"}:</span></td>
-        <td class="contentMainFirst" style="width:80%;text-align:center">{$nick}</td>
-      </tr>
       {$notification}
       <tr>
         <td class="contentMainFirst" align="center" colspan="2">

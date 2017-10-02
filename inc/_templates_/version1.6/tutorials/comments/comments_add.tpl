@@ -7,7 +7,7 @@
     <form id="comForm" name="comForm" action="{$action}" method="post" onsubmit="return(DZCP.submitButton('contentSubmit'))">
     <table class="hperc" cellspacing="1">
       <tr>
-        <td class="contentHead" colspan="2" align="center"><a name="eintragen"></a><span class="fontBold">{lang msgID="news_comments_write_head"}</span></td>
+        <td class="contentHead" colspan="2" align="center"><a name="eintragen"></a><span class="fontBold">{lang msgID="tutorials_comments_add_head"}</span></td>
       </tr>
       {$notification}
       <tr>

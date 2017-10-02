@@ -7,6 +7,7 @@
 var doc = document, ie4 = document.all, opera = window.opera;
 var innerLayer, layer, x, y, offsetX = 15, offsetY = 5;
 var jQueryV = "3.2.1", $ = jQuery;
+var dzcp_config = JSON&&JSON.parse(json)|| $.parseJSON(json);
 
 function changeme(that) {document.location.href="index.php?kat=" + that.value;}
 
@@ -25,32 +26,12 @@ var config_ckeditor_bbcode_only = {
 
     filebrowserBrowseUrl:'/inc/ajax.php?i=fileman&run',
     filebrowserImageBrowseUrl:'/inc/ajax.php?i=fileman&run&type=image',
-    extraPlugins: 'dzcp_bbcode,dzcp_smiley,font,colorbutton,youtube',
+    extraPlugins: 'bbcode,smiley,font,colorbutton',
     removePlugins: 'format,horizontalrule,pastetext,pastefromword,scayt,showborders,stylescombo,table,tabletools,tableselection,wsc',
     removeButtons: 'Anchor,BGColor,Font,Strike,Subscript,Superscript',
     removeDialogTabs: 'link:upload;image:upload',
     fontSize_sizes: "80/80%;100/100%;120/120%;150/150%;200/200%;300/300%;400/400%;500/500%",
     disableObjectResizing: true,
-    language: dzcp_config.lng,
-};
-
-var config_ckeditor_standard = {
-    toolbar: [
-        ['Cut','Paste','PasteText','PasteFromWord','-', 'SpellChecker', 'Scayt'],
-        ['Undo','Redo','-','SelectAll','RemoveFormat'],
-        ['Bold','Italic','Underline','Strike'],
-        ['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
-        ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-        ['Link','Unlink','Image','HorizontalRule','Anchor'],
-        ['Styles','Format','Font','FontSize'],
-        ['TextColor','BGColor'],
-        ['Maximize', '-','Source'],
-    ],
-
-    filebrowserBrowseUrl:'/inc/ajax.php?i=fileupload',
-    filebrowserImageBrowseUrl:'/inc/ajax.php?i=fileupload&type=image',
-    removeDialogTabs: 'link:upload;image:upload',
-    coreStyles_bold: { element : 'b', overrides : 'strong' },
     language: dzcp_config.lng,
 };
 
@@ -103,17 +84,11 @@ var DZCP = {
 
     // init bar rating
     Barrating: function(userstyle) {
-        if ($(".bar-rating-readonly").length) {
-            $(".bar-rating-readonly").barrating('show', {
-                theme: 'bootstrap-stars',
-                readonly: true,
-            });
-        }
-
         if ($(".bar-rating").length) {
             var theme = dzcp_config.rating_by_user || userstyle ? 'bootstrap-stars-user' : 'bootstrap-stars';
             $(".bar-rating").barrating('show', {
                 theme: theme,
+                readonly: dzcp_config.rating_readonly,
                 onSelect: function(value, text, event) {
                     if (typeof(event) !== 'undefined') {
                         var url = "../inc/ajax.php?i=rating&page=tutorials&rating="+value+"&id="+DZCP.getUrlParameters('id',true);
@@ -154,13 +129,13 @@ var DZCP = {
 
     //CKEditor - WYSIWYG
     initCKEditor: function() {
-        if(dzcp_config.onlyBBCode) {
-            $(".editorStyleWord").ckeditor(config_ckeditor_bbcode_only);
-            $(".editorStyle").ckeditor(config_ckeditor_bbcode_only);
-        } else {
-            $(".editorStyleWord").ckeditor(config_ckeditor_standard);
-            $(".editorStyle").ckeditor(config_ckeditor_standard);
-        }
+        var basePath = document.location.origin+'/inc/_templates_/version1.6/_js/ckeditor';
+        CKEDITOR.plugins.addExternal('bbcode',basePath+'/bbcode/', 'plugin.js');
+        CKEDITOR.plugins.addExternal('smiley',basePath+'/smiley/', 'plugin.js');
+        CKEDITOR.plugins.addExternal('youtube',basePath+'/youtube/', 'plugin.js');
+
+        $(".editorStyleWord").ckeditor(config_ckeditor_bbcode_only);
+        $(".editorStyle").ckeditor(config_ckeditor_bbcode_only);
     },
 
     // update jquery-ui
@@ -176,8 +151,8 @@ var DZCP = {
             var theICON = '<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 0 0;"></span>';
 
             var btns = {};
-            btns[decodeURIComponent(escape(dzcp_config.dialog_button_00))] = function() { window.location.href = theHREF; };
-            btns[decodeURIComponent(escape(dzcp_config.dialog_button_01))] = function() { $(this).dialog("close"); };
+            btns[decodeURIComponent(dzcp_config.dialog_button_00)] = function() { window.location.href = theHREF; };
+            btns[decodeURIComponent(dzcp_config.dialog_button_01)] = function() { $(this).dialog("close"); };
 
             // set windows content
             $('#dialog').html('<P>' + theICON + theMESSAGE + '</P>');
