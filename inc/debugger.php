@@ -24,15 +24,15 @@ if (version_compare(PHP_VERSION, '7.0.0', 'lt')) {
 //-> Debug Console Settings Start
 #########################################
 
-define('show_loaded', true);
-define('show_info', true);
+define('show_loaded', false);
+define('show_info', false);
 define('show_warning', true);
 define('show_dbc_debug', false);
-define('show_deprecation_debug', false);
-define('show_sessions_debug', true);
+define('show_deprecation_debug', true);
+define('show_sessions_debug', false);
 define('show_pdo_delete_debug', false);
-define('show_pdo_update_debug', false);
-define('show_pdo_insert_debug', false);
+define('show_pdo_update_debug', true);
+define('show_pdo_insert_debug', true);
 define('show_pdo_select_debug', false);
 define('show_mail_debug', true);
 define('show_settings_debug', false);

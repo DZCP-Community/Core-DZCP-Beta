@@ -43,8 +43,8 @@ if(defined('_News')) {
             $smarty->clearAllAssign();
 
             //Bild
-            $newsimage = '../inc/images/uploads/newskat/'.stringParser::decode(common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_news_kats}` WHERE `id` = ?;",
-                    [$get['kat']],'katimg'));
+            $newsimage_get = common::$sql['default']->fetch("SELECT `katimg`,`kategorie` FROM `{prefix_news_kats}` WHERE `id` = ?;", [$get['kat']]);
+            $newsimage = '../inc/images/uploads/newskat/'.stringParser::decode($newsimage_get['katimg']);
             foreach(common::SUPPORTED_PICTURE as $tmpendung) {
                 if(file_exists(basePath."/inc/images/uploads/news/".$get['id'].".".$tmpendung)) {
                     $newsimage = '../inc/images/uploads/news/'.$get['id'].'.'.$tmpendung;
@@ -56,7 +56,9 @@ if(defined('_News')) {
             $smarty->caching = true;
             $smarty->assign('titel',stringParser::decode($get['titel']));
             $smarty->assign('kat',$newsimage);
+            $smarty->assign('kat_name',stringParser::decode($newsimage_get['kategorie']));
             $smarty->assign('id',$get['id']);
+            $smarty->assign('hits',12345);
             $smarty->assign('comments',common::cnt('{prefix_news_comments}', " WHERE `news` = ?","id",[(int)($get['id'])]));
             $smarty->assign('showmore','');
             $smarty->assign('dp','none');
@@ -97,10 +99,9 @@ if(defined('_News')) {
                 }
             }
 
-            $katimg = common::$sql['default']->fetch("SELECT `katimg` FROM `{prefix_news_kats}` WHERE `id` = ?;", [$get['kat']],'katimg');
-            if(!empty($katimg) && common::$sql['default']->rowCount() && file_exists(basePath.'/inc/images/uploads/newskat/'.stringParser::decode($katimg))) {
-                $newsimage = '../inc/images/uploads/newskat/'.stringParser::decode($katimg);
-            }
+            //Bild
+            $newsimage_get = common::$sql['default']->fetch("SELECT `katimg`,`kategorie` FROM `{prefix_news_kats}` WHERE `id` = ?;", [$get['kat']]);
+            $newsimage = '../inc/images/uploads/newskat/'.stringParser::decode($newsimage_get['katimg']);
 
             //-> News Bild by ID
             foreach(common::SUPPORTED_PICTURE as $tmpendung) {
@@ -115,7 +116,9 @@ if(defined('_News')) {
             $smarty->caching = true;
             $smarty->assign('titel',stringParser::decode($get['titel']));
             $smarty->assign('kat',$newsimage);
+            $smarty->assign('kat_name',stringParser::decode($newsimage_get['kategorie']));
             $smarty->assign('id',$get['id']);
+            $smarty->assign('hits',12345);
             $smarty->assign('comments',common::cnt('{prefix_news_comments}', " WHERE `news` = ?","id",[(int)($get['id'])]));
             $smarty->assign('showmore','');
             $smarty->assign('dir',common::$designpath);

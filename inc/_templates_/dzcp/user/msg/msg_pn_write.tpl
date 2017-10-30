@@ -1,0 +1,1 @@
+<a href="../user/?action=msg&amp;do=pn&amp;id={$id}"><img src="{idir}/pn.gif" alt="" title="{$nick} {lang msgID="pn_write"}" class="icon" /></a>

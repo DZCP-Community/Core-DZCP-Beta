@@ -2829,7 +2829,7 @@ class common {
     }
 
     public static function less($template='template',$regen=false) {
-        $cache_hash = md5($template);
+        $cache_hash = md5(self::$tmpdir.$template);
         if(config::$use_less_cache && !$regen && config::$use_system_cache &&
             config::$use_network_cache && self::$cache->AutoMemExists($cache_hash)) {
             return self::$cache->AutoMemGet($cache_hash);
@@ -2840,17 +2840,17 @@ class common {
             return self::$cache->FileGet($cache_hash);
         }
 
-        $main_dir = basePath . "/inc/_templates_/" . self::$sdir . "/_less";
+        $main_dir = basePath . "/inc/_templates_/" . self::$tmpdir . "/_less";
         $auto_imports = [];
-        $auto_imports[basePath . '/inc/_templates_/' . self::$sdir . '/_less/imports/'] =
-            '../inc/_templates_/' . self::$sdir . '/_less/imports';
+        $auto_imports[basePath . '/inc/_templates_/' . self::$tmpdir . '/_less/imports/'] =
+            '../inc/_templates_/' . self::$tmpdir . '/_less/imports';
 
         if (count($auto_imports) >= 1) {
             self::$less->SetImportDirs($auto_imports);
         }
 
         if (file_exists($main_dir . '/' . $template . '.less')) {
-            self::$less->parseFile($main_dir . '/' . $template . '.less', "/inc/_templates_/" . self::$sdir . "/_less/");
+            self::$less->parseFile($main_dir . '/' . $template . '.less', "/inc/_templates_/" . self::$tmpdir . "/_less/");
         }
 
         $css = self::$less->getCss();

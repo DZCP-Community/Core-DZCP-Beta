@@ -473,7 +473,7 @@ class BBCode extends common
      * @param string $content The content of the tag. Only available when {@link $action} is **BBCODE_OUTPUT**.
      * @return string Returns a span with the font size CSS.
      */
-    public function callback_size($bbcode, $action, $name, $default, $params, $content) {
+    public static function callback_size($bbcode, $action, $name, $default, $params, $content) {
         switch ($default) {
             case '80':
                 $size = '.80em';

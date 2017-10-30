@@ -1,0 +1,1 @@
+<option{$class} value="{$value}"{$sel}>{$what}</option>

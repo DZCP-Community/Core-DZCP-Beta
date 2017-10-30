@@ -71,8 +71,9 @@ class notification {
         return self::$notification_success;
     }
 
-    public static function has() {
-        return (count(self::$notification_index) >= 1);
+    public static function has($index='global') {
+        if(!array_key_exists($index,self::$notification_index)) return false;
+        return (count(self::$notification_index[$index]) >= 1);
     }
 
     //Private
