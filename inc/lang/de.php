@@ -1404,6 +1404,7 @@ define('_linkname', 'Linkname');
 define('_url', 'URL');
 define('_admin', 'Admin');
 define('_hits', 'Zugriffe');
+define('_hit', 'Zugriff');
 define('_autor', 'Autor');
 define('_yes', 'Ja');
 define('_no', 'Nein');

@@ -1402,6 +1402,7 @@ define('_linkname' , 'Linkname');
 define('_url' , 'URL');
 define('_admin' , 'Admin');
 define('_hits' , 'Hits');
+define('_hit' , 'Hit');
 define('_map' , 'Map');
 define('_game' , 'Game');
 define('_autor' , 'Author');
