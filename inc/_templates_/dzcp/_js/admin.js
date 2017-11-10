@@ -48,7 +48,7 @@ function checkEditor()
 DZCP.addEvent(window, 'load', checkEditor);
 
 function menu (a_items, a_tpl) {
-    if (!doc.body || !doc.body.style)
+    if (!document.body || !document.body.style)
         return;
     this.a_config = a_items;
     this.a_tpl = a_tpl;
@@ -189,7 +189,7 @@ function menu_item (o_parent, n_order)
         ? o_parent.a_children[n_order - 1].n_y + this.getprop('top')
         : o_parent.n_y + this.getprop('block_top');
 
-    doc.write (
+    document.write (
         '<a id="e' + o_root.n_id + '_'
         + this.n_id +'o" class="' + this.getstyle(0, 0) + '" href="' + this.a_config[1] + '"'
         + (this.a_config[2] && this.a_config[2]['tw'] ? ' target="'

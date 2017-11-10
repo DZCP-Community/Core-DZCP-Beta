@@ -19,7 +19,7 @@
 <tr>
   <td class="contentMainTop"><span class="fontBold">{$placeholder}:</span></td>
   <td class="contentMainFirst" align="center">
-    {$nav_ <input type="text" name="placeholder" value="{$n_placeholder}" class="inputField_dis" style="width:100px" /> }
+      {literal}{nav_ <input type="text" name="placeholder" value="{/literal}{$n_placeholder} {literal}" class="inputField_dis" style="width:100px" /> }{/literal}
   </td>
 </tr>
 <tr>

@@ -14,6 +14,14 @@
   </td>
 </tr>
 <tr>
+    <td class="contentMainTop"><span class="fontBold">{lang msgID="color_title"}:</span></td>
+    <td class="contentMainFirst" align="center">
+      <input type="text" name="color" id="colorpicker" value="{$color}" class="inputField_dis_mid"
+             onfocus="this.className='inputField_en_mid';"
+             onblur="this.className='inputField_dis_mid';" />
+    </td>
+</tr>
+<tr>
   <td class="contentMainTop"><span class="fontBold">{lang msgID="config_newskats_katbild"}:</span></td>
   <td class="contentMainFirst" align="center">
     <select name="img" class="dropdown">

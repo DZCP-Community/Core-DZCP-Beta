@@ -8,7 +8,7 @@
 			<div class="posts__inner">
 				<div class="card__content">
 					<div class="posts__cat">
-						<span class="label posts__cat-label">{$kat_name}</span>
+						<span class="label posts__cat-label" style="background-color: {$color}">{$kat_name}</span>
 					</div>
 					<h6 class="posts__title">{$sticky} {$intern} {$titel}</h6>
 					<time datetime="{$datum}" class="posts__date">{$datum}</time>

@@ -17,6 +17,9 @@
 
 setlocale(LC_ALL, "de_DE.utf8");
 
+## DZCP Template ##
+define('_color_title' , 'Kategorie Farbe');
+
 ## Fileman ##
 define('_perm_fileman' , 'Uploads verwalten');
 define('_fileman_uploads_' , '## Stammverzeichnis ##');

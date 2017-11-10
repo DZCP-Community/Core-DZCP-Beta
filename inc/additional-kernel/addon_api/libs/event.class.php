@@ -19,24 +19,26 @@ class dzcp_event
         $this->get = $_GET;
         $this->event = '';
         $this->contenttype = 'json';
-        if(GUMP::is_valid($this->get, ['input' => 'required|valid_json_string']) === true) {
-            $this->json_array = json_decode($this->get['input'],true);
-            if(GUMP::is_valid($this->json_array, ['event' => 'required|alpha']) === true) {
-                $this->event = strtolower(trim($this->json_array['event']));
-            }
+        if(is_api) {
+            if (GUMP::is_valid($this->get, ['input' => 'required|valid_json_string']) === true) {
+                $this->json_array = json_decode($this->get['input'], true);
+                if (GUMP::is_valid($this->json_array, ['event' => 'required|alpha']) === true) {
+                    $this->event = strtolower(trim($this->json_array['event']));
+                }
 
-            //ContentType XML,JSON OR JSONP for Javascript
-            if(GUMP::is_valid($this->json_array, ['type' => 'required|alpha']) === true) {
-                switch ($this->json_array['type']) {
-                    case 'xml':
-                        $this->contenttype = 'xml';
-                        break;
-                    case 'jsonp':
-                        $this->contenttype = 'jsonp';
-                        break;
-                    default:
-                        $this->contenttype = 'json';
-                        break;
+                //ContentType XML,JSON OR JSONP for Javascript
+                if (GUMP::is_valid($this->json_array, ['type' => 'required|alpha']) === true) {
+                    switch ($this->json_array['type']) {
+                        case 'xml':
+                            $this->contenttype = 'xml';
+                            break;
+                        case 'jsonp':
+                            $this->contenttype = 'jsonp';
+                            break;
+                        default:
+                            $this->contenttype = 'json';
+                            break;
+                    }
                 }
             }
         }

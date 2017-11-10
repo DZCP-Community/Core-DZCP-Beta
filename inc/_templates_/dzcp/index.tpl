@@ -2,6 +2,29 @@
 <html lang="en">
 
 <head>
+    <!-- Javascript Files
+    ================================================== -->
+    <!-- Core JS -->
+    <script src="{dir}/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="{dir}/assets/js/core-min.js"></script>
+
+    <script language="javascript" type="text/javascript" src="{dir}/_js/highlight.min.js"></script>
+    <!-- <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.min.js"></script> -->
+    <script language="javascript" type="text/javascript" src="{dir}/_js/bootstrap.min.js"></script>
+    <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.tools.min.js"></script>
+    <script language="javascript" type="text/javascript" src="{dir}/_js/jquery-ui.min.js"></script>
+    {$java_vars}
+    <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.colorpicker.min.js"></script>
+    <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.magnific-popup.min.js"></script>
+    <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.highlighter.min.js"></script>
+    <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.barrating.min.js"></script>
+    <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.dzcp.js"></script>
+
+    <!-- Vendor JS -->
+   <!-- <script src="{dir}/assets/vendor/twitter/jquery.twitter.js"></script> -->
+
+    <!-- Template JS -->
+    <!-- <script src="{dir}/assets/js/custom.js"></script> -->
 
   <!-- Basic Page Needs
   ================================================== -->
@@ -82,16 +105,13 @@
             <li class="nav-account__item"><a href="#">Credits</a></li>
             <li class="nav-account__item"><a href="#">GitHub Projekte</span></a>
               <ul class="main-nav__sub">
-                <li><a href="#">1.5 <span style="color: red;"> alpha</span></a></li>
-                <li><a href="#">1.6 <span style="color: red;"> Alpha</span></a></li>
-                <li><a href="#">1.7 <span style="color: red;"> Beta</span></a></li>
-                <li><a href="#">1.8 <span style="color: red;"> Planung</span></a></li>
-                <li><a href="#">1.9 <span style="color: red;"> Planung</span></a></li>
-                <li><a href="#">2.0 <span style="color: red;"> Planung</span></a></li>
+                  {github_nav}
               </ul>
             </li>
-            <li class="nav-account__item"><a href="#">Aktuelle Version: <span class="highlight">1.6.4</span></a>
+            <li class="nav-account__item"><a href="#">Aktuelle Beta: <span class="highlight"> {version type="beta"}</span></a>
             </li>
+              <li class="nav-account__item"><a href="#">Aktuelle Stable: <span class="highlight green"> {version type="stable"}</span></a>
+              </li>
             <li class="nav-account__item"><a href="#"><span class="highlight">{languages}</span></a>
             </li>
           </ul>
@@ -209,17 +229,17 @@
                 </li>
                 <li class=""><a href="#">Community</a>
                   <ul class="main-nav__sub">
-                      {navi kat="clan"}
+                      {navi kat="community"}
                   </ul>
                 </li>
                 <li class=""><a href="#">Multimedia</a>
                   <ul class="main-nav__sub">
-                      {navi kat="server"}
+                      {navi kat="media"}
                   </ul>
                 </li>
                 <li class=""><a href="#">Downloads</a>
                   <ul class="main-nav__sub">
-                      {navi kat="misc"}
+                      {navi kat="downloads"}
                   </ul>
                 </li>
               </ul>
@@ -389,6 +409,7 @@
           <!-- Content -->
           <div class="content col-md-8">
             {$index}
+              {templateswitch}
           </div>
           <!-- Content / End -->
 
@@ -664,31 +685,7 @@
     </div>
     <!-- Login/Register Modal / End -->   
   </div>
+  </body>
 
-  <!-- Javascript Files
-  ================================================== -->
-  <script language="javascript" type="text/javascript" src="{dir}/_js/highlight.min.js"></script>
- <!-- <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.min.js"></script> -->
-  <script language="javascript" type="text/javascript" src="{dir}/_js/bootstrap.min.js"></script>
-  <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.tools.min.js"></script>
-  <script language="javascript" type="text/javascript" src="{dir}/_js/jquery-ui.min.js"></script>
-  {$java_vars}
-  <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.colorpicker.min.js"></script>
-  <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.magnific-popup.min.js"></script>
-  <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.highlighter.min.js"></script>
-  <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.barrating.min.js"></script>
-  <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.dzcp.js"></script>
-
-  <!-- Core JS -->
-  <script src="{dir}/assets/vendor/jquery/jquery.min.js"></script>
-  <script src="{dir}/assets/js/core-min.js"></script>
-  
-  <!-- Vendor JS -->
-  <script src="{dir}/assets/vendor/twitter/jquery.twitter.js"></script>
-   
-  <!-- Template JS -->
-  <script src="{dir}/assets/js/init.js"></script>
-  <script src="{dir}/assets/js/custom.js"></script>
-  
-  </body> 
+    <script src="{dir}/assets/js/init.js"></script>
 </html>

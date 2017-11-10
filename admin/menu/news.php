@@ -43,6 +43,7 @@ switch(common::$do) {
         $smarty->assign('do',"addnewskat");
         $smarty->assign('upload',_config_neskats_katbild_upload);
         $smarty->assign('img',$img);
+        $smarty->assign('color','#ffcc00');
         $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/newskatform.tpl');
         $smarty->clearAllAssign();
     break;
@@ -50,8 +51,8 @@ switch(common::$do) {
         if(empty($_POST['kat'])) {
             $show = common::error(_config_empty_katname,1);
         } else {
-            common::$sql['default']->insert("INSERT INTO `{prefix_news_kats}` SET `katimg` = ?, `kategorie` = ?;",
-                    [stringParser::encode($_POST['img']),stringParser::encode($_POST['kat'])]);
+            common::$sql['default']->insert("INSERT INTO `{prefix_news_kats}` SET `color` = ?, `katimg` = ?, `kategorie` = ?;",
+                    [stringParser::encode($_POST['color']),stringParser::encode($_POST['img']),stringParser::encode($_POST['kat'])]);
             $show = common::info(_config_newskats_added, "?admin=news");
         }
     break;
@@ -75,6 +76,7 @@ switch(common::$do) {
         $smarty->assign('do','editnewskat&amp;id='.$_GET['id']);
         $smarty->assign('upload',$upload);
         $smarty->assign('img',$img);
+        $smarty->assign('color',$get['color']);
         $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/newskatform.tpl');
         $smarty->clearAllAssign();
     break;
@@ -83,8 +85,15 @@ switch(common::$do) {
             $show = common::error(_config_empty_katname,1);
         } else {
             $katimg = ($_POST['img'] == "lazy" ? "" : "`katimg` = '".stringParser::encode($_POST['img'])."',");
-            common::$sql['default']->update("UPDATE `{prefix_news_kats}` SET ".$katimg." `kategorie` = ? WHERE id = ?;",
-                    [stringParser::encode($_POST['kat']),(int)($_GET['id'])]);
+            common::$sql['default']->update("UPDATE `{prefix_news_kats}` SET `color` = ?, ".$katimg." `kategorie` = ? WHERE id = ?;",
+                    [stringParser::encode($_POST['color']),stringParser::encode($_POST['kat']),(int)($_GET['id'])]);
+
+            //Clear News Cache
+            $qry = common::$sql['default']->select("SELECT `id` FROM `{prefix_news_kats}` WHERE `kategorie` = ?;",[(int)($_GET['id'])]);
+            foreach($qry as $get) {
+                $smarty->clearCache('file:['.common::$tmpdir.']'.$dir.'/news_show.tpl', common::getSmartyCacheHash('news_'.$get['id']));
+            }
+
             $show = common::info(_config_newskats_edited, "?admin=news");
         }
     break;

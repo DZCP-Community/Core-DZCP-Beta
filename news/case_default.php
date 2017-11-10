@@ -100,7 +100,7 @@ if(defined('_News')) {
             }
 
             //Bild
-            $newsimage_get = common::$sql['default']->fetch("SELECT `katimg`,`kategorie` FROM `{prefix_news_kats}` WHERE `id` = ?;", [$get['kat']]);
+            $newsimage_get = common::$sql['default']->fetch("SELECT `katimg`,`kategorie`,`color` FROM `{prefix_news_kats}` WHERE `id` = ?;", [$get['kat']]);
             $newsimage = '../inc/images/uploads/newskat/'.stringParser::decode($newsimage_get['katimg']);
 
             //-> News Bild by ID
@@ -123,6 +123,7 @@ if(defined('_News')) {
             $smarty->assign('showmore','');
             $smarty->assign('dir',common::$designpath);
             $smarty->assign('intern',boolval($get['intern']));
+            $smarty->assign('color',stringParser::decode($newsimage_get['color']));
             $smarty->assign('sticky','');
             $smarty->assign('more',BBCode::parse_html((string)$get['more']));
             $smarty->assign('viewed',$viewed);

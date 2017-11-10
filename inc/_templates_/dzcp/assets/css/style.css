@@ -5268,9 +5268,12 @@ body {
     outline: none;
   }
   .nav-account .nav-account__item > a .highlight {
-    color: #D1181E;
+    color: #d10600;
   }
-  .nav-account .nav-account__item:last-child::before {
+    .nav-account .nav-account__item > a .highlight.green {
+        color: #1dd100;
+    }
+    .nav-account .nav-account__item:last-child::before {
     display: none;
   }
   .nav-account .nav-account__item.has-children {
