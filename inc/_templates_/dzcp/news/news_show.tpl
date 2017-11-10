@@ -23,7 +23,7 @@
 						</div>
 					</div>
 					<ul class="post__meta meta">
-						<li class="meta__item meta__item--views">{$hits}</li>
+						<li class="meta__item meta__item--views">{$viewed}</li>
 						<!-- <li class="meta__item meta__item--likes"><a href="#"><i class="meta-like icon-heart"></i> 530</a></li> -->
 						<li class="meta__item meta__item--comments"><a href="?action=show&amp;id={$id}">{if $comments >= 2}{$comments} {lang msgID="news_kommentare"}{else}{$comments} {lang msgID="news_kommentar"}{/if}</a></li>
 					</ul>

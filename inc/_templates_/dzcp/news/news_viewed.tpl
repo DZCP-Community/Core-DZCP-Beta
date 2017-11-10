@@ -1,3 +1,3 @@
 <!-- start news_viewed.tpl -->
-[<span class="fontItalic">{$viewed} {lang msgID="hits"}</span>]
+{$viewed} {lang msgID="hits"}
 <!-- end news_viewed.tpl -->
