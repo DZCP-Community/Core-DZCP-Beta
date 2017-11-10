@@ -58,6 +58,7 @@ if(defined('_News')) {
             $smarty->assign('kat',$newsimage);
             $smarty->assign('kat_name',stringParser::decode($newsimage_get['kategorie']));
             $smarty->assign('id',$get['id']);
+            $smarty->assign('is_mobile',common::$mobile->isMobile());
             $smarty->assign('comments',common::cnt('{prefix_news_comments}', " WHERE `news` = ?","id",[(int)($get['id'])]));
             $smarty->assign('showmore','');
             $smarty->assign('dp','none');
@@ -117,6 +118,7 @@ if(defined('_News')) {
             $smarty->assign('kat',$newsimage);
             $smarty->assign('kat_name',stringParser::decode($newsimage_get['kategorie']));
             $smarty->assign('id',$get['id']);
+            $smarty->assign('is_mobile',common::$mobile->isMobile());
             $smarty->assign('comments',common::cnt('{prefix_news_comments}', " WHERE `news` = ?","id",[(int)($get['id'])]));
             $smarty->assign('showmore','');
             $smarty->assign('dir',common::$designpath);

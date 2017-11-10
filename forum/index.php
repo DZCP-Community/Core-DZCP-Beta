@@ -40,4 +40,4 @@ if (file_exists(basePath . "/forum/case_" . common::$action . ".php")) {
 
 ## INDEX OUTPUT ##
 $title = common::$pagetitle." - ".$where;
-common::page($index, $title, $where);
+common::page($index, $title, $where, 'forum');
