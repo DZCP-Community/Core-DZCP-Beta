@@ -4,7 +4,7 @@
   <td>
     <table class="hperc" cellspacing="0">
       <tr>
-        <td class="adminBarOuter contentHead" style="width:100%;padding:4px;text-align:left;">{$version}</td>
+        <td class="contentHead adminBarOuter" style="width:100%;padding-left: 20px;text-align:left;padding-right: 212px;">{$version}</td>
       </tr>
     </table>
   </td>
@@ -12,7 +12,7 @@
 <tr>
   <td>
     <div style="position:relative">
-      <script language="javascript" type="text/javascript" src="../inc/_templates_/version1.6/_js/admin.js"></script>
+      <script language="javascript" type="text/javascript" src="../inc/_templates_/dzcp/_js/admin.js"></script>
       <script language="javascript" type="text/javascript">
       var ITEMS = [
           {$radmin1}

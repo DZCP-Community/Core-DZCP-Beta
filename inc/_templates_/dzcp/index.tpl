@@ -606,6 +606,7 @@
             <div class="row">
               <div class="col-md-10 col-md-offset-1">
                 <ul class="footer-nav">
+                    {navi kat="footer"}
                   <li class="footer-nav__item"><a href="#">Home</a></li>
                   <li class="footer-nav__item"><a href="#">Features</a></li>
                   <li class="footer-nav__item"><a href="#">Statistics</a></li>
