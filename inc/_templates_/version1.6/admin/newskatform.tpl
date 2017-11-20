@@ -22,6 +22,14 @@
     <br />{$upload}
   </td>
 </tr>
+  <tr>
+    <td class="contentMainTop"><span class="fontBold">{lang msgID="color_title"}:</span></td>
+    <td class="contentMainFirst" align="center">
+      <input type="text" name="color" id="colorpicker" value="{$color}" class="inputField_dis_mid"
+             onfocus="this.className='inputField_en_mid';"
+             onblur="this.className='inputField_dis_mid';" />
+    </td>
+  </tr>
 <tr>
   <td class="contentBottom" colspan="2"><input id="contentSubmit" type="submit" value="{$value}" class="submit" /> | <input type="button" value="{lang msgID="paginator_previous"}" class="submit" onclick="DZCP.goTo('../admin/?admin=news')" tabindex="6"></td>
 </tr>
