@@ -69,7 +69,6 @@ if(defined('_News')) {
             $smarty->assign('viewed',$viewed);
             $smarty->assign('text',BBCode::parse_html((string)$get['text']));
             $smarty->assign('datum',date("d.m.y H:i", $get['datum']));
-            $smarty->assign('links',$links); //TODO: Missing!
             $smarty->assign('autor',common::autor($get['autor']));
             $show_sticky .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/news_show.tpl',common::getSmartyCacheHash('news_'.$get['id']));
             $smarty->clearAllAssign();

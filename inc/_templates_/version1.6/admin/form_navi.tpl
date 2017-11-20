@@ -33,8 +33,8 @@
   <td class="contentMainTop"><span class="fontBold">{lang msgID="navi_wichtig"}:</span></td>
   <td class="contentMainFirst" align="center">
     <select name="wichtig" class="dropdown">
-      <option value="0">{$nein}</option>
-      <option value="1">{$ja}</option>
+      <option value="0">{lang msgID="no"}</option>
+      <option value="1">{lang msgID="yes"}</option>
     </select>
   </td>
 </tr>
@@ -42,8 +42,8 @@
   <td class="contentMainTop"><span class="fontBold">{lang msgID="config_forum_intern"}:</span></td>
   <td class="contentMainFirst" align="center">
     <select name="internal" class="dropdown">
-      <option value="0">{$nein}</option>
-      <option value="1">{$ja}</option>
+      <option value="0">{lang msgID="no"}</option>
+      <option value="1">{lang msgID="yes"}</option>
     </select>
   </td>
 </tr>

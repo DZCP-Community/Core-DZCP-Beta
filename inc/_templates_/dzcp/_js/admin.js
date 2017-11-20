@@ -4,7 +4,7 @@
  */
 
 var POS = [{
-    'height': 21,
+    'height': 28,
     'width': 110,
     'block_top': 0,
     'block_left': 0,
@@ -17,11 +17,11 @@ var POS = [{
         'inner' : ['adminBarInner', 'adminBarInnerOver']
     }
 },{
-    'height': 21,
+    'height': 31,
     'width': 221,
-    'block_top': 21,
+    'block_top': 28,
     'block_left': 0,
-    'top': 22,
+    'top': 30,
     'left': 0,
     'css' : {
         'outer' : ['adminMenuOuter', 'adminMenuOuterOver'],
