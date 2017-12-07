@@ -253,7 +253,7 @@ class common {
 
                         //Update Autologin
                         self::$sql['default']->update("UPDATE `{prefix_autologin}` SET `ssid` = ?, `pkey` = ?, `ipv4` = ?, `host` = ?, `update` = ?, `expires` = ? WHERE `id` = ?;",
-                            [session_id(),$permanent_key,self::$userip['v4'],gethostbyaddr(self::$userip),time(),autologin_expire,$get_almgr['id']]);
+                            [session_id(),$permanent_key,self::$userip['v4'],gethostbyaddr(self::$userip['v4']),time(),autologin_expire,$get_almgr['id']]);
 
                         //-> Schreibe Werte in die Server Sessions
                         $_SESSION['id']         = $get['id'];
@@ -515,9 +515,9 @@ class common {
     public static function getSmarty(bool $new_instance = false) {
         if($new_instance) {
             $smarty = new Smarty;
-            $smarty->force_compile = true;
+            $smarty->force_compile = false;
             $smarty->debugging = false;
-            $smarty->caching = false;
+            $smarty->caching = true;
             $smarty->cache_lifetime = 60;
             $smarty->allow_php_templates = true;
 
@@ -1888,7 +1888,7 @@ class common {
      */
     public static function visitorIp() {
         $SetIP = ['v4' => self::IPV4_NULL_ADDR, 'v6' => self::IPV6_NULL_ADDR];
-        $ServerVars = ['REMOTE_ADDR','HTTP_CLIENT_IP','HTTP_X_FORWARDED_FOR','HTTP_X_FORWARDED',
+        $ServerVars = ['REMOTE_ADDR','HTTP_CLIENT_IP','HTTP_X_CLIENT_IP','HTTP_X_FORWARDED_FOR','HTTP_X_FORWARDED',
             'HTTP_FORWARDED_FOR','HTTP_FORWARDED','HTTP_VIA','HTTP_X_COMING_FROM','HTTP_COMING_FROM'];
         foreach ($ServerVars as $ServerVar) {
             if($IP=self::detectIP($ServerVar)) {

@@ -48,96 +48,81 @@ switch (common::$do) {
         unset($thiskat,$position,$qry,$get);
     break;
     default:
-        $kat = ""; $show_ = ""; $color = 0;
-
-        $qry = common::$sql['default']->select("SELECT s1.*, s2.name AS katname FROM `{prefix_navi}` AS s1 LEFT JOIN `{prefix_navi_kats}` AS s2 ON s1.kat = s2.placeholder ORDER BY s2.name, s1.kat,s1.pos");
-        foreach($qry as $get) {
-            $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
-
-            if($get['type'] == "0")
-            {
-                $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_navi);
-                $edit = "&nbsp;";
-                $type = _navi_space;
-            } else {
-                $type = stringParser::decode($get['name']);
-                $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=edit");
-                $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=delete",_button_title_del,_confirm_del_navi);
-            }
-
-            if($get['shown'] == "1")
-            {
-                $shown = _yesicon;
-                $set = 0;
-            } else {
-                $shown = _noicon;
-                $set = 1;
-            }
-            if($get['katname'] != $kat) {
-                $kat = $get['katname'];
-                $show_ .= '<tr><td align="center" colspan="8" class="contentHead"><span class="fontBold">'.$get['katname'].'</span></td></tr>';
-            }
-            $smarty->caching = false;
-            $smarty->assign('class',$class);
-            $smarty->assign('name',$type);
-            $smarty->assign('id', $get['id']);
-            $smarty->assign('set',$set);
-            $smarty->assign('url',common::cut($get['url'],34));
-            $smarty->assign('kat',stringParser::decode($get['katname']));
-            $smarty->assign('shown',$shown);
-            $smarty->assign('edit',$edit);
-            $smarty->assign('del',$delete);
-            $show_ .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/navi_show.tpl');
-            $smarty->clearAllAssign();
-        }
-        //default
-        $show_kats = "";
         $color = 0;
+        $qry_kat = common::$sql['default']->select("SELECT `name`,`placeholder` FROM `{prefix_navi_kats}` ORDER BY `name`;");
+        foreach($qry_kat as $get_kat) {
 
+            $kat = $get_kat['name'];
+            $show .= '<tr><td align="center" colspan="8" class="contentHead"><span class="fontBold">'.$get_kat['name'].'</span></td></tr>';
+
+
+            $qry_nav = common::$sql['default']->select("SELECT * FROM `{prefix_navi}` WHERE `kat` = ? ORDER BY `pos`;",[$get_kat['placeholder']]);
+
+            if(common::$sql['default']->rowCount()) {
+                foreach ($qry_nav as $get_nav) {
+                    $delete = common::button_delete_single($get_nav['id'], "admin=" . $admin . "&amp;do=delete", _button_title_del, _confirm_del_navi);
+                    $edit = "&nbsp;";
+                    $type = _navi_space;
+                    if ($get_nav['type']) {
+                        $type = stringParser::decode($get_nav['name']);
+                        $edit = common::getButtonEditSingle($get_nav['id'], "admin=" . $admin . "&amp;do=edit");
+                        $delete = common::button_delete_single($get_nav['id'], "admin=" . $admin . "&amp;do=delete", _button_title_del, _confirm_del_navi);
+                    }
+
+                    $shown = _noicon;
+                    $set = 1;
+                    if ($get_nav['shown']) {
+                        $shown = _yesicon;
+                        $set = 0;
+                    }
+
+                    $smarty->caching = false;
+                    $smarty->assign('color', $color);
+                    $smarty->assign('name', $type);
+                    $smarty->assign('id', $get_nav['id']);
+                    $smarty->assign('set', $set);
+                    $smarty->assign('url', common::cut($get_nav['url'], 34));
+                    $smarty->assign('kat', stringParser::decode($get_kat['name']));
+                    $smarty->assign('shown', $shown);
+                    $smarty->assign('edit', $edit);
+                    $smarty->assign('del', $delete);
+                    $show .= $smarty->fetch('file:[' . common::$tmpdir . ']' . $dir . '/navi_show.tpl');
+                    $smarty->clearAllAssign();
+                    $color++;
+                }
+            } else {
+                $show .= '<tr><td colspan="6" class="contentMainFirst">'._no_entrys.'</td></tr>';
+            }
+        }
+
+        //default
+        $show_kats = ""; $color = 0;
         $qry = common::$sql['default']->select("SELECT * FROM `{prefix_navi_kats}` ORDER BY `name` ASC");
         foreach($qry as $get) {
-            $class = ($color % 2) ? 'contentMainFirst' : 'contentMainSecond'; $color++;
-
+            $edit = ''; $delete = '';
             $type = stringParser::decode($get['name']);
-            if($get['placeholder'] == 'nav_admin') {
-                $edit = '';
-                $delete = '';
-            } else {
+            if($get['placeholder'] != 'nav_admin')
+            {
                 $edit = common::getButtonEditSingle($get['id'],"admin=".$admin."&amp;do=editkat");
                 $delete = common::button_delete_single($get['id'],"admin=".$admin."&amp;do=deletekat",_button_title_del,_confirm_del_menu);
             }
+
             $smarty->caching = false;
-            $smarty->assign('name',stringParser::decode($get['name']));
+            $smarty->assign('name',$type,true);
             $smarty->assign('intern',(empty($get['intern']) ? _noicon : _yesicon));
             $smarty->assign('id',$get['id']);
             $smarty->assign('set', (empty($get['intern']) ? 1 : 0));
             $smarty->assign('placeholder', str_replace('nav_', '', stringParser::decode($get['placeholder'])));
-            $smarty->assign('class',$class);
+            $smarty->assign('color',$color);
             $smarty->assign('edit',$edit);
             $smarty->assign('del',$delete);
             $show_kats .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/navi_kats.tpl');
-            $smarty->clearAllAssign();
+            $smarty->clearAllAssign(); $color++;
         }
 
         $smarty->caching = false;
-        $smarty->assign('show',$show_);
-        $smarty->assign('intern',_config_forum_intern);
-        $smarty->assign('name',_navi_name);
-        $smarty->assign('info',_navi_info);
-        $smarty->assign('kat',_config_newskats_kat);
-        $smarty->assign('placeholder',_placeholder);
-        $smarty->assign('head_kat',_menu_kats_head);
-        $smarty->assign('add_kat',_menu_add_kat);
-        $smarty->assign('show_kats',$show_kats);
-        $smarty->assign('url',_navi_url);
-        $smarty->assign('intern',_internal);
-        $smarty->assign('shown',_navi_shown);
-        $smarty->assign('head',_navi_head);
-        $smarty->assign('add',_navi_add_head);
-        $smarty->assign('type',_navi_type);
-        $smarty->assign('wichtig',_navi_wichtig);
-        $smarty->assign('edit',_editicon_blank);
-        $smarty->assign('del',_deleteicon_blank);
+        $smarty->assign('show',$show,true);
+        $smarty->assign('show_kats',$show_kats,true);
         $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/navi.tpl');
         $smarty->clearAllAssign();
     break;
@@ -158,20 +143,18 @@ if(common::$do == "addnavi") {
         $kat = preg_replace('/-(\d+)/','',$_POST['pos']);
         $pos = preg_replace("=nav_(.*?)-=","",$_POST['pos']);
 
-        common::$sql['default']->update("UPDATE `{prefix_navi}`
-                      SET `pos` = pos+1
-                      WHERE pos ".$sign." '".(int)($pos)."'");
+        common::$sql['default']->update("UPDATE `{prefix_navi}` SET `pos` = pos+1 WHERE pos ".$sign." '".(int)($pos)."'");
 
-        common::$sql['default']->insert("INSERT INTO `{prefix_navi}`
-                      SET `pos`       = '".(int)($pos)."',
-                          `kat`       = '".stringParser::encode($kat)."',
-                          `name`      = '".stringParser::encode($_POST['name'])."',
-                          `url`       = '".stringParser::encode($_POST['url'])."',
-                          `shown`     = '1',
-                          `target`    = '".(int)($_POST['target'])."',
-                          `internal`  = '".(int)($_POST['internal'])."',
-                          `type`      = '2',
-                          `wichtig`   = '".(int)($_POST['wichtig'])."'");
+        common::$sql['default']->insert("INSERT INTO `{prefix_navi}` SET `pos` = '".(int)($pos)."', ".
+                                                                        "`kat` = '".stringParser::encode($kat)."',".
+                                                                        " `name` = '".stringParser::encode($_POST['name'])."',".
+                                                                        " `url` = '".stringParser::encode($_POST['url'])."',".
+                                                                        "`shown` = '1',".
+                                                                        "`target` = '".(int)($_POST['target'])."',".
+                                                                        " `internal` = '".(int)($_POST['internal'])."',".
+                                                                        "`type` = '2',".
+                                                                        " `wichtig` = '".(int)($_POST['wichtig'])."'");
+
         $show = common::info(_navi_added,"?admin=navi");
     }
 } elseif(common::$do == "delete") {
@@ -193,8 +176,7 @@ if(common::$do == "addnavi") {
         if($thiskat != $get['kat']) {
             $position .= '
               <option class="dropdownKat" value="lazy">'.stringParser::decode($get['katname']).'</option>
-              <option value="'.stringParser::decode($get['placeholder']).'-1">-> '._admin_first.'</option>
-            ';
+              <option value="'.stringParser::decode($get['placeholder']).'-1">-> '._admin_first.'</option>';
         }
         $thiskat = $get['kat'];
         $sel[$i] = ($get['id'] == $_GET['id']) ? 'selected="selected"' : '';
@@ -213,10 +195,17 @@ if(common::$do == "addnavi") {
         $read = "";
     }
 
-    if($get['wichtig'] == "1") $selw = 'selected="selected"';
-    if($get['shown'] == "1") $sels = 'selected="selected"';
-    if($get['internal'] == "1") $seli = 'selected="selected"';
-    if($get['target'] == "1") $target = 'selected="selected"';
+    if($get['wichtig'])
+        $selw = 'selected="selected"';
+
+    if($get['shown'])
+        $sels = 'selected="selected"';
+
+    if($get['internal'])
+        $seli = 'selected="selected"';
+
+    if($get['target'])
+        $target = 'selected="selected"';
 
     $smarty->caching = false;
     $smarty->assign('name',_navi_name);
@@ -265,47 +254,28 @@ if(common::$do == "addnavi") {
 
     $show = common::info(_navi_edited,"?admin=navi");
 } elseif(common::$do == "menu") {
-    common::$sql['default']->update("UPDATE `{prefix_navi}`
-                    SET `shown`     = '".(int)($_GET['set'])."'
-                    WHERE id = '".(int)($_GET['id'])."'");
-
+    common::$sql['default']->update("UPDATE `{prefix_navi}` SET `shown` = ? WHERE `id` = ?;",[(int)($_GET['set']),(int)($_GET['id'])]);
     header("Location: ?admin=navi");
 } else if(common::$do == 'intern') {
-    common::$sql['default']->update("UPDATE `{prefix_navi_kats}`
-                    SET `intern` = '".(int)($_GET['set'])."'
-                    WHERE id = '".(int)($_GET['id'])."'");
-
+    common::$sql['default']->update("UPDATE `{prefix_navi_kats}` SET `intern` = ? WHERE `id` = ?;",[(int)($_GET['set']),(int)($_GET['id'])]);
     header("Location: ?admin=navi");
 } else if(common::$do == 'editkat') {
-    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_navi_kats}` WHERE `id` = '".(int)($_GET['id'])."'");
+    $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_navi_kats}` WHERE `id` = ?;",[(int)($_GET['id'])]);
 
     $smarty->caching = false;
     $smarty->assign('head',_menu_edit_kat);
-    $smarty->assign('name',_sponsors_admin_name);
-    $smarty->assign('placeholder',_placeholder);
-    $smarty->assign('visible',_menu_visible);
     $smarty->assign('what',_menu_edit_kat);
-    $smarty->assign('menu_kat_info',_menu_kat_info);
     $smarty->assign('n_name',stringParser::decode($get['name']));
     $smarty->assign('n_placeholder',str_replace('nav_', '', stringParser::decode($get['placeholder'])));
     $smarty->assign('sel_user',($get['level'] == 1 ? ' selected="selected"' : ''));
     $smarty->assign('sel_trial',($get['level'] == 2 ? ' selected="selected"' : ''));
     $smarty->assign('sel_member',($get['level'] == 3 ? ' selected="selected"' : ''));
     $smarty->assign('sel_admin',($get['level'] == 4 ? ' selected="selected"' : ''));
-    $smarty->assign('guest',_status_unregged);
-    $smarty->assign('user',_status_user);
-    $smarty->assign('trial',_status_trial);
-    $smarty->assign('member',_status_member);
-    $smarty->assign('admin',_status_admin);
     $smarty->assign('do','updatekat&amp;id='.$get['id']);
     $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_navi_kats.tpl');
     $smarty->clearAllAssign();
 } else if(common::$do == 'updatekat') {
-    common::$sql['default']->update("UPDATE `{prefix_navi_kats}`
-            SET `name`        = '".stringParser::encode($_POST['name'])."',
-                `placeholder` = 'nav_".stringParser::encode(trim($_POST['placeholder']))."',
-                `level`       = '".(int)($_POST['level'])."'
-            WHERE `id` = '".(int)($_GET['id'])."'");
+    common::$sql['default']->update("UPDATE `{prefix_navi_kats}` SET `name` = '".stringParser::encode($_POST['name'])."', `placeholder` = 'nav_".stringParser::encode(trim($_POST['placeholder']))."',`level` = '".(int)($_POST['level'])."' WHERE `id` = '".(int)($_GET['id'])."'");
 
     $show = common::info(_menukat_updated, '?admin=navi');
 } else if(common::$do == 'deletekat') {
@@ -314,22 +284,13 @@ if(common::$do == "addnavi") {
 }  else if(common::$do == 'addkat') {
     $smarty->caching = false;
     $smarty->assign('head',_menu_add_kat);
-    $smarty->assign('name',_sponsors_admin_name);
-    $smarty->assign('placeholder',_placeholder);
-    $smarty->assign('visible',_menu_visible);
     $smarty->assign('what',_menu_add_kat);
-    $smarty->assign('menu_kat_info',_menu_kat_info);
     $smarty->assign('n_name','');
     $smarty->assign('n_placeholder','');
     $smarty->assign('sel_user','');
     $smarty->assign('sel_trial','');
     $smarty->assign('sel_member','');
     $smarty->assign('sel_admin','');
-    $smarty->assign('guest',_status_unregged);
-    $smarty->assign('user',_status_user);
-    $smarty->assign('trial',_status_trial);
-    $smarty->assign('member',_status_member);
-    $smarty->assign('admin',_status_admin);
     $smarty->assign('do','insertkat');
     $show = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/form_navi_kats.tpl');
     $smarty->clearAllAssign();
