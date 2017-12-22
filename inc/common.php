@@ -63,6 +63,13 @@ $index = ''; $show = ''; $color = 0;
 new common(); //Main Construct
 require_once(basePath.'/inc/sfs.php');
 
+//-> Neue Kernel Funktionen einbinden, sofern vorhanden
+if($functions_files = common::get_files(basePath.'/inc/additional-kernel/',false,true, ['php'])) {
+    foreach($functions_files AS $func) {
+        include_once(basePath.'/inc/additional-kernel/'.$func);
+    } unset($functions_files,$func);
+}
+
 /**
  * Class common
  */
@@ -197,13 +204,11 @@ class common {
         }
 
         //-> Language auslesen oder default setzen
-        if(!is_api && !is_thumbgen) {
-            $_SESSION['language'] = (cookie::get('language') != false ?
-                (file_exists(basePath.'/inc/lang/'.cookie::get('language').'.php') ?
-                    cookie::get('language') :
-                    settings::get('language')) :
-                settings::get('language'));
-        }
+        $_SESSION['language'] = (cookie::get('language') != false ?
+            (file_exists(basePath.'/inc/lang/'.cookie::get('language').'.php') ?
+                cookie::get('language') :
+                settings::get('language')) :
+            settings::get('language'));
 
         if(!is_api && !is_thumbgen) {
             $subfolder = basename(dirname(dirname(self::GetServerVars('PHP_SELF')) . '../'));
@@ -3118,15 +3123,49 @@ class common {
     /**
      * Languagefiles einlesen
      * @param string $lng (optional)
+     * @param bool $refresh (optional)
      */
-    public static function lang(string $lng = 'de') {
-        if(!file_exists(basePath."/inc/lang/".$lng.".php")) {
-            $files = self::get_files(basePath.'/inc/lang/',false,true,['php']);
-            $lng = str_replace('.php','',$files[0]);
+    public static function lang(string $lng = 'de', bool $refresh = false) {
+        global $language_text;
+
+        $language_text = array(); $charset = 'utf-8';
+        $cache_hash = md5('system_lang_'.$lng);
+        if(!self::$cache->AutoMemExists($cache_hash) || !config::$use_system_cache || $refresh) {
+            require_once(basePath . "/inc/lang/global.php");
+            require_once(basePath . "/inc/lang/uk.php"); //default
+
+            if ($lng != 'en' && file_exists(basePath . "/inc/lang/" . $lng . ".php")) {
+                include(basePath . "/inc/lang/" . $lng . ".php");
+                if (config::$use_system_cache) {
+                   self::$cache->AutoMemSet($cache_hash, serialize(['language' => $language_text, 'charset' => $charset]), cache::TIME_LANGUAGE);
+                }
+            } else if ($lng == 'en') {
+                self::$cache->AutoMemSet($cache_hash, serialize(['language' => $language_text, 'charset' => $charset]), cache::TIME_LANGUAGE);
+            }
+        } else {
+            $language_cache_text = unserialize(self::$cache->AutoMemGet($cache_hash));
+            $language_text = $language_cache_text['language'];
+            $charset = $language_cache_text['charset'];
+            unset($language_cache_text);
         }
 
-        include(basePath."/inc/lang/global.php");
-        include(basePath."/inc/lang/".$lng.".php");
+        //Set Base-Content-type header
+        header("Content-type: text/html; charset=".$charset);
+
+        //-> Neue Languages einbinden, sofern vorhanden
+        if($language_files = self::get_files(basePath.'/inc/additional-languages/'.$lng.'/',false,true,array('php'))) {
+            foreach($language_files AS $languages) {
+                if(is_file(basePath.'/inc/additional-languages/'.$lng.'/'.$languages))
+                    require_once(basePath.'/inc/additional-languages/'.$lng.'/'.$languages);
+            } unset($language_files,$languages);
+        }
+
+        //Fix for OLD DZCP Code (Remove on Final)
+        foreach ($language_text as $key => $text) {
+            if(!defined($key)) {
+                define($key,$text);
+            }
+        } unset($key,$text);
     }
 
     /**
@@ -3289,20 +3328,6 @@ class common {
  *                       API Loader
  * ###########################################################
  */
-
-//-> Neue Kernel Funktionen einbinden, sofern vorhanden
-if($functions_files = common::get_files(basePath.'/inc/additional-kernel/',false,true, ['php'])) {
-    foreach($functions_files AS $func) {
-        include_once(basePath.'/inc/additional-kernel/'.$func);
-    } unset($functions_files,$func);
-}
-
-//-> Neue Languages einbinden, sofern vorhanden
-if($language_files = common::get_files(basePath.'/inc/additional-languages/'.$_SESSION['language'].'/',false,true, ['php'])) {
-    foreach($language_files AS $languages)
-    { include_once(basePath.'/inc/additional-languages/'.$_SESSION['language'].'/'.$languages); }
-    unset($language_files,$languages);
-}
 
 //-> Neue Funktionen einbinden, sofern vorhanden
 if($functions_files = common::get_files(basePath.'/inc/additional-functions/',false,true, ['php'])) {

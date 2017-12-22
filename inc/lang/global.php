@@ -16,60 +16,60 @@
  */
 
 ## ADDED / REDEFINED FOR 1.7.0
-define('_user_mailto_texttop', '<img src=\\"../inc/images/mailto.gif\\" align=\\"texttop\\"> <a href=\\"mailto:"+d+"\\" target=\\"_blank\\">"+d+"</a>');
+$language_text['_user_mailto_texttop'] = '<img src=\\"../inc/images/mailto.gif\\" align=\\"texttop\\"> <a href=\\"mailto:"+d+"\\" target=\\"_blank\\">"+d+"</a>';
 
 ## ADDED / REDEFINED FOR 1.5.2
-define('_dropdown_date_ts', '<select id="t_{$nr}" name="t_{$nr}" class="dropdown">{$day}</select> <select id="m_{$nr}" name="m_{$nr}" class="dropdown">{$month}</select> <select id="j_{$nr}" name="j_{$nr}" class="dropdown">{$year}</select>');
-define('_dropdown_time_ts', '<select id="h_{$nr}" name="h_{$nr}" class="dropdown">{$hour}</select> <select id="min_{$nr}" name="min_{$nr}" class="dropdown">{$minute}</select>{$uhr}');
+$language_text['_dropdown_date_ts'] = '<select id="t_{$nr}" name="t_{$nr}" class="dropdown">{$day}</select> <select id="m_{$nr}" name="m_{$nr}" class="dropdown">{$month}</select> <select id="j_{$nr}" name="j_{$nr}" class="dropdown">{$year}</select>';
+$language_text['_dropdown_time_ts'] = '<select id="h_{$nr}" name="h_{$nr}" class="dropdown">{$hour}</select> <select id="min_{$nr}" name="min_{$nr}" class="dropdown">{$minute}</select>{$uhr}';
 
 //Added for DZCP 1.4
-define('_buddys_yesicon', '<img src="../inc/images/buddys_yes.gif" alt="" class="icon" />');
-define('_buddys_noicon', '<img src="../inc/images/buddys_no.gif" alt="" class="icon" />');
-define('_closedicon_votes', '<img src="../inc/images/closed_votes.gif" alt="" class="icon" />');
-define('_hpicon_forum', '<a href="{$hp}" target="_blank"><img src="../inc/images/forum_hp.gif" alt="" title="{$hp}" class="icon" /></a>');
-define('_emailicon_forum', '<a href=\\"mailto:"+d+"\\"><img src=\\"../inc/images/forum_email.gif\\" title="+d+" class=\\"icon\\" /></a>');
-define('_forum_pn_preview', '<img src="../inc/images/forum_pn.gif" alt="" class="icon" style="cursor:pointer" />');
-define('_forum_zitat_preview', '<img src="../inc/images/zitat.gif" alt="" class="icon" style="cursor:pointer" />');
+$language_text['_buddys_yesicon'] = '<img src="../inc/images/buddys_yes.gif" alt="" class="icon" />';
+$language_text['_buddys_noicon'] = '<img src="../inc/images/buddys_no.gif" alt="" class="icon" />';
+$language_text['_closedicon_votes'] = '<img src="../inc/images/closed_votes.gif" alt="" class="icon" />';
+$language_text['_hpicon_forum'] = '<a href="{$hp}" target="_blank"><img src="../inc/images/forum_hp.gif" alt="" title="{$hp}" class="icon" /></a>';
+$language_text['_emailicon_forum'] = '<a href=\\"mailto:"+d+"\\"><img src=\\"../inc/images/forum_email.gif\\" title="+d+" class=\\"icon\\" /></a>';
+$language_text['_forum_pn_preview'] = '<img src="../inc/images/forum_pn.gif" alt="" class="icon" style="cursor:pointer" />';
+$language_text['_forum_zitat_preview'] = '<img src="../inc/images/zitat.gif" alt="" class="icon" style="cursor:pointer" />';
 
 ## Allgemein ##
-define('_user_link_noreg', '<a class=\\"{$class}\\" href=\\"mailto:"+d+"\\">{$nick}</a>');
-define('_link_mailto', '<a href=\\"mailto:"+d+"\\">{$nick}</a>');
+$language_text['_user_link_noreg'] = '<a class=\\"{$class}\\" href=\\"mailto:"+d+"\\">{$nick}</a>';
+$language_text['_link_mailto'] = '<a href=\\"mailto:"+d+"\\">{$nick}</a>';
 
 ## Icons ##
-define('_hpicon', '<a href="{$hp}" target="_blank"><img src="../inc/images/hp.gif" alt="" title="{$hp}" class="icon" /></a>');
-define('_email_mailto', '<a href="mailto:{$email}">{$email}</a>');
-define('_emailicon', '<a href=\\"mailto:"+d+"\\"><img src=\\"../inc/images/email.gif\\" title="+d+" class=\\"icon\\" /></a>');
-define('_emailicon_non_mailto', '<a href="{$email}"><img src="../inc/images/email.gif" alt="" class="icon" /></a>');
-define('_emailicon_blank', '<img src="../inc/images/email.gif" alt="" class="icon" />');
-define('_zitaticon', '<img src="../inc/images/zitat.gif" alt="" class="icon" />');
-define('_hpicon_blank', '<img src="../inc/images/hp.gif" alt="" class="icon" />');
-define('_mficon_blank', '<img src="../inc/images/mf.gif" alt="" class="icon" />');
-define('_maleicon', '<img src="../inc/images/male.gif" alt="" class="icon" />');
-define('_femaleicon', '<img src="../inc/images/female.gif" alt="" class="icon" />');
-define('_pnicon_blank', '<img src="../inc/images/pn.gif" alt="" class="icon" />');
-define('_yesicon', '<img src="../inc/images/yes.gif" alt="" class="icon" />');
-define('_noicon', '<img src="../inc/images/no.gif" alt="" class="icon" />');
-define('_newicon', '<img src="../inc/images/forum_newpost.gif" alt="" class="icon" />');
-define('_notnewicon', '<img src="../inc/images/notnew.gif" alt="" class="icon" />');
-define('_deleteicon_blank', '<img alt="" src="../inc/images/delete.png" class="icon" />');
-define('_editicon_blank', '<img alt="" src="../inc/images/edit.png" class="icon" />');
-define('_admin_default_edit', '<a href="?action=admin&amp;edit={$id}"><img src="../inc/images/edit.png" alt="" title="Edit" class="icon" /></a>');
-define('_admin_ck_edit', '<a href="?action=admin&amp;do=paycheck&amp;id={$id}"><img src="../inc/images/edit.png" alt="" title="Edit" class="icon" /></a>');
-define('_msg_delete_sended', '<a href="?action=msg&amp;do=deletesended&amp;id={$id}"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
-define('_forum_delete', '<a href="?action=post&amp;do=delete&amp;id={$id}"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
-define('_newsc_delete', '<a href="?action=show&amp;id={$id}&amp;do=delete&cid={$cid}"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>');
+$language_text['_hpicon'] = '<a href="{$hp}" target="_blank"><img src="../inc/images/hp.gif" alt="" title="{$hp}" class="icon" /></a>';
+$language_text['_email_mailto'] = '<a href="mailto:{$email}">{$email}</a>';
+$language_text['_emailicon'] = '<a href=\\"mailto:"+d+"\\"><img src=\\"../inc/images/email.gif\\" title="+d+" class=\\"icon\\" /></a>';
+$language_text['_emailicon_non_mailto'] = '<a href="{$email}"><img src="../inc/images/email.gif" alt="" class="icon" /></a>';
+$language_text['_emailicon_blank'] = '<img src="../inc/images/email.gif" alt="" class="icon" />';
+$language_text['_zitaticon'] = '<img src="../inc/images/zitat.gif" alt="" class="icon" />';
+$language_text['_hpicon_blank'] = '<img src="../inc/images/hp.gif" alt="" class="icon" />';
+$language_text['_mficon_blank'] = '<img src="../inc/images/mf.gif" alt="" class="icon" />';
+$language_text['_maleicon'] = '<img src="../inc/images/male.gif" alt="" class="icon" />';
+$language_text['_femaleicon'] = '<img src="../inc/images/female.gif" alt="" class="icon" />';
+$language_text['_pnicon_blank'] = '<img src="../inc/images/pn.gif" alt="" class="icon" />';
+$language_text['_yesicon'] = '<img src="../inc/images/yes.gif" alt="" class="icon" />';
+$language_text['_noicon'] = '<img src="../inc/images/no.gif" alt="" class="icon" />';
+$language_text['_newicon'] = '<img src="../inc/images/forum_newpost.gif" alt="" class="icon" />';
+$language_text['_notnewicon'] = '<img src="../inc/images/notnew.gif" alt="" class="icon" />';
+$language_text['_deleteicon_blank'] = '<img alt="" src="../inc/images/delete.png" class="icon" />';
+$language_text['_editicon_blank'] = '<img alt="" src="../inc/images/edit.png" class="icon" />';
+$language_text['_admin_default_edit'] = '<a href="?action=admin&amp;edit={$id}"><img src="../inc/images/edit.png" alt="" title="Edit" class="icon" /></a>';
+$language_text['_admin_ck_edit'] = '<a href="?action=admin&amp;do=paycheck&amp;id={$id}"><img src="../inc/images/edit.png" alt="" title="Edit" class="icon" /></a>';
+$language_text['_msg_delete_sended'] = '<a href="?action=msg&amp;do=deletesended&amp;id={$id}"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>';
+$language_text['_forum_delete'] = '<a href="?action=post&amp;do=delete&amp;id={$id}"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>';
+$language_text['_newsc_delete'] = '<a href="?action=show&amp;id={$id}&amp;do=delete&cid={$cid}"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>';
 
 ## Umfragen ##
-define('_votes_titel', '<a href="javascript:DZCP.toggle(\'{$vid}\')"><img src="../inc/images/{$icon}.gif" alt="" id="img{$vid}" class="icon" />{$intern}{$titel}</a>');
-define('_votes_balken', '<img src="../inc/images/vote.gif" width="{$width}%" height="4" alt="{$width}%" />');
+$language_text['_votes_titel'] = '<a href="javascript:DZCP.toggle(\'{$vid}\')"><img src="../inc/images/{$icon}.gif" alt="" id="img{$vid}" class="icon" />{$intern}{$titel}</a>';
+$language_text['_votes_balken'] = '<img src="../inc/images/vote.gif" width="{$width}%" height="4" alt="{$width}%" />';
 
 ## Admin ##
-define('_config_delete', '<a href="?admin={$what}&amp;do=delete&amp;id={$id}"><img src="../inc/images/delete.png" alt="" class="icon" /></a>');
-define('_config_edit', '<a href="?admin={$what}&amp;do=edit&amp;id={$id}"><img src="../inc/images/edit.png" alt="" class="icon" /></a>');
-define('_config_forum_kats_titel', '<a href="?admin=forum&amp;show=subkats&amp;id={$id}" style="display:block">{$kat}</a>');
-define('_config_newskats_img', '<img src="../inc/images/uploads/newskat/{$img}" alt="" />');
-define('_config_neskats_katbild_upload', '<a href="../upload/?action=newskats">upload</a>');
-define('_config_neskats_katbild_upload_edit', '<a href="../upload/?action=newskats&amp;edit={$id}">upload</a>');
+$language_text['_config_delete'] = '<a href="?admin={$what}&amp;do=delete&amp;id={$id}"><img src="../inc/images/delete.png" alt="" class="icon" /></a>';
+$language_text['_config_edit'] = '<a href="?admin={$what}&amp;do=edit&amp;id={$id}"><img src="../inc/images/edit.png" alt="" class="icon" /></a>';
+$language_text['_config_forum_kats_titel'] = '<a href="?admin=forum&amp;show=subkats&amp;id={$id}" style="display:block">{$kat}</a>';
+$language_text['_config_newskats_img'] = '<img src="../inc/images/uploads/newskat/{$img}" alt="" />';
+$language_text['_config_neskats_katbild_upload'] = '<a href="../upload/?action=newskats">upload</a>';
+$language_text['_config_neskats_katbild_upload_edit'] = '<a href="../upload/?action=newskats&amp;edit={$id}">upload</a>';
 
 ## User ##
-define('_to_squads', '<option value="{$id}" {$sel}>-> {$name}</option>');
+$language_text['_to_squads'] = '<option value="{$id}" {$sel}>-> {$name}</option>';

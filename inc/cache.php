@@ -29,9 +29,11 @@ class Cache extends CacheManager {
     const TIME_IPS_BLOCKING = 30; //function check_ip()
     const TIME_FILEMAN_IMG_STATS = 30; //fileman:function fileslist()
     const TIME_LESS = 1800; //function less()
+    const TIME_LANGUAGE = 1800; //function lang()
 
     //Class Stuff
     private $cache_index = null;
+    public $cache_config = null;
 
     function __construct() {
         Util\Languages::setEncoding("UTF-8");
@@ -40,37 +42,40 @@ class Cache extends CacheManager {
         $this->cache_index['memory'] = null;
         $this->cache_index['net'] = null;
 
+        $this->cache_config['file'] = ["path" => basePath.'/inc/_cache_', 'compress_data' => true, 'defaultKeyHashFunction' => 'sha1'];
+        $this->cache_config['memory'] = ['compress_data' => true,'defaultKeyHashFunction' => 'sha1'];
+
         //File Cache
         if(extension_loaded('Zend Data Cache') && function_exists('zend_disk_cache_store')) { //Zend Server
-            $this->cache_index['file'] = self::getInstance('zenddisk');
+            $this->cache_index['file'] = self::getInstance('zenddisk',$this->cache_config['file']);
         } else {
-            $this->cache_index['file'] = self::getInstance('files', ["path" => basePath.'/inc/_cache_']);
+            $this->cache_index['file'] = self::getInstance('files', $this->cache_config['file']);
         }
 
         //Memory Cache
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             if(extension_loaded('Zend Data Cache') && function_exists('zend_shm_cache_store')) { //Zend Server
-                $this->cache_index['memory'] = self::getInstance('zendshm');
+                $this->cache_index['memory'] = self::getInstance('zendshm',$this->cache_config['memory']);
             } else if(extension_loaded('wincache') && function_exists('wincache_ucache_set')) {
-                $this->cache_index['memory'] = self::getInstance('wincache');
+                $this->cache_index['memory'] = self::getInstance('wincache',$this->cache_config['memory']);
             } else if(extension_loaded('apcu') && ini_get('apc.enabled')) {
-                $this->cache_index['memory'] = self::getInstance('apcu');
+                $this->cache_index['memory'] = self::getInstance('apcu',$this->cache_config['memory']);
             } else if(extension_loaded('apc') && ini_get('apc.enabled') && strpos(PHP_SAPI, 'CGI') === false) {
-                $this->cache_index['memory'] = self::getInstance('apc');
+                $this->cache_index['memory'] = self::getInstance('apc',$this->cache_config['memory']);
             } else if(extension_loaded('xcache') && function_exists('xcache_get')) {
-                $this->cache_index['memory'] = self::getInstance('xcache');
+                $this->cache_index['memory'] = self::getInstance('xcache',$this->cache_config['memory']);
             } else {
                 $this->cache_index['memory'] = null;
             }
         } else {
             if(extension_loaded('Zend Data Cache') && function_exists('zend_shm_cache_store')) { //Zend Server
-                $this->cache_index['memory'] = self::getInstance('zendshm');
+                $this->cache_index['memory'] = self::getInstance('zendshm',$this->cache_config['memory']);
             } else if(extension_loaded('apcu') && ini_get('apc.enabled')) {
-                $this->cache_index['memory'] = self::getInstance('apcu');
+                $this->cache_index['memory'] = self::getInstance('apcu',$this->cache_config['memory']);
             } else if(extension_loaded('apc') && ini_get('apc.enabled') && strpos(PHP_SAPI, 'CGI') === false) {
-                $this->cache_index['memory'] = self::getInstance('apc');
+                $this->cache_index['memory'] = self::getInstance('apc',$this->cache_config['memory']);
             } else if(extension_loaded('xcache') && function_exists('xcache_get')) {
-                $this->cache_index['memory'] = self::getInstance('xcache');
+                $this->cache_index['memory'] = self::getInstance('xcache',$this->cache_config['memory']);
             } else {
                 $this->cache_index['memory'] = null;
             }
@@ -79,21 +84,28 @@ class Cache extends CacheManager {
         //Network Memory Cache (NetCache)
             if(config::$use_network_cache) {
                 if(config::$is_memcache && function_exists('memcache_connect')) {
-                    $this->cache_index['net'] = self::getInstance('memcache', ['memcache' => [config::$memcache_host, config::$memcache_port, 1]]);
+                    $this->cache_index['net'] = self::getInstance('memcache', ['memcache' => [config::$memcache_host, config::$memcache_port, 1],
+                        'compress_data' => true,
+                        'defaultKeyHashFunction' => 'sha1']);
                 } else if(config::$is_memcache && class_exists('Memcached')) {
-                    $this->cache_index['net'] = self::getInstance('memcached', ['memcache' => [config::$memcache_host, config::$memcache_port, 1]]);
+                    $this->cache_index['net'] = self::getInstance('memcached', ['memcache' => [config::$memcache_host, config::$memcache_port, 1],
+                        'compress_data' => true]);
                 } else if(config::$is_redis && class_exists('Redis')) {
                     $this->cache_index['net'] = self::getInstance('redis', ['redis' => ['host' => config::$redis_host,
                                                                                                  'port' => config::$redis_port,
                                                                                                  'password' => config::$redis_password,
                                                                                                  'database' => config::$redis_database,
-                                                                                                 'timeout' => config::$redis_timeout]]);
+                                                                                                 'timeout' => config::$redis_timeout],
+                        'compress_data' => true,
+                        'defaultKeyHashFunction' => 'sha1']);
                 } else if(config::$is_redis && class_exists("\\Predis\\Client")) {
                     $this->cache_index['net'] = self::getInstance('predis', ['redis' => ['host' => config::$redis_host,
                                                                                         'port' => config::$redis_port,
                                                                                         'password' => config::$redis_password,
                                                                                         'database' => config::$redis_database,
-                                                                                        'timeout' => config::$redis_timeout]]);
+                                                                                        'timeout' => config::$redis_timeout],
+                        'compress_data' => true,
+                        'defaultKeyHashFunction' => 'sha1']);
                 }
             }
     }

@@ -22,11 +22,13 @@
  * @return mixed|string
  */
 function smarty_function_lang($params,Smarty_Internal_Template &$smarty) {
+    global $language_text;
+
     /** @var TYPE_NAME $params */
     $params['msgID']='_'.$params['msgID'];
-    if(!defined($params['msgID'])) {
+    if(!array_key_exists($params['msgID'],$language_text) && !defined($params['msgID'])) {
         return 'MsgID: "'.$params['msgID'].'"" does not exist!';
     }
 
-    return constant($params['msgID']);
+    return defined($params['msgID']) ? constant($params['msgID']) : $language_text[$params['msgID']];
 }

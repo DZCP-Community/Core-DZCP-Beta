@@ -271,9 +271,9 @@ final class database {
             }
 
             if($dbConf['persistent']) {
-                $db = new PDO($dsn, $dbConf['db_user'], $dbConf['db_pw'], [PDO::ATTR_PERSISTENT => true]);
+                $db = new PDO($dsn, stripslashes($dbConf['db_user']), stripslashes($dbConf['db_pw']), [PDO::ATTR_PERSISTENT => true]);
             } else {
-                $db = new PDO($dsn, $dbConf['db_user'], $dbConf['db_pw']); 
+                $db = new PDO($dsn, stripslashes($dbConf['db_user']), stripslashes($dbConf['db_pw']));
             }
 
             $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
