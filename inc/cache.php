@@ -91,21 +91,21 @@ class Cache extends CacheManager {
                     $this->cache_index['net'] = self::getInstance('memcached', ['memcache' => [config::$memcache_host, config::$memcache_port, 1],
                         'compress_data' => true]);
                 } else if(config::$is_redis && class_exists('Redis')) {
-                    $this->cache_index['net'] = self::getInstance('redis', ['redis' => ['host' => config::$redis_host,
+                    $this->cache_index['net'] = self::getInstance('redis', ['host' => config::$redis_host,
                                                                                                  'port' => config::$redis_port,
                                                                                                  'password' => config::$redis_password,
                                                                                                  'database' => config::$redis_database,
-                                                                                                 'timeout' => config::$redis_timeout],
-                        'compress_data' => true,
-                        'defaultKeyHashFunction' => 'sha1']);
+                                                                                                 'timeout' => config::$redis_timeout,
+                                                                                                 'compress_data' => true,
+                                                                                                 'defaultKeyHashFunction' => 'sha1']);
                 } else if(config::$is_redis && class_exists("\\Predis\\Client")) {
-                    $this->cache_index['net'] = self::getInstance('predis', ['redis' => ['host' => config::$redis_host,
+                    $this->cache_index['net'] = self::getInstance('predis', ['host' => config::$redis_host,
                                                                                         'port' => config::$redis_port,
                                                                                         'password' => config::$redis_password,
                                                                                         'database' => config::$redis_database,
-                                                                                        'timeout' => config::$redis_timeout],
-                        'compress_data' => true,
-                        'defaultKeyHashFunction' => 'sha1']);
+                                                                                        'timeout' => config::$redis_timeout,
+                                                                                        'compress_data' => true,
+                                                                                        'defaultKeyHashFunction' => 'sha1']);
                 }
             }
     }
