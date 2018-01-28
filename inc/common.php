@@ -2935,7 +2935,7 @@ class common {
         $smarty->assign('id',$id);
         $smarty->assign('action',$action);
         $smarty->assign('title',$title);
-        $smarty->assign('del',str_replace(" ","+",$del));
+        $smarty->assign('del',$del);
         $delete = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_delete_single.tpl');
         $smarty->clearAllAssign();
         return $delete;
