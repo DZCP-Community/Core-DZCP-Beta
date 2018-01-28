@@ -1,28 +1,28 @@
 <tr>
 <td>
-<form name="navi" method="post" action="?admin=navi&amp;do={$do}" onsubmit="return(DZCP.submitButton())">
+<form name="navi" method="post" action="?admin=navi&amp;do=editlink&amp;id={$data.id}" onsubmit="return(DZCP.submitButton())">
 <table class="hperc" cellspacing="1">
 <tr>
-  <td class="contentHead" colspan="2" align="center"><span class="fontBold">{$head}</span></td>
+  <td class="contentHead" colspan="2" align="center"><span class="fontBold">{lang msgID="navi_edit_head"}</span></td>
 </tr>
 <tr>
-  <td class="contentMainTop"><span class="fontBold">{$name}:</span></td>
+  <td class="contentMainTop"><span class="fontBold">{lang msgID="navi_name"}:</span></td>
   <td class="contentMainFirst" align="center">
-    <input type="text" name="name" value="{$n_name}" class="inputField_dis"
+    <input type="text" name="name" value="{$name}" class="inputField_dis"
     onfocus="this.className='inputField_en';"
     onblur="this.className='inputField_dis';" />
   </td>
 </tr>
 <tr>
-  <td class="contentMainTop"><span class="fontBold">{$url}:</span></td>
+  <td class="contentMainTop"><span class="fontBold">{lang msgID="navi_url_to"}:</span></td>
   <td class="contentMainFirst" align="center">
-    <input type="text" name="url" value="{$n_url}" class="inputField_dis"
+    <input type="text" name="url" value="{$url}" class="inputField_dis"
     onfocus="this.className='inputField_en';"
     onblur="this.className='inputField_dis';" />
   </td>
 </tr>
 <tr>
-  <td class="contentMainTop"><span class="fontBold">{$pos}:</span></td>
+  <td class="contentMainTop"><span class="fontBold">{lang msgID="posi"}:</span></td>
   <td class="contentMainFirst" align="center">
     <select name="pos" class="dropdown">
       {$position}
@@ -30,43 +30,43 @@
   </td>
 </tr>
 <tr>
-  <td class="contentMainTop"><span class="fontBold">{$wichtig}:</span></td>
+  <td class="contentMainTop"><span class="fontBold">{lang msgID="navi_wichtig"}:</span></td>
   <td class="contentMainFirst" align="center">
     <select name="wichtig" class="dropdown">
-      <option value="0">{$nein}</option>
-      <option value="1" {$selw}>{$ja}</option>
+      <option value="0">{lang msgID="no"}</option>
+      <option value="1"{if $data.wichtig} selected="selected"{/if}>{lang msgID="yes"}</option>
     </select>
   </td>
 </tr>
 <tr>
-  <td class="contentMainTop"><span class="fontBold">{$intern}:</span></td>
+  <td class="contentMainTop"><span class="fontBold">{lang msgID="config_forum_intern"}:</span></td>
   <td class="contentMainFirst" align="center">
     <select name="internal" class="dropdown">
-      <option value="0">{$nein}</option>
-      <option value="1" {$seli}>{$ja}</option>
+      <option value="0">{lang msgID="no"}</option>
+      <option value="1"{if $data.internal} selected="selected"{/if}>{lang msgID="yes"}</option>
     </select>
   </td>
 </tr>
 <tr>
-  <td class="contentMainTop"><span class="fontBold">{$sichtbar}:</span></td>
+  <td class="contentMainTop"><span class="fontBold">{lang msgID="navi_shown"}:</span></td>
   <td class="contentMainFirst" align="center">
     <select name="sichtbar" class="dropdown">
-      <option value="0">{$nein}</option>
-      <option value="1" {$sels}>{$ja}</option>
+      <option value="0">{lang msgID="no"}</option>
+      <option value="1"{if $data.shown} selected="selected"{/if}>{lang msgID="yes"}</option>
     </select>
   </td>
 </tr>
 <tr>
-  <td class="contentMainTop"><span class="fontBold">{$target}:</span></td>
+  <td class="contentMainTop"><span class="fontBold">{lang msgID="target"}:</span></td>
   <td class="contentMainFirst" align="center">
     <select name="target" class="dropdown">
-      <option value="0">{$nein}</option>
-      <option value="1" {$atarget}>{$ja}</option>
+      <option value="0">{lang msgID="no"}</option>
+      <option value="1"{if $data.target} selected="selected"{/if}>{lang msgID="yes"}</option>
     </select>
   </td>
 </tr>
 <tr>
-  <td class="contentBottom" colspan="2"><input id="contentSubmit" type="submit" value="{$what}" class="submit" /></td>
+  <td class="contentBottom" colspan="2"><input id="contentSubmit" type="submit" value="{lang msgID="button_value_edit"}" class="submit" /></td>
 </tr>
 </table>
 </form>
