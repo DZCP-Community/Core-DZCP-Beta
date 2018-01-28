@@ -1,5 +1,5 @@
 <tr>
-  <td class="contentMainTop info" colspan="2" onclick="DZCP.toggle(1)" style="cursor:pointer" onmouseover="DZCP.showInfo('{$main_info}');this.className='contentMainFirst info'" onmouseout="DZCP.hideInfo();this.className='contentMainTop info'">
+  <td class="contentMainTop info" colspan="2" onclick="DZCP.toggle(1)" style="cursor:pointer" onmouseover="DZCP.showInfo('{lang msgID="main_info"}');this.className='contentMainFirst info'" onmouseout="DZCP.hideInfo();this.className='contentMainTop info'">
     <table class="hperc" cellspacing="0">
       <tr>
         <td style="width:1%"><img id="img1" src="{idir}/expand.gif" alt="" /></td>
@@ -172,7 +172,7 @@
   </td>
 </tr>
 <tr>
-  <td class="contentMainTop info" colspan="2" onclick="DZCP.toggle(2)" style="cursor:pointer" onmouseover="DZCP.showInfo('{$badword_info}');this.className='contentMainFirst info'" onmouseout="DZCP.hideInfo();this.className='contentMainTop info'">
+  <td class="contentMainTop info" colspan="2" onclick="DZCP.toggle(2)" style="cursor:pointer" onmouseover="DZCP.showInfo('{lang msgID="admin_config_badword_info"}');this.className='contentMainFirst info'" onmouseout="DZCP.hideInfo();this.className='contentMainTop info'">
     <table class="hperc" cellspacing="1">
       <tr>
         <td style="width:1%"><img id="img2" src="{idir}/expand.gif" alt="" /></td>
@@ -263,7 +263,7 @@
     </td>
 </tr>
 <tr>
-  <td class="contentMainTop info" colspan="2" onclick="DZCP.toggle(7)" style="cursor:pointer" onmouseover="DZCP.showInfo('{$eml_info}');this.className='contentMainFirst info'" onmouseout="DZCP.hideInfo();this.className='contentMainTop info'">
+  <td class="contentMainTop info" colspan="2" onclick="DZCP.toggle(7)" style="cursor:pointer" onmouseover="DZCP.showInfo('{lang msgID="admin_eml_info"}');this.className='contentMainFirst info'" onmouseout="DZCP.hideInfo();this.className='contentMainTop info'">
     <table class="hperc" cellspacing="1">
       <tr>
         <td style="width:1%"><img id="img7" src="{idir}/expand.gif" alt="" /></td>
@@ -428,7 +428,7 @@
   </td>
 </tr>
 <tr>
-  <td class="contentMainTop info" colspan="2" onclick="DZCP.toggle(3)" style="cursor:pointer" onmouseover="DZCP.showInfo('{$reg_info}');this.className='contentMainFirst info'" onmouseout="DZCP.hideInfo();this.className='contentMainTop info'">
+  <td class="contentMainTop info" colspan="2" onclick="DZCP.toggle(3)" style="cursor:pointer" onmouseover="DZCP.showInfo('{lang msgID="admin_reg_info"}');this.className='contentMainFirst info'" onmouseout="DZCP.hideInfo();this.className='contentMainTop info'">
     <table class="hperc" cellspacing="1">
       <tr>
         <td style="width:1%"><img id="img3" src="{idir}/expand.gif" alt="" /></td>
@@ -471,7 +471,7 @@
   </td>
 </tr>
 <tr>
-  <td class="contentMainTop info" colspan="2" onclick="DZCP.toggle(4)" style="cursor:pointer" onmouseover="DZCP.showInfo('{$c_limits_what}');this.className='contentMainFirst info'" onmouseout="DZCP.hideInfo();this.className='contentMainTop info'">
+  <td class="contentMainTop info" colspan="2" onclick="DZCP.toggle(4)" style="cursor:pointer" onmouseover="DZCP.showInfo('{lang msgID="config_c_limits_what"}');this.className='contentMainFirst info'" onmouseout="DZCP.hideInfo();this.className='contentMainTop info'">
     <table class="hperc" cellspacing="1">
       <tr>
         <td style="width:1%"><img id="img4" src="{idir}/expand.gif" alt="" /></td>
@@ -607,7 +607,7 @@
   </td>
 </tr>
 <tr>
-  <td class="contentMainTop info" colspan="2" onclick="DZCP.toggle(5)" style="cursor:pointer" onmouseover="DZCP.showInfo('{$c_floods_what}');this.className='contentMainFirst info'" onmouseout="DZCP.hideInfo();this.className='contentMainTop info'">
+  <td class="contentMainTop info" colspan="2" onclick="DZCP.toggle(5)" style="cursor:pointer" onmouseover="DZCP.showInfo('{lang msgID="config_c_floods_what"}');this.className='contentMainFirst info'" onmouseout="DZCP.hideInfo();this.className='contentMainTop info'">
     <table class="hperc" cellspacing="1">
       <tr>
         <td style="width:1%"><img id="img5" src="{idir}/expand.gif" alt="" /></td>
@@ -647,7 +647,7 @@
   </td>
 </tr>
 <tr>
-  <td class="contentMainTop info" colspan="2" onclick="DZCP.toggle(6)" style="cursor:pointer" onmouseover="DZCP.showInfo('{$c_length_what}');this.className='contentMainFirst info'" onmouseout="DZCP.hideInfo();this.className='contentMainTop info'">
+  <td class="contentMainTop info" colspan="2" onclick="DZCP.toggle(6)" style="cursor:pointer" onmouseover="DZCP.showInfo('{lang msgID="config_c_length_what"}');this.className='contentMainFirst info'" onmouseout="DZCP.hideInfo();this.className='contentMainTop info'">
     <table class="hperc" cellspacing="1">
       <tr>
         <td style="width:1%"><img id="img6" src="{idir}/expand.gif" alt="" /></td>
