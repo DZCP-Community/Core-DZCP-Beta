@@ -158,13 +158,6 @@ $smtp_secure_options = $smarty->fetch('string:<option '.(!settings::get('smtp_tl
     . '<option '.(settings::get('smtp_tls_ssl') == 2 ? 'selected="selected"' : '').' value="2">SSL</option>');
 
 $smarty->caching = false;
-$smarty->assign('main_info',_main_info);
-$smarty->assign('badword_info',_admin_config_badword_info);
-$smarty->assign('eml_info',_admin_eml_info);
-$smarty->assign('reg_info',_admin_reg_info);
-$smarty->assign('c_limits_what',_config_c_limits_what);
-$smarty->assign('c_floods_what',_config_c_floods_what);
-$smarty->assign('c_length_what',_config_c_length_what);
 $smarty->assign('c_eml_reg_subj',stringParser::decode(settings::get('eml_reg_subj')));
 $smarty->assign('c_eml_pwd_subj',stringParser::decode(settings::get('eml_pwd_subj')));
 $smarty->assign('c_eml_nletter_subj',stringParser::decode(settings::get('eml_nletter_subj')));
