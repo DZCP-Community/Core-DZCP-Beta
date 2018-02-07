@@ -30,6 +30,7 @@ function smarty_function_kalender($params,Smarty_Internal_Template &$smarty) {
             $jahr = date("Y");
         }
 
+        $month = '';
         for($i = 1; $i <= 12; $i++) {
             $mname = ["1" => _jan,
                 "2" => _feb,
@@ -44,7 +45,8 @@ function smarty_function_kalender($params,Smarty_Internal_Template &$smarty) {
                 "11" => _nov,
                 "12" => _dez];
 
-            if($monat == $i) $month = $mname[$i];
+            if($monat == $i)
+                $month = $mname[$i];
         }
 
         $today = mktime(0,0,0,date("n"),date("d"),date("Y"));
@@ -90,17 +92,18 @@ function smarty_function_kalender($params,Smarty_Internal_Template &$smarty) {
                     else
                         $day = common::cal($i);
 
+                    $smarty = common::getSmarty(); //Use Smarty
                     if(!checkdate($monat, $i, $jahr))
                         $data .= '<td class="navKalEmpty"></td>';
                     elseif($datum == $today) {
                         $smarty->caching = false;
-                        $smarty->assign('day',$day);
-                        $smarty->assign('id',"navKalToday");
+                        $smarty->assign('day',$day,true);
+                        $smarty->assign('id',"navKalToday",true);
                         $data .= $smarty->fetch('file:['.common::$tmpdir.']menu/kalender/kal_day.tpl');
                     } else {
                         $smarty->caching = false;
-                        $smarty->assign('day',$day);
-                        $smarty->assign('id',"navKalDays");
+                        $smarty->assign('day',$day,true);
+                        $smarty->assign('id',"navKalDays",true);
                         $data .= $smarty->fetch('file:['.common::$tmpdir.']menu/kalender/kal_day.tpl');
                     }
 
