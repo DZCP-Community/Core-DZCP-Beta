@@ -961,6 +961,8 @@ class common {
             if ($count >= 1) {
                 return 'http://' . $hp;
             }
+
+            return 'http://' . $hp;
         }
 
         return $hp;

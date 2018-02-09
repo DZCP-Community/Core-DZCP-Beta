@@ -83,7 +83,7 @@ class DebugConsole {
     public static final function sql_error_Exception($msg,$query,array $params = []) {
         $message = '#####################################################################'.EOL.
         'Datum   = '.date("d.m.y H:i", time()).EOL.
-        'URL     = http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].$_SERVER['PHP_self'].EOL.EOL.
+        'URL     = http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].$_SERVER['PHP_SELF'].EOL.EOL.
         'PDO-Exception:'.EOL.
         'Message   = '.$msg.EOL.
         'Query   = '.$query.EOL.

@@ -379,10 +379,11 @@ switch (common::$do) {
         $smarty->clearAllAssign();
     break;
     case 'public':
-        if(isset($_GET['what']) && $_GET['what'] == 'set')
-            common::$sql['default']->update("UPDATE `{prefix_news}` SET `public` = '1', `datum`  = '".time()."' WHERE id = '".(int)($_GET['id'])."'");
+        $get = common::$sql['default']->fetch("SELECT `public` FROM `{prefix_news}` WHERE `id` = ?;",[(int)($_GET['id'])]);
+        if(!$get['public'])
+            common::$sql['default']->update("UPDATE `{prefix_news}` SET `public` = 1, `datum`  = ? WHERE `id` = ?;",[time(),(int)($_GET['id'])]);
         else
-            common::$sql['default']->update("UPDATE `{prefix_news}` SET `public` = '0' WHERE id = '".(int)($_GET['id'])."'");
+            common::$sql['default']->update("UPDATE `{prefix_news}` SET `public` = 0 WHERE `id` = ?;",[(int)($_GET['id'])]);
 
         header("Location: ?admin=newsadmin");
     break;
@@ -440,8 +441,8 @@ switch (common::$do) {
             $intern = ($get['intern'] ? _votes_intern : '');
             $sticky = ($get['sticky'] ? _news_sticky : '');
             $datum = empty($get['datum']) ? _no_public : date("d.m.y H:i", $get['datum'])._uhr;
-            $public = ($get['public'] ? '<a href="?admin=newsadmin&amp;do=public&amp;id='.$get['id'].'&amp;what=unset"><img src="../inc/images/public.gif" alt="" title="'._non_public.'" /></a>'
-                    : '<a href="?admin=newsadmin&amp;do=public&amp;id='.$get['id'].'&amp;what=set"><img src="../inc/images/nonpublic.gif" alt="" title="'._public.'" /></a>');
+            $public = ($get['public'] ? '<a href="?admin=newsadmin&amp;do=public&amp;id='.$get['id'].'"><img src="../inc/images/public.gif" alt="" title="'._non_public.'" /></a>'
+                    : '<a href="?admin=newsadmin&amp;do=public&amp;id='.$get['id'].'"><img src="../inc/images/nonpublic.gif" alt="" title="'._public.'" /></a>');
 
             $class = ($color % 2) ? "contentMainSecond" : "contentMainFirst"; $color++;
             $smarty->caching = false;
