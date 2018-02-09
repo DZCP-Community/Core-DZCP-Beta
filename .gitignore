@@ -22,3 +22,4 @@ rss.xml
 *.phar
 inc/configs/config.php
 vendor/*
+inc/lang/ru_old.php

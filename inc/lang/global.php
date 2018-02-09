@@ -51,21 +51,21 @@ $language_text['_yesicon'] = '<img src="../inc/images/yes.gif" alt="" class="ico
 $language_text['_noicon'] = '<img src="../inc/images/no.gif" alt="" class="icon" />';
 $language_text['_newicon'] = '<img src="../inc/images/forum_newpost.gif" alt="" class="icon" />';
 $language_text['_notnewicon'] = '<img src="../inc/images/notnew.gif" alt="" class="icon" />';
-$language_text['_deleteicon_blank'] = '<img alt="" src="../inc/images/delete.png" class="icon" />';
-$language_text['_editicon_blank'] = '<img alt="" src="../inc/images/edit.png" class="icon" />';
-$language_text['_admin_default_edit'] = '<a href="?action=admin&amp;edit={$id}"><img src="../inc/images/edit.png" alt="" title="Edit" class="icon" /></a>';
-$language_text['_admin_ck_edit'] = '<a href="?action=admin&amp;do=paycheck&amp;id={$id}"><img src="../inc/images/edit.png" alt="" title="Edit" class="icon" /></a>';
-$language_text['_msg_delete_sended'] = '<a href="?action=msg&amp;do=deletesended&amp;id={$id}"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>';
-$language_text['_forum_delete'] = '<a href="?action=post&amp;do=delete&amp;id={$id}"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>';
-$language_text['_newsc_delete'] = '<a href="?action=show&amp;id={$id}&amp;do=delete&cid={$cid}"><img alt="" src="../inc/images/delete.png" title="Delete" class="icon" /></a>';
+$language_text['_deleteicon_blank'] = '<img alt="" src="../inc/images/delete.gif" class="icon" />';
+$language_text['_editicon_blank'] = '<img alt="" src="../inc/images/edit.gif" class="icon" />';
+$language_text['_admin_default_edit'] = '<a href="?action=admin&amp;edit={$id}"><img src="../inc/images/edit.gif" alt="" title="Edit" class="icon" /></a>';
+$language_text['_admin_ck_edit'] = '<a href="?action=admin&amp;do=paycheck&amp;id={$id}"><img src="../inc/images/edit.gif" alt="" title="Edit" class="icon" /></a>';
+$language_text['_msg_delete_sended'] = '<a href="?action=msg&amp;do=deletesended&amp;id={$id}"><img alt="" src="../inc/images/delete.gif" title="Delete" class="icon" /></a>';
+$language_text['_forum_delete'] = '<a href="?action=post&amp;do=delete&amp;id={$id}"><img alt="" src="../inc/images/delete.gif" title="Delete" class="icon" /></a>';
+$language_text['_newsc_delete'] = '<a href="?action=show&amp;id={$id}&amp;do=delete&cid={$cid}"><img alt="" src="../inc/images/delete.gif" title="Delete" class="icon" /></a>';
 
 ## Umfragen ##
 $language_text['_votes_titel'] = '<a href="javascript:DZCP.toggle(\'{$vid}\')"><img src="../inc/images/{$icon}.gif" alt="" id="img{$vid}" class="icon" />{$intern}{$titel}</a>';
 $language_text['_votes_balken'] = '<img src="../inc/images/vote.gif" width="{$width}%" height="4" alt="{$width}%" />';
 
 ## Admin ##
-$language_text['_config_delete'] = '<a href="?admin={$what}&amp;do=delete&amp;id={$id}"><img src="../inc/images/delete.png" alt="" class="icon" /></a>';
-$language_text['_config_edit'] = '<a href="?admin={$what}&amp;do=edit&amp;id={$id}"><img src="../inc/images/edit.png" alt="" class="icon" /></a>';
+$language_text['_config_delete'] = '<a href="?admin={$what}&amp;do=delete&amp;id={$id}"><img src="../inc/images/delete.gif" alt="" class="icon" /></a>';
+$language_text['_config_edit'] = '<a href="?admin={$what}&amp;do=edit&amp;id={$id}"><img src="../inc/images/edit.gif" alt="" class="icon" /></a>';
 $language_text['_config_forum_kats_titel'] = '<a href="?admin=forum&amp;show=subkats&amp;id={$id}" style="display:block">{$kat}</a>';
 $language_text['_config_newskats_img'] = '<img src="../inc/images/uploads/newskat/{$img}" alt="" />';
 $language_text['_config_neskats_katbild_upload'] = '<a href="../upload/?action=newskats">upload</a>';

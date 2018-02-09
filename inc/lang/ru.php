@@ -257,63 +257,63 @@ $language_text['_ipban_head_admin'] = 'IP-Bans';
 $language_text['_perm_ipban'] = 'IP-Bans verwalten';
 
 ## ADDED / REDEFINED FOR 1.6.0 Final
-$language_text['_txt_navi_main'] = 'Hauptnavigation';
-$language_text['_txt_navi_clan'] = 'Clannavigation';
-$language_text['_txt_navi_misc'] = 'Sonstiges';
-$language_text['_txt_userarea'] = 'Benutzerbereich';
-$language_text['_txt_vote'] = 'Umfragen';
-$language_text['_txt_partners'] = 'Partner';
-$language_text['_txt_sponsors'] = 'Sponsoren';
-$language_text['_txt_counter'] = 'Statistik';
-$language_text['_txt_l_news'] = 'Neuigkeiten';
-$language_text['_txt_ftopics'] = 'Forenbeitr&auml;ge';
-$language_text['_txt_teams'] = 'Teams';
-$language_text['_txt_template_switch'] = 'Design &auml;ndern';
-$language_text['_txt_events'] = 'Termine';
-$language_text['_txt_kalender'] = 'Kalender';
-$language_text['_txt_l_artikel'] = 'Artikel';
-$language_text['_txt_l_reg'] = 'neue User';
-$language_text['_txt_motm'] = 'Member of the Moment';
-$language_text['_txt_top_dl'] = 'Top Downloads';
-$language_text['_txt_uotm'] = 'User of the Moment';
+$language_text['_txt_navi_main'] = 'Главная';
+$language_text['_txt_navi_clan'] = 'Kлан';
+$language_text['_txt_navi_misc'] = 'Остальные';
+$language_text['_txt_userarea'] = 'Область пользователя';
+$language_text['_txt_vote'] = 'Опросы';
+$language_text['_txt_partners'] = 'Партнеры';
+$language_text['_txt_sponsors'] = 'Спонсоры';
+$language_text['_txt_counter'] = 'Cтатистика';
+$language_text['_txt_l_news'] = 'Hовости';
+$language_text['_txt_ftopics'] = 'Сообщения форума';
+$language_text['_txt_teams'] = 'Команды';
+$language_text['_txt_template_switch'] = 'Изменить шаблон';
+$language_text['_txt_events'] = 'События';
+$language_text['_txt_kalender'] = 'Календарь';
+$language_text['_txt_l_artikel'] = 'Статья';
+$language_text['_txt_l_reg'] = 'Новый пользователь';
+$language_text['_txt_motm'] = 'Случайный участник клана';
+$language_text['_txt_top_dl'] = 'Топ закачек';
+$language_text['_txt_uotm'] = 'Случайный пользователь';
 
-$language_text['_forum_kat'] = 'Kategorie';
+$language_text['_forum_kat'] = 'Kатегория';
 
-$language_text['_artikel_userimage'] = 'Eigenes Artikelbild';
-$language_text['_artikelpic_del'] = 'Artikelbild l&ouml;schen?';
-$language_text['_artikelpic_deleted'] = 'Artikelbild erfolgreich gel&ouml;scht';
+$language_text['_artikel_userimage'] = 'Собственные Изображение';
+$language_text['_artikelpic_del'] = 'Удалить изображение?';
+$language_text['_artikelpic_deleted'] = 'Изображение удаленo';
 
-$language_text['_news_userimage'] = 'Eigenes Newsbild';
-$language_text['_newspic_del'] = 'Newsbild l&ouml;schen?';
-$language_text['_newspic_deleted'] = 'Newsbild erfolgreich gel&ouml;scht';
-$language_text['_max'] = 'max.';
+$language_text['_news_userimage'] = 'Собственные Изображение';
+$language_text['_newspic_del'] = 'Удалить образ новостей?';
+$language_text['_newspic_deleted'] = 'образ новостей удален';
+$language_text['_max'] = 'Макс.';
 
-$language_text['_perm_dlintern'] = 'Interne Download einsehen';
+$language_text['_perm_dlintern'] = 'Показать внутренние загрузки';
 
-$language_text['_config_url_linked_head'] = 'URLs verlinken';
+$language_text['_config_url_linked_head'] = 'URLs связать';
 
-$language_text['_upload_error'] = 'Fehler beim hochladen der Datei!';
-$language_text['_login_banned'] = 'Dein Account wurde vom Administrator gesperrt!';
-$language_text['_lobby_no_mymessages'] = '<a href="../user/?action=msg">Du hast keine neuen Nachrichten!</a>';
+$language_text['_upload_error'] = 'Не удалось загрузить файл!';
+$language_text['_login_banned'] = 'Ваш аккаунт заблокирован администратором!';
+$language_text['_lobby_no_mymessages'] = '<a href="../user/?action=msg">У вас нет новых сообщений!</a>';
 
-$language_text['_perm_protocol'] = 'Admin Protokoll einsehen';
-$language_text['_perm_support'] = 'Support Seite einsehen';
-$language_text['_perm_clear'] = 'Datenbank aufr&auml;umen';
-$language_text['_perm_forumkats'] = 'Forenkategorien verwalten';
-$language_text['_perm_impressum'] = 'Impressum verwalten';
-$language_text['_perm_config'] = 'Seitenkonfiguration &auml;ndern';
-$language_text['_perm_positions'] = 'User R&auml;nge verwalten';
-$language_text['_perm_partners'] = 'Partner verwalten';
-$language_text['_perm_profile'] = 'Profilfelder verwalten';
+$language_text['_perm_protocol'] = 'См протокол администратора';
+$language_text['_perm_support'] = 'Смотрите страницу поддержки';
+$language_text['_perm_clear'] = 'Очистить базу данных';
+$language_text['_perm_forumkats'] = 'Конфиг. категории Форумыa';
+$language_text['_perm_impressum'] = 'Конфиг. контактами';
+$language_text['_perm_config'] = 'Конфиг. страницы';
+$language_text['_perm_positions'] = 'Конфиг. рангами пользователей';
+$language_text['_perm_partners'] = 'Конфиг. партнеров';
+$language_text['_perm_profile'] = 'Конфиг. поля в профилe';
 
 ## ADDED / REDEFINED FOR 1.5 Final
-$language_text['_id_dont_exist'] = 'Die von dir angegebene ID existiert nicht!';
+$language_text['_id_dont_exist'] = 'Который вы указали ID не существует!';
 
 ## ADDED / REDEFINED FOR 1.5.2
-$language_text['_button_title_del_account'] = 'User-Account l&ouml;schen';
-$language_text['_confirm_del_account'] = 'Moechtest du wirklich dein Benutzeraccount loeschen';
-$language_text['_profil_del_account'] = 'Account l&ouml;schen';
-$language_text['_profil_del_admin'] = '<b>L&ouml;schen nicht m&ouml;glich!</b>';
+$language_text['_button_title_del_account'] = 'удалить аккаунт?';
+$language_text['_confirm_del_account'] = 'вы действительно хотите удалить свой аккаунт ?';
+$language_text['_profil_del_account'] = 'удалить аккаунт?';
+$language_text['_profil_del_admin'] = '<b>удаление не возможно!</b>';
 $language_text['_info_account_deletet'] = 'Dein Account wurde erfolgreich gel&ouml;scht';
 $language_text['_news_get_timeshift'] = 'Zeitversetzte News?';
 $language_text['_news_timeshift_from'] = 'News Anzeigen ab:';
@@ -505,8 +505,8 @@ $language_text['_no_live_status'] = 'Keine Liveabfrage';
 $language_text['_comment_edited'] = 'Der Kommentar wurde erfolgreich editiert!';
 $language_text['_comments_edit'] = 'Kommentar editieren';
 $language_text['_forum_post_where_preview'] = '<a href="javascript:void(0)">{$mainkat}</a> <span class="fontBold">Forum:</span> <a href="javascript:void(0)">{$wherekat}</a> <span class="fontBold">Thema:</span> <a href="javascript:void(0)">{$wherepost}</a>';
-$language_text['_aktiv_icon'] = '<img src="../inc/lang/images/de/active.png" alt="" class="icon" />';
-$language_text['_inaktiv_icon'] = '<img src="../inc/lang/images/de/inactive.png" alt="" class="icon" />';
+$language_text['_aktiv_icon'] = '<img src="../inc/images/active.gif" alt="" class="icon" />';
+$language_text['_inaktiv_icon'] = '<img src="../inc/images/inactive.gif" alt="" class="icon" />';
 $language_text['_pn_write_forum'] = '<a href="../user/?action=msg&amp;do=pn&amp;id={$id}"><img src="{idir}/forum_pn.gif" alt="" title="{$nick} eine Nachricht schreiben" class="icon" /></a>';
 $language_text['_uhr'] = '&nbsp;Uhr';
 $language_text['_kalender_admin_head'] = 'Kalender - Ereignisse';
