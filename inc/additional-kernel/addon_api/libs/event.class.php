@@ -32,9 +32,6 @@ class dzcp_event
                         case 'xml':
                             $this->contenttype = 'xml';
                             break;
-                        case 'xmlrpc':
-                            $this->contenttype = 'xmlrpc';
-                            break;
                         case 'jsonp':
                             $this->contenttype = 'jsonp';
                             break;
@@ -61,7 +58,6 @@ class dzcp_event
         header("Expires: ".gmdate("D, d M Y H:i:s", time()-1)." GMT");
         switch ($this->contenttype) {
             case 'xml':
-            case 'xmlrpc':
                 header('Content-Type: application/xml');
                 break;
             case 'jsonp':

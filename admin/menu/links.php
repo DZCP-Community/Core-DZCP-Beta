@@ -98,7 +98,6 @@ switch (common::$do) {
             $smarty->assign('class',$class);
             $smarty->assign('edit',$edit);
             $smarty->assign('delete',$delete);
-            $smarty->assign('id',$get['id']);
             $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/links_show.tpl');
             $smarty->clearAllAssign();
         }

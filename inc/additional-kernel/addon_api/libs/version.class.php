@@ -74,11 +74,9 @@ class dzcp_version extends dzcp_event
 
         $get = common::$sql['default']->fetch("SELECT `version`,`release`,`build`,`edition` FROM `{prefix_addon_version}` WHERE `static_version` = ? AND `edition` = ?;",
             [$this->version, $this->edition]);
-
         if (common::$sql['default']->rowCount()) {
             switch ($this->contenttype) {
                 case 'xml':
-                case 'xmlrpc':
                     $output = xmlrpc_encode([
                         'dzcp' => [
                             'version' => stringParser::decode($get['version']),
@@ -105,7 +103,7 @@ class dzcp_version extends dzcp_event
 
                     $validated_data = common::$gump->run($output);
                     if ($validated_data !== false) {
-                        echo json_encode($validated_data,JSON_FORCE_OBJECT);
+                        echo $validated_data;
                     }
                 break;
             }
