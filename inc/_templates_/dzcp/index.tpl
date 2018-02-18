@@ -31,7 +31,7 @@
   <title>{$title}</title>
   <meta http-equiv="title" content="{$title}" />
   <meta http-equiv="pragma" content="No-Cache" />
-  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
   <link rel="alternate" type="application/rss+xml" href="../rss.xml" title="{$clanname} RSS-Feed" />
   <link rel="home" href="/" title="Home" />
@@ -186,9 +186,9 @@
 
                   <div class="header-cart__inner">
                     <span class="header-cart__product-cat">BugReport. #00396</span>
-                    <h5 class="header-cart__product-name"><a href="#">Adminmenü</a></h5>
+                    <h5 class="header-cart__product-name"><a href="#">AdminmenÃ¼</a></h5>
                     <div class="header-cart__product-sum">
-                      <span class="header-cart__product-price">Newskategorie lädt Bild nicht</span>
+                      <span class="header-cart__product-price">Newskategorie lÃ¤dt Bild nicht</span>
                     </div>
                   </div>
                 </li>
@@ -295,7 +295,7 @@
                     <h6 class="posts__title"><a href="#">Die Version 1.6.5 BETA Phase</a></h6>
                     <time datetime="2017-08-23" class="posts__date">32.06.2017</time>
                     <div class="posts__excerpt">
-                      Bald ist es soweit. Lucas aka Hammermaps.dev ist bereits an der neuen Beta DZCP 1.6.5 dran und wird diese Version noch dieses Quartal Öffentlich zu testzwecken zum Download anbieten. 
+                      Bald ist es soweit. Lucas aka Hammermaps.dev ist bereits an der neuen Beta DZCP 1.6.5 dran und wird diese Version noch dieses Quartal Ãffentlich zu testzwecken zum Download anbieten. 
                     </div>
                   </div>
                   <footer class="posts__footer card__footer">
@@ -321,7 +321,7 @@
                     <h6 class="posts__title"><a href="#">Die neusten Addons und Mods von DZCP</a></h6>
                     <time datetime="2017-08-23" class="posts__date">31.06.2017</time>
                     <div class="posts__excerpt">
-                      Bald ist es soweit. Lucas aka Hammermaps.dev ist bereits an der neuen Beta DZCP 1.6.5 dran und wird diese Version noch dieses Quartal Öffentlich zu testzwecken zum Download anbieten. 
+                      Bald ist es soweit. Lucas aka Hammermaps.dev ist bereits an der neuen Beta DZCP 1.6.5 dran und wird diese Version noch dieses Quartal Ãffentlich zu testzwecken zum Download anbieten. 
                     </div>
                   </div>
                   <footer class="posts__footer card__footer">

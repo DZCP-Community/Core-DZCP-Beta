@@ -2,7 +2,7 @@
 /**
  * DZCP - deV!L`z ClanPortal - Mainpage ( dzcp.de )
  * deV!L`z Clanportal ist ein Produkt von CodeKing,
- * geändert dürch my-STARMEDIA und Codedesigns.
+ * geändert durch my-STARMEDIA und Codedesigns.
  *
  * Diese Datei ist ein Bestandteil von dzcp.de
  * Diese Version wurde speziell von Lucas Brucksch (Codedesigns) für dzcp.de entworfen bzw. verändert.
@@ -13,13 +13,14 @@
  * E-Mail: info@web-customs.com
  * E-Mail: lbrucksch@codedesigns.de
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
+ *
  */
 
 setlocale(LC_ALL, "en_US.utf8");
 $charset = 'utf-8';
 
-$language_text['_perm_fileman'] = 'Uploads verwalten';
-
+## DZCP Template ##
+$language_text['_color_title'] = 'Kategorie Farbe';
 ## Fileman ##
 $language_text['_perm_fileman'] = 'manage uploads';
 $language_text['_fileman_uploads_'] = '## Global ##';
@@ -45,11 +46,9 @@ $language_text['_fileman_error_copy_dir'] = 'Error on folder copy "{$dir}"';
 $language_text['_fileman_error_upload_extension'] = 'Dateitypen können nicht bearbeitet werden - ungültige extensions';
 $language_text['_fileman_error_upload_all'] = 'Fehler beim uploaden einiger dateien';
 $language_text['_fileman_error_upload_no_files'] = 'Keine Dateien zum uploaden oder Datei zu gross.';
-
 ## DEV ##
 $language_text['_config_test_menu_template'] = 'Test in Template Menu';
-
-## Allgemein ##
+## General ##
 $language_text['_error_no_html5_vid'] = 'Your browser does not support the video tag.';
 $language_text['_button_title_del'] = 'Delete';
 $language_text['_button_title_edit'] = 'Edit';
@@ -78,16 +77,14 @@ $language_text['_comments_head'] = 'Comments';
 $language_text['_click_close'] = 'close';
 $language_text['_lang_de'] = 'German';
 $language_text['_lang_uk'] = 'English';
+$language_text['_lang_ru'] = 'Russian';
 $language_text['_template'] = 'Template';
 $language_text['_perm_editby'] = 'Editby verwalten';
 $language_text['_private'] = 'Private';
 $language_text['_group'] = 'Group';
-
 ## Lost Password ##
 $language_text['_admin_lpwd_subj'] = 'Subject: Reset password';
 $language_text['_admin_lpwd'] = 'Reset password template';
-
-## ADDED / REDEFINED FOR 1.7.0
 $language_text['_years'] = 'Years';
 $language_text['_year'] = 'Year';
 $language_text['_months'] = 'Months';
@@ -102,7 +99,6 @@ $language_text['_minutes'] = 'Minutes';
 $language_text['_minute'] = 'Minute';
 $language_text['_seconds'] = 'Seconds';
 $language_text['_second'] = 'Second';
-
 $language_text['_server_ip'] = 'Server-IP';
 $language_text['_aktion'] = 'Action';
 $language_text['_config_activate_user'] = 'Activate User';
@@ -193,13 +189,10 @@ $language_text['_notification_custom'] = 'Custom';
 $language_text['_color'] = 'Color';
 $language_text['_description'] = 'Description';
 $language_text['_replies'] = 'Replies';
-$language_text['_no_entrys_found'] = '<tr>
-  <td class="contentMainFirst" colspan="[colspan]" align="center">No entrys found</td>
-</tr>';
+$language_text['_no_entrys_found'] = '<tr><td class="contentMainFirst" colspan="[colspan]" align="center">No entrys found</td></tr>';
 $language_text['_admin_news_readed'] = 'Readed';
 $language_text['_admin_news_refresh'] = 'Refresh';
-
-//Forum
+## Forum ##
 $language_text['_forum_stats_top5'] = 'Statistics and Top 5 Posters';
 $language_text['_forum_who_is_online'] = 'Who is online?';
 $language_text['_forum_last_post'] = 'View the latest post';
@@ -227,8 +220,7 @@ $language_text['_forum_admin_closed'] = 'Close vote';
 $language_text['_forum_admin_editby'] = 'der Nachricht "<span class="fontWichtig">zuletzt editiert</span>" anh&auml;ngen?';
 $language_text['_forum_thread_lpost'] = 'from {$nick}<br />at {$date}{lang msgID="uhr"}';
 $language_text['_forum_search_word'] = 'Board search in...';
-
-//Startpage
+## Startpage ##
 $language_text['_profil_startpage'] = 'Startseite';
 $language_text['_config_startpage'] = 'Startseiten';
 $language_text['_admin_startpage'] = 'Startseiten';
@@ -244,8 +236,7 @@ $language_text['_admin_startpage_editd'] = 'Startseite wurde erfogreich editiert
 $language_text['_admin_startpage_no_name'] = 'Du hast keinen Namen eingegeben';
 $language_text['_admin_startpage_no_url'] = 'Du hast keine URL eingegeben';
 $language_text['_admin_startpage_add'] = 'Neue Startseite hinzuf�gen';
-
-//IP Blocker
+## IP Blocker ##
 $language_text['_ipban_admin_head'] = 'IP Blocker';
 $language_text['_config_ipban'] = 'IP Blocker';
 $language_text['_confirm_del_ipban'] = 'Delete Record';
@@ -270,7 +261,6 @@ $language_text['_ip_empty'] = 'The IP is missing';
 $language_text['_total_bans'] = 'Total Bans';
 $language_text['_ipban_head_admin'] = 'IP-Bans';
 $language_text['_perm_ipban'] = 'Manage IP-Bans';
-
 ## Navigation / Server ##
 $language_text['_navi_gsv_players_online'] = 'Online';
 $language_text['_navi_gsv_on_the_game'] = 'Players';
@@ -279,8 +269,6 @@ $language_text['_navi_gsv_game'] = 'Game';
 $language_text['_navi_gsv_no_name_available'] = 'no Name available';
 $language_text['_navi_gsv_no_players_available'] = 'no Players online';
 $language_text['_navi_gsv_password'] = 'Password';
-
-## ADDED / REDEFINED FOR 1.6.0 Final
 $language_text['_txt_navi_main'] = 'Main Navigation';
 $language_text['_txt_navi_clan'] = 'Clan Navigation';
 $language_text['_txt_navi_misc'] = 'Misc Navigation';
@@ -300,26 +288,19 @@ $language_text['_txt_l_reg'] = 'new Users';
 $language_text['_txt_motm'] = 'Member of the Moment';
 $language_text['_txt_top_dl'] = 'Top Downloads';
 $language_text['_txt_uotm'] = 'User of the Moment';
-
 $language_text['_forum_kat'] = 'Categorie';
-
 $language_text['_artikel_userimage'] = 'Own Articlepicture';
 $language_text['_artikelpic_del'] = 'delete Articlepicture?';
 $language_text['_artikelpic_deleted'] = 'Articlepicture successfully deleted';
-
 $language_text['_news_userimage'] = 'Own Newspicture';
 $language_text['_newspic_del'] = 'delete Newspicture?';
 $language_text['_newspic_deleted'] = 'Newspicture successfully deleted';
 $language_text['_max'] = 'max.';
-
 $language_text['_perm_dlintern'] = 'View internal Downloads';
-
 $language_text['_config_url_linked_head'] = 'URLs linking';
-
 $language_text['_upload_error'] = 'Failed to upload the file!';
 $language_text['_login_banned'] = 'Your account has been banned by administrator!';
 $language_text['_lobby_no_mymessages'] = '<a href="../user/?action=msg">You have no new messages!</a>';
-
 $language_text['_perm_protocol'] = 'can see admin protocol';
 $language_text['_perm_support'] = 'can see support page';
 $language_text['_perm_clear'] = 'clean database';
@@ -329,11 +310,7 @@ $language_text['_perm_config'] = 'manage configuration page';
 $language_text['_perm_positions'] = 'manage user ranks';
 $language_text['_perm_partners'] = 'manage partner';
 $language_text['_perm_profile'] = 'manage profile fields';
-
-## ADDED / REDEFINED FOR 1.5 Final
 $language_text['_id_dont_exist'] = 'The requested ID does not exist!';
-
-## ADDED / REDEFINED FOR 1.5.2
 $language_text['_button_title_del_account'] = 'User-Account delete';
 $language_text['_confirm_del_account'] = 'You really want to delete your Account on dzcp.de';
 $language_text['_profil_del_account'] = 'Account delete';
@@ -360,13 +337,9 @@ $language_text['_config_direct_refresh'] = 'Direct Forward';
 $language_text['_config_direct_refresh_info'] = 'If activated, the site will be forwarded directly, instead of showing the status information.';
 $language_text['_eintrag_titel_forum'] = '<a href="{$url}" title="Show this post"><span class="fontBold">#{$postid}</span></a> at {$datum} on {$zeit}{lang msgID="uhr"} {$edit} {$delete}';
 $language_text['_eintrag_titel'] = '<span class="fontBold">#{$postid}</span> at {$datum} on {$zeit}{lang msgID="uhr"} {$edit} {$delete}';
-
-## ADDED / REDEFINED FOR 1.5.1
 $language_text['_config_double_post'] = 'Forum double post';
 $language_text['_config_fotum_vote'] = 'Forum-Vote';
 $language_text['_config_fotum_vote_info'] = '<div style="text-align: center;">Here you can specify whether a Forum-Vote also Vote to be displayed.</div>';
-
-## ADDED / REDEFINED FOR 1.5
 $language_text['_search_sites'] = 'Sites';
 $language_text['_search_results'] = 'Search Results';
 $language_text['_config_useradd_head'] = 'Add User';
@@ -450,7 +423,6 @@ $language_text['_forum_fabo_do'] = 'E-Mail notification has been successfully ed
 $language_text['_forum_vote_del'] = 'Delete Vote';
 $language_text['_forum_vote_preview'] = 'Here the vote appears.';
 $language_text['_forum_spam_text'] = '{$ltext}<p>&nbsp;</p><p>&nbsp;</p><span class="fontBold">Addendum by </span>{$autor}:<p>&nbsp;</p>{$ntext}';
-####################################################################################
 $language_text['_config_config'] = 'Global Settings';
 $language_text['_config_dladmin'] = 'Downloads';
 $language_text['_config_editor'] = 'Sites';
@@ -460,29 +432,20 @@ $language_text['_config_nletter'] = 'Newsletter';
 $language_text['_config_protocol'] = 'Adminprotocoll';
 $language_text['_partnerbuttons_textlink'] = 'Textlink';
 $language_text['_config_forum_subkats_add'] = '
-    <form action="" method="get" onsubmit="DZCP.submitButton()">
-      <input type="hidden" name="admin" value="forum" />
-      <input type="hidden" name="do" value="newskat" />
-      <input type="hidden" name="id" value="[id]" />
-      <input id="contentSubmit" type="submit" class="submit" value="Insert sub-category" />
-    </form>
-';
+<form action="" method="get" onsubmit="DZCP.submitButton()">
+  <input type="hidden" name="admin" value="forum" />
+  <input type="hidden" name="do" value="newskat" />
+  <input type="hidden" name="id" value="[id]" />
+  <input id="contentSubmit" type="submit" class="submit" value="Insert sub-category" />
+</form>';
 $language_text['_msg_answer'] = 'Answer';
 $language_text['_user_new_erase'] = '<form method="post" action="?action=userlobby"><input type="hidden" name="erase" value="1" /><input id="contentSubmit" type="submit" name="submit" class="submit" value="Mark all as readed" /></form>';
 $language_text['_target'] = 'New window';
 $language_text['_config_c_floods_what'] = 'Here you can adjust the time in secontds which a user have to wait<br />to write something new in this area';
-
-## ADDED FOR 1.4.3
 $language_text['_download_last_date'] = 'Last downloaded';
-
-## EDITED FOR 1.4.1
 $language_text['_ulist_normal'] = 'Rank &amp; Level';
-
-## ADDED FOR 1.4.1
 $language_text['_lobby_mymessages'] = '<a href="../user/?action=msg">You have <span class="fontWichtig">[cnt]</span> new messages!</a>';
 $language_text['_lobby_mymessage'] = '<a href="../user/?action=msg">You have <span class="fontWichtig">1</span> new message!</a>';
-
-## EDIT/ADDED FOR 1.4
 $language_text['_protocol_action'] = 'Action';
 $language_text['_protocol'] = 'Admin protocol';
 $language_text['_button_title_del_protocol'] = 'Completely delete the protocol!';
@@ -536,7 +499,7 @@ $language_text['_comments_edit'] = 'Edit comment';
 $language_text['_forum_post_where_preview'] = '<a href="javascript:void(0)">[mainkat]</a> <span class="fontBold">Board:</span> <a href="javascript:void(0)">[wherekat]</a> <span class="fontBold">Thread:</span> <a href="javascript:void(0)">[wherepost]</a>';
 $language_text['_aktiv_icon'] = '<img src="../inc/lang/images/uk/active.png" alt="" class="icon" />';
 $language_text['_inaktiv_icon'] = '<img src="../inc/lang/images/uk/inactive.png" alt="" class="icon" />';
-$language_text['_pn_write_forum'] = '<a href="../user/?action=msg&amp;do=pn&amp;id={$id}"><img src="{idir}/forum_pn.gif" alt="" title="write {$nick} a message" class="icon" /></a>';
+$language_text['_pn_write_forum'] = '<a href="../user/?action=msg&amp;do=pn&amp;id={$id}"><img src="../inc/lang/images/uk/pn.png" alt="" title="write {$nick} a message" class="icon" /></a>';
 $language_text['_uhr'] = 'h';
 $language_text['_kalender_admin_head'] = 'Calendar - Events';
 $language_text['_preview'] = 'Preview';
@@ -568,7 +531,6 @@ $language_text['_confirm_del_sponsor'] = 'You really want to delete this sponsor
 $language_text['_confirm_del_kalender'] = 'You really want to delete this event?';
 $language_text['_link_type'] = 'Link type';
 $language_text['_sponsor'] = 'Sponsor';
-//-----------------------------------------------
 $language_text['_main_info'] = 'Here you can set global settings like default language, default template, title of the site, etc...';
 $language_text['_admin_eml_head'] = 'Emailtemplates';
 $language_text['_admin_eml_info'] = 'Here you can edit the emailtemplates from different areas.<br />Make sure that you do not delete the placeholders in the triggers [...]!';
@@ -586,7 +548,6 @@ $language_text['_online_head_guests'] = 'Guests online';
 $language_text['_admin_first'] = 'at first';
 $language_text['_admin_squads_nav'] = 'Navigation';
 $language_text['_admin_squad_show_info'] = 'Defined weather a team in the team overview is shown or not shown by default.';
-//Edited
 $language_text['_dl_getfile'] = 'download {$file} now';
 $language_text['_partners_link_add'] = 'Insert partner button';
 $language_text['_config_forum_kats_add'] = 'Insert category';
@@ -621,33 +582,26 @@ $language_text['_member_admin_votes'] = 'View internal votes';
 $language_text['_member_admin_votesadmin'] = 'Admin: Votes';
 $language_text['_msg_global_all'] = 'all members';
 $language_text['_pos_empty_kat'] = 'You have to indicate a position!';
-$language_text['_forum_lastpost'] = '<a href="?action=showthread&amp;id={$tid}&amp;page={$page}#p{$id}"><img src="../inc/images/forum_lpost.gif" alt="" title="Go to the last entry" class="icon" /></a>';
+$language_text['_forum_lastpost'] = '<a href="?action=showthread&amp;id={$tid}&amp;page={$page}#p{$id}"><img src="../inc/lang/images/uk/lpost.gif" alt="" title="Go to the last entry" class="icon" /></a>';
 $language_text['_forum_addpost'] = 'New entry';
 $language_text['_pn_write'] = '{$nick} a new message';
-//--------------------------------------------\\
 $language_text['_error_invalid_regcode'] = 'The entered safety code does not agree with the character sequence indicated in the diagram!';
 $language_text['_error_invalid_regcode_mathematic'] = 'Your calculation result from security code is not correct!';
 $language_text['_welcome_guest'] = ' <img src="../inc/images/flaggen/nocountry.gif" alt="" class="icon" /> <a class="welcome" href="../user/?action=register">Guest</a>';
 $language_text['_online_head'] = 'User online';
 $language_text['_online_whereami'] = 'Area';
 $language_text['_back'] = '<a href="javascript: history.go(-1)" class="files">back</a>';
-
-## EDITED/ADDED FOR v 1.3.3
 $language_text['_level_info'] = 'By set the level "admin", the level can be unset by root admin only! (the one who installed the clanportal)!<br />Furthermore the owner this level has <span class="fontUnder">unrestricted</span> access to all administrative areas!';
-
-## EDITED FOR v 1.3.1
 $language_text['_related_links'] = 'related Links:';
 $language_text['_profil_email2'] = 'E-mail #2';
 $language_text['_profil_email3'] = 'E-mail #3';
-
-## Begruessungen ##
+## greeting ##
 $language_text['_welcome_18'] = 'Good evening,';
 $language_text['_welcome_13'] = 'Good day,';
 $language_text['_welcome_11'] = 'Good lunch,';
 $language_text['_welcome_5'] = 'Good morning,';
 $language_text['_welcome_0'] = 'Good night,';
-
-## Monate ##
+## months ##
 $language_text['_jan'] = 'January';
 $language_text['_feb'] = 'February';
 $language_text['_mar'] = 'March';
@@ -660,23 +614,19 @@ $language_text['_sep'] = 'September';
 $language_text['_okt'] = 'October';
 $language_text['_nov'] = 'November';
 $language_text['_dez'] = 'Dezember';
-
-## Globale Userraenge ##
+## Global userrage ##
 $language_text['_status_banned'] = 'banned';
 $language_text['_status_unregged'] = 'unregistered';
 $language_text['_status_user'] = 'User';
 $language_text['_status_trial'] = 'Trial';
 $language_text['_status_member'] = 'Member';
 $language_text['_status_admin'] = 'Admin';
-
-## Userliste ##
+## User list ##
 $language_text['_acc_banned'] = 'Banned';
 $language_text['_ulist_acc_banned'] = 'Banned accounts';
-
-## Navigation: Kalender ##
+## Navigation: Calendar ##
 $language_text['_kal_birthday'] = 'Birthday from ';
 $language_text['_kal_event'] = 'Event: ';
-
 ## News ##
 $language_text['_news_kommentar'] = 'Comment';
 $language_text['_news_kommentare'] = 'Comments';
@@ -685,10 +635,8 @@ $language_text['_news_comments_write_head'] = 'Write new comment';
 $language_text['_news_archiv_sort'] = 'Sort by';
 $language_text['_news_archiv_head'] = 'News archive';
 $language_text['_news_kat_choose'] = 'Choose category';
-
-## Artikel ##
+## article ##
 $language_text['_artikel_comments_write_head'] = 'Write new comment';
-
 ## Forum ##
 $language_text['_forum_head'] = 'Board';
 $language_text['_forum_topic'] = 'Topic';
@@ -740,7 +688,6 @@ $language_text['_forum_search_kat_all'] = 'all Categories';
 $language_text['_forum_search_results'] = 'Search results';
 $language_text['_forum_online_head'] = 'Browsing the board';
 $language_text['_forum_nobody_is_online'] = 'Right now no user is browsing the board!';
-
 ## Kalender ##
 //-> Allgemein
 $language_text['_kalender_head'] = 'Calendar';
@@ -751,11 +698,9 @@ $language_text['_donnerstag'] = 'Thursday';
 $language_text['_freitag'] = 'Friday';
 $language_text['_samstag'] = 'Saturday';
 $language_text['_sonntag'] = 'Sunday';
-
 //-> Events
 $language_text['_kalender_events_head'] = 'Events at {$datum}';
 $language_text['_kalender_uhrzeit'] = 'Time';
-
 //-> Admin
 $language_text['_kalender_admin_head_add'] = 'Insert event';
 $language_text['_kalender_admin_head_edit'] = 'Edit event';
@@ -766,7 +711,6 @@ $language_text['_kalender_error_no_event'] = 'You have to describe this event!';
 $language_text['_kalender_successful_added'] = 'The event was successfully registered!';
 $language_text['_kalender_successful_edited'] = 'The event was successfully edited!';
 $language_text['_kalender_deleted'] = 'The event was successfully deleted!';
-
 ## Umfragen ##
 $language_text['_error_vote_closed'] = 'This vote is closed!';
 $language_text['_votes_admin_closed'] = 'Close vote';
@@ -791,7 +735,6 @@ $language_text['_votes_admin_edit_head'] = 'Edit vote';
 $language_text['_vote_admin_successful_edited'] = 'The vote was successfully edited!';
 $language_text['_vote_admin_successful_menu1'] = 'The menu was successfully unset from the menu!';
 $language_text['_error_voted_again'] = 'You already participated in this vote!';
-
 ## Links/Sponsoren ##
 $language_text['_links_head'] = 'Links';
 $language_text['_links_admin_head'] = 'Insert link';
@@ -808,7 +751,6 @@ $language_text['_link_added'] = 'The link was successfully registered!';
 $language_text['_link_edited'] = 'The link was successfully edited!';
 $language_text['_link_deleted'] = 'The link was successfully deleted!';
 $language_text['_sponsor_head'] = 'Sponsors';
-
 ## Downloads ##
 $language_text['_downloads_head'] = 'Downloads';
 $language_text['_downloads_download'] = 'Download';
@@ -826,7 +768,6 @@ $language_text['_downloads_empty_beschreibung'] = 'You have to indicate a descri
 $language_text['_downloads_added'] = 'The download was successfully registered!';
 $language_text['_downloads_edited'] = 'The download was successfully edited!';
 $language_text['_downloads_deleted'] = 'The download was successfully deleted!';
-
 $language_text['_dl_info'] = 'Download informations';
 $language_text['_dl_file'] = 'File';
 $language_text['_dl_files'] = 'Files';
@@ -839,9 +780,7 @@ $language_text['_dl_loaded'] = 'Downloaded';
 $language_text['_dl_date'] = 'Upload date';
 $language_text['_dl_wait'] = 'Download of file: ';
 $language_text['_dl_fileman'] = 'Open Fileman';
-
 $language_text['_contact_pflichtfeld'] = '<span class="fontWichtig">*</span> = Required field';
-
 ## User ##
 $language_text['_profil_head'] = '<span class="fontBold">Userprofile from {$nick}</span> [{$profilhits} times viewed]';
 $language_text['_login_head'] = 'Login';
@@ -1028,7 +967,6 @@ $language_text['_profil_url1'] = 'Page #1';
 $language_text['_profil_url2'] = 'Page #2';
 $language_text['_profil_url3'] = 'Page #3';
 $language_text['_profil_ich'] = 'Description';
-
 ## Upload ##
 $language_text['_upload_ext_error'] = 'Only jpg, gif or png files!';
 $language_text['_upload_wrong_size'] = 'The uploaded file is bigger than allowed!!';
@@ -1046,7 +984,6 @@ $language_text['_upload_ava_head'] = 'Useravatar';
 $language_text['_upload_userava_info'] = 'Only jpg, gif or png files with a maximum filesize of {$userpicsize}KB!<br />The recommended dimension is 100px * 100px ';
 $language_text['_upload_newskats_head'] = 'Category pictures';
 $language_text['_upload_usergallery_info'] = 'Only jpg, gif or png files with a maximum filesize of {$userpicsize}KB!';
-
 ## Unzugeordnet ##
 $language_text['_config_maxwidth'] = 'Resize pictures automatically';
 $language_text['_config_maxwidth_info'] = 'Here you can adjust at which width a picture will be resized!';
@@ -1084,7 +1021,6 @@ $language_text['_error_no_access'] = 'You don`t have the rights to enter this ar
 $language_text['_artikel_show_link'] = '<a href="../artikel/?action=show&amp;id={$id}">{$titel}</a>';
 $language_text['_ulist_bday'] = 'Birthday';
 $language_text['_ulist_last_login'] = 'Last login';
-
 ## Impressum ##
 $language_text['_impressum_head'] = 'Imprint';
 $language_text['_impressum_autor'] = 'Author of the site';
@@ -1122,7 +1058,6 @@ The use of published postal addresses, telephone or fax numbers and email addres
 <br />
 This disclaimer is to be regarded as part of the internet publication which you were referred from. If sections or individual terms of this statement are not legal or correct, the content or validity of the other parts remain uninfluenced by this fact.
 </blockquote>';
-
 ## Admin ##
 $language_text['_config_head'] = 'Administrative area';
 $language_text['_config_empty_katname'] = 'You have to indicate a category description!';
@@ -1299,7 +1234,6 @@ $language_text['_off'] = 'off';
 $language_text['_config_lreg'] = 'Menu: Last reg. user';
 $language_text['_config_mailfrom'] = 'Email mailfrom';
 $language_text['_config_mailfrom_info'] = 'This email address will be used for sent emails like newsletter, registration, etc!';
-
 ## Misc ##
 $language_text['_error_have_to_be_logged'] = 'You havet to be logged in to use this feature!';
 $language_text['_error_invalid_email'] = 'The indicated email address is invalid!';

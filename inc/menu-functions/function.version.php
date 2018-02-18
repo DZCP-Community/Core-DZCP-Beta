@@ -2,7 +2,7 @@
 /**
  * DZCP - deV!L`z ClanPortal - Mainpage ( dzcp.de )
  * deV!L`z Clanportal ist ein Produkt von CodeKing,
- * geändert dürch my-STARMEDIA und Codedesigns.
+ * geändert durch my-STARMEDIA und Codedesigns.
  *
  * Diese Datei ist ein Bestandteil von dzcp.de
  * Diese Version wurde speziell von Lucas Brucksch (Codedesigns) für dzcp.de entworfen bzw. verändert.
