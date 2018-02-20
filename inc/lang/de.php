@@ -28,7 +28,7 @@ $language_text['_fileman_group_'] = '## Gruppen ##';
 $language_text['_fileman_public_'] = '## &Ouml;ffentlich ##';
 $language_text['_fileman_users_'] = '## Benutzer ##';
 $language_text['_fileman_error_unknown'] = 'Unbekannter Fehler';
-$language_text['_fileman_error_zip_creating'] = 'Error creating zip archive.';
+$language_text['_fileman_error_zip_creating'] = 'Fehler beim Erstellen des Zip-Archivs.';
 $language_text['_fileman_error_permissons'] = 'Du hast keine Berechtigungen um hier eine &Auml;nderung auszuf&uuml;hren!';
 $language_text['_fileman_error_permissons_root'] = 'Das ROOT-Verzeichnis kann nicht ge&auml;ndert werden!';
 $language_text['_fileman_error_create_dir_invalid_path'] = 'Das Verzeichnis kann nicht erstellt werden, der Pfad existiert nicht!';
@@ -1100,7 +1100,7 @@ $language_text['_admin_news_add'] = '<a href="?admin=newsadmin&amp;do=add">News 
 $language_text['_admin_news_head'] = 'News hinzuf&uuml;gen';
 $language_text['_news_admin_kat'] = 'Kategorie';
 $language_text['_news_admin_klapptitel'] = 'Klapptexttitel';
-$language_text['_news_admin_more'] = 'More';
+$language_text['_news_admin_more'] = 'Mehr';
 $language_text['_empty_news'] = 'Du musst eine News eintragen!';
 $language_text['_news_sended'] = 'Die News wurde erfolgreich eingetragen!';
 $language_text['_admin_news_edit_head'] = 'News editieren';
