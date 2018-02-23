@@ -7,7 +7,7 @@
     <meta http-equiv="pragma" content="No-Cache" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="Content-Script-Type" content="text/javascript" />
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" type="text/css" href="{dir}/_css/stylesheet.css" media="screen" />
     <link rel="alternate" type="application/rss+xml" href="../rss.xml" title="{$title} RSS-Feed" />
     <link rel="icon" type="image/png" href="{dir}/favicon.png" />
