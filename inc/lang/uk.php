@@ -75,9 +75,10 @@ $language_text['_editor_from'] = 'From';
 $language_text['intern'] = '<span class="fontWichtig">Internal</span>';
 $language_text['_comments_head'] = 'Comments';
 $language_text['_click_close'] = 'close';
-$language_text['_lang_de'] = 'German';
-$language_text['_lang_uk'] = 'English';
-$language_text['_lang_ru'] = 'Russian';
+$language_text['_lang_de'] = 'Deutsch'; //do not translate this line
+$language_text['_lang_uk'] = 'English'; 
+$language_text['_lang_ru'] = 'Русский'; //do not translate this line
+$language_text['_lang_it'] = 'Italiano'; //do not translate this line
 $language_text['_template'] = 'Template';
 $language_text['_perm_editby'] = 'Manage Editby';
 $language_text['_private'] = 'Private';

@@ -75,9 +75,10 @@ $language_text['_editor_from'] = 'от';
 $language_text['intern'] = '<span class="fontWichtig">внутренне</span>';
 $language_text['_comments_head'] = 'комментарии';
 $language_text['_click_close'] = 'закрыть';
-$language_text['_lang_de'] = 'немецкий';
-$language_text['_lang_uk'] = 'английский';
-$language_text['_lang_ru'] = 'русский';
+$language_text['_lang_de'] = 'Deutsch'; //do not translate this line
+$language_text['_lang_uk'] = 'English'; //do not translate this line
+$language_text['_lang_ru'] = 'Русский';
+$language_text['_lang_it'] = 'Italiano'; //do not translate this line
 $language_text['_template'] = 'дизайн';
 $language_text['_perm_editby'] = 'Управление редактированием';
 $language_text['_private'] = 'частный';
