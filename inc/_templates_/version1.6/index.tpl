@@ -20,6 +20,7 @@
             <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.colorpicker.js"></script>
             <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.magnific-popup.js"></script>
             <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.highlighter.js"></script>
+			<script language="javascript" type="text/javascript" src="{dir}/_js/jquery.barrating.js"></script>
             <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.dzcp.js"></script>
         </head>
 	<body>

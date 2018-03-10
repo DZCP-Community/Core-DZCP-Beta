@@ -25,7 +25,7 @@ var config_ckeditor_bbcode_only = {
 
     filebrowserBrowseUrl:'/inc/ajax.php?i=fileman&run',
     filebrowserImageBrowseUrl:'/inc/ajax.php?i=fileman&run&type=image',
-    extraPlugins: 'dzcp_bbcode,dzcp_smiley,font,colorbutton',
+    extraPlugins: 'dzcp_bbcode,dzcp_smiley,font,colorbutton,youtube',
     removePlugins: 'format,horizontalrule,pastetext,pastefromword,scayt,showborders,stylescombo,table,tabletools,tableselection,wsc',
     removeButtons: 'Anchor,BGColor,Font,Strike,Subscript,Superscript',
     removeDialogTabs: 'link:upload;image:upload',
