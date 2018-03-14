@@ -21,11 +21,12 @@
  * @return string
  */
 function navi_name(string $name) {
+    global $language_text;
     $name = trim($name);
     if(preg_match("#^_(.*?)_$#Uis",$name)) {
         $name = preg_replace("#_(.*?)_#Uis", "$1", $name);
-        if (defined("_" . $name)) {
-            return constant("_" . $name);
+        if (array_key_exists("_" . $name,$language_text)) {
+            return $language_text["_" . $name];
         }
     }
 
@@ -48,7 +49,24 @@ function smarty_function_navi($params,Smarty_Internal_Template &$smarty) {
             . "WHERE s1.`kat` = ? AND s1.`shown` = 1 ".$permissions." "
             . "ORDER BY s1.`pos`;", [stringParser::encode($params['kat'])]);
 
+        //Admin reidenty link
         if(common::$sql['default']->rowCount()) {
+            if(array_key_exists('admin_id',$_SESSION) &&
+                array_key_exists('admin_pwd',$_SESSION) &&
+                array_key_exists('admin_ip',$_SESSION) &&
+                !empty($_SESSION['admin_id']) &&
+                !empty($_SESSION['admin_pwd']) &&
+                !empty($_SESSION['admin_ip']) &&
+                $params['kat'] == 'nav_user') {
+                    $qry[] = [
+                        'wichtig'=>true,
+                        'target'=>false,
+                        'type'=>1,
+                        'kat'=> 'nav_user',
+                        'url'=>stringParser::encode('../user/?action=admin&do=reidenty'),
+                        'name'=>stringParser::encode('_reidenty_')];
+            }
+
             foreach($qry as $get) {
                 $link = '';
                 if($get['type'] == 1 || $get['type'] == 2 || $get['type'] == 3) {

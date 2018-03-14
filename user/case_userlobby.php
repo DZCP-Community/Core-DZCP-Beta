@@ -337,14 +337,22 @@ if(defined('_UserMenu')) {
         }
 
         // Userlevel
-        if (($lvl = common::data("level")) == 1) {
-            $mylevel = _status_user;
-        } elseif ($lvl == 2) {
-            $mylevel = _status_trial;
-        } elseif ($lvl == 3) {
-            $mylevel = _status_member;
-        } elseif ($lvl == 4) {
-            $mylevel = _status_admin;
+        switch (common::data("level")) {
+            case 2:
+                $mylevel = _status_user;
+                break;
+            case 2:
+                $mylevel = _status_trial;
+                break;
+            case 3:
+                $mylevel = _status_member;
+                break;
+            case 4:
+                $mylevel = _status_admin;
+                break;
+            default:
+                $mylevel = _status_gast;
+                break;
         }
 
         if (empty($ftopics)) {

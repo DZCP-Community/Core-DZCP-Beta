@@ -16,6 +16,6 @@
  */
 
 function smarty_function_autor($params,Smarty_Internal_Template &$smarty) {
-    $params['userid'] = !array_key_exists('userid',$params) ? 0 : $params['userid'];
+    $params['userid'] = !array_key_exists('userid',$params) ? (common::$userid >= 1 ? common::$userid : 0) : $params['userid'];
     return common::autor($params['userid']);
 }

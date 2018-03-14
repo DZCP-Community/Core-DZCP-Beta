@@ -63,11 +63,14 @@ $index = ''; $show = ''; $color = 0;
 new common(); //Main Construct
 require_once(basePath.'/inc/sfs.php');
 
+if(config::$use_additional_dir) {
 //-> Neue Kernel Funktionen einbinden, sofern vorhanden
-if($functions_files = common::get_files(basePath.'/inc/additional-kernel/',false,true, ['php'])) {
-    foreach($functions_files AS $func) {
-        include_once(basePath.'/inc/additional-kernel/'.$func);
-    } unset($functions_files,$func);
+    if ($functions_files = common::get_files(basePath . '/inc/additional-kernel/', false, true, ['php'])) {
+        foreach ($functions_files AS $func) {
+            include_once(basePath . '/inc/additional-kernel/' . $func);
+        }
+        unset($functions_files, $func);
+    }
 }
 
 /**
@@ -266,6 +269,10 @@ class common {
                         $_SESSION['pwd']        = $get['pwd'];
                         $_SESSION['lastvisit']  = $get['time'];
                         $_SESSION['ip']         = self::$userip['v4'];
+                        $_SESSION['admin_id']   = '';
+                        $_SESSION['admin_pwd']  = '';
+                        $_SESSION['admin_ip']   =  '';
+                        $_SESSION['akl_id']     = 0;
 
                         if (self::data("ipv4", $get['id']) != $_SESSION['ip']) {
                             $_SESSION['lastvisit'] = self::data("time", $get['id']);
@@ -295,6 +302,9 @@ class common {
                         $_SESSION['ip']        = '';
                         $_SESSION['lastvisit'] = '';
                         $_SESSION['pkey']      = '';
+                        $_SESSION['admin_id'] = '';
+                        $_SESSION['admin_pwd'] = '';
+                        $_SESSION['admin_ip'] =  '';
                         $_SESSION['akl_id']    = 0;
                     }
                 } else {
@@ -327,6 +337,10 @@ class common {
             $_SESSION['ip']        = self::$userip['v4'];
             $_SESSION['lastvisit'] = time();
             $_SESSION['language'] = stringParser::decode(settings::get('language'));
+            $_SESSION['admin_id'] = '';
+            $_SESSION['admin_pwd'] = '';
+            $_SESSION['admin_ip'] =  '';
+            $_SESSION['akl_id']    = 0;
         }
 
         //-> Prueft ob der User gebannt ist, oder die IP des Clients warend einer offenen session veraendert wurde.
@@ -658,8 +672,8 @@ class common {
     }
 
     /**
-     * @name        cleanautor()
-     * @access      public
+     * @name cleanautor()
+     * @access public
      * @static
      * @param int $uid
      * @param string $class (optional)
@@ -687,8 +701,8 @@ class common {
     }
 
     /**
-     * @name        rawautor()
-     * @access      public
+     * @name rawautor()
+     * @access public
      * @static
      * @param int $uid
      * @param bool $refresh (optional)
@@ -926,10 +940,10 @@ class common {
 
         return $pagination."</div>";
     }
-    
+
     /**
      * Liste der Laender ausgeben
-     * @param string $i
+     * @param string $selected_country
      * @return string
      */
     public static function show_countrys(string $selected_country="") {
@@ -2000,7 +2014,9 @@ class common {
                 self::$cache->AutoMemSet('ip_check', $ips, cache::TIME_IPS_BLOCKING);
             }
 
-        } if(self::isIP(self::$userip['v4'], true)) {
+        }
+
+        if(self::isIP(self::$userip['v6'], true)) {
             //Is IPv6
             //TODO: Support for IPV6
         }
@@ -2015,6 +2031,9 @@ class common {
         $_SESSION['ip']        = '';
         $_SESSION['lastvisit'] = '';
         $_SESSION['akl_id']    = 0;
+        $_SESSION['admin_id']  = '';
+        $_SESSION['admin_pwd'] = '';
+        $_SESSION['admin_ip']  = '';
         session_unset();
         session_destroy();
         session_regenerate_id();
@@ -3155,15 +3174,17 @@ class common {
         //Set Base-Content-type header
         header("Content-type: text/html; charset=".$charset);
 
-        //-> Neue Languages einbinden, sofern vorhanden
-        if($language_files = self::get_files(basePath.'/inc/additional-languages/'.$lng.'/',false,true,array('php'))) {
-            foreach($language_files AS $languages) {
-                if(is_file(basePath.'/inc/additional-languages/'.$lng.'/'.$languages))
-                    require_once(basePath.'/inc/additional-languages/'.$lng.'/'.$languages);
-            } unset($language_files,$languages);
+        if(config::$use_additional_dir) {
+            //-> Neue Languages einbinden, sofern vorhanden
+            if ($language_files = self::get_files(basePath . '/inc/additional-languages/' . $lng . '/', false, true, array('php'))) {
+                foreach ($language_files AS $languages) {
+                    if (is_file(basePath . '/inc/additional-languages/' . $lng . '/' . $languages))
+                        require_once(basePath . '/inc/additional-languages/' . $lng . '/' . $languages);
+                }
+                unset($language_files, $languages);
+            }
         }
 
-        //Fix for OLD DZCP Code (Remove on Final)
         foreach ($language_text as $key => $text) {
             if(!defined($key)) {
                 define($key,$text);
@@ -3240,7 +3261,7 @@ class common {
      * @param string $template (optional)
      */
     public static final function page(string $index,string $title='',string $where='',string $template='index') {
-        //JS SetOptions & lang ckeditor
+        //JS SetOptions & language for CKEditor
         switch ($_SESSION['language']) {
             case 'uk': javascript::set('lng','en'); break;
             default:
@@ -3334,8 +3355,11 @@ class common {
  */
 
 //-> Neue Funktionen einbinden, sofern vorhanden
-if($functions_files = common::get_files(basePath.'/inc/additional-functions/',false,true, ['php'])) {
-    foreach($functions_files AS $func)
-    { include_once(basePath.'/inc/additional-functions/'.$func); }
-    unset($functions_files,$func);
+if(config::$use_additional_dir) {
+    if ($functions_files = common::get_files(basePath . '/inc/additional-functions/', false, true, ['php'])) {
+        foreach ($functions_files AS $func) {
+            include_once(basePath . '/inc/additional-functions/' . $func);
+        }
+        unset($functions_files, $func);
+    }
 }

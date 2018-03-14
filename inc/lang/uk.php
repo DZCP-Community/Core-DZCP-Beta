@@ -49,6 +49,7 @@ $language_text['_fileman_error_upload_no_files'] = 'No files to upload or file t
 ## DEV ##
 $language_text['_config_test_menu_template'] = 'Test in Template Menü';
 ## General ##
+$language_text['_reidenty'] = 'Zur alten Identit&auml;t'; //TODO: Translate (Better text?)
 $language_text['_error_no_html5_vid'] = 'Your browser does not support the video tag.';
 $language_text['_button_title_del'] = 'Delete';
 $language_text['_button_title_edit'] = 'Edit';

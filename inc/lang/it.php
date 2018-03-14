@@ -9,6 +9,8 @@
 //$charset = 'utf-8';
 
 ## ADDED / REDEFINED FOR 1.6 Final
+$language_text['_reidenty'] = 'Zur alten Identit&auml;t'; //TODO: Translate (Better text?)
+
 $language_text['_txt_navi_main'] = 'Navigazione Principale';
 $language_text['_txt_navi_clan'] = 'Navigazione Clan';
 $language_text['_txt_navi_server'] = 'Navigazione Server';

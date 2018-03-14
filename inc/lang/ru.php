@@ -49,6 +49,7 @@ $language_text['_fileman_error_upload_no_files'] = 'Нет файлов для �
 ## DEV ##
 $language_text['_config_test_menu_template'] = 'Тест в меню шаблонов';
 ## в общем ##
+$language_text['_reidenty'] = 'Zur alten Identit&auml;t'; //TODO: Translate (Better text?)
 $language_text['_error_no_html5_vid'] = 'Ваш браузер не поддерживает тег видео.';
 $language_text['_button_title_del'] = 'Удалить';
 $language_text['_button_title_edit'] = 'отредактировать';
