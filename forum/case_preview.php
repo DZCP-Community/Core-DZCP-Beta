@@ -14,21 +14,32 @@
  * E-Mail: lbrucksch@codedesigns.de
  * Copyright 2017 © CodeKing, my-STARMEDIA, Codedesigns
  */
-
 if(defined('_Forum')) {
     header("Content-type: text/html; charset=utf-8");
     switch (strtolower($_GET['what'])) {
         case 'thread':
-            if(strtolower($_GET['do']) == 'addthread') {
+            if(common::$do == 'addthread') {
                 $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forum_threads}` WHERE `id` = ?;",
                     [(int)($_GET['id'])]);
 
                 if(!$get['t_reg']) {
-                    $guestCheck = false;
+                    $guestCheck = true;
                     $pUId = 0;
                 } else {
-                    $guestCheck = true;
+                    $guestCheck = false;
                     $pUId = $get['t_reg'];
+                }
+
+                $tID = (int)$get['id'];
+            } else if(common::$do == 'editthread') {
+                $get = [];
+                $get['t_date'] = time();
+
+                if(!common::$chkMe) {
+                    $guestCheck = true;
+                } else {
+                    $guestCheck = false;
+                    $pUId = common::$userid;
                 }
 
                 //-> Editby Text
@@ -38,17 +49,6 @@ if(defined('_Forum')) {
                     $smarty->assign('time', date("d.m.Y H:i", time()));
                     $editedby = $smarty->fetch('string:' . _edited_by);
                     $smarty->clearAllAssign();
-                }
-
-                $tID = (int)$get['id'];
-            } else {
-                $get['t_date'] = time();
-
-                if(!common::$chkMe)
-                    $guestCheck = false;
-                else {
-                    $guestCheck = true;
-                    $pUId = common::$userid;
                 }
 
                 $tID = (int)$_SESSION['kid'];
@@ -67,7 +67,7 @@ if(defined('_Forum')) {
 
             if(!$guestCheck)
             {
-                $getu = common::$sql['default']->fetch("SELECT nick,hp,email FROM `{prefix_users}` WHERE id = '".$pUId."'");
+                $getu = common::$sql['default']->fetch("SELECT `nick`,`hp`,`email` FROM `{prefix_users}` WHERE `id` = ?;",[$pUId]);
                 $email = common::CryptMailto(stringParser::decode($getu['email']),_emailicon_forum);
                 $pn = _forum_pn_preview;
 
@@ -80,10 +80,9 @@ if(defined('_Forum')) {
                     $smarty->clearAllAssign();
                 }
 
+                $sig = "";
                 if(common::data("signatur",$pUId))
                     $sig = _sig.BBCode::parse_html(common::data("signatur",$pUId));
-                else
-                    $sig = "";
 
                 $onoff = common::onlinecheck(common::$userid);
                 $smarty->caching = false;

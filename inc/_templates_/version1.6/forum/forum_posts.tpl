@@ -24,7 +24,7 @@
     <table class="hperc" cellspacing="0">
       <tr>
         <td style="vertical-align:middle"><a name="p{$postnr}"></a>{$titel}</td>
-        <td style="text-align:right">{if $chkme >= 1}{$zitat}{/if}</td>
+        <td style="text-align:right">{if $chkme >= 1 && !$closed && !$permission}{$zitat}{/if}</td>
       </tr>
     </table>
   </td>

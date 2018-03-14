@@ -20,7 +20,7 @@
     }
   ],
   "require": {
-    "ckeditor/ckeditor": "4.7.3",
+    "ckeditor/ckeditor": "4.8.0",
     "phpmailer/phpmailer": "v5.2.23",
     "smarty/smarty": "v3.1.31",
     "suin/php-rss-writer": "1.5.0",

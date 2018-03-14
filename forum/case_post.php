@@ -478,6 +478,28 @@ if(defined('_Forum')) {
                         common::$sql['default']->update("UPDATE `{prefix_forum_threads}` SET `first` = 1 WHERE `kid` = ?", [$get['kid']]);
                     }
 
+                    //Fix last post time update
+                    $qryp = common::$sql['default']->select("SELECT `date` FROM `{prefix_forum_posts}` WHERE sid = ? ORDER BY `date` ASC;",
+                        [$get['sid']]);
+                    $update_lp_time = 0; //Last Post Time
+                    foreach($qryp as $getp) {
+                        if(!$update_lp_time || $update_lp_time < $getp['date']) {
+                            $update_lp_time = $getp['date'];
+                        }
+                    } unset($qryp,$getp);
+
+                    //Fix LastPost Time Bug
+                    $gett = common::$sql['default']->fetch("SELECT `t_date`,`id`,`lp` FROM `{prefix_forum_threads}` WHERE `id` = ?;", [$get['sid']]);
+                    if(!$update_lp_time) {
+                        $update_lp_time = $gett['t_date'];
+                    }
+
+                    if($gett['lp'] >= $update_lp_time) {
+                        common::$sql['default']->update("UPDATE `{prefix_forum_threads}` SET `lp` = ? WHERE `id` = ?;",
+                            [$update_lp_time,$gett['id']]);
+                        $get['lp'] = $update_lp_time;
+                    } unset($update_lp_time,$gett);
+
                     $pagenr = !$entrys ? 1 : ceil($entrys / settings::get('m_fposts'));
                     $index = common::info(_forum_delpost_successful, '?action=showthread&amp;id=' . $get['sid'] . '&amp;page=' . $pagenr . '#p' . ($entrys + 1));
                 }

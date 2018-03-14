@@ -34,6 +34,15 @@ if(defined('_Forum')) {
                 common::$sql['default']->update("UPDATE `{prefix_forum_threads}` SET `hits` = (hits+1) WHERE `id` = ?;", [(int)($_GET['id'])]);
             }
 
+            //Fix last post time update
+            $qryp = common::$sql['default']->select("SELECT `date` FROM `{prefix_forum_posts}` WHERE sid = ?;",[(int)($_GET['id'])]);
+            $update_lp_time = 0; //Last Post Time
+            foreach($qryp as $getp) {
+                if(!$update_lp_time || $update_lp_time < $getp['date']) {
+                    $update_lp_time = $getp['date'];
+                }
+            } unset($qryp,$getp);
+
             $qryp = common::$sql['default']->select("SELECT * FROM `{prefix_forum_posts}` WHERE sid = ? ".
                 "ORDER BY id LIMIT ".(common::$page - 1)*($m_fposts=settings::get('m_fposts')).",".$m_fposts.";",
                 [(int)($_GET['id'])]);
@@ -158,6 +167,8 @@ if(defined('_Forum')) {
                 $smarty->assign('titel',$titel);
                 $smarty->assign('signatur',$sig);
                 $smarty->assign('zitat',$zitat);
+                $smarty->assign('permission',common::permission("forum"));
+                $smarty->assign('closed',common::$sql['default']->fetch("SELECT `closed` FROM `{prefix_forum_threads}` WHERE `id` = ?;",[$getp['sid']],'closed'));
                 $smarty->assign('onoff',$onoff);
                 $smarty->assign('lp',common::cnt("{prefix_forum_posts}", " WHERE `sid` = ?;","id", [(int)($_GET['id'])])+1);
                 $show .= $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/forum_posts_show.tpl');
@@ -176,6 +187,17 @@ if(defined('_Forum')) {
                 [(int)($_GET['id'])]);
 
             $kat = common::$sql['default']->fetch("SELECT `name` FROM `{prefix_forum_kats}` WHERE `id` = ?;",[$getw['sid']]);
+
+            //Fix LastPost Time Bug
+            if(!$update_lp_time) {
+                $update_lp_time = $get['t_date'];
+            }
+
+            if($get['lp'] >= $update_lp_time) {
+                common::$sql['default']->update("UPDATE `{prefix_forum_threads}` SET `lp` = ? WHERE `id` = ?;",
+                    [$update_lp_time,$get['id']]);
+                $get['lp'] = $update_lp_time;
+            } unset($update_lp_time);
 
             //Breadcrumbs
             $smarty->caching = false;
@@ -328,7 +350,7 @@ if(defined('_Forum')) {
             $smarty->assign('id',$_GET['id']);
             $smarty->assign('lpost',$lpost);
             $smarty->assign('lp',common::cnt("{prefix_forum_posts}", " WHERE `sid` = ?","id",[(int)($_GET['id'])])+1);
-            $smarty->assign('closed',!$get['closed']);
+            $smarty->assign('closed',$get['closed']);
             $smarty->assign('permission',common::permission("forum"));
             $smarty->assign('nav',$nav);
             $smarty->assign('is_vote',!empty($get['vote']));
