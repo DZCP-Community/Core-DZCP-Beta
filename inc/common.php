@@ -219,6 +219,7 @@ class common {
         //Less Parser
         $options = ['compress' => true, 'sourceMap' => false];
         self::$less = new Less_Parser($options);
+        unset($options);
 
         //Country class
         self::$country = new Loader();
@@ -232,7 +233,7 @@ class common {
         self::$maxpicwidth = 90;
         self::$maxfilesize = @ini_get('upload_max_filesize');
         self::$UserAgent = trim(self::GetServerVars('HTTP_USER_AGENT'));
-        self::$sid=(float)rand()/(float)getrandmax();
+        self::$sid = (float)rand()/(float)getrandmax();
 
         //Nachrichten Check
         self::check_msg_emal();
@@ -3263,8 +3264,9 @@ class common {
         if(settings::get("wmodus") && self::$chkMe != 4) {
             $index = self::wmodus($title);
         } else {
-            $where = preg_replace_callback("#autor_(.*?)$#",
-                create_function('$id', 'return stringParser::decode(common::data("nick","$id[1]"));'),
+            $where = preg_replace_callback("#autor_(.*?)$#", function($id) {
+                     return stringParser::decode(common::data("nick","$id[1]"));
+                },
                 $where);
 
             if(!self::$CrawlerDetect->isCrawler()) {
