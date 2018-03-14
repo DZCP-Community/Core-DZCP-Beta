@@ -521,11 +521,11 @@ class common {
     public static function getSmarty(bool $new_instance = false) {
         if($new_instance) {
             $smarty = new Smarty;
-            $smarty->force_compile = false;
-            $smarty->debugging = false;
-            $smarty->caching = true;
-            $smarty->cache_lifetime = 60;
-            $smarty->allow_php_templates = true;
+            $smarty->force_compile = config::$smarty_force_compile;
+            $smarty->debugging = config::$smarty_debugging;
+            $smarty->caching = config::$smarty_caching;
+            $smarty->cache_lifetime = config::$smarty_cache_lifetime;
+            $smarty->allow_php_templates = config::$smarty_allow_php_templates;
 
             $smarty->setTemplateDir(basePath.'/inc/_templates_')
                 ->setCompileDir(basePath.'/inc/_templates_c_')
