@@ -82,32 +82,32 @@ class Cache extends CacheManager {
         }
 
         //Network Memory Cache (NetCache)
-            if(config::$use_network_cache) {
-                if(config::$is_memcache && function_exists('memcache_connect')) {
-                    $this->cache_index['net'] = self::getInstance('memcache', ['memcache' => [config::$memcache_host, config::$memcache_port, 1],
-                        'compress_data' => true,
-                        'defaultKeyHashFunction' => 'sha1']);
-                } else if(config::$is_memcache && class_exists('Memcached')) {
-                    $this->cache_index['net'] = self::getInstance('memcached', ['memcache' => [config::$memcache_host, config::$memcache_port, 1],
-                        'compress_data' => true]);
-                } else if(config::$is_redis && class_exists('Redis')) {
-                    $this->cache_index['net'] = self::getInstance('redis', ['host' => config::$redis_host,
-                                                                                                 'port' => config::$redis_port,
-                                                                                                 'password' => config::$redis_password,
-                                                                                                 'database' => config::$redis_database,
-                                                                                                 'timeout' => config::$redis_timeout,
-                                                                                                 'compress_data' => true,
-                                                                                                 'defaultKeyHashFunction' => 'sha1']);
-                } else if(config::$is_redis && class_exists("\\Predis\\Client")) {
-                    $this->cache_index['net'] = self::getInstance('predis', ['host' => config::$redis_host,
-                                                                                        'port' => config::$redis_port,
-                                                                                        'password' => config::$redis_password,
-                                                                                        'database' => config::$redis_database,
-                                                                                        'timeout' => config::$redis_timeout,
-                                                                                        'compress_data' => true,
-                                                                                        'defaultKeyHashFunction' => 'sha1']);
-                }
+        if(config::$use_network_cache) {
+            if(config::$is_memcache && function_exists('memcache_connect')) {
+                $this->cache_index['net'] = self::getInstance('memcache', ['memcache' => [config::$memcache_host, config::$memcache_port, 1],
+                    'compress_data' => true,
+                    'defaultKeyHashFunction' => 'sha1']);
+            } else if(config::$is_memcache && class_exists('Memcached')) {
+                $this->cache_index['net'] = self::getInstance('memcached', ['memcache' => [config::$memcache_host, config::$memcache_port, 1],
+                    'compress_data' => true]);
+            } else if(config::$is_redis && class_exists('Redis')) {
+                $this->cache_index['net'] = self::getInstance('redis', ['host' => config::$redis_host,
+                    'port' => config::$redis_port,
+                    'password' => config::$redis_password,
+                    'database' => config::$redis_database,
+                    'timeout' => config::$redis_timeout,
+                    'compress_data' => true,
+                    'defaultKeyHashFunction' => 'sha1']);
+            } else if(config::$is_redis && class_exists("\\Predis\\Client")) {
+                $this->cache_index['net'] = self::getInstance('predis', ['host' => config::$redis_host,
+                    'port' => config::$redis_port,
+                    'password' => config::$redis_password,
+                    'database' => config::$redis_database,
+                    'timeout' => config::$redis_timeout,
+                    'compress_data' => true,
+                    'defaultKeyHashFunction' => 'sha1']);
             }
+        }
     }
 
     private function Get($type,$key) {
@@ -147,6 +147,50 @@ class Cache extends CacheManager {
     }
 
     //Public
+    public function IsMemory() {
+        return $this->cache_index['memory'] != null;
+    }
+
+    public function IsNet() {
+        return $this->cache_index['net'] != null;
+    }
+
+    public function AutoGet(string $key) {
+        if($this->IsNet())
+            return $this->Get('net',$key);
+        else if($this->IsMemory())
+            return $this->Get('memory',$key);
+        else
+            return $this->Get('file',$key);
+    }
+
+    public function AutoExists(string $key) {
+        if($this->IsNet())
+            return $this->Exists('net',$key);
+        else if($this->IsMemory())
+            return $this->Exists('memory',$key);
+        else
+            return $this->Exists('file',$key);
+    }
+
+    public function AutoSet(string $key,$var,int $ttl=600) {
+        if($this->IsNet())
+            return $this->Set('net',$key,$var,$ttl);
+        else if($this->IsMemory())
+            return $this->Set('memory',$key,$var,$ttl);
+        else
+            return $this->Set('file',$key,$var,$ttl);
+    }
+
+    public function AutoDelete(string $key) {
+        if($this->IsNet())
+            return $this->Delete('net',$key);
+        else if($this->IsMemory())
+            return $this->Delete('memory',$key);
+        else
+            return $this->Delete('file',$key);
+    }
+
     public function FileGet(string $key) {
         return $this->Get('file',$key);
     }
@@ -219,7 +263,7 @@ class Cache extends CacheManager {
         return $this->Set('memory',$key,$var,$ttl);
     }
 
-    public function AutoDelete(string $key) {
+    public function AutoMemDelete(string $key) {
         if($this->cache_index['net'] != null) {
             return $this->Delete('net', $key);
         }

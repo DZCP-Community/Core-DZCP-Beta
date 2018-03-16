@@ -45,6 +45,7 @@ require_once(basePath."/inc/sfs.php");
 require_once(basePath."/inc/bbcode.php");
 require_once(basePath."/inc/cache.php");
 require_once(basePath."/inc/fileman.php");
+require_once(basePath."/inc/netapi.php");
 
 if(!is_api) {
     require_once(basePath . '/inc/securimage/securimage_color.php');
@@ -2113,12 +2114,13 @@ class common {
     /**
      * Funktion um eine Datei im Web auf Existenz zu prufen und abzurufen
      * @param string $url
-     * @param bool $post (optional)
+     * @param bool|array $post (optional)
+     * @param bool|array $header (optional)
      * @param bool $nogzip (optional)
      * @param int $timeout (optional)
-     * @return String
+     * @return String|Boolean
      */
-    public static function get_external_contents(string $url,bool $post=false,bool $nogzip=false,int $timeout=file_get_contents_timeout) {
+    public static function get_external_contents(string $url,$post=false,$header=false,bool $nogzip=false,int $timeout=file_get_contents_timeout) {
         if((!(ini_get('allow_url_fopen') == 1) && !use_curl || (use_curl && !extension_loaded('curl'))))
             return false;
 
@@ -2126,25 +2128,12 @@ class common {
         $host = $url_p['host'];
         $port = isset($url_p['port']) ? $url_p['port'] : 80;
         $port = (($url_p['scheme'] == 'https' && $port == 80) ? 443 : $port);
-        if(!self::ping_port($host,$port,$timeout)) return false;
+        if(!self::ping_port($host,$port,$timeout))
+            return false;
+
         unset($host);
 
-        if(class_exists('\\Snoopy\\Snoopy') && $url_p['scheme'] != 'https') { //Use Snoopy HTTP Client
-            $snoopy = new Snoopy\Snoopy;
-            if(count($post) >= 1 && $post != false) {
-                $snoopy->rawheaders["Pragma"] = "no-cache";
-                $snoopy->submit($url, $post);
-            } else {
-                $snoopy->rawheaders["Pragma"] = "no-cache";
-                if (!$snoopy->fetch($url)) {
-                    return false;
-                }
-            }
-
-            return ((string)(trim($snoopy->results)));
-        }
-
-        if(use_curl && extension_loaded('curl')) {
+        if(use_curl && extension_loaded('curl')) { //Use CURL
             if(!$curl = curl_init())
                 return false;
 
@@ -2153,8 +2142,9 @@ class common {
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($curl, CURLOPT_AUTOREFERER, true);
             curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
             curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
-            curl_setopt($curl, CURLOPT_USERAGENT, "DZCP-HTTP-CLIENT");
+            curl_setopt($curl, CURLOPT_USERAGENT, "DZCP");
             curl_setopt($curl, CURLOPT_CONNECTTIMEOUT , $timeout);
             curl_setopt($curl, CURLOPT_TIMEOUT, $timeout * 2); // x 2
 
@@ -2192,31 +2182,24 @@ class common {
 
             @curl_close($curl);
             unset($curl);
-        } else {
-            if($url_p['scheme'] == 'https') //HTTPS not Supported!
-                $url = str_replace('https', 'http', $url);
-
-            $opts = [];
-            $opts['http']['method'] = "GET";
-            $opts['http']['timeout'] = $timeout * 2;
-
-            $gzip = false;
-            if(function_exists('gzinflate') && !$nogzip) {
-                $gzip = true;
-                $opts['http']['header'] = 'Accept-Encoding:gzip,deflate'."\r\n";
-            }
-
-            $context = stream_context_create($opts);
-            if(!$content = @file_get_contents($url, false, $context, -1, 40000))
-                return false;
-
-            if($gzip) {
-                foreach($http_response_header as $c => $h) {
-                    if(stristr($h, 'content-encoding') && stristr($h, 'gzip')) {
-                        $content = gzinflate( substr($content,10,-8) );
-                    }
+        } else { //Use Snoopy
+            $snoopy = new Snoopy\Snoopy;
+            $snoopy->rawheaders["Pragma"] = "no-cache";
+            $snoopy->use_gzip = !$nogzip;
+            $snoopy->rawheaders = !$header ? [] : $header;
+            $snoopy->agent = "DZCP";
+            if(count($post) >= 1 && $post != false) {
+                if (!$snoopy->submit($url,$post)) {
+                    return false;
+                }
+            } else {
+                if (!$snoopy->fetch($url)) {
+                    return false;
                 }
             }
+
+            $content =  $snoopy->results;
+            unset($snoopy);
         }
 
         return ((string)(trim($content)));
@@ -3346,6 +3329,10 @@ class common {
         $output = view_error_reporting || DebugConsole::get_warning_enable() ? DebugConsole::show_logs().$index : $index; //Debug Console + Index Out
         exit($output); //Exit
     }
+}
+
+if($_GET['dev']) {
+    new dzcp_network_api();
 }
 
 /**
