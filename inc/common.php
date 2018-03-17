@@ -2147,6 +2147,8 @@ class common {
             curl_setopt($curl, CURLOPT_USERAGENT, "DZCP");
             curl_setopt($curl, CURLOPT_CONNECTTIMEOUT , $timeout);
             curl_setopt($curl, CURLOPT_TIMEOUT, $timeout * 2); // x 2
+            curl_setopt($curl, CURLOPT_COOKIEFILE, basePath.'/inc/_cache_/netapi.cookie');
+            curl_setopt($curl, CURLOPT_COOKIEJAR, basePath.'/inc/_cache_/netapi.cookie');
 
             //For POST
             if(count($post) >= 1 && $post != false) {
