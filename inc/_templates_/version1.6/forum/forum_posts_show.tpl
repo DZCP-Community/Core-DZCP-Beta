@@ -41,3 +41,6 @@
   <td class="contentMainTop" align="center">{$ip}</td>
   <td class="contentMainTop" style="text-align:left;vertical-align:middle">{$pn} {$hp} {$email}</td>
 </tr>
+<tr>
+  <td style="height: 20px"></td>
+</tr>
