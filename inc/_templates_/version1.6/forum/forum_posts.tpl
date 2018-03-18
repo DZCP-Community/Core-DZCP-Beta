@@ -1,5 +1,5 @@
 <tr>
-  <td class="contentHead" align="center"><a name="top"><span class="fontBold">{lang msgID="forum_head"}</span></a></td>
+  <td class="contentHead" align="center"><a name="top"><span class="fontSites">{lang msgID="forum_head"}</span></a></td>
 </tr>
 <tr>
   <td class="contentMainTop">{$where}</td>
@@ -12,7 +12,7 @@
   <td class="contentHead" align="center" colspan="2">
     <table class="hperc" cellspacing="0">
       <tr>
-        <td class="gray"><span class="fontBold">{$threadhead}</span></td>
+        <td class="gray"><span class="fontSites">{$threadhead}</span></td>
         <td class="gray" style="text-align:right">{$nav}</td>
       </tr>
     </table>
@@ -62,6 +62,9 @@
 <tr>
   <td class="contentMainTop" align="center">{$ip}</td>
   <td class="contentMainTop" style="text-align:left;vertical-align:middle">{$pn} {$hp} {$email}</td>
+</tr>
+<tr>
+  <td style="height: 20px"></td>
 </tr>
 {$show}
 <tr>
