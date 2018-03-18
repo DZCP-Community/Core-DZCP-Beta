@@ -1,1 +1,1 @@
-<a href="{$action}"><img src="{idir}/edit.png" title="{$title}" alt="{$title}" class="icon" /></a>
+<a href="{$action}"><img src="{lang msgID="editicon_blank"}" title="{$title}" alt="{$title}" class="icon" /></a>

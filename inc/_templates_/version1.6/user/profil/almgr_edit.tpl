@@ -1,1 +1,1 @@
-<a href="?action=editprofile&amp;show=almgr&amp;do=almgr_edit&amp;id={$id}"><img alt="" src="{idir}/edit.png" title="Edit" class="icon" /></a>
+<a href="?action=editprofile&amp;show=almgr&amp;do=almgr_edit&amp;id={$id}"><img alt="" src="{lang msgID="editicon_blank"}" title="Edit" class="icon" /></a>

@@ -42,8 +42,8 @@ $language_text['_yesicon'] = '<img src="../inc/images/yes.gif" alt="" class="ico
 $language_text['_noicon'] = '<img src="../inc/images/no.gif" alt="" class="icon" />';
 $language_text['_newicon'] = '<img src="../inc/images/forum_newpost.gif" alt="" class="icon" />';
 $language_text['_notnewicon'] = '<img src="../inc/images/notnew.gif" alt="" class="icon" />';
-$language_text['_deleteicon_blank'] = '<img alt="" src="../inc/images/delete.gif" class="icon" />';
-$language_text['_editicon_blank'] = '<img alt="" src="../inc/images/edit.gif" class="icon" />';
+$language_text['_deleteicon_blank'] = '../inc/images/delete.gif';
+$language_text['_editicon_blank'] = '../inc/images/edit.gif';
 $language_text['_admin_default_edit'] = '<a href="?action=admin&amp;edit={$id}"><img src="../inc/images/edit.gif" alt="" title="Edit" class="icon" /></a>';
 $language_text['_admin_ck_edit'] = '<a href="?action=admin&amp;do=paycheck&amp;id={$id}"><img src="../inc/images/edit.gif" alt="" title="Edit" class="icon" /></a>';
 $language_text['_msg_delete_sended'] = '<a href="?action=msg&amp;do=deletesended&amp;id={$id}"><img alt="" src="../inc/images/delete.gif" title="Delete" class="icon" /></a>';
