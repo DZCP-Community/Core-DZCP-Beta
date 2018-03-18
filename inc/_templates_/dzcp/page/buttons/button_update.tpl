@@ -1,1 +1,0 @@
-<a href="?{$action}&amp;id={$id}"><img src="{idir}/sync.png" title="{$title}" alt="{$title}" class="icon" /></a>

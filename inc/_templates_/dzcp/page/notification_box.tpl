@@ -1,1 +1,0 @@
-<div id="notification-box" class="notification-box {$status}"><span>{$status_msg}: </span>{$msg}</div>{$link}

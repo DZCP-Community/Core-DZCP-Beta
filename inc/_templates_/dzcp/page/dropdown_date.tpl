@@ -1,1 +1,0 @@
-<select id="t" name="t" class="dropdown">{$day}</select> <select id="m" name="m" class="dropdown">{$month}</select> <select id="j" name="j" class="dropdown">{$year}</select>

@@ -1,1 +1,0 @@
-<a href="../user/?action=buddys&amp;do=addbuddy&amp;id={$id}"><img alt="" src="{idir}/add.gif" class="icon" /></a>

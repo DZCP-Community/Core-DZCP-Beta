@@ -1,1 +1,0 @@
-&nbsp;&nbsp;<a href="?action=userlist&amp;show=newreg"><span class="fontWichtig">{$cnt}</span> {$eintrag}</a><br />

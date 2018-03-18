@@ -1,1 +1,0 @@
-<img src="../inc/images/uploads/useravatare/{$id}.{$endung}" width="{$width}" height="{$height}" alt="" />

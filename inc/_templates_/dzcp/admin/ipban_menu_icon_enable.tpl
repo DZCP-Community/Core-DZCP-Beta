@@ -1,1 +1,0 @@
-<a href="{$action}" title="{lang msgID="ipban_disable"}" rel="{$info}" class="confirm"><img src="../inc/images/admin_lock_closed.jpg" alt="" class="icon" /></a>

@@ -1,1 +1,0 @@
-<a href="?action=msg&amp;do=showsended&amp;id={$id}">{$titel}</a>

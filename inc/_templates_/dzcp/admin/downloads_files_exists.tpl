@@ -1,1 +1,0 @@
-<option value="{$dl}" {$sel}>{$dl}</option>

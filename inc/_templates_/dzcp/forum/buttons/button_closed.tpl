@@ -1,1 +1,0 @@
-<img src="{idir}/closed.png" alt="">

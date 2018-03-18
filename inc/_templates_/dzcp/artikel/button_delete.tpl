@@ -1,1 +1,0 @@
-<a href="{$action}" rel="{$del}" class="confirm"><img src="{idir}/delete.png" title="{$title}" alt="{$title}" class="icon" /></a>

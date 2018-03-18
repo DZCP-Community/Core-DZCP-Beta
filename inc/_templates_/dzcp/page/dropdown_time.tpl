@@ -1,1 +1,0 @@
-<select id="h" name="h" class="dropdown">{$hour}</select> <select id="min" name="min" class="dropdown">{$minute}</select>{lang msgID="uhr"}

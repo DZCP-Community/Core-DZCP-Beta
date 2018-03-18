@@ -1,1 +1,0 @@
-<a href="?action=msg&amp;do=deletethis&amp;id={$id}"><img alt="" src="{idir}/delete.png" title="{lang msgID="button_title_del"}" class="icon" /></a>
