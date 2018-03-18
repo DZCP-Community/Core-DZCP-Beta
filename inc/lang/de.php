@@ -49,7 +49,7 @@ $language_text['_fileman_error_upload_no_files'] = 'Keine Dateien zum uploaden o
 ## DEV ##
 $language_text['_config_test_menu_template'] = 'Test in Template Menü';
 ## Allgemein ##
-$language_text['_reidenty'] = 'Zur alten Identit&auml;t'; //TODO: (Better text?)
+$language_text['_reidenty'] = 'eigene Identität annehmen';
 $language_text['_error_no_html5_vid'] = 'Ihr Browser unterstützt das Video-Tag nicht.';
 $language_text['_button_title_del'] = 'Löschen';
 $language_text['_button_title_edit'] = 'Editieren';
