@@ -22,10 +22,7 @@ $language_text['_dropdown_time_ts'] = '<select id="h_{$nr}" name="h_{$nr}" class
 $language_text['_buddys_yesicon'] = '<img src="../inc/images/buddys_yes.gif" alt="" class="icon" />';
 $language_text['_buddys_noicon'] = '<img src="../inc/images/buddys_no.gif" alt="" class="icon" />';
 $language_text['_closedicon_votes'] = '<img src="../inc/images/closed_votes.gif" alt="" class="icon" />';
-$language_text['_hpicon_forum'] = '<a href="{$hp}" target="_blank"><img src="../inc/images/forum_hp.gif" alt="" title="{$hp}" class="icon" /></a>';
-$language_text['_emailicon_forum'] = '<a href=\\"mailto:"+d+"\\"><img src=\\"../inc/images/forum_email.gif\\" title="+d+" class=\\"icon\\" /></a>';
-$language_text['_forum_pn_preview'] = '<img src="../inc/images/forum_pn.gif" alt="" class="icon" style="cursor:pointer" />';
-$language_text['_forum_zitat_preview'] = '<img src="../inc/images/zitat.gif" alt="" class="icon" style="cursor:pointer" />';
+$language_text['_forum_zitat_preview'] = '<img src="../inc/lang/images/uk/images/quote.png" alt="" class="icon" style="cursor:pointer" />';
 
 ## Allgemein ##
 $language_text['_user_link_noreg'] = '<a class=\\"{$class}\\" href=\\"mailto:"+d+"\\">{$nick}</a>';
@@ -37,12 +34,10 @@ $language_text['_email_mailto'] = '<a href="mailto:{$email}">{$email}</a>';
 $language_text['_emailicon'] = '<a href=\\"mailto:"+d+"\\"><img src=\\"../inc/images/email.gif\\" title="+d+" class=\\"icon\\" /></a>';
 $language_text['_emailicon_non_mailto'] = '<a href="{$email}"><img src="../inc/images/email.gif" alt="" class="icon" /></a>';
 $language_text['_emailicon_blank'] = '<img src="../inc/images/email.gif" alt="" class="icon" />';
-$language_text['_zitaticon'] = '<img src="../inc/images/zitat.gif" alt="" class="icon" />';
 $language_text['_hpicon_blank'] = '<img src="../inc/images/hp.gif" alt="" class="icon" />';
 $language_text['_mficon_blank'] = '<img src="../inc/images/mf.gif" alt="" class="icon" />';
 $language_text['_maleicon'] = '<img src="../inc/images/male.gif" alt="" class="icon" />';
 $language_text['_femaleicon'] = '<img src="../inc/images/female.gif" alt="" class="icon" />';
-$language_text['_pnicon_blank'] = '<img src="../inc/images/pn.gif" alt="" class="icon" />';
 $language_text['_yesicon'] = '<img src="../inc/images/yes.gif" alt="" class="icon" />';
 $language_text['_noicon'] = '<img src="../inc/images/no.gif" alt="" class="icon" />';
 $language_text['_newicon'] = '<img src="../inc/images/forum_newpost.gif" alt="" class="icon" />';
