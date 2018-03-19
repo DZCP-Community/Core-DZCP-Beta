@@ -115,7 +115,7 @@ if(defined('_UserMenu')) {
             $smarty->caching = false;
             $smarty->assign('id',$get['id']);
             $smarty->assign('action',"action=admin&amp;do=delete");
-            $smarty->assign('title',_button_title_del.' ohne Forum Posts/Threads');
+            $smarty->assign('title',_button_title_del. _delete_without_posts);
             $delete = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_delete.tpl');
             $smarty->clearAllAssign();
 
@@ -123,7 +123,7 @@ if(defined('_UserMenu')) {
             $smarty->caching = false;
             $smarty->assign('id',$get['id']);
             $smarty->assign('action',"action=admin&amp;do=full_delete");
-            $smarty->assign('title',_button_title_del.' mit Forum Posts/Threads');
+            $smarty->assign('title',_button_title_del. _delete_with_posts);
             $full_delete = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_delete_full.tpl');
             $smarty->clearAllAssign();
         }

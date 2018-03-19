@@ -122,6 +122,8 @@ $language_text['_button_del_user'] = 'Elimina utente';
 $language_text['_users_deleted'] = 'Utente eliminato';
 $language_text['_actived_all'] = 'Gli account utente sono stati attivati!';
 $language_text['_delete_text'] = 'Cancella';
+$language_text['_delete_without_posts'] = ' senza post & discussioni del forum';
+$language_text['_delete_with_posts'] = ' con post & discussioni del forum';
 $language_text['_config_c_cache'] = 'Cache';
 $language_text['_config_c_cache_provider'] = 'Cache Provider';
 $language_text['_config_c_cache_mem_host'] = 'Memcache Host';
@@ -777,7 +779,7 @@ $language_text['_dl_traffic'] = 'Traffico bloccato';
 $language_text['_dl_loaded'] = 'Scaricato';
 $language_text['_dl_date'] = 'Carica data';
 $language_text['_dl_wait'] = 'Scarica il file: ';
-$language_text['_dl_fileman'] = 'SCarica il file';
+$language_text['_dl_fileman'] = 'Scarica il file';
 ## User ##
 $language_text['_profil_head'] = '<span class="fontBold">Profilo utente da {$nick}</span> [{$profilhits} times viewed]';
 $language_text['_user_noposi'] = '<option value="lazy" class="dropdownKat">nessuna posizione</option>';
