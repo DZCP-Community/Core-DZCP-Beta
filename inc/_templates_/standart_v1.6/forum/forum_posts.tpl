@@ -75,8 +75,8 @@
         <td class="contentMainTop" style="text-align:right">
             {if $chkme >= 1}
               {if $closed && !$permission}<img src="{idir}/closed.png" alt="">{elseif !$closed && $permission}<a href="?action=post&amp;do=add&amp;id={$id}">
-                  <img src="{idir}/forum_admin_reply.gif" alt="" title="{lang msgID="forum_addpost"}" class="icon" /></a>{else}<a href="?action=post&amp;do=add&amp;id={$id}">
-            <img src="{idir}/forum_reply.gif" alt="" title="{lang msgID="forum_addpost"}" class="icon" /></a>{/if}
+                  <img src="{lang msgID="forum_button_admin_replys"}" alt="" title="{lang msgID="forum_addpost"}" class="icon" /></a>{else}<a href="?action=post&amp;do=add&amp;id={$id}">
+            <img src="{lang msgID="forum_button_replys"}" alt="" title="{lang msgID="forum_addpost"}" class="icon" /></a>{/if}
             {/if}{$lpost}</td>
       </tr>
     </table>

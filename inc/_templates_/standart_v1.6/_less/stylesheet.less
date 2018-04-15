@@ -4,7 +4,7 @@
 @color_4: #a9a9a9;
 @color_5: #7d7d7d;
 @color_6: #fff;
-@color_7: #CCC;
+@color_7: #CCC; //free not used
 @color_8: #676767;
 @color_9: #FFF;
 @color_10: #4e4e4e;
@@ -12,24 +12,16 @@
 @color_12: #2372fa;
 @color_13: #ccc;
 @color_14: #464646;
-@color_15: #cccccc;
-@color_16: #000000;
+@color_16: #000;
 @color_17: #e50000;
 @color_18: #17D427;
-@color_19: #FFFFFF;
 @color_20: #EE0000;
 @color_21: #DBD004;
 @color_22: #800;
 @color_23: #C0C0C0;
 @color_24: #000080;
 @color_25: #880;
-@color_26: red;
-@color_27: black;
-@font_family_1: Verdana,Tahoma,Geneva,Arial,Helvetica,Sans-serif;
-@font_family_2: Verdana;
-@font_family_3: "Courier New", Verdana, Arial;
 @background_color_1: #fbfbfb;
-@background_color_2: #FFF;
 @background_color_3: #303030;
 @background_color_4: #ededed;
 @background_color_5: #fff;
@@ -47,7 +39,9 @@
 @background_color_17: #f3a2a6;
 @background_color_18: #FFFF00;
 @background_color_19: #adf3a2;
-@border_color_1: #000;
+@font_family_1: Verdana,Tahoma,Geneva,Arial,Helvetica,Sans-serif;
+@font_family_2: Verdana;
+@font_family_3: "Courier New", Verdana, Arial;
 
 /*######################################
   Global Styles, to norm all elements
@@ -551,7 +545,7 @@ hr {
   color: @color_1;
   height: 1px;
   padding: 0;
-  border-color: @border_color_1;
+  border-color: color_1;
   border-width: 1px 0 0 0;
   border-style: solid;
   margin: 3px 0 6px 0;
@@ -921,7 +915,7 @@ div#index {
 .tabs {
   span {
     cursor: pointer;
-    color: @color_7;
+    color: @color_5;
   }
   span.current {
     cursor: default;
@@ -1036,7 +1030,7 @@ input.loginName_en {
   border: 1px solid #d4d4d4;
   background-color: @background_color_1;
   padding: 2px;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px solid #4e4e4e;
   color: @color_1;
 }
@@ -1046,7 +1040,7 @@ input.loginPwd_en {
   border: 1px solid #d4d4d4;
   background-color: @background_color_1;
   padding: 2px;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px solid #4e4e4e;
   color: @color_1;
 }
@@ -1059,10 +1053,23 @@ input.loginSubmit {
   width: 70px;
   padding: 1px;
   border: 1px solid #5F5F5F;
-  color: @color_6;
+  color: @color_1;
   cursor: pointer;
   font-weight: bold;
   font-size: 12px;
+  &:link {
+    color: @color_2;
+    
+  }
+  &:visited {
+    color: @color_2;
+  }
+  &:hover {
+    color: @color_2;
+  }
+  &:active {
+    color: @color_2;
+  }
 }
 td.navVoteButton {
   text-align: center;
@@ -1349,10 +1356,10 @@ td.contentHead {
   border-bottom: 1px solid red;
   a {
     &:link {
-      color: @color_15;
+      color: @color_13;
     }
     &:visited {
-      color: @color_15;
+      color: @color_13;
     }
     &:hover {
       color: @color_6;
@@ -1441,7 +1448,7 @@ td.commentsRight {
   background-color: @background_color_5;
   vertical-align: top;
   padding: 4px;
-  border: 1px solid @color_7;
+  border: 1px solid @color_13;
 }
 td.calDay {
   background-color: @background_color_5;
@@ -1564,30 +1571,30 @@ a.navAdmin {
 a.navLostPwd {
   &:link {
     font-weight: normal;
-    color: @color_2;
+    color: @color_11;
   }
   &:visited {
     font-weight: normal;
-    color: @color_2;
+    color: @color_11;
   }
   &:hover {
     color: @color_3;
   }
   &:active {
-    color: @color_3;
+    color: @color_11;
   }
 }
 a.navLastNews {
   &:link {
     font-weight: normal;
-    color: @color_2;
+    color: @color_11;
     padding: 2px 6px;
     padding-bottom: 4px;
     display: block;
   }
   &:visited {
     font-weight: normal;
-    color: @color_2;
+    color: @color_11;
     padding: 2px 6px;
     padding-bottom: 4px;
     display: block;
@@ -1596,7 +1603,7 @@ a.navLastNews {
     color: @color_3;
   }
   &:active {
-    color: @color_3;
+    color: @color_11;
   }
 }
 a.navFtopics {
@@ -1817,7 +1824,7 @@ a.navMain {
     height: 34px;
     line-height: 32px;
     margin: 0 19px;
-    color: @color_15;
+    color: @color_13;
   }
   &:visited {
     background: url(../images/main_navigation.jpg) bottom repeat-x;
@@ -1826,7 +1833,7 @@ a.navMain {
     height: 34px;
     line-height: 32px;
     margin: 0 19px;
-    color: @color_15;
+    color: @color_13;
   }
   &:hover {
     color: @color_6;
@@ -2002,7 +2009,7 @@ span.fontGreen {
 }
 span.fontWhite {
   font-weight: bold;
-  color: @color_19;
+  color: color_6;
 }
 span.fontBlack {
   font-weight: bold;
@@ -2066,7 +2073,7 @@ span.CwLost {
   color: @color_17;
 }
 div#preload {
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px solid #000;
 }
 td.highlight {
@@ -2097,13 +2104,13 @@ select.tempswitch {
   width: 120px;
   color: @color_1;
   font-size: 97%;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px #000 solid;
 }
 select.dropdown {
   color: @color_1;
   font-size: 97%;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px #000 solid;
 }
 option.dropdownKat {
@@ -2195,7 +2202,7 @@ input.inputField_en {
   color: @color_10;
   padding: 1px;
   width: 250px;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px solid #4e4e4e;
   color: @color_1;
 }
@@ -2205,7 +2212,7 @@ input.inputField_en_mid {
   color: @color_10;
   padding: 1px;
   width: 250px;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px solid #4e4e4e;
   color: @color_1;
   width: 68px;
@@ -2216,7 +2223,7 @@ input.inputField_en_small {
   color: @color_10;
   padding: 1px;
   width: 250px;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px solid #4e4e4e;
   color: @color_1;
   width: 22px;
@@ -2228,7 +2235,7 @@ input.inputFieldFsearch_en {
   color: @color_10;
   padding: 1px;
   width: 250px;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px solid #4e4e4e;
   color: @color_1;
   width: 180px;
@@ -2239,7 +2246,7 @@ input.inputFieldKal_en {
   color: @color_10;
   padding: 1px;
   width: 250px;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px solid #4e4e4e;
   color: @color_1;
   width: 240px;
@@ -2250,7 +2257,7 @@ textarea.inputFieldKalDesc_en {
   color: @color_10;
   padding: 1px;
   width: 250px;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px solid #4e4e4e;
   color: @color_1;
   overflow: Auto;
@@ -2263,7 +2270,7 @@ textarea.inputField_en {
   color: @color_10;
   padding: 1px;
   width: 250px;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px solid #4e4e4e;
   color: @color_1;
 }
@@ -2273,7 +2280,7 @@ input.inputField_en_profil {
   color: @color_10;
   padding: 1px;
   width: 250px;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px solid #4e4e4e;
   color: @color_1;
   width: 200px;
@@ -2284,7 +2291,7 @@ textarea.inputField_en_nletter {
   color: @color_10;
   padding: 1px;
   width: 250px;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px solid #4e4e4e;
   color: @color_1;
   width: 90%;
@@ -2305,7 +2312,7 @@ textarea.inputField_en_profil {
   color: @color_10;
   padding: 1px;
   width: 250px;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px solid #4e4e4e;
   color: @color_1;
   width: 200px;
@@ -2322,7 +2329,7 @@ input.submit {
   padding-left: 10px;
   padding-right: 10px;
   cursor: pointer;
-  font-weight: normal;
+  font-weight: bold;
   border: 1px solid #5F5F5F;
 }
 input.checkbox {
@@ -2334,7 +2341,7 @@ input#loginCheckbox {
   cursor: pointer;
 }
 .emph {
-  background-color: @background_color_2;
+  background-color: color_9;
   color: @color_1;
   border: 1px solid #000;
   padding: 2px;
@@ -2346,7 +2353,7 @@ input#loginCheckbox {
   font-family: @font_family_2;
 }
 .msg {
-  background-color: @background_color_2;
+  background-color: color_9;
   color: @color_1;
   border: 1px solid #000;
   padding: 2px;
@@ -2440,7 +2447,7 @@ iframe#ieFix {
   padding: 2px;
   width: 470px;
   max-height: 200px;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px solid #000;
   padding: 0px;
   overflow: auto;
@@ -2454,7 +2461,7 @@ iframe#ieFix {
 .code {
   width: 470px;
   max-height: 200px;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px solid #000;
   padding: 0px;
   overflow: auto;
@@ -2515,7 +2522,7 @@ select.teamswitch {
   width: 160px;
   color: @color_1;
   font-size: 97%;
-  background-color: @background_color_2;
+  background-color: color_9;
   border: 1px #000 solid;
 }
 img.icon {
@@ -2533,7 +2540,7 @@ img.helpicon {
   padding-bottom: 10px;
   padding-left: 16px;
   padding-right: 2px;
-  background-color: @background_color_2;
+  background-color: color_9;
   background-image: url(../../../images/quote.gif);
   background-repeat: no-repeat;
   color: @color_1;
@@ -2577,7 +2584,7 @@ ul.search {
 label.search {
   display: block;
   text-align: left;
-  background-color: @background_color_2;
+  background-color: color_9;
   color: @color_1;
   margin: 0;
   padding: 0;
@@ -2589,7 +2596,7 @@ label.search {
 label.searchKat {
   display: block;
   text-align: left;
-  background-color: @background_color_2;
+  background-color: color_9;
   color: @color_1;
   margin: 0;
   padding: 0;
@@ -2616,20 +2623,20 @@ input.chksearch {
   vertical-align: middle;
 }
 td.nautor {
-  color: @color_19;
-  color: @color_19;
-  color: @color_19;
-  color: @color_19;
+  color: color_6;
+  color: color_6;
+  color: color_6;
+  color: color_6;
 }
 a.gray {
   &:visited {
-    color: @color_15;
+    color: @color_13;
   }
   &:active {
-    color: @color_15;
+    color: @color_13;
   }
   &:link {
-    color: @color_15;
+    color: @color_13;
   }
   &:hover {
     color: @color_17;
@@ -2677,10 +2684,10 @@ div#ticker {
       color: @color_9;
     }
     &:hover {
-      color: @color_26;
+      color: color_3;
     }
     &:active {
-      color: @color_26;
+      color: color_3;
     }
   }
 }
@@ -2739,7 +2746,7 @@ td.news.info {
   border: 1px solid black;
 }
 .error_text {
-  color: @color_27;
+  color: color_1;
   font-size: 10px;
   font-family: @font_family_2;
 }
@@ -2748,12 +2755,12 @@ td.news.info {
   border: 1px solid black;
 }
 .warn_text {
-  color: @color_27;
+  color: color_1;
   font-size: 10px;
   font-family: @font_family_2;
 }
 .successful_text {
-  color: @color_27;
+  color: color_1;
   font-size: 10px;
   font-family: @font_family_2;
 }
