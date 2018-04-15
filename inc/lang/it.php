@@ -567,7 +567,7 @@ $language_text['_member_admin_votes'] = 'Visualizza voti interni';
 $language_text['_member_admin_votesadmin'] = 'Admin: Voti';
 $language_text['_msg_global_all'] = 'tutti i membri';
 $language_text['_pos_empty_kat'] = 'Devi indicare una posizione!';
-$language_text['_forum_lastpost'] = '<a href="?action=showthread&amp;id={$tid}&amp;page={$page}#p{$id}"><img src="../inc/lang/images/uk/lpost.gif" alt="" title="Vai all\'ultima voce" class="icon" /></a>';
+$language_text['_forum_lastpost'] = '<a href="?action=showthread&amp;id={$tid}&amp;page={$page}#p{$id}"><img src="../inc/lang/images/it/lpost.gif" alt="" title="Vai all\'ultima voce" class="icon" /></a>';
 $language_text['_forum_addpost'] = 'Nuova voce';
 $language_text['_pn_write'] = '{$nick} hai un nuovo messaggio';
 $language_text['_error_invalid_regcode'] = 'Il codice di sicurezza inserito non concorda con la sequenza di caratteri indicata nello schema!';
@@ -688,6 +688,8 @@ $language_text['_forum_search_results'] = 'Risultati di ricerca';
 $language_text['_forum_online_head'] = 'Navigando nella board';
 $language_text['_forum_nobody_is_online'] = 'In questo momento nessun utente sta navigando nella board!';
 $language_text['_forum_admin_closed'] = 'Chiudi sondaggio';
+$language_text['_forum_button_admin_replys'] = '../inc/lang/images/it/admin_reply.gif';
+$language_text['_forum_button_replys'] = '../inc/lang/images/it/reply.gif';
 ## Calendar ##
 //-> Global
 $language_text['_kalender_head'] = 'Calendario';

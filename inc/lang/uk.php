@@ -686,6 +686,8 @@ $language_text['_forum_search_results'] = 'Search results';
 $language_text['_forum_online_head'] = 'Browsing the board';
 $language_text['_forum_nobody_is_online'] = 'Right now no user is browsing the board!';
 $language_text['_forum_admin_closed'] = 'Close poll';
+$language_text['_forum_button_admin_replys'] = '../inc/lang/images/uk/admin_reply.gif';
+$language_text['_forum_button_replys'] = '../inc/lang/images/uk/reply.gif';
 ## Calendar ##
 //-> Global
 $language_text['_kalender_head'] = 'Calendar';

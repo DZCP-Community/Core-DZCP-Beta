@@ -687,6 +687,8 @@ $language_text['_forum_search_results'] = 'Suchergebnisse';
 $language_text['_forum_online_head'] = 'Im Forum online:';
 $language_text['_forum_nobody_is_online'] = 'Zur Zeit ist kein User im Forum online!';
 $language_text['_forum_admin_closed'] = 'Umfrage schließen';
+$language_text['_forum_button_admin_replys'] = '../inc/lang/images/de/admin_reply.gif';
+$language_text['_forum_button_replys'] = '../inc/lang/images/de/reply.gif';
 ## Kalender ##
 //-> Allgemein
 $language_text['_kalender_head'] = 'Kalender';

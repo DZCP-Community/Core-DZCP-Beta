@@ -687,6 +687,8 @@ $language_text['_forum_search_results'] = 'Результаты поиска';
 $language_text['_forum_online_head'] = 'На форуме сейчас:';
 $language_text['_forum_nobody_is_online'] = 'в данное время - ни одного пользователья в форуме!';
 $language_text['_forum_admin_closed'] = 'Закрыть опрос';
+$language_text['_forum_button_admin_replys'] = '../inc/lang/images/ru/admin_reply.gif';
+$language_text['_forum_button_replys'] = '../inc/lang/images/ru/reply.gif';
 ## календарь ##
 //-> Генеральная
 $language_text['_kalender_head'] = 'Календарь';
