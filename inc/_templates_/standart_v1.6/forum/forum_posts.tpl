@@ -50,7 +50,7 @@
   <td {$class}>
     <table class="hperc">
       <tr>
-        <td height="108">{$text}</td>
+        <td height="108">{$text}{$editedby}</td>
       </tr>
         {if $is_vote}<tr><td>{$vote}</td></tr>{/if}
       <tr>

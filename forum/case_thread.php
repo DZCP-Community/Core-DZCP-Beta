@@ -372,11 +372,11 @@ if(defined('_Forum')) {
                         $smarty->assign('id', 0);
                         $smarty->assign('kid', $_SESSION['kid']);
                         $smarty->assign('form', common::editor_is_reg(['reg' => common::$userid]));
-                        $smarty->assign('posttopic', isset($_POST['topic']) ? stringParser::decode($_POST['topic']) : '');
-                        $smarty->assign('postsubtopic', isset($_POST['subtopic']) ? stringParser::decode($_POST['subtopic']) : '');
+                        $smarty->assign('posttopic', isset($_POST['topic']) ? $_POST['topic'] : '');
+                        $smarty->assign('postsubtopic', isset($_POST['subtopic']) ? $_POST['subtopic'] : '');
                         $smarty->assign('admin', $admin);
                         $smarty->assign('vote', $vote);
-                        $smarty->assign('posteintrag', isset($_POST['eintrag']) ? stringParser::decode($_POST['eintrag']) : '');
+                        $smarty->assign('posteintrag', isset($_POST['eintrag']) ? $_POST['eintrag'] : '');
                         $smarty->assign('notification', notification::get('global', true));
                         $index = $smarty->fetch('file:[' . common::$tmpdir . ']' . $dir . '/thread.tpl');
                         $smarty->clearAllAssign();

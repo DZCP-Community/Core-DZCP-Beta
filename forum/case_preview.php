@@ -19,27 +19,27 @@ if(defined('_Forum')) {
     switch (strtolower($_GET['what'])) {
         case 'thread':
             if(common::$do == 'addthread') {
-                $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forum_threads}` WHERE `id` = ?;",
-                    [(int)($_GET['id'])]);
-
-                if(!$get['t_reg']) {
+                $get = [];
+                if(!common::$chkMe && !common::$userid) {
                     $guestCheck = true;
                     $pUId = 0;
                 } else {
                     $guestCheck = false;
-                    $pUId = $get['t_reg'];
+                    $pUId = common::$userid;
                 }
 
                 $tID = (int)$get['id'];
             } else if(common::$do == 'editthread') {
-                $get = [];
+                $get = common::$sql['default']->fetch("SELECT * FROM `{prefix_forum_threads}` WHERE `id` = ?;",
+                    [(int)($_GET['id'])]);
+
                 $get['t_date'] = time();
 
-                if(!common::$chkMe) {
+                if(!common::$chkMe && !common::$userid) {
                     $guestCheck = true;
                 } else {
                     $guestCheck = false;
-                    $pUId = common::$userid;
+                    $pUId = $get['t_reg'];
                 }
 
                 //-> Editby Text
@@ -130,7 +130,8 @@ if(defined('_Forum')) {
             $smarty->assign('hp',$hp);
             $smarty->assign('email',$email);
             $smarty->assign('posts',$userposts);
-            $smarty->assign('text',BBCode::parse_html((string)($_POST['eintrag']).$editedby));
+            $smarty->assign('text',BBCode::parse_html((string)($_POST['eintrag']),false));
+            $smarty->assign('editedby',BBCode::parse_html((string)$editedby,false));
             $smarty->assign('status',common::getrank($pUId));
             $smarty->assign('avatar',common::useravatar($pUId));
             $smarty->assign('edited',stringParser::decode($get['edited']));
@@ -152,7 +153,7 @@ if(defined('_Forum')) {
             $smarty->clearAllAssign();
 
             common::update_user_status_preview();
-            exit(utf8_encode('<table class="mainContent" cellspacing="1" style="margin-top:17px">'.$index.'</table>'));
+            exit('<table class="mainContent" cellspacing="1" style="margin-top:17px">'.$index.'</table>');
         break;
         default:
         case 'post':
@@ -234,7 +235,7 @@ if(defined('_Forum')) {
             $smarty->assign('chkme', common::$chkMe);
             $smarty->assign('postnr', "#".($i+(common::$page-1)*settings::get('m_fposts')));
             $smarty->assign('p', ($i+(common::$page-1)*settings::get('m_fposts')));
-            $smarty->assign('text', BBCode::parse_html((string)($_POST['eintrag']).$editedby));
+            $smarty->assign('text', BBCode::parse_html((string)($_POST['eintrag']).$editedby,false));
             $smarty->assign('class', 'class="commentsRight"');
             $smarty->assign('pn', $pn);
             $smarty->assign('hp', $hp);
@@ -253,7 +254,7 @@ if(defined('_Forum')) {
             $smarty->clearAllAssign();
 
             common::update_user_status_preview();
-            exit(utf8_encode('<table class="mainContent" cellspacing="1" style="margin-top:17px">'.$index.'</table>'));
+            exit('<table class="mainContent" cellspacing="1" style="margin-top:17px">'.$index.'</table>');
         break;
     }
 }
