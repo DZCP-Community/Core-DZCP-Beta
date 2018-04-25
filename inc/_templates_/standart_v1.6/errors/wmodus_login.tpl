@@ -11,7 +11,7 @@
             <td class="contentMainFirst">
               <input type=text name="user" class="inputField_dis"
               onfocus="this.className='inputField_en';"
-              onblur="this.className='inputField_dis';" {$dis} />
+              onblur="this.className='inputField_dis';" />
             </td>
           </tr>
           <tr>
@@ -19,7 +19,7 @@
             <td class="contentMainFirst">
               <input type=password name="pwd" class="inputField_dis"
               onfocus="this.className='inputField_en';"
-              onblur="this.className='inputField_dis';" {$dis} required><br /><br />
+              onblur="this.className='inputField_dis';" required><br /><br />
             </td>
           </tr>
           {$secure}

@@ -85,10 +85,8 @@ if(defined('_Forum')) {
                 $onoff = ($getp['reg'] ? common::onlinecheck($getp['reg']) : '');
 
                 //Button Zitat
-                $smarty->caching = false;
-                $smarty->assign('action',"action=post&amp;do=add&amp;kid=".$_SESSION['kid']."&amp;zitat=".$getp['id']."&amp;id=".$_GET['id']);
-                $zitat = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/buttons/button_zitat.tpl');
-                $smarty->clearAllAssign();
+                $zitat = common::a_img_link("?action=post&amp;do=add&amp;kid=".$_SESSION['kid']."&amp;zitat_post=".$getp['id'].
+                    "&amp;id=".$_GET['id'],'quote', _button_title_zitat,'_self');
 
                 //Delete & Edit Button
                 $delete = ""; $edit = "";
@@ -111,35 +109,27 @@ if(defined('_Forum')) {
                 $titel = $smarty->fetch('string:'._eintrag_titel_forum);
                 $smarty->clearAllAssign();
 
+                $pn = ""; $hp = "";
                 if($getp['reg'] != 0) {
-                    $getu = common::$sql['default']->fetch("SELECT nick,hp,email FROM `{prefix_users}` WHERE id = '".$getp['reg']."'");
-                    $email = common::CryptMailto(stringParser::decode($getu['email']),_emailicon_forum);
+                    $getu = common::$sql['default']->fetch("SELECT `nick`,`hp`,`email` FROM `{prefix_users}` WHERE `id` = '".$getp['reg']."';");
 
+                    //PM
                     $smarty->caching = false;
-                    $smarty->assign('id',$getp['reg']);
                     $smarty->assign('nick',stringParser::decode($getu['nick']));
-                    $pn = $smarty->fetch('string:'._pn_write_forum);
+                    $pn_name = $smarty->fetch('string:'._pn_write_forum);
                     $smarty->clearAllAssign();
+                    $pn = common::a_img_link('../user/?action=msg&amp;do=pn&amp;id='.$getp['reg'],'pn', $pn_name);
+                    unset($pn_name);
 
-                    //Homepage Link
-                    $hp = "";
+                    //-> Homepage Link
                     if (!empty($getu['hp'])) {
-                        $smarty->caching = false;
-                        $smarty->assign('hp',common::links(stringParser::decode($getu['hp'])));
-                        $hp = $smarty->fetch('string:'._hpicon_forum);
-                        $smarty->clearAllAssign();
+                        $hp = common::a_img_link(common::links(stringParser::decode($getu['hp'])),'hp', common::links(stringParser::decode($getu['hp'])));
                     }
-                } else {
-                    $pn = "";
-                    $email = common::CryptMailto(stringParser::decode($getp['email']),_emailicon_forum);
 
-                    //Homepage Link
-                    $hp = "";
+                } else {
+                    //-> Homepage Link
                     if (!empty($getp['hp'])) {
-                        $smarty->caching = false;
-                        $smarty->assign('hp',common::links(stringParser::decode($getp['hp'])));
-                        $hp = $smarty->fetch('string:'._hpicon_forum);
-                        $smarty->clearAllAssign();
+                        $hp = common::a_img_link(common::links(stringParser::decode($getp['hp'])),'hp', common::links(stringParser::decode($getp['hp'])));
                     }
                 }
 
@@ -158,7 +148,6 @@ if(defined('_Forum')) {
                 $smarty->assign('class',stringParser::decode($ftxt['class']));
                 $smarty->assign('pn',$pn);
                 $smarty->assign('hp',$hp);
-                $smarty->assign('email',$email);
                 $smarty->assign('status',common::getrank($getp['reg']));
                 $smarty->assign('avatar',common::useravatar($getp['reg']));
                 $smarty->assign('ip',common::getPostedIP($getp));
@@ -219,10 +208,8 @@ if(defined('_Forum')) {
             }
 
             //Button Zitat
-            $smarty->caching = false;
-            $smarty->assign('action',"action=post&amp;do=add&amp;kid=".$_SESSION['kid']."&amp;zitat_thread=".$get['id']."&amp;id=".$_GET['id']);
-            $zitat = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/buttons/button_zitat.tpl');
-            $smarty->clearAllAssign();
+            $zitat = common::a_img_link("?action=post&amp;do=add&amp;kid=".$_SESSION['kid']."&amp;zitat_thread=".$get['id'].
+                "&amp;id=".$_GET['id'],'quote', _button_title_zitat,'_self');
 
             $nav = common::nav($entrys,settings::get('m_fposts'),"?action=showthread&amp;id=".$_GET['id'].$hL);
             $sig = ($signatur=common::data("signatur",$get['t_reg'])) ? _sig.BBCode::parse_html((string)$signatur) : '';
@@ -279,31 +266,23 @@ if(defined('_Forum')) {
             $pn = ""; $hp = "";
             if($get['t_reg']) {
                 $getu = common::$sql['default']->fetch("SELECT `nick`,`hp`,`email` FROM `{prefix_users}` WHERE `id` = ?;",[$get['t_reg']]);
-                $email = common::CryptMailto(stringParser::decode($getu['email']),_emailicon_forum);
 
                 //PM
                 $smarty->caching = false;
-                $smarty->assign('id',$get['t_reg']);
                 $smarty->assign('nick',stringParser::decode($getu['nick']));
-                $pn = $smarty->fetch('string:'._pn_write_forum);
+                $pn_name = $smarty->fetch('string:'._pn_write_forum);
                 $smarty->clearAllAssign();
+                $pn = common::a_img_link('../user/?action=msg&amp;do=pn&amp;id='.$get['t_reg'],'pn', $pn_name);
+                unset($pn_name);
 
                 //-> Homepage Link
                 if (!empty($getu['hp'])) {
-                    $smarty->caching = false;
-                    $smarty->assign('hp',common::links(stringParser::decode($getu['hp'])));
-                    $hp = $smarty->fetch('string:'._hpicon_forum);
-                    $smarty->clearAllAssign();
+                    $hp = common::a_img_link(common::links(stringParser::decode($getu['hp'])),'hp', common::links(stringParser::decode($getu['hp'])));
                 }
             } else {
-                $email = common::CryptMailto(stringParser::decode($get['t_email']),_emailicon_forum);
-
                 //-> Homepage Link
                 if (!empty($get['t_hp'])) {
-                    $smarty->caching = false;
-                    $smarty->assign('hp',common::links(stringParser::decode($get['t_hp'])));
-                    $hp = $smarty->fetch('string:'._hpicon_forum);
-                    $smarty->clearAllAssign();
+                    $hp = common::a_img_link(common::links(stringParser::decode($get['t_hp'])),'hp', common::links(stringParser::decode($get['t_hp'])));
                 }
             }
 
@@ -337,12 +316,12 @@ if(defined('_Forum')) {
             $smarty->assign('class',stringParser::decode($ftxt['class']));
             $smarty->assign('pn',$pn);
             $smarty->assign('hp',$hp);
-            $smarty->assign('email',$email);
             $smarty->assign('posts',$userposts);
             $smarty->assign('text',$text);
             $smarty->assign('status',common::getrank($get['t_reg']));
             $smarty->assign('avatar',common::useravatar($get['t_reg']));
             $smarty->assign('edited',stringParser::decode($get['edited']));
+            $smarty->assign('editedby','');
             $smarty->assign('signatur',$sig);
             $smarty->assign('zitat',$zitat);
             $smarty->assign('onoff',$onoff);

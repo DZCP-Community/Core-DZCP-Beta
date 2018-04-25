@@ -84,7 +84,7 @@ switch ($mod):
 			if($_GET['get'] == 'smileys') {
                 $smileys = bbcode::smiley_map();
 				$smileys['smiley_columns'] = 10;
-				$smileys['smiley_path'] = '..\inc\_templates_\version1.6\images\smileys\\';
+				$smileys['smiley_path'] = '..\inc\_templates_\/'.common::$tmpdir.'\images\smileys\\';
                 header('Content-Type: application/json');
 				exit(json_encode($smileys));
 			}

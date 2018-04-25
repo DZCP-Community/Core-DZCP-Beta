@@ -44,6 +44,9 @@ if(defined('_Forum')) {
 
                 //-> Editby Text
                 if(isset($_POST['editby'])) {
+
+//TODO:
+
                     $smarty->caching = false;
                     $smarty->assign('autor', common::cleanautor(common::$userid));
                     $smarty->assign('time', date("d.m.Y H:i", time()));
@@ -69,15 +72,19 @@ if(defined('_Forum')) {
             {
                 $getu = common::$sql['default']->fetch("SELECT `nick`,`hp`,`email` FROM `{prefix_users}` WHERE `id` = ?;",[$pUId]);
                 $email = common::CryptMailto(stringParser::decode($getu['email']),_emailicon_forum);
-                $pn = _forum_pn_preview;
+
+                //PM
+                $smarty->caching = false;
+                $smarty->assign('nick',stringParser::decode($getu['nick']));
+                $pn_name = $smarty->fetch('string:'._pn_write_forum);
+                $smarty->clearAllAssign();
+                $pn = common::a_img_link('../user/?action=msg&amp;do=pn&amp;id='.$get['t_reg'],'pn', $pn_name);
+                unset($pn_name);
 
                 //-> Homepage Link
                 $hp = "";
                 if (!empty($getu['hp'])) {
-                    $smarty->caching = false;
-                    $smarty->assign('hp',common::links(stringParser::decode($getu['hp'])));
-                    $hp = $smarty->fetch('string:'._hpicon_forum);
-                    $smarty->clearAllAssign();
+                    $hp = common::a_img_link(common::links($getu['hp']),'hp', common::links($getu['hp']));
                 }
 
                 $sig = "";
@@ -91,15 +98,11 @@ if(defined('_Forum')) {
                 $smarty->clearAllAssign();
             } else {
                 $pn = "";
-                $email = common::CryptMailto($_POST['email'],_emailicon_forum);
 
                 //-> Homepage Link
                 $hp = "";
                 if (!empty($_POST['hp'])) {
-                    $smarty->caching = false;
-                    $smarty->assign('hp',common::links($_POST['hp']));
-                    $hp = $smarty->fetch('string:'._hpicon_forum);
-                    $smarty->clearAllAssign();
+                    $hp = common::a_img_link(common::links($_POST['hp']),'hp', common::links($_POST['hp']));
                 }
             }
 
@@ -128,10 +131,9 @@ if(defined('_Forum')) {
             $smarty->assign('class','class="commentsRight"');
             $smarty->assign('pn',$pn);
             $smarty->assign('hp',$hp);
-            $smarty->assign('email',$email);
             $smarty->assign('posts',$userposts);
             $smarty->assign('text',BBCode::parse_html((string)($_POST['eintrag']),false));
-            $smarty->assign('editedby',BBCode::parse_html((string)$editedby,false));
+            $smarty->assign('editedby',BBCode::parse_html((string)$editedby,true));
             $smarty->assign('status',common::getrank($pUId));
             $smarty->assign('avatar',common::useravatar($pUId));
             $smarty->assign('edited',stringParser::decode($get['edited']));

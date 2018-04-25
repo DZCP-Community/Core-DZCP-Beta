@@ -76,8 +76,8 @@ var DZCP = {
         DZCP.Barrating(false);
 
         //Conjob
-        var request = $.ajax({ url: "../inc/ajax.php?i=conjob"});
-        request.done();
+       // var request = $.ajax({ url: "../inc/ajax.php?i=conjob"});
+       // request.done();
 
         DZCP.initCodeHighlighting();
     },
@@ -129,7 +129,7 @@ var DZCP = {
 
     //CKEditor - WYSIWYG
     initCKEditor: function() {
-        var basePath = document.location.origin+'/inc/_templates_/version1.6/_js/ckeditor';
+        var basePath = document.location.origin+'/inc/_templates_/standart_v1.6/_js/ckeditor';
         CKEDITOR.plugins.addExternal('bbcode',basePath+'/bbcode/', 'plugin.js');
         CKEDITOR.plugins.addExternal('smiley',basePath+'/smiley/', 'plugin.js');
         CKEDITOR.plugins.addExternal('youtube',basePath+'/youtube/', 'plugin.js');

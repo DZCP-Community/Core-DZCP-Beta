@@ -536,6 +536,11 @@ class common {
     public static function getSmarty(bool $new_instance = false) {
         if($new_instance) {
             $smarty = new Smarty;
+            if(method_exists('Smarty_CacheResource_FastCache','read') && config::$use_system_cache) {
+                $smarty->registerCacheResource('fastcache', new Smarty_CacheResource_FastCache());
+                $smarty->caching_type = 'fastcache';
+            }
+
             $smarty->force_compile = config::$smarty_force_compile;
             $smarty->debugging = config::$smarty_debugging;
             $smarty->caching = config::$smarty_caching;
@@ -2935,6 +2940,7 @@ class common {
      * @internal param string $value
      * @internal param bool $is_selected
      * @internal param string $what
+     * @throws SmartyException
      */
     public static function button_delete_single(string $id,string $action,string $title=_button_title_del,string $del=_confirm_del_entry) {
         $smarty = self::getSmarty(true);
@@ -2946,6 +2952,37 @@ class common {
         $delete = $smarty->fetch('file:['.common::$tmpdir.']page/buttons/button_delete_single.tpl');
         $smarty->clearAllAssign();
         return $delete;
+    }
+
+    /**
+     * Generiert einen A link mit einem Bild als Inhalt
+     * @param string $href
+     * @param string $img
+     * @param string $title
+     * @param string $target
+     * @param string $alt
+     * @return string
+     * @throws SmartyException
+     */
+    public static function a_img_link(string $href,string $img,string $title = '',string $target = '_blank', string $alt = '') {
+        //Img Template detect
+        $src = ''; $src = "../inc/images/languages/" . $_SESSION['language'] . "/" . $img. ".png";
+        foreach (common::SUPPORTED_PICTURE as $endung) {
+            if (file_exists(basePath . "/inc/_templates_/" . common::$tmpdir . "/images/languages/" . $_SESSION['language'] . "/" . $img. "." .$endung)) {
+                $src = "../inc/_templates_/" . common::$tmpdir . "/images/languages/" . $_SESSION['language'] . "/" . $img. "." .$endung;
+            }
+        }
+
+        $smarty = self::getSmarty(true);
+        $smarty->caching = false;
+        $smarty->assign('src',$src);
+        $smarty->assign('target',$target);
+        $smarty->assign('href',$href);
+        $smarty->assign('alt',$alt);
+        $smarty->assign('title',$title);
+        $link = $smarty->fetch('file:['.common::$tmpdir.']page/links/a_img_link.tpl');
+        $smarty->clearAllAssign();
+        return $link;
     }
 
     /**
@@ -3333,8 +3370,70 @@ class common {
     }
 }
 
-if($_GET['dev']) {
-    new dzcp_network_api();
+/**
+ * Class Smarty_CacheResource_FastCache
+ */
+class Smarty_CacheResource_FastCache extends Smarty_CacheResource_KeyValueStore {
+    /**
+     * Read values for a set of keys from cache
+     *
+     * @param array $keys list of keys to fetch
+     * @return array list of values with the given keys used as indexes
+     * @return boolean true on success, false on failure
+     */
+    protected function read(array $keys)
+    {
+        $_keys = $lookup = array();
+        foreach ($keys as $k) {
+            $_k = sha1($k);
+            $_keys[] = $_k;
+            $lookup[$_k] = $k;
+        }
+        $_res = array();
+
+        $res = [];
+        foreach ($_keys as $k) {
+            if(common::$cache->AutoExists($k)) {
+                $res[$k] = common::$cache->AutoGet($k);
+            }
+        }
+
+        foreach ($res as $k => $v) {
+            $_res[$lookup[$k]] = $v;
+        }
+        return $_res;
+    }
+
+    /**
+     * Save values for a set of keys to cache
+     *
+     * @param array $keys list of values to save
+     * @param int $expire expiration time
+     * @return boolean true on success, false on failure
+     */
+    protected function write(array $keys, $expire=null)
+    {
+        foreach ($keys as $k => $v) {
+            $k = sha1($k);
+            common::$cache->AutoSet($k,$v,$expire);
+        }
+        return true;
+    }
+
+    /**
+     * Remove values from cache
+     *
+     * @param array $keys list of keys to delete
+     * @return boolean true on success, false on failure
+     */
+    protected function delete(array $keys)
+    {
+        foreach ($keys as $k) {
+            $k = sha1($k);
+            common::$cache->AutoDelete($k);
+        }
+        return true;
+    }
 }
 
 /**

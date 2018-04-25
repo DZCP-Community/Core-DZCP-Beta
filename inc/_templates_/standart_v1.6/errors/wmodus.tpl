@@ -8,7 +8,7 @@
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="Content-Script-Type" content="text/javascript" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link rel="stylesheet" type="text/css" href="{dir}/_css/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="../inc/ajax.php?i=less" />
     <link rel="alternate" type="application/rss+xml" href="../rss.xml" title="{$title} RSS-Feed" />
     <link rel="icon" type="image/png" href="{dir}/favicon.png" />
     <link rel="home" href="/" title="Home" />
@@ -20,6 +20,8 @@
     <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.dzcp.js"></script>
   </head>
   <body>
+  <div id="wrapper">
+    <div id="content">
     <a style="visibility:hidden;" href="../inc/bot.php"><img src="{idir}/1px.gif" width="1" height="1" border="0" alt="" /></a>
     <div style="width:460px;height:100%;margin:auto">
       <table width="100%">
@@ -48,5 +50,7 @@
         </tr>
       </table>
     </div>
+    </div>
+  </div>
   </body>
 </html>
