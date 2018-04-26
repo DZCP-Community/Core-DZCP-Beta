@@ -92,6 +92,7 @@
 		    <!-- rechte Spalte Start -->
 		    <div class="sideContent">
 		      <!-- Userbereich Start -->
+			{if $lock}
 		      <div class="box corner">
 		        <h2 class="headline">{lang msgID="txt_userarea"}</h2>
 		        {login}
@@ -99,6 +100,7 @@
 		        <div class="leftFloat">{navi kat="user"}{navi kat="trial"}{navi kat="member"}{navi kat="admin"}</div>
 		        <br style="clear:both" />
 		      </div>
+			{/if}
 		      <!-- Userbereich Ende -->
 		      <!-- Switchbox News/Artikel Start -->
 		      <div class="box corner">
@@ -133,10 +135,12 @@
 		      </div>
 		      <!-- Switchbox Kalender/Events Ende -->
 		      <!-- Templateswitch Box Start -->
+			{if $lock}
 		      <div class="box corner">
 		        <h2 class="headline">{lang msgID="txt_template_switch"}</h2>
 		        {templateswitch}
 		      </div>
+			{/if}
 		      <!-- Templateswitch Box Ende -->
 		    </div>
 		    <!-- rechte Spalte Ende -->

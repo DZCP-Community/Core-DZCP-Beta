@@ -62,7 +62,8 @@ use Phine\Country\Loader\Loader;
 $index = ''; $show = ''; $color = 0;
 
 new common(); //Main Construct
-require_once(basePath.'/inc/sfs.php');
+if($_SESSION['DSGVO'])
+    require_once(basePath.'/inc/sfs.php');
 
 if(config::$use_additional_dir) {
 //-> Neue Kernel Funktionen einbinden, sofern vorhanden
@@ -167,7 +168,7 @@ class common {
             self::$page = isset($_GET['page']) ? (int)(trim($_GET['page'])) : (isset($_POST['page']) ? (int)(trim($_POST['page'])) : 1);
             self::$do = isset($_GET['do']) ? secure_global_imput($_GET['do']) : (isset($_POST['do']) ? secure_global_imput($_POST['do']) : '');
         }
-		
+
 		self::$search_forum = false;
 
         //->Crawler Detect
@@ -199,7 +200,9 @@ class common {
         }
 
         //-> Cookie initialisierung
-        cookie::init('dzcp_' . settings::get('prev'));
+        if($_SESSION['DSGVO']) {
+            cookie::init('dzcp_' . settings::get('prev'));
+        }
 
         //-> JS initialisierung
         if(!is_api && !is_thumbgen && !is_ajax) {
@@ -208,11 +211,17 @@ class common {
         }
 
         //-> Language auslesen oder default setzen
-        $_SESSION['language'] = (cookie::get('language') != false ?
-            (file_exists(basePath.'/inc/lang/'.cookie::get('language').'.php') ?
-                cookie::get('language') :
-                settings::get('language')) :
-            settings::get('language'));
+        if($_SESSION['DSGVO']) {
+            $_SESSION['language'] = (cookie::get('language') != false ?
+                (file_exists(basePath . '/inc/lang/' . cookie::get('language') . '.php') ?
+                    cookie::get('language') :
+                    settings::get('language')) :
+                settings::get('language'));
+        } else {
+            if(!array_key_exists('language',$_SESSION) || empty($_SESSION['language'])) {
+                $_SESSION['language'] = settings::get('language');
+            }
+        }
 
         if(!is_api && !is_thumbgen) {
             $subfolder = basename(dirname(dirname(self::GetServerVars('PHP_SELF')) . '../'));
@@ -245,72 +254,76 @@ class common {
         //Smarty Template-system
         self::$smarty = self::getSmarty(true);
 
-        self::check_ip(); // IP Prufung * No IPV6 Support *
+        if($_SESSION['DSGVO']) {
+            self::check_ip(); // IP Prufung * No IPV6 Support *
+        }
 
         //-> Auslesen der Cookies und automatisch anmelden
-        if(!is_api && cookie::get('id') != false && cookie::get('pkey') != false && empty($_SESSION['id']) && !self::checkme()) {
-            //-> Permanent Key aus der Datenbank suchen
-            $get_almgr = self::$sql['default']->fetch("SELECT `id`,`uid`,`update`,`expires` FROM `{prefix_autologin}` WHERE `pkey` = ? AND `uid` = ?;", [cookie::get('pkey'), cookie::get('id')]);
-            if(self::$sql['default']->rowCount()) {
-                if((!$get_almgr['update'] || (time() < ($get_almgr['update'] + $get_almgr['expires'])))) {
-                    //-> User aus der Datenbank suchen
-                    $get = self::$sql['default']->fetch("SELECT `id`,`user`,`nick`,`pwd`,`email`,`level`,`time` FROM `{prefix_users}` WHERE `id` = ? AND `level` != 0;", [cookie::get('id')]);
-                    if(self::$sql['default']->rowCount()) {
-                        //-> Generiere neuen permanent-key
-                        $permanent_key = md5(self::mkpwd(8));
-                        cookie::put('pkey', $permanent_key);
-                        cookie::save();
+        if($_SESSION['DSGVO']) {
+            if (!is_api && cookie::get('id') != false && cookie::get('pkey') != false && empty($_SESSION['id']) && !self::checkme()) {
+                //-> Permanent Key aus der Datenbank suchen
+                $get_almgr = self::$sql['default']->fetch("SELECT `id`,`uid`,`update`,`expires` FROM `{prefix_autologin}` WHERE `pkey` = ? AND `uid` = ?;", [cookie::get('pkey'), cookie::get('id')]);
+                if (self::$sql['default']->rowCount()) {
+                    if ((!$get_almgr['update'] || (time() < ($get_almgr['update'] + $get_almgr['expires'])))) {
+                        //-> User aus der Datenbank suchen
+                        $get = self::$sql['default']->fetch("SELECT `id`,`user`,`nick`,`pwd`,`email`,`level`,`time` FROM `{prefix_users}` WHERE `id` = ? AND `level` != 0;", [cookie::get('id')]);
+                        if (self::$sql['default']->rowCount()) {
+                            //-> Generiere neuen permanent-key
+                            $permanent_key = md5(self::mkpwd(8));
+                            cookie::put('pkey', $permanent_key);
+                            cookie::save();
 
-                        //Update Autologin
-                        self::$sql['default']->update("UPDATE `{prefix_autologin}` SET `ssid` = ?, `pkey` = ?, `ipv4` = ?, `host` = ?, `update` = ?, `expires` = ? WHERE `id` = ?;",
-                            [session_id(),$permanent_key,self::$userip['v4'],gethostbyaddr(self::$userip['v4']),time(),autologin_expire,$get_almgr['id']]);
+                            //Update Autologin
+                            self::$sql['default']->update("UPDATE `{prefix_autologin}` SET `ssid` = ?, `pkey` = ?, `ipv4` = ?, `host` = ?, `update` = ?, `expires` = ? WHERE `id` = ?;",
+                                [session_id(), $permanent_key, self::$userip['v4'], gethostbyaddr(self::$userip['v4']), time(), autologin_expire, $get_almgr['id']]);
 
-                        //-> Schreibe Werte in die Server Sessions
-                        $_SESSION['id']         = $get['id'];
-                        $_SESSION['pwd']        = $get['pwd'];
-                        $_SESSION['lastvisit']  = $get['time'];
-                        $_SESSION['ip']         = self::$userip['v4'];
-                        $_SESSION['admin_id']   = '';
-                        $_SESSION['admin_pwd']  = '';
-                        $_SESSION['admin_ip']   =  '';
-                        $_SESSION['akl_id']     = 0;
+                            //-> Schreibe Werte in die Server Sessions
+                            $_SESSION['id'] = $get['id'];
+                            $_SESSION['pwd'] = $get['pwd'];
+                            $_SESSION['lastvisit'] = $get['time'];
+                            $_SESSION['ip'] = self::$userip['v4'];
+                            $_SESSION['admin_id'] = '';
+                            $_SESSION['admin_pwd'] = '';
+                            $_SESSION['admin_ip'] = '';
+                            $_SESSION['akl_id'] = 0;
 
-                        if (self::data("ipv4", $get['id']) != $_SESSION['ip']) {
-                            $_SESSION['lastvisit'] = self::data("time", $get['id']);
+                            if (self::data("ipv4", $get['id']) != $_SESSION['ip']) {
+                                $_SESSION['lastvisit'] = self::data("time", $get['id']);
+                            }
+
+                            if (empty($_SESSION['lastvisit'])) {
+                                $_SESSION['lastvisit'] = self::data("time", $get['id']);
+                            }
+
+                            //-> Aktualisiere Datenbank
+                            self::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ipv4` = ? WHERE `id` = ?;",
+                                [session_id(), self::$userip['v4'], $get['id']]);
+
+                            //-> Aktualisiere die User-Statistik
+                            self::userstats_increase('logins', $get['id']);
+
+                            //-> Aktualisiere Ip-Count Tabelle
+                            foreach (self::$sql['default']->select("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ipv4` = ? AND `uid` = 0;", [self::$userip['v4']]) as $get_ci) {
+                                self::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ? WHERE `id` = ?;", [$get['id'], $get_ci['id']]);
+                            }
+
+                            unset($get, $permanent_key, $get_almgr, $get_ci); //Clear Mem
+                        } else {
+                            self::dzcp_session_destroy();
+                            $_SESSION['id'] = '';
+                            $_SESSION['pwd'] = '';
+                            $_SESSION['ip'] = '';
+                            $_SESSION['lastvisit'] = '';
+                            $_SESSION['pkey'] = '';
+                            $_SESSION['admin_id'] = '';
+                            $_SESSION['admin_pwd'] = '';
+                            $_SESSION['admin_ip'] = '';
+                            $_SESSION['akl_id'] = 0;
                         }
-
-                        if (empty($_SESSION['lastvisit'])) {
-                            $_SESSION['lastvisit'] = self::data("time", $get['id']);
-                        }
-
-                        //-> Aktualisiere Datenbank
-                        self::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ipv4` = ? WHERE `id` = ?;",
-                            [session_id(),self::$userip['v4'],$get['id']]);
-
-                        //-> Aktualisiere die User-Statistik
-                        self::userstats_increase('logins',$get['id']);
-
-                        //-> Aktualisiere Ip-Count Tabelle
-                        foreach(self::$sql['default']->select("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ipv4` = ? AND `uid` = 0;", [self::$userip['v4']]) as $get_ci) {
-                            self::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ? WHERE `id` = ?;", [$get['id'],$get_ci['id']]);
-                        }
-
-                        unset($get,$permanent_key,$get_almgr,$get_ci); //Clear Mem
                     } else {
+                        self::$sql['default']->delete("DELETE FROM `{prefix_autologin}` WHERE `id` = ?;", [$get_almgr['id']]);
                         self::dzcp_session_destroy();
-                        $_SESSION['id']        = '';
-                        $_SESSION['pwd']       = '';
-                        $_SESSION['ip']        = '';
-                        $_SESSION['lastvisit'] = '';
-                        $_SESSION['pkey']      = '';
-                        $_SESSION['admin_id'] = '';
-                        $_SESSION['admin_pwd'] = '';
-                        $_SESSION['admin_ip'] =  '';
-                        $_SESSION['akl_id']    = 0;
                     }
-                } else {
-                    self::$sql['default']->delete("DELETE FROM `{prefix_autologin}` WHERE `id` = ?;", [$get_almgr['id']]);
-                    self::dzcp_session_destroy();
                 }
             }
         }
@@ -320,8 +333,10 @@ class common {
             if (isset($_GET['set_language']) && !empty($_GET['set_language'])) {
                 if (file_exists(basePath . "/inc/lang/" . $_GET['set_language'] . ".php")) {
                     $_SESSION['language'] = $_GET['set_language'];
-                    cookie::put('language', $_GET['set_language']);
-                    cookie::save();
+                    if($_SESSION['DSGVO']) {
+                        cookie::put('language', $_GET['set_language']);
+                        cookie::save();
+                    }
                 }
 
                 header("Location: " . stringParser::decode(self::GetServerVars('HTTP_REFERER')));
@@ -330,26 +345,33 @@ class common {
         }
 
         self::lang($_SESSION['language']); //Lade Sprache
-        self::$userid = (int)(self::userid());
-        self::$chkMe = (int)(self::checkme());
-        if(!self::$chkMe && (!empty($_SESSION['id']) || !empty($_SESSION['pwd']))) {
-            $_SESSION['id']        = '';
-            $_SESSION['pwd']       = '';
-            $_SESSION['ip']        = self::$userip['v4'];
-            $_SESSION['lastvisit'] = time();
-            $_SESSION['language'] = stringParser::decode(settings::get('language'));
-            $_SESSION['admin_id'] = '';
-            $_SESSION['admin_pwd'] = '';
-            $_SESSION['admin_ip'] =  '';
-            $_SESSION['akl_id']    = 0;
+        self::$userid = 0;
+        self::$chkMe = 0;
+        if($_SESSION['DSGVO']) {
+            self::$userid = (int)(self::userid());
+            self::$chkMe = (int)(self::checkme());
+
+            if(!self::$chkMe && (!empty($_SESSION['id']) || !empty($_SESSION['pwd']))) {
+                $_SESSION['id']        = '';
+                $_SESSION['pwd']       = '';
+                $_SESSION['ip']        = self::$userip['v4'];
+                $_SESSION['lastvisit'] = time();
+                $_SESSION['language'] = stringParser::decode(settings::get('language'));
+                $_SESSION['admin_id'] = '';
+                $_SESSION['admin_pwd'] = '';
+                $_SESSION['admin_ip'] =  '';
+                $_SESSION['akl_id']    = 0;
+            }
         }
 
         //-> Prueft ob der User gebannt ist, oder die IP des Clients warend einer offenen session veraendert wurde.
-        if(!is_api) {
-            if (self::$chkMe && self::$userid && !empty($_SESSION['ip'])) {
-                if ($_SESSION['ip'] != self::visitorIp()['v4'] || self::isBanned(self::$userid, false)) {
-                    self::dzcp_session_destroy();
-                    header("Location: ../news/");
+        if($_SESSION['DSGVO']) {
+            if (!is_api) {
+                if (self::$chkMe && self::$userid && !empty($_SESSION['ip'])) {
+                    if ($_SESSION['ip'] != self::visitorIp()['v4'] || self::isBanned(self::$userid, false)) {
+                        self::dzcp_session_destroy();
+                        header("Location: ../news/");
+                    }
                 }
             }
         }
@@ -357,7 +379,7 @@ class common {
         /*
          * Aktualisiere die Client DNS & User Agent
          */
-        if(!is_api && session_id()) {
+        if(!is_api && session_id() && $_SESSION['DSGVO']) {
             $userdns = self::DNSToIp(self::$userip['v4']);
             if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `update` <= ? AND `sessid` = ?;", [time(),session_id()])) {
                 self::$sql['default']->update("UPDATE `{prefix_iptodns}` SET `time` = ?, `update` = ?, `ipv4` = ?, `agent` = ?, `dns` = ?, `bot` = ?, `bot_name` = ? WHERE `sessid` = ?;",
@@ -416,7 +438,7 @@ class common {
         unset($bbcode);
 
         //-> User Hits und Lastvisit aktualisieren
-        if(self::$userid >= 1 && !is_ajax && !is_thumbgen && !is_api && isset($_SESSION['lastvisit'])) {
+        if($_SESSION['DSGVO'] && self::$userid >= 1 && !is_ajax && !is_thumbgen && !is_api && isset($_SESSION['lastvisit'])) {
             self::$sql['default']->update("UPDATE `{prefix_user_stats}` SET `hits` = (hits+1), `lastvisit` = ? WHERE `user` = ?;",
                 [(int)($_SESSION['lastvisit']),(int)(self::$userid)]);
         }
@@ -435,21 +457,27 @@ class common {
                     if(!empty((string)$xml->permissions) && (string)$xml->permissions != 'null') {
                         if(common::permission((string)$xml->permissions) || ((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level)) {
                             if($templ == $_GET['tmpl_set']) {
-                                cookie::put('tmpdir', $templ);
-                                cookie::save();
+                                if($_SESSION['DSGVO']) {
+                                    cookie::put('tmpdir', $templ);
+                                    cookie::save();
+                                }
                                 header("Location: ".self::GetServerVars('HTTP_REFERER'));
                             }
                         }
                     } else if((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level) {
                         if($templ == $_GET['tmpl_set']) {
-                            cookie::put('tmpdir', $templ);
-                            cookie::save();
+                            if($_SESSION['DSGVO']) {
+                                cookie::put('tmpdir', $templ);
+                                cookie::save();
+                            }
                             header("Location: ".self::GetServerVars('HTTP_REFERER'));
                         }
                     } else if(!(int)$xml->level){
                         if($templ == $_GET['tmpl_set']) {
-                            cookie::put('tmpdir', $templ);
-                            cookie::save();
+                            if($_SESSION['DSGVO']) {
+                                cookie::put('tmpdir', $templ);
+                                cookie::save();
+                            }
                             header("Location: ".self::GetServerVars('HTTP_REFERER'));
                         }
                     }
@@ -458,22 +486,28 @@ class common {
                     if(!empty($data['permissions']) && (string)$data['permissions'] != 'null') {
                         if(common::permission((string)$data['permissions']) || ((int)$data['level'] >= 1 && (int)$data['level'])) {
                             if($templ == $_GET['tmpl_set']) {
-                                cookie::put('tmpdir', $templ);
-                                cookie::save();
+                                if($_SESSION['DSGVO']) {
+                                    cookie::put('tmpdir', $templ);
+                                    cookie::save();
+                                }
                                 header("Location: ".self::GetServerVars('HTTP_REFERER'));
                             }
                         }
                     } else if((int)$data['level'] >= 1 &&
                         common::$chkMe >= (int)$data['level']) {
                         if($templ == $_GET['tmpl_set']) {
-                            cookie::put('tmpdir', $templ);
-                            cookie::save();
+                            if($_SESSION['DSGVO']) {
+                                cookie::put('tmpdir', $templ);
+                                cookie::save();
+                            }
                             header("Location: ".self::GetServerVars('HTTP_REFERER'));
                         }
                     } else if(!(int)$data['level']){
                         if($templ == $_GET['tmpl_set']) {
-                            cookie::put('tmpdir', $templ);
-                            cookie::save();
+                            if($_SESSION['DSGVO']) {
+                                cookie::put('tmpdir', $templ);
+                                cookie::save();
+                            }
                             header("Location: ".self::GetServerVars('HTTP_REFERER'));
                         }
                     }
@@ -483,7 +517,7 @@ class common {
             unset($xml,$templ);
         }
 
-        if(cookie::get('tmpdir') != false && cookie::get('tmpdir') != NULL) {
+        if(cookie::get('tmpdir') != false && cookie::get('tmpdir') != NULL && $_SESSION['DSGVO']) {
             if (file_exists(basePath . "/inc/_templates_/" . cookie::get('tmpdir'))) {
                 $cache_hash = md5('templateswitch_xml_'.cookie::get('tmpdir'));
                 if(!common::$cache->AutoMemExists($cache_hash) || !config::$use_system_cache) {
@@ -1331,7 +1365,7 @@ class common {
     }
 
     public static function check_msg_emal() {
-        if(!is_ajax && !is_thumbgen && !is_api && !self::$CrawlerDetect->isCrawler() && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;",
+        if($_SESSION['DSGVO'] && !is_ajax && !is_thumbgen && !is_api && !self::$CrawlerDetect->isCrawler() && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;",
                 [session_id()])) {
             $qry = self::$sql['default']->select("SELECT s1.`an`,s1.`page`,s1.`titel`,s1.`sendmail`,s1.`id` AS `mid`, "
                 . "s2.`id`,s2.`nick`,s2.`email`,s2.`pnmail` FROM `{prefix_messages}` AS `s1` "
@@ -1693,7 +1727,6 @@ class common {
      * @name        get_files()
      * @access      public
      * @static
-     * @param string|null $dir
      * @param bool $only_dir (optional)
      * @param bool $only_files (optional)
      * @param array $file_ext (optional)
@@ -2566,23 +2599,25 @@ class common {
      * Aktualisierung des Online Status *preview
      */
     public static function update_user_status_preview() {
-        ## User aus der Datenbank suchen ##
-        $get = self::$sql['default']->fetch("SELECT `id`,`time` FROM `{prefix_users}` "
-            . "WHERE `id` = ? AND `sessid` = ? AND `ipv4` = ? AND level != 0;",
-            [(int)($_SESSION['id']),session_id(),stringParser::encode(self::$userip['v4'])]);
+        if($_SESSION['DSGVO']) {
+            ## User aus der Datenbank suchen ##
+            $get = self::$sql['default']->fetch("SELECT `id`,`time` FROM `{prefix_users}` "
+                . "WHERE `id` = ? AND `sessid` = ? AND `ipv4` = ? AND level != 0;",
+                [(int)($_SESSION['id']), session_id(), stringParser::encode(self::$userip['v4'])]);
 
-        if(self::$sql['default']->rowCount()) {
-            ## Schreibe Werte in die Server Sessions ##
-            $_SESSION['lastvisit']  = $get['time'];
+            if (self::$sql['default']->rowCount()) {
+                ## Schreibe Werte in die Server Sessions ##
+                $_SESSION['lastvisit'] = $get['time'];
 
-            if(stringParser::decode(self::data("ipv4",$get['id'])) != $_SESSION['ip'])
-                $_SESSION['lastvisit'] = self::data($get['id'], "time");
+                if (stringParser::decode(self::data("ipv4", $get['id'])) != $_SESSION['ip'])
+                    $_SESSION['lastvisit'] = self::data($get['id'], "time");
 
-            if(empty($_SESSION['lastvisit']))
-                $_SESSION['lastvisit'] = self::data($get['id'], "time");
+                if (empty($_SESSION['lastvisit']))
+                    $_SESSION['lastvisit'] = self::data($get['id'], "time");
 
-            ## Aktualisiere Datenbank ##
-            self::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1 WHERE `id` = ?;", [$get['id']]);
+                ## Aktualisiere Datenbank ##
+                self::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1 WHERE `id` = ?;", [$get['id']]);
+            }
         }
     }
 
@@ -2770,22 +2805,24 @@ class common {
      * @param string $where
      */
     public static function update_online(string $where='') {
-        if(!self::$CrawlerDetect->isCrawler() && !empty($where) && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;", [session_id()])) {
-            if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter_whoison}` WHERE `online` < ?;", [time()])) { //Cleanup
-                self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `online` < ?;", [time()]);
-            }
+        if($_SESSION['DSGVO']) {
+            if (!self::$CrawlerDetect->isCrawler() && !empty($where) && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;", [session_id()])) {
+                if (self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter_whoison}` WHERE `online` < ?;", [time()])) { //Cleanup
+                    self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `online` < ?;", [time()]);
+                }
 
-            $get = self::$sql['default']->fetch("SELECT `id` FROM `{prefix_counter_whoison}` WHERE `ipv4` = ? AND `ssid` = ?;", [self::$userip['v4'],session_id()]); //Update Move
-            if(self::$sql['default']->rowCount()) {
-                self::$sql['default']->update("UPDATE `{prefix_counter_whoison}` SET `whereami` = ?, `online` = ?, `login` = ?  WHERE `id` = ?;",
-                    [stringParser::encode($where),(time()+1800),(!self::$chkMe ? 0 : 1),$get['id']]);
-            } else {
-                self::$sql['default']->insert("INSERT INTO `{prefix_counter_whoison}` SET `ipv4` = ?, `ssid` = ?, `online` = ?, `whereami` = ?, `login` = ?;",
-                    [self::$userip['v4'], session_id(),(time()+1800),stringParser::encode($where),(!self::$chkMe ? 0 : 1)]);
-            }
+                $get = self::$sql['default']->fetch("SELECT `id` FROM `{prefix_counter_whoison}` WHERE `ipv4` = ? AND `ssid` = ?;", [self::$userip['v4'], session_id()]); //Update Move
+                if (self::$sql['default']->rowCount()) {
+                    self::$sql['default']->update("UPDATE `{prefix_counter_whoison}` SET `whereami` = ?, `online` = ?, `login` = ?  WHERE `id` = ?;",
+                        [stringParser::encode($where), (time() + 1800), (!self::$chkMe ? 0 : 1), $get['id']]);
+                } else {
+                    self::$sql['default']->insert("INSERT INTO `{prefix_counter_whoison}` SET `ipv4` = ?, `ssid` = ?, `online` = ?, `whereami` = ?, `login` = ?;",
+                        [self::$userip['v4'], session_id(), (time() + 1800), stringParser::encode($where), (!self::$chkMe ? 0 : 1)]);
+                }
 
-            if(self::$chkMe) {
-                self::$sql['default']->update("UPDATE `{prefix_users}` SET `time` = ?, `whereami` = ? WHERE `id` = ?;", [time(),stringParser::encode($where),(int)(self::$userid)]);
+                if (self::$chkMe) {
+                    self::$sql['default']->update("UPDATE `{prefix_users}` SET `time` = ?, `whereami` = ? WHERE `id` = ?;", [time(), stringParser::encode($where), (int)(self::$userid)]);
+                }
             }
         }
     }
@@ -2811,35 +2848,37 @@ class common {
      * Counter updaten
      */
     public static function updateCounter() {
-        $datum = time();
-        $get_agent = self::$sql['default']->fetch("SELECT `id`,`agent`,`bot` FROM `{prefix_iptodns}` WHERE `ipv4` = ?;", [stringParser::encode(self::$userip['v4'])]);
-        if(self::$sql['default']->rowCount()) {
-            if(!$get_agent['bot'] && !self::$CrawlerDetect->isCrawler(stringParser::decode($get_agent['agent']))) {
-                if(self::$sql['default']->rows("SELECT id FROM `{prefix_counter_ips}` WHERE datum+? <= ? OR FROM_UNIXTIME(datum,'%d.%m.%Y') != ?;", [self::$reload,time(),date("d.m.Y")])) {
-                    self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE datum+? <= ? OR FROM_UNIXTIME(datum,'%d.%m.%Y') != ?;", [self::$reload,time(),date("d.m.Y")]);
-                }
+        if($_SESSION['DSGVO']) {
+            $datum = time();
+            $get_agent = self::$sql['default']->fetch("SELECT `id`,`agent`,`bot` FROM `{prefix_iptodns}` WHERE `ipv4` = ?;", [stringParser::encode(self::$userip['v4'])]);
+            if (self::$sql['default']->rowCount()) {
+                if (!$get_agent['bot'] && !self::$CrawlerDetect->isCrawler(stringParser::decode($get_agent['agent']))) {
+                    if (self::$sql['default']->rows("SELECT id FROM `{prefix_counter_ips}` WHERE datum+? <= ? OR FROM_UNIXTIME(datum,'%d.%m.%Y') != ?;", [self::$reload, time(), date("d.m.Y")])) {
+                        self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE datum+? <= ? OR FROM_UNIXTIME(datum,'%d.%m.%Y') != ?;", [self::$reload, time(), date("d.m.Y")]);
+                    }
 
-                $get = self::$sql['default']->fetch("SELECT `datum` FROM `{prefix_counter_ips}` WHERE `ipv4` = ? AND FROM_UNIXTIME(datum,'%d.%m.%Y') = ?;", [stringParser::encode(self::$userip['v4']),date("d.m.Y")]);
-                if(self::$sql['default']->rowCount()) {
-                    $sperrzeit = $get['datum']+self::$reload;
-                    if($sperrzeit <= time()) {
-                        self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE `ipv4` = ?;", [stringParser::encode(self::$userip['v4'])]);
-                        if (self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter}` WHERE `today` = '" . date("j.n.Y") . "';", [date("j.n.Y")])) {
+                    $get = self::$sql['default']->fetch("SELECT `datum` FROM `{prefix_counter_ips}` WHERE `ipv4` = ? AND FROM_UNIXTIME(datum,'%d.%m.%Y') = ?;", [stringParser::encode(self::$userip['v4']), date("d.m.Y")]);
+                    if (self::$sql['default']->rowCount()) {
+                        $sperrzeit = $get['datum'] + self::$reload;
+                        if ($sperrzeit <= time()) {
+                            self::$sql['default']->delete("DELETE FROM `{prefix_counter_ips}` WHERE `ipv4` = ?;", [stringParser::encode(self::$userip['v4'])]);
+                            if (self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter}` WHERE `today` = '" . date("j.n.Y") . "';", [date("j.n.Y")])) {
+                                self::$sql['default']->update("UPDATE `{prefix_counter}` SET `visitors` = (visitors+1) WHERE `today` = ?;", [date("j.n.Y")]);
+                            } else {
+                                self::$sql['default']->insert("INSERT INTO `{prefix_counter}` SET `visitors` = 1 WHERE `today` = ?;", [date("j.n.Y")]);
+                            }
+
+                            self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ipv4` = ?, `datum` = ?;", [stringParser::encode(self::$userip['v4']), (int)($datum)]);
+                        }
+                    } else {
+                        if (self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter}` WHERE `today` = ?;", [date("j.n.Y")])) {
                             self::$sql['default']->update("UPDATE `{prefix_counter}` SET `visitors` = (visitors+1) WHERE `today` = ?;", [date("j.n.Y")]);
                         } else {
-                            self::$sql['default']->insert("INSERT INTO `{prefix_counter}` SET `visitors` = 1 WHERE `today` = ?;", [date("j.n.Y")]);
+                            self::$sql['default']->insert("INSERT INTO `{prefix_counter}` SET `visitors` = 1, `today` = ?;", [date("j.n.Y")]);
                         }
 
-                        self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ipv4` = ?, `datum` = ?;", [stringParser::encode(self::$userip['v4']),(int)($datum)]);
+                        self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ipv4` = ?, `datum` = ?;", [stringParser::encode(self::$userip['v4']), (int)($datum)]);
                     }
-                } else {
-                    if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter}` WHERE `today` = ?;", [date("j.n.Y")])) {
-                        self::$sql['default']->update("UPDATE `{prefix_counter}` SET `visitors` = (visitors+1) WHERE `today` = ?;", [date("j.n.Y")]);
-                    } else {
-                        self::$sql['default']->insert("INSERT INTO `{prefix_counter}` SET `visitors` = 1, `today` = ?;", [date("j.n.Y")]);
-                    }
-
-                    self::$sql['default']->insert("INSERT INTO `{prefix_counter_ips}` SET `ipv4` = ?, `datum` = ?;", [stringParser::encode(self::$userip['v4']),(int)($datum)]);
                 }
             }
         }
@@ -3263,7 +3302,9 @@ class common {
         $login = $smarty->fetch('file:['.self::$tmpdir.']errors/wmodus_login.tpl');
         $smarty->clearAllAssign();
 
-        cookie::save(); //Save Cookie
+        if($_SESSION['DSGVO']) {
+            cookie::save(); //Save Cookie
+        }
 
         $smarty->caching = false;
         $smarty->assign('java_vars',$java_vars);
@@ -3312,7 +3353,7 @@ class common {
                 },
                 $where);
 
-            if(!self::$CrawlerDetect->isCrawler()) {
+            if(!self::$CrawlerDetect->isCrawler() && $_SESSION['DSGVO']) {
                 self::updateCounter();
                 self::update_maxonline();
                 self::update_online($where);
@@ -3344,6 +3385,7 @@ class common {
             $smarty->assign('java_vars',$java_vars,true);
             $smarty->assign('regen',isset($_GET['less_regen']) ? '&refresh=1' : '');
             $smarty->assign('where',$where);
+            $smarty->assign('lock',$_SESSION['DSGVO']);
             if($template != 'index' && file_exists(self::$designpath.'/'.$template.'.tpl')) {
                 $index = $smarty->fetch('file:['.common::$tmpdir.']'.$template.'.tpl');
             } else {
@@ -3353,7 +3395,10 @@ class common {
         }
 
         //index output
-        cookie::save(); //Save Cookie
+        if($_SESSION['DSGVO']) {
+            cookie::save(); //Save Cookie
+        }
+
         DebugConsole::insert_info('common::page()','Memory Usage: '.self::parser_filesize(memory_get_usage()));
         DebugConsole::insert_info('common::page()','Memory-Peak Usage: '.self::parser_filesize(memory_get_peak_usage()));
         DebugConsole::insert_info('common::page()',sprintf("Page generated in %.8f seconds", (getmicrotime() - start_time)));

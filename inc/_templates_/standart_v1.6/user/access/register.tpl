@@ -1,6 +1,7 @@
 <tr>
   <td class="contentHead" colspan="2" align="center"><span class="fontBold">{lang msgID="register_head"}</span></td>
 </tr>
+{if !$lock}
 {$notification_page}
 <tr>
 <td>
@@ -57,3 +58,13 @@
 </form>
 </td>
 </tr>
+{else}
+    <tr>
+        <td>
+            <div align="center">
+                <br><p><span style="font-size: 13px;">Diese Funktion steht nur zur Verfügung, wenn du die Datenschutz-Grundverordnung (EU-DSGVO) akzeptiert hast.</span>
+                <p><span style="font-size: 13px;">Diese findest du hier: <a href="sdfsdfsdfsd" target="_parent">{$dsgvo_url}</a></span><br><br>
+            </div>
+        </td>
+    </tr>
+{/if}

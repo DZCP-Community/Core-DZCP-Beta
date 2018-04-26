@@ -22,7 +22,7 @@ if(defined('_UserMenu')) {
         // POST
         // ########################################
 
-        if ($do == "add" && !common::$chkMe && common::isIP(common::$userip['v4']) && !common::$CrawlerDetect->isCrawler()) {
+        if ($_SESSION['DSGVO'] && $do == "add" && !common::$chkMe && common::isIP(common::$userip['v4']) && !common::$CrawlerDetect->isCrawler()) {
             $check_user = common::$sql['default']->rows("SELECT `id` FROM `{prefix_users}` WHERE `user`= ?;",
                 [stringParser::encode($_POST['user'])]);
 
@@ -171,6 +171,8 @@ if(defined('_UserMenu')) {
 
         //Index
         $smarty->caching = false;
+        $smarty->assign('lock', !$_SESSION['DSGVO'], true);
+        $smarty->assign('dsgvo_url', 'dsfsdfsdfsdfsdfsdfsdfsdf', true);
         $smarty->assign('r_name', isset($_POST['user']) ? $_POST['user'] : '');
         $smarty->assign('r_nick', isset($_POST['nick']) ? $_POST['nick'] : '');
         $smarty->assign('r_email', isset($_POST['email']) ? $_POST['email'] : '');

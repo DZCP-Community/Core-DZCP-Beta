@@ -17,36 +17,38 @@
 
 function smarty_function_templateswitch($params,Smarty_Internal_Template &$smarty) {
     $tmpldir="";
-    $tmps = common::get_files(basePath.'/inc/_templates_/',true);
-    foreach ($tmps as $tmp) {
-        $cache_hash = md5('templateswitch_xml_'.$tmp);
-        if(!common::$cache->AutoMemExists($cache_hash) || !config::$use_system_cache) {
-            if(file_exists(basePath.'/inc/_templates_/'.$tmp.'/template.xml')) {
-                $xml = simplexml_load_file(basePath . '/inc/_templates_/' . $tmp . '/template.xml');
-                if(config::$use_system_cache) {
-                    common::$cache->AutoMemSet($cache_hash, json_encode($xml), cache::TIME_TEMPLATE_XML);
-                }
-
-                if(!empty((string)$xml->permissions)) {
-                    if(common::permission((string)$xml->permissions) || ((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level)) {
-                        $tmpldir .= common::select_field("?tmpl_set=".$tmp,(common::$tmpdir == $tmp),(string)$xml->name);
+    if($_SESSION['DSGVO']) {
+        $tmps = common::get_files(basePath . '/inc/_templates_/', true);
+        foreach ($tmps as $tmp) {
+            $cache_hash = md5('templateswitch_xml_' . $tmp);
+            if (!common::$cache->AutoMemExists($cache_hash) || !config::$use_system_cache) {
+                if (file_exists(basePath . '/inc/_templates_/' . $tmp . '/template.xml')) {
+                    $xml = simplexml_load_file(basePath . '/inc/_templates_/' . $tmp . '/template.xml');
+                    if (config::$use_system_cache) {
+                        common::$cache->AutoMemSet($cache_hash, json_encode($xml), cache::TIME_TEMPLATE_XML);
                     }
-                } else if((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level) {
-                    $tmpldir .= common::select_field("?tmpl_set=".$tmp,(common::$tmpdir == $tmp),(string)$xml->name);
-                } else if (!(int)$xml->level){
-                    $tmpldir .= common::select_field("?tmpl_set=".$tmp,(common::$tmpdir == $tmp),(string)$xml->name);
+
+                    if (!empty((string)$xml->permissions)) {
+                        if (common::permission((string)$xml->permissions) || ((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level)) {
+                            $tmpldir .= common::select_field("?tmpl_set=" . $tmp, (common::$tmpdir == $tmp), (string)$xml->name);
+                        }
+                    } else if ((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level) {
+                        $tmpldir .= common::select_field("?tmpl_set=" . $tmp, (common::$tmpdir == $tmp), (string)$xml->name);
+                    } else if (!(int)$xml->level) {
+                        $tmpldir .= common::select_field("?tmpl_set=" . $tmp, (common::$tmpdir == $tmp), (string)$xml->name);
+                    }
                 }
-            }
-        } else {
-            $data = json_decode(common::$cache->AutoMemGet($cache_hash),true);
-            if(!empty($data['permissions'])) {
-                if(common::permission((string)$data['permissions']) || ((int)$data['level'] >= 1 && common::$chkMe >= (int)$data['level'])) {
-                    $tmpldir .= common::select_field("?tmpl_set=".$tmp,(common::$tmpdir == $tmp),(string)$data['name']);
+            } else {
+                $data = json_decode(common::$cache->AutoMemGet($cache_hash), true);
+                if (!empty($data['permissions'])) {
+                    if (common::permission((string)$data['permissions']) || ((int)$data['level'] >= 1 && common::$chkMe >= (int)$data['level'])) {
+                        $tmpldir .= common::select_field("?tmpl_set=" . $tmp, (common::$tmpdir == $tmp), (string)$data['name']);
+                    }
+                } else if ((int)$data['level'] >= 1 && common::$chkMe >= (int)$data['level']) {
+                    $tmpldir .= common::select_field("?tmpl_set=" . $tmp, (common::$tmpdir == $tmp), (string)$data['name']);
+                } else if (!(int)$data['level']) {
+                    $tmpldir .= common::select_field("?tmpl_set=" . $tmp, (common::$tmpdir == $tmp), (string)$data['name']);
                 }
-            } else if((int)$data['level'] >= 1 && common::$chkMe >= (int)$data['level']) {
-                $tmpldir .= common::select_field("?tmpl_set=".$tmp,(common::$tmpdir == $tmp),(string)$data['name']);
-            } else if (!(int)$data['level']){
-                $tmpldir .= common::select_field("?tmpl_set=".$tmp,(common::$tmpdir == $tmp),(string)$data['name']);
             }
         }
     }

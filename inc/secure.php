@@ -87,7 +87,6 @@ if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
 
 if(function_exists('set_magic_quotes_runtime')
    && version_compare(PHP_VERSION, '5.3.0', '<')) {
-    @set_magic_quotes_runtime(0);
     @ini_set('magic_quotes_sybase', 0);
 }
 
@@ -104,7 +103,7 @@ function add_stripslashes(&$value, $depth = 0) {
         foreach ($value AS $key => $val) {
             if (is_string($val))
                 $value["$key"] = stripslashes(secure($val));
-            else if (is_array($val) AND $depth < 10)
+            else if (is_array($val) && $depth < 10)
                 add_stripslashes($value["$key"], $depth + 1);
         }
     }
