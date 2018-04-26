@@ -97,10 +97,8 @@ if(defined('_Forum')) {
                 $userposts = $smarty->fetch('string:'._forum_user_posts);
                 $smarty->clearAllAssign();
             } else {
-                $pn = "";
-
+                $pn = ""; $hp = "";
                 //-> Homepage Link
-                $hp = "";
                 if (!empty($_POST['hp'])) {
                     $hp = common::a_img_link(common::links($_POST['hp']),'hp', common::links($_POST['hp']));
                 }
@@ -204,20 +202,24 @@ if(defined('_Forum')) {
 
             if($guestCheck) {
                 $getu = common::$sql['default']->fetch("SELECT `nick`,`hp`,`email` FROM `{prefix_users}` WHERE `id` = ?;", [$pUId]);
-                $email = common::CryptMailto(stringParser::decode($getu['email']),_emailicon_forum);
-                $pn = _forum_pn_preview;
+
+                //PM
+                $smarty->caching = false;
+                $smarty->assign('nick',stringParser::decode($getu['nick']));
+                $pn_name = $smarty->fetch('string:'._pn_write_forum);
+                $smarty->clearAllAssign();
+                $pn = common::a_img_link('../user/?action=msg&amp;do=pn&amp;id='.$pUId,'pn', $pn_name);
+                unset($pn_name);
 
                 //-> Homepage Link
                 $hp = "";
                 if (!empty($getu['hp'])) {
-                    $smarty->caching = false;
-                    $smarty->assign('hp',common::links(stringParser::decode($getu['hp'])));
-                    $hp = $smarty->fetch('string:'._hpicon_forum);
-                    $smarty->clearAllAssign();
+                    $hp = common::a_img_link(common::links(stringParser::decode($getu['hp'])),'hp', common::links(stringParser::decode($getu['hp'])));
                 }
 
-                if(common::data("signatur",$pUId)) $sig = _sig.BBCode::parse_html(common::data("signatur",$pUId));
-                else $sig = "";
+                $sig = "";
+                if(common::data("signatur",$pUId))
+                    $sig = _sig.BBCode::parse_html(common::data("signatur",$pUId));
             } else {
                 $pn = "";
                 $email = common::CryptMailto($_POST['email'],_emailicon_forum);
