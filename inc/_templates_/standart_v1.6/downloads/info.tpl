@@ -42,18 +42,6 @@
   <td class="contentMainFirst">
     <table class="hperc">
       <tr>
-        <td width="50%"><span class="fontBold">Modem</span> (56 KBit/s) <span class="fontBold">:</span></td>
-        <td>{$speed_modem} Min.</td>
-      </tr>
-      <tr>
-        <td><span class="fontBold">ISDN</span> (128 KBit/s) <span class="fontBold">:</span></td>
-        <td>{$speed_isdn} Min.</td>
-      </tr>
-      <tr>
-        <td><span class="fontBold">DSL</span> (512 KBit/s) <span class="fontBold">:</span></td>
-        <td>{$speed_dsl512} Min.</td>
-      </tr>
-      <tr>
         <td><span class="fontBold">DSL 1000</span> (1 MBit/s) <span class="fontBold">:</span></td>
         <td>{$speed_dsl1024} Min.</td>
       </tr>
