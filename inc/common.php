@@ -260,7 +260,7 @@ class common {
         self::$country = new Loader();
 
         //Set User IP & einzelne Definitionen
-        self::$userip = self::HasDSGVO() ? self::visitorIp() : self::IPV4_NULL_ADDR;
+        self::$userip = self::HasDSGVO() ? self::visitorIp() : ['v4' => self::IPV4_NULL_ADDR, 'v6' => self::IPV6_NULL_ADDR];
         self::$domain = str_replace('www.','',self::$httphost);
         self::$pagetitle = stringParser::decode(settings::get('pagetitel'));
         self::$sdir = stringParser::decode(settings::get('tmpdir'));
