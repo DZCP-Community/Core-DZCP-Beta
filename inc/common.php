@@ -167,6 +167,7 @@ class common {
             $_SESSION['DSGVO'] = false;
         }
 
+        //Check is DSGVO Set?
         if(isset($_GET['dsgvo'])) {
             switch ((int)$_GET['dsgvo']) {
                 case 1:
@@ -259,7 +260,7 @@ class common {
         self::$country = new Loader();
 
         //Set User IP & einzelne Definitionen
-        self::$userip = self::visitorIp();
+        self::$userip = self::HasDSGVO() ? self::visitorIp() : self::IPV4_NULL_ADDR;
         self::$domain = str_replace('www.','',self::$httphost);
         self::$pagetitle = stringParser::decode(settings::get('pagetitel'));
         self::$sdir = stringParser::decode(settings::get('tmpdir'));
@@ -369,6 +370,7 @@ class common {
         self::lang($_SESSION['language']); //Lade Sprache
         self::$userid = 0;
         self::$chkMe = 0;
+
         if(self::HasDSGVO()) {
             self::$userid = (int)(self::userid());
             self::$chkMe = (int)(self::checkme());
@@ -477,6 +479,7 @@ class common {
                     if(!empty((string)$xml->permissions) && (string)$xml->permissions != 'null') {
                         if(common::permission((string)$xml->permissions) || ((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level)) {
                             if($templ == $_GET['tmpl_set']) {
+                                $_SESSION['tmpdir'] = $templ;
                                 if(self::HasDSGVO()) {
                                     cookie::put('tmpdir', $templ);
                                     cookie::save();
@@ -486,6 +489,7 @@ class common {
                         }
                     } else if((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level) {
                         if($templ == $_GET['tmpl_set']) {
+                            $_SESSION['tmpdir'] = $templ;
                             if(self::HasDSGVO()) {
                                 cookie::put('tmpdir', $templ);
                                 cookie::save();
@@ -494,6 +498,7 @@ class common {
                         }
                     } else if(!(int)$xml->level){
                         if($templ == $_GET['tmpl_set']) {
+                            $_SESSION['tmpdir'] = $templ;
                             if(self::HasDSGVO()) {
                                 cookie::put('tmpdir', $templ);
                                 cookie::save();
@@ -506,6 +511,7 @@ class common {
                     if(!empty($data['permissions']) && (string)$data['permissions'] != 'null') {
                         if(common::permission((string)$data['permissions']) || ((int)$data['level'] >= 1 && (int)$data['level'])) {
                             if($templ == $_GET['tmpl_set']) {
+                                $_SESSION['tmpdir'] = $templ;
                                 if(self::HasDSGVO()) {
                                     cookie::put('tmpdir', $templ);
                                     cookie::save();
@@ -516,6 +522,7 @@ class common {
                     } else if((int)$data['level'] >= 1 &&
                         common::$chkMe >= (int)$data['level']) {
                         if($templ == $_GET['tmpl_set']) {
+                            $_SESSION['tmpdir'] = $templ;
                             if(self::HasDSGVO()) {
                                 cookie::put('tmpdir', $templ);
                                 cookie::save();
@@ -524,6 +531,7 @@ class common {
                         }
                     } else if(!(int)$data['level']){
                         if($templ == $_GET['tmpl_set']) {
+                            $_SESSION['tmpdir'] = $templ;
                             if(self::HasDSGVO()) {
                                 cookie::put('tmpdir', $templ);
                                 cookie::save();
@@ -569,11 +577,24 @@ class common {
             } else {
                 self::$tmpdir = $files[0];
             }
+
+            $_SESSION['tmpdir'] = self::$tmpdir;
         } else {
-            if (file_exists(basePath . "/inc/_templates_/" . self::$sdir)) {
-                self::$tmpdir = self::$sdir;
-            } else {
-                self::$tmpdir = $files[0];
+            if(array_key_exists('tmpdir',$_SESSION) && !empty($_SESSION['tmpdir']))
+            {
+                if (file_exists(basePath . "/inc/_templates_/" .$_SESSION['tmpdir'])) {
+                    self::$tmpdir = $_SESSION['tmpdir'];
+                } else {
+                    self::$tmpdir = $files[0];
+                }
+            }
+            else
+            {
+                if (file_exists(basePath . "/inc/_templates_/" . self::$sdir)) {
+                    self::$tmpdir = self::$sdir;
+                } else {
+                    self::$tmpdir = $files[0];
+                }
             }
         }
 
