@@ -76,8 +76,8 @@ var DZCP = {
         DZCP.Barrating(false);
 
         //Conjob
-       // var request = $.ajax({ url: "../inc/ajax.php?i=conjob"});
-       // request.done();
+        var request = $.ajax({ url: "../inc/ajax.php?i=conjob"});
+        request.done();
 
         DZCP.initCodeHighlighting();
     },
@@ -124,7 +124,49 @@ var DZCP = {
             location.href = "index.php?kat="+id;
         });
 
+        $("#dialog-confirm").hide();
+        if(dzcp_config.dsgvo == 1) {
+            $("#dialog-confirm").show();
+            $("#dialog-confirm").dialog({
+                resizable: false,
+                height: "auto",
+                width: 800,
+                modal: true,
+                buttons: {
+                    "Akzeptieren": function () {
+                        var url = "?dsgvo=1";
+                        $(location).attr('href',url);
+                    },
+                    "Ablehnen": function () {
+                        var url = "?dsgvo=0";
+                        $(location).attr('href',url);
+                    }
+                }
+            });
+        }
+
         DZCP.UpdateJQueryUI();
+    },
+
+    // init jquery-ui
+    test: function() {
+        $("#dialog-confirm").show();
+        $("#dialog-confirm").dialog({
+            resizable: false,
+            height: "auto",
+            width: 800,
+            modal: true,
+            buttons: {
+                "Akzeptieren": function () {
+                    var url = "?dsgvo=1";
+                    $(location).attr('href',url);
+                },
+                "Ablehnen": function () {
+                    var url = "?dsgvo=0";
+                    $(location).attr('href',url);
+                }
+            }
+        });
     },
 
     //CKEditor - WYSIWYG

@@ -62,13 +62,13 @@ use Phine\Country\Loader\Loader;
 $index = ''; $show = ''; $color = 0;
 
 new common(); //Main Construct
-if($_SESSION['DSGVO'])
-    require_once(basePath.'/inc/sfs.php');
+
+require_once(basePath.'/inc/sfs.php');
 
 if(config::$use_additional_dir) {
 //-> Neue Kernel Funktionen einbinden, sofern vorhanden
     if ($functions_files = common::get_files(basePath . '/inc/additional-kernel/', false, true, ['php'])) {
-        foreach ($functions_files AS $func) {
+        foreach ($functions_files as $func) {
             include_once(basePath . '/inc/additional-kernel/' . $func);
         }
         unset($functions_files, $func);
@@ -162,6 +162,27 @@ class common {
             }
         }
 
+        //Set DSGVO to false
+        if(!array_key_exists('DSGVO',$_SESSION)) {
+            $_SESSION['DSGVO'] = false;
+        }
+
+        if(isset($_GET['dsgvo'])) {
+            switch ((int)$_GET['dsgvo']) {
+                case 1:
+                    $_SESSION['DSGVO'] = true;
+                    $_SESSION['do_show_dsgvo'] = true;
+                    header("Location: " . stringParser::decode(self::GetServerVars('HTTP_REFERER')));
+                    exit();
+                    break;
+                default:
+                    $_SESSION['DSGVO'] = false;
+                    $_SESSION['do_show_dsgvo'] = true;
+                    header("Location: " . stringParser::decode(self::GetServerVars('HTTP_REFERER')));
+                    exit();
+            }
+        }
+
         //-> Global
         if(!is_api) {
             self::$action = isset($_GET['action']) ? secure_global_imput($_GET['action']) : (isset($_POST['action']) ? secure_global_imput($_POST['action']) : 'default');
@@ -200,7 +221,7 @@ class common {
         }
 
         //-> Cookie initialisierung
-        if($_SESSION['DSGVO']) {
+        if(self::HasDSGVO()) {
             cookie::init('dzcp_' . settings::get('prev'));
         }
 
@@ -211,7 +232,7 @@ class common {
         }
 
         //-> Language auslesen oder default setzen
-        if($_SESSION['DSGVO']) {
+        if(self::HasDSGVO()) {
             $_SESSION['language'] = (cookie::get('language') != false ?
                 (file_exists(basePath . '/inc/lang/' . cookie::get('language') . '.php') ?
                     cookie::get('language') :
@@ -248,18 +269,19 @@ class common {
         self::$UserAgent = trim(self::GetServerVars('HTTP_USER_AGENT'));
         self::$sid = (float)rand()/(float)getrandmax();
 
-        //Nachrichten Check
-        self::check_msg_emal();
-
         //Smarty Template-system
         self::$smarty = self::getSmarty(true);
 
-        if($_SESSION['DSGVO']) {
-            self::check_ip(); // IP Prufung * No IPV6 Support *
+        if(self::HasDSGVO()) {
+            // IP Prufung * No IPV6 Support *
+            self::check_ip();
+
+            //Nachrichten Check
+            self::check_msg_emal();
         }
 
         //-> Auslesen der Cookies und automatisch anmelden
-        if($_SESSION['DSGVO']) {
+        if(self::HasDSGVO()) {
             if (!is_api && cookie::get('id') != false && cookie::get('pkey') != false && empty($_SESSION['id']) && !self::checkme()) {
                 //-> Permanent Key aus der Datenbank suchen
                 $get_almgr = self::$sql['default']->fetch("SELECT `id`,`uid`,`update`,`expires` FROM `{prefix_autologin}` WHERE `pkey` = ? AND `uid` = ?;", [cookie::get('pkey'), cookie::get('id')]);
@@ -333,7 +355,7 @@ class common {
             if (isset($_GET['set_language']) && !empty($_GET['set_language'])) {
                 if (file_exists(basePath . "/inc/lang/" . $_GET['set_language'] . ".php")) {
                     $_SESSION['language'] = $_GET['set_language'];
-                    if($_SESSION['DSGVO']) {
+                    if(self::HasDSGVO()) {
                         cookie::put('language', $_GET['set_language']);
                         cookie::save();
                     }
@@ -347,7 +369,7 @@ class common {
         self::lang($_SESSION['language']); //Lade Sprache
         self::$userid = 0;
         self::$chkMe = 0;
-        if($_SESSION['DSGVO']) {
+        if(self::HasDSGVO()) {
             self::$userid = (int)(self::userid());
             self::$chkMe = (int)(self::checkme());
 
@@ -362,10 +384,8 @@ class common {
                 $_SESSION['admin_ip'] =  '';
                 $_SESSION['akl_id']    = 0;
             }
-        }
 
-        //-> Prueft ob der User gebannt ist, oder die IP des Clients warend einer offenen session veraendert wurde.
-        if($_SESSION['DSGVO']) {
+            //-> Prueft ob der User gebannt ist, oder die IP des Clients warend einer offenen session veraendert wurde.
             if (!is_api) {
                 if (self::$chkMe && self::$userid && !empty($_SESSION['ip'])) {
                     if ($_SESSION['ip'] != self::visitorIp()['v4'] || self::isBanned(self::$userid, false)) {
@@ -379,7 +399,7 @@ class common {
         /*
          * Aktualisiere die Client DNS & User Agent
          */
-        if(!is_api && session_id() && $_SESSION['DSGVO']) {
+        if(!is_api && session_id() && self::HasDSGVO()) {
             $userdns = self::DNSToIp(self::$userip['v4']);
             if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `update` <= ? AND `sessid` = ?;", [time(),session_id()])) {
                 self::$sql['default']->update("UPDATE `{prefix_iptodns}` SET `time` = ?, `update` = ?, `ipv4` = ?, `agent` = ?, `dns` = ?, `bot` = ?, `bot_name` = ? WHERE `sessid` = ?;",
@@ -438,7 +458,7 @@ class common {
         unset($bbcode);
 
         //-> User Hits und Lastvisit aktualisieren
-        if($_SESSION['DSGVO'] && self::$userid >= 1 && !is_ajax && !is_thumbgen && !is_api && isset($_SESSION['lastvisit'])) {
+        if(self::HasDSGVO() && self::$userid >= 1 && !is_ajax && !is_thumbgen && !is_api && isset($_SESSION['lastvisit'])) {
             self::$sql['default']->update("UPDATE `{prefix_user_stats}` SET `hits` = (hits+1), `lastvisit` = ? WHERE `user` = ?;",
                 [(int)($_SESSION['lastvisit']),(int)(self::$userid)]);
         }
@@ -457,7 +477,7 @@ class common {
                     if(!empty((string)$xml->permissions) && (string)$xml->permissions != 'null') {
                         if(common::permission((string)$xml->permissions) || ((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level)) {
                             if($templ == $_GET['tmpl_set']) {
-                                if($_SESSION['DSGVO']) {
+                                if(self::HasDSGVO()) {
                                     cookie::put('tmpdir', $templ);
                                     cookie::save();
                                 }
@@ -466,7 +486,7 @@ class common {
                         }
                     } else if((int)$xml->level >= 1 && common::$chkMe >= (int)$xml->level) {
                         if($templ == $_GET['tmpl_set']) {
-                            if($_SESSION['DSGVO']) {
+                            if(self::HasDSGVO()) {
                                 cookie::put('tmpdir', $templ);
                                 cookie::save();
                             }
@@ -474,7 +494,7 @@ class common {
                         }
                     } else if(!(int)$xml->level){
                         if($templ == $_GET['tmpl_set']) {
-                            if($_SESSION['DSGVO']) {
+                            if(self::HasDSGVO()) {
                                 cookie::put('tmpdir', $templ);
                                 cookie::save();
                             }
@@ -486,7 +506,7 @@ class common {
                     if(!empty($data['permissions']) && (string)$data['permissions'] != 'null') {
                         if(common::permission((string)$data['permissions']) || ((int)$data['level'] >= 1 && (int)$data['level'])) {
                             if($templ == $_GET['tmpl_set']) {
-                                if($_SESSION['DSGVO']) {
+                                if(self::HasDSGVO()) {
                                     cookie::put('tmpdir', $templ);
                                     cookie::save();
                                 }
@@ -496,7 +516,7 @@ class common {
                     } else if((int)$data['level'] >= 1 &&
                         common::$chkMe >= (int)$data['level']) {
                         if($templ == $_GET['tmpl_set']) {
-                            if($_SESSION['DSGVO']) {
+                            if(self::HasDSGVO()) {
                                 cookie::put('tmpdir', $templ);
                                 cookie::save();
                             }
@@ -504,7 +524,7 @@ class common {
                         }
                     } else if(!(int)$data['level']){
                         if($templ == $_GET['tmpl_set']) {
-                            if($_SESSION['DSGVO']) {
+                            if(self::HasDSGVO()) {
                                 cookie::put('tmpdir', $templ);
                                 cookie::save();
                             }
@@ -517,7 +537,7 @@ class common {
             unset($xml,$templ);
         }
 
-        if(cookie::get('tmpdir') != false && cookie::get('tmpdir') != NULL && $_SESSION['DSGVO']) {
+        if(cookie::get('tmpdir') != false && cookie::get('tmpdir') != NULL && self::HasDSGVO()) {
             if (file_exists(basePath . "/inc/_templates_/" . cookie::get('tmpdir'))) {
                 $cache_hash = md5('templateswitch_xml_'.cookie::get('tmpdir'));
                 if(!common::$cache->AutoMemExists($cache_hash) || !config::$use_system_cache) {
@@ -558,6 +578,17 @@ class common {
         }
 
         self::$designpath = '../inc/_templates_/'.self::$tmpdir; //Set designpath
+    }
+
+    /**
+     * Prüft ob die DSGVO akzeptiert wurde
+     * @return bool
+     */
+    public static function HasDSGVO() {
+        if(array_key_exists('DSGVO',$_SESSION) && $_SESSION['DSGVO'])
+            return true;
+
+        return false;
     }
 
     /**
@@ -1365,7 +1396,7 @@ class common {
     }
 
     public static function check_msg_emal() {
-        if($_SESSION['DSGVO'] && !is_ajax && !is_thumbgen && !is_api && !self::$CrawlerDetect->isCrawler() && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;",
+        if(!is_ajax && !is_thumbgen && !is_api && !self::$CrawlerDetect->isCrawler() && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;",
                 [session_id()])) {
             $qry = self::$sql['default']->select("SELECT s1.`an`,s1.`page`,s1.`titel`,s1.`sendmail`,s1.`id` AS `mid`, "
                 . "s2.`id`,s2.`nick`,s2.`email`,s2.`pnmail` FROM `{prefix_messages}` AS `s1` "
@@ -2599,7 +2630,7 @@ class common {
      * Aktualisierung des Online Status *preview
      */
     public static function update_user_status_preview() {
-        if($_SESSION['DSGVO']) {
+        if(self::HasDSGVO()) {
             ## User aus der Datenbank suchen ##
             $get = self::$sql['default']->fetch("SELECT `id`,`time` FROM `{prefix_users}` "
                 . "WHERE `id` = ? AND `sessid` = ? AND `ipv4` = ? AND level != 0;",
@@ -2805,7 +2836,7 @@ class common {
      * @param string $where
      */
     public static function update_online(string $where='') {
-        if($_SESSION['DSGVO']) {
+        if(self::HasDSGVO()) {
             if (!self::$CrawlerDetect->isCrawler() && !empty($where) && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;", [session_id()])) {
                 if (self::$sql['default']->rows("SELECT `id` FROM `{prefix_counter_whoison}` WHERE `online` < ?;", [time()])) { //Cleanup
                     self::$sql['default']->delete("DELETE FROM `{prefix_counter_whoison}` WHERE `online` < ?;", [time()]);
@@ -2848,7 +2879,7 @@ class common {
      * Counter updaten
      */
     public static function updateCounter() {
-        if($_SESSION['DSGVO']) {
+        if(self::HasDSGVO()) {
             $datum = time();
             $get_agent = self::$sql['default']->fetch("SELECT `id`,`agent`,`bot` FROM `{prefix_iptodns}` WHERE `ipv4` = ?;", [stringParser::encode(self::$userip['v4'])]);
             if (self::$sql['default']->rowCount()) {
@@ -3302,7 +3333,7 @@ class common {
         $login = $smarty->fetch('file:['.self::$tmpdir.']errors/wmodus_login.tpl');
         $smarty->clearAllAssign();
 
-        if($_SESSION['DSGVO']) {
+        if(self::HasDSGVO()) {
             cookie::save(); //Save Cookie
         }
 
@@ -3337,6 +3368,7 @@ class common {
             break;
         }
 
+        javascript::set('dsgvo',!array_key_exists('do_show_dsgvo',$_SESSION) || !$_SESSION['do_show_dsgvo'] ? 1 : 0);
         javascript::set('maxW',settings::get('maxwidth'));
         javascript::set('autoRefresh',1);  // Enable Auto-Refresh for Ajax
         javascript::set('debug',view_javascript_debug);  // Enable JS Debug
@@ -3353,7 +3385,7 @@ class common {
                 },
                 $where);
 
-            if(!self::$CrawlerDetect->isCrawler() && $_SESSION['DSGVO']) {
+            if(!self::$CrawlerDetect->isCrawler() && self::HasDSGVO()) {
                 self::updateCounter();
                 self::update_maxonline();
                 self::update_online($where);
@@ -3385,7 +3417,7 @@ class common {
             $smarty->assign('java_vars',$java_vars,true);
             $smarty->assign('regen',isset($_GET['less_regen']) ? '&refresh=1' : '');
             $smarty->assign('where',$where);
-            $smarty->assign('lock',$_SESSION['DSGVO']);
+            $smarty->assign('lock',self::HasDSGVO(),true);
             if($template != 'index' && file_exists(self::$designpath.'/'.$template.'.tpl')) {
                 $index = $smarty->fetch('file:['.common::$tmpdir.']'.$template.'.tpl');
             } else {
@@ -3394,15 +3426,16 @@ class common {
             $smarty->clearAllAssign();
         }
 
-        //index output
-        if($_SESSION['DSGVO']) {
-            cookie::save(); //Save Cookie
+        //Save Cookie
+        if(self::HasDSGVO()) {
+            cookie::save();
         }
 
         DebugConsole::insert_info('common::page()','Memory Usage: '.self::parser_filesize(memory_get_usage()));
         DebugConsole::insert_info('common::page()','Memory-Peak Usage: '.self::parser_filesize(memory_get_peak_usage()));
         DebugConsole::insert_info('common::page()',sprintf("Page generated in %.8f seconds", (getmicrotime() - start_time)));
 
+        //index output
         $index = (!self::$chkMe ? preg_replace("|<logged_in>.*?</logged_in>|is", "", $index) :
             preg_replace("|<logged_out>.*?</logged_out>|is", "", $index));
         $index = str_ireplace(["<logged_in>","</logged_in>","<logged_out>","</logged_out>"], '', $index);
@@ -3411,6 +3444,15 @@ class common {
             DebugConsole::save_log();
         } //Debug save to file
         $output = view_error_reporting || DebugConsole::get_warning_enable() ? DebugConsole::show_logs().$index : $index; //Debug Console + Index Out
+
+        if(!array_key_exists('do_show_dsgvo',$_SESSION)) {
+           $_SESSION['do_show_dsgvo'] = true;
+        }
+
+        //DEV
+        if(isset($_GET['reset']))
+            self::dzcp_session_destroy();
+
         exit($output); //Exit
     }
 }

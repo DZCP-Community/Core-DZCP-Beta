@@ -17,7 +17,7 @@
 
 function smarty_function_templateswitch($params,Smarty_Internal_Template &$smarty) {
     $tmpldir="";
-    if($_SESSION['DSGVO']) {
+    if(common::HasDSGVO()) {
         $tmps = common::get_files(basePath . '/inc/_templates_/', true);
         foreach ($tmps as $tmp) {
             $cache_hash = md5('templateswitch_xml_' . $tmp);

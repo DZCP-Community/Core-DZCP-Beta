@@ -66,11 +66,10 @@ if(defined('_UserMenu')) {
 
         $smarty->caching = false;
         $smarty->assign('dsgvo_url', 'dsfsdfsdfsdfsdfsdfsdfsdf', true);
-        $smarty->assign('lock', !$_SESSION['DSGVO'], true);
+        $smarty->assign('lock', !common::HasDSGVO(), true);
         $smarty->assign('notification_page', notification::get());
         $index = $smarty->fetch('file:['.common::$tmpdir.']'.$dir.'/access/lostpwd.tpl');
         $smarty->clearAllAssign();
-
     } else {
         $index = common::error(_error_user_already_in, 1);
     }

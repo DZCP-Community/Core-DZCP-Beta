@@ -22,6 +22,84 @@
             <script language="javascript" type="text/javascript" src="{dir}/_js/jquery.dzcp.js"></script>
         </head>
 	<body>
+		<div id="dialog-confirm" title="Datenschutz-Grundverordnung (EU-DSGVO)">
+			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
+            <div style="height:520px;width:740px;border:1px solid #ccc;font:16px/26px Georgia, Garamond, Serif;overflow:auto;">
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+                As you can see, once there's enough text in this box, the box will grow scroll bars...<p>
+                that's why we call it a scroll box! You could also place an image into the scroll box.<p>
+            </div>
+            </p>
+		</div>
 		{$check_msg}
 		<a style="visibility:hidden;" href="../inc/bot.php"><img src="{idir}/1px.gif" width="1" height="1" border="0" alt="" /></a>
 		<a name="toplink"></a>
@@ -72,7 +150,7 @@
 		    <!-- mittlere Spalte Start -->
 		    <div id="middleContent">
 		      <div class="index corner" style="margin-bottom:5px; padding:7px">
-		        <div class="leftFloat">{welcome}</div>
+                  <div class="leftFloat">{welcome} <a onclick="DZCP.test()">------ TEST Datenschutz-Grundverordnung (EU-DSGVO) Layer ------</a></div>
 		        <div class="rightFloat">{languages}</div>
 		        <div class="clearFix"></div>
 		      </div>
