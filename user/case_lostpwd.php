@@ -37,7 +37,7 @@ if(defined('_UserMenu')) {
             } else {
                 common::setIpcheck("trypwd(" . $get['id'] . ")");
                 if (settings::get('securelogin') && isset($_POST['secure']) && !common::$securimage->check($_POST['secure'])) {
-                    notification::add_error(captcha_mathematic ? _error_invalid_regcode_mathematic : _error_invalid_regcode);
+                    notification::add_error(config::$captcha_mathematic ? _error_invalid_regcode_mathematic : _error_invalid_regcode);
                 } else {
                     notification::add_error(_lostpwd_failed);
                 }

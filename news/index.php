@@ -44,7 +44,7 @@ function nonum($i) {
 }
 
 if(settings::get('news_feed')) { //NewsFeed
-    if(!file_exists(basePath.'/rss.xml') || time() - filemtime(basePath.'/rss.xml') > feed_update_time) {
+    if(!file_exists(basePath.'/rss.xml') || time() - filemtime(basePath.'/rss.xml') > config::$feed_update_time) {
         $feed = new Feed();
         $host = common::GetServerVars('HTTP_HOST');
         $pfad = preg_replace("#^(.*?)\/(.*?)#Uis", "$1", dirname(common::GetServerVars('PHP_SELF')));

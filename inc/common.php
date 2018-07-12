@@ -22,7 +22,6 @@ function getmicrotime() {
 }
 define('start_time',getmicrotime());
 
-if(!defined('is_api')) { define('is_api', false); }
 if(!defined('is_ajax')) { define('is_ajax', false); }
 if(!defined('is_thumbgen')) { define('is_thumbgen', false); }
 
@@ -46,12 +45,9 @@ require_once(basePath."/inc/bbcode.php");
 require_once(basePath."/inc/cache.php");
 require_once(basePath."/inc/fileman.php");
 require_once(basePath."/inc/netapi.php");
-
-if(!is_api) {
-    require_once(basePath . '/inc/securimage/securimage_color.php');
-    require_once(basePath . '/inc/securimage/securimage.php');
-    require_once(basePath . '/inc/notification.php');
-}
+require_once(basePath . '/inc/securimage/securimage_color.php');
+require_once(basePath . '/inc/securimage/securimage.php');
+require_once(basePath . '/inc/notification.php');
 
 require_once(basePath.'/inc/settings.php');
 
@@ -137,7 +133,7 @@ class common {
 
         //->Set Debugger
         if(!is_thumbgen) {
-            if(view_error_reporting) {
+            if(config::$view_error_reporting) {
                 error_reporting(E_ALL);
 
                 if (function_exists('ini_set')) {
@@ -146,7 +142,7 @@ class common {
 
                 DebugConsole::initCon();
 
-                if (debug_dzcp_handler) {
+                if (config::$debug_dzcp_handler) {
                     set_error_handler('dzcp_error_handler');
                 }
             } else {
@@ -156,40 +152,61 @@ class common {
 
                 error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED);
 
-                if (debug_dzcp_handler) {
+                if (config::$debug_dzcp_handler) {
                     set_error_handler('dzcp_error_handler');
                 }
             }
         }
 
+        //Filter 404
+        $filter404 = strtolower(self::GetServerVars("REQUEST_URI"));
+        if (strpos($filter404, 'index.php/') !== false ||
+            strpos($filter404, 'ajax.php/') !== false) {
+            header("HTTP/1.0 404 Not Found");
+            exit();
+        } unset($filter404);
+
+        //Weiterleitung zu einer SSL Verbindung
+        if(!self::isSecure() && config::$use_ssl_auto_redirect && !is_ajax && !is_thumbgen) {
+            if(self::ping_port(self::GetServerVars('HTTP_HOST'),443,0.2)) {
+                header("Location: https://" . self::GetServerVars('HTTP_HOST') .
+                    self::GetServerVars('REQUEST_URI'));
+                exit();
+            }
+        }
+
         //Set DSGVO to false
-        if(!array_key_exists('DSGVO',$_SESSION)) {
+        if (!array_key_exists('DSGVO', $_SESSION)) {
             $_SESSION['DSGVO'] = false;
         }
 
+        //Set DSGVO Lock
+        if (!array_key_exists('user_has_dsgvo_lock', $_SESSION)) {
+            $_SESSION['user_has_dsgvo_lock'] = false;
+        }
+
         //Check is DSGVO Set?
-        if(isset($_GET['dsgvo'])) {
+        if (isset($_GET['dsgvo'])) {
             switch ((int)$_GET['dsgvo']) {
                 case 1:
                     $_SESSION['DSGVO'] = true;
                     $_SESSION['do_show_dsgvo'] = true;
-                    header("Location: " . stringParser::decode(self::GetServerVars('HTTP_REFERER')));
+                    header("Location: " . self::GetServerVars('HTTP_REFERER'));
                     exit();
                     break;
                 default:
                     $_SESSION['DSGVO'] = false;
                     $_SESSION['do_show_dsgvo'] = true;
-                    header("Location: " . stringParser::decode(self::GetServerVars('HTTP_REFERER')));
+                    $_SESSION['user_has_dsgvo_lock'] = false;
+                    header("Location: " . self::GetServerVars('HTTP_REFERER'));
                     exit();
             }
         }
 
         //-> Global
-        if(!is_api) {
-            self::$action = isset($_GET['action']) ? secure_global_imput($_GET['action']) : (isset($_POST['action']) ? secure_global_imput($_POST['action']) : 'default');
-            self::$page = isset($_GET['page']) ? (int)(trim($_GET['page'])) : (isset($_POST['page']) ? (int)(trim($_POST['page'])) : 1);
-            self::$do = isset($_GET['do']) ? secure_global_imput($_GET['do']) : (isset($_POST['do']) ? secure_global_imput($_POST['do']) : '');
-        }
+        self::$action = isset($_GET['action']) ? secure_global_imput($_GET['action']) : (isset($_POST['action']) ? secure_global_imput($_POST['action']) : 'default');
+        self::$page = isset($_GET['page']) ? (int)(trim($_GET['page'])) : (isset($_POST['page']) ? (int)(trim($_POST['page'])) : 1);
+        self::$do = isset($_GET['do']) ? secure_global_imput($_GET['do']) : (isset($_POST['do']) ? secure_global_imput($_POST['do']) : '');
 
 		self::$search_forum = false;
 
@@ -217,7 +234,7 @@ class common {
         settings::load();
 
         //->Lade Securimage
-        if(!is_api && !is_thumbgen) {
+        if(!is_thumbgen) {
             self::$securimage = new Securimage();
         }
 
@@ -227,9 +244,9 @@ class common {
         }
 
         //-> JS initialisierung
-        if(!is_api && !is_thumbgen && !is_ajax) {
+        if(!is_thumbgen && !is_ajax) {
             javascript::set('AnchorMove', '');
-            javascript::set('debug', (view_error_reporting && view_javascript_debug));
+            javascript::set('debug', (config::$view_error_reporting && config::$view_javascript_debug));
         }
 
         //-> Language auslesen oder default setzen
@@ -245,7 +262,7 @@ class common {
             }
         }
 
-        if(!is_api && !is_thumbgen) {
+        if(!is_thumbgen) {
             $subfolder = basename(dirname(dirname(self::GetServerVars('PHP_SELF')) . '../'));
             self::$httphost = self::GetServerVars('HTTP_HOST') . (empty($subfolder) ? '' : '/' . $subfolder);
             unset($subfolder);
@@ -283,54 +300,62 @@ class common {
 
         //-> Auslesen der Cookies und automatisch anmelden
         if(self::HasDSGVO()) {
-            if (!is_api && cookie::get('id') != false && cookie::get('pkey') != false && empty($_SESSION['id']) && !self::checkme()) {
+            if (cookie::get('id') != false && cookie::get('pkey') != false && empty($_SESSION['id']) && !self::checkme()) {
                 //-> Permanent Key aus der Datenbank suchen
                 $get_almgr = self::$sql['default']->fetch("SELECT `id`,`uid`,`update`,`expires` FROM `{prefix_autologin}` WHERE `pkey` = ? AND `uid` = ?;", [cookie::get('pkey'), cookie::get('id')]);
                 if (self::$sql['default']->rowCount()) {
                     if ((!$get_almgr['update'] || (time() < ($get_almgr['update'] + $get_almgr['expires'])))) {
                         //-> User aus der Datenbank suchen
-                        $get = self::$sql['default']->fetch("SELECT `id`,`user`,`nick`,`pwd`,`email`,`level`,`time` FROM `{prefix_users}` WHERE `id` = ? AND `level` != 0;", [cookie::get('id')]);
+                        $get = self::$sql['default']->fetch("SELECT `id`,`user`,`nick`,`pwd`,`email`,`level`,`time`,`dsgvo_lock` FROM `{prefix_users}` WHERE `id` = ? AND `level` != 0;", [cookie::get('id')]);
                         if (self::$sql['default']->rowCount()) {
-                            //-> Generiere neuen permanent-key
-                            $permanent_key = md5(self::mkpwd(8));
-                            cookie::put('pkey', $permanent_key);
-                            cookie::save();
+                            if ($get['dsgvo_lock']) {
+                                $_SESSION['user_has_dsgvo_lock'] = true;
+                                $_SESSION['dsgvo_lock_permanent_login'] = true;
+                                $_SESSION['dsgvo_lock_login_id'] = $get['id'];
+                                if (!array_key_exists('dsgvo_lock_login_id', $_SESSION))
+                                    header("Location: ?action=userlock");
+                            } else {
+                                //-> Generiere neuen permanent-key
+                                $permanent_key = md5(self::mkpwd(8));
+                                cookie::put('pkey', $permanent_key);
+                                cookie::save();
 
-                            //Update Autologin
-                            self::$sql['default']->update("UPDATE `{prefix_autologin}` SET `ssid` = ?, `pkey` = ?, `ipv4` = ?, `host` = ?, `update` = ?, `expires` = ? WHERE `id` = ?;",
-                                [session_id(), $permanent_key, self::$userip['v4'], gethostbyaddr(self::$userip['v4']), time(), autologin_expire, $get_almgr['id']]);
+                                //Update Autologin
+                                self::$sql['default']->update("UPDATE `{prefix_autologin}` SET `ssid` = ?, `pkey` = ?, `ipv4` = ?, `host` = ?, `update` = ?, `expires` = ? WHERE `id` = ?;",
+                                    [session_id(), $permanent_key, self::$userip['v4'], gethostbyaddr(self::$userip['v4']), time(), autologin_expire, $get_almgr['id']]);
 
-                            //-> Schreibe Werte in die Server Sessions
-                            $_SESSION['id'] = $get['id'];
-                            $_SESSION['pwd'] = $get['pwd'];
-                            $_SESSION['lastvisit'] = $get['time'];
-                            $_SESSION['ip'] = self::$userip['v4'];
-                            $_SESSION['admin_id'] = '';
-                            $_SESSION['admin_pwd'] = '';
-                            $_SESSION['admin_ip'] = '';
-                            $_SESSION['akl_id'] = 0;
+                                //-> Schreibe Werte in die Server Sessions
+                                $_SESSION['id'] = $get['id'];
+                                $_SESSION['pwd'] = $get['pwd'];
+                                $_SESSION['lastvisit'] = $get['time'];
+                                $_SESSION['ip'] = self::$userip['v4'];
+                                $_SESSION['admin_id'] = '';
+                                $_SESSION['admin_pwd'] = '';
+                                $_SESSION['admin_ip'] = '';
+                                $_SESSION['akl_id'] = 0;
 
-                            if (self::data("ipv4", $get['id']) != $_SESSION['ip']) {
-                                $_SESSION['lastvisit'] = self::data("time", $get['id']);
+                                if (self::data("ipv4", $get['id']) != $_SESSION['ip']) {
+                                    $_SESSION['lastvisit'] = self::data("time", $get['id']);
+                                }
+
+                                if (empty($_SESSION['lastvisit'])) {
+                                    $_SESSION['lastvisit'] = self::data("time", $get['id']);
+                                }
+
+                                //-> Aktualisiere Datenbank
+                                self::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ipv4` = ? WHERE `id` = ?;",
+                                    [session_id(), self::$userip['v4'], $get['id']]);
+
+                                //-> Aktualisiere die User-Statistik
+                                self::userstats_increase('logins', $get['id']);
+
+                                //-> Aktualisiere Ip-Count Tabelle
+                                foreach (self::$sql['default']->select("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ipv4` = ? AND `uid` = 0;", [self::$userip['v4']]) as $get_ci) {
+                                    self::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ? WHERE `id` = ?;", [$get['id'], $get_ci['id']]);
+                                }
+
+                                unset($get, $permanent_key, $get_almgr, $get_ci); //Clear Mem
                             }
-
-                            if (empty($_SESSION['lastvisit'])) {
-                                $_SESSION['lastvisit'] = self::data("time", $get['id']);
-                            }
-
-                            //-> Aktualisiere Datenbank
-                            self::$sql['default']->update("UPDATE `{prefix_users}` SET `online` = 1, `sessid` = ?, `ipv4` = ? WHERE `id` = ?;",
-                                [session_id(), self::$userip['v4'], $get['id']]);
-
-                            //-> Aktualisiere die User-Statistik
-                            self::userstats_increase('logins', $get['id']);
-
-                            //-> Aktualisiere Ip-Count Tabelle
-                            foreach (self::$sql['default']->select("SELECT `id` FROM `{prefix_clicks_ips}` WHERE `ipv4` = ? AND `uid` = 0;", [self::$userip['v4']]) as $get_ci) {
-                                self::$sql['default']->update("UPDATE `{prefix_clicks_ips}` SET `uid` = ? WHERE `id` = ?;", [$get['id'], $get_ci['id']]);
-                            }
-
-                            unset($get, $permanent_key, $get_almgr, $get_ci); //Clear Mem
                         } else {
                             self::dzcp_session_destroy();
                             $_SESSION['id'] = '';
@@ -352,19 +377,17 @@ class common {
         }
 
         //-> Sprache aendern
-        if(!is_api) {
-            if (isset($_GET['set_language']) && !empty($_GET['set_language'])) {
-                if (file_exists(basePath . "/inc/lang/" . $_GET['set_language'] . ".php")) {
-                    $_SESSION['language'] = $_GET['set_language'];
-                    if(self::HasDSGVO()) {
-                        cookie::put('language', $_GET['set_language']);
-                        cookie::save();
-                    }
+        if (isset($_GET['set_language']) && !empty($_GET['set_language'])) {
+            if (file_exists(basePath . "/inc/lang/" . $_GET['set_language'] . ".php")) {
+                $_SESSION['language'] = $_GET['set_language'];
+                if(self::HasDSGVO()) {
+                    cookie::put('language', $_GET['set_language']);
+                    cookie::save();
                 }
-
-                header("Location: " . stringParser::decode(self::GetServerVars('HTTP_REFERER')));
-                exit();
             }
+
+            header("Location: " . stringParser::decode(self::GetServerVars('HTTP_REFERER')));
+            exit();
         }
 
         self::lang($_SESSION['language']); //Lade Sprache
@@ -388,12 +411,10 @@ class common {
             }
 
             //-> Prueft ob der User gebannt ist, oder die IP des Clients warend einer offenen session veraendert wurde.
-            if (!is_api) {
-                if (self::$chkMe && self::$userid && !empty($_SESSION['ip'])) {
-                    if ($_SESSION['ip'] != self::visitorIp()['v4'] || self::isBanned(self::$userid, false)) {
-                        self::dzcp_session_destroy();
-                        header("Location: ../news/");
-                    }
+            if (self::$chkMe && self::$userid && !empty($_SESSION['ip'])) {
+                if ($_SESSION['ip'] != self::visitorIp()['v4'] || self::isBanned(self::$userid, false)) {
+                    self::dzcp_session_destroy();
+                    header("Location: ../news/");
                 }
             }
         }
@@ -401,7 +422,7 @@ class common {
         /*
          * Aktualisiere die Client DNS & User Agent
          */
-        if(!is_api && session_id() && self::HasDSGVO()) {
+        if(session_id() && self::HasDSGVO()) {
             $userdns = self::DNSToIp(self::$userip['v4']);
             if(self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `update` <= ? AND `sessid` = ?;", [time(),session_id()])) {
                 self::$sql['default']->update("UPDATE `{prefix_iptodns}` SET `time` = ?, `update` = ?, `ipv4` = ?, `agent` = ?, `dns` = ?, `bot` = ?, `bot_name` = ? WHERE `sessid` = ?;",
@@ -460,7 +481,7 @@ class common {
         unset($bbcode);
 
         //-> User Hits und Lastvisit aktualisieren
-        if(self::HasDSGVO() && self::$userid >= 1 && !is_ajax && !is_thumbgen && !is_api && isset($_SESSION['lastvisit'])) {
+        if(self::HasDSGVO() && self::$userid >= 1 && !is_ajax && !is_thumbgen && isset($_SESSION['lastvisit'])) {
             self::$sql['default']->update("UPDATE `{prefix_user_stats}` SET `hits` = (hits+1), `lastvisit` = ? WHERE `user` = ?;",
                 [(int)($_SESSION['lastvisit']),(int)(self::$userid)]);
         }
@@ -610,6 +631,18 @@ class common {
             return true;
 
         return false;
+    }
+
+    public static function isSecure() {
+        $isSecure = false;
+        if (self::GetServerVars('HTTPS') && self::GetServerVars('HTTPS') == 'on') {
+            $isSecure = true;
+        } elseif ((self::GetServerVars('HTTP_X_FORWARDED_PROTO') && self::GetServerVars('HTTP_X_FORWARDED_PROTO') == 'https') ||
+            (self::GetServerVars('HTTP_X_FORWARDED_SSL') && self::GetServerVars('HTTP_X_FORWARDED_SSL') == 'on')) {
+            $isSecure = true;
+        }
+
+        return $isSecure;
     }
 
     /**
@@ -1417,7 +1450,7 @@ class common {
     }
 
     public static function check_msg_emal() {
-        if(!is_ajax && !is_thumbgen && !is_api && !self::$CrawlerDetect->isCrawler() && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;",
+        if(!is_ajax && !is_thumbgen && !self::$CrawlerDetect->isCrawler() && !self::$sql['default']->rows("SELECT `id` FROM `{prefix_iptodns}` WHERE `sessid` = ? AND `bot` = 1;",
                 [session_id()])) {
             $qry = self::$sql['default']->select("SELECT s1.`an`,s1.`page`,s1.`titel`,s1.`sendmail`,s1.`id` AS `mid`, "
                 . "s2.`id`,s2.`nick`,s2.`email`,s2.`pnmail` FROM `{prefix_messages}` AS `s1` "
@@ -2000,6 +2033,11 @@ class common {
      * Forwarded IP Support - IPV4 & IPV6
      */
     public static function visitorIp() {
+        if (array_key_exists('admin_ip', $_SESSION)) {
+            if (!empty($_SESSION['admin_ip']))
+                return $_SESSION['admin_ip'];
+        }
+
         $SetIP = ['v4' => self::IPV4_NULL_ADDR, 'v6' => self::IPV6_NULL_ADDR];
         $ServerVars = ['REMOTE_ADDR','HTTP_CLIENT_IP','HTTP_X_CLIENT_IP','HTTP_X_FORWARDED_FOR','HTTP_X_FORWARDED',
             'HTTP_FORWARDED_FOR','HTTP_FORWARDED','HTTP_VIA','HTTP_X_COMING_FROM','HTTP_COMING_FROM'];
@@ -2154,7 +2192,7 @@ class common {
      * @return boolean
      **/
     public static function fsockopen_support() {
-        return ((!fsockopen_support_bypass && (self::disable_functions('fsockopen') || self::disable_functions('fopen'))) ? false : true);
+        return ((!config::$fsockopen_support_bypass && (self::disable_functions('fsockopen') || self::disable_functions('fopen'))) ? false : true);
     }
 
     /**
@@ -2210,9 +2248,12 @@ class common {
      * @param int $timeout (optional)
      * @return String|Boolean
      */
-    public static function get_external_contents(string $url,$post=false,$header=false,bool $nogzip=false,int $timeout=file_get_contents_timeout) {
-        if((!(ini_get('allow_url_fopen') == 1) && !use_curl || (use_curl && !extension_loaded('curl'))))
+    public static function get_external_contents(string $url,$post=false,$header=false,bool $nogzip=false,int $timeout=0) {
+        if((!(ini_get('allow_url_fopen') == 1) && !config::$use_curl || (config::$use_curl && !extension_loaded('curl'))))
             return false;
+
+        if(!$timeout)
+            $timeout = config::$file_get_contents_timeout;
 
         $url_p = @parse_url($url);
         $host = $url_p['host'];
@@ -2223,7 +2264,7 @@ class common {
 
         unset($host);
 
-        if(use_curl && extension_loaded('curl')) { //Use CURL
+        if(config::$use_curl && extension_loaded('curl')) { //Use CURL
             if(!$curl = curl_init())
                 return false;
 
@@ -3310,7 +3351,7 @@ class common {
      * @return integer
      **/
     public static function userid() {
-        if (empty($_SESSION['id']) || empty($_SESSION['pwd'])) { return 0; }
+        if (empty($_SESSION['id']) || empty($_SESSION['pwd']) || !self::HasDSGVO()) { return 0; }
         $user = self::getUserIndex((int)$_SESSION['id']); //Load user from Mem/Netcache
         if(count($user) > 2) {
             return $user['id'];
@@ -3392,7 +3433,7 @@ class common {
         javascript::set('dsgvo',!array_key_exists('do_show_dsgvo',$_SESSION) || !$_SESSION['do_show_dsgvo'] ? 1 : 0);
         javascript::set('maxW',settings::get('maxwidth'));
         javascript::set('autoRefresh',1);  // Enable Auto-Refresh for Ajax
-        javascript::set('debug',view_javascript_debug);  // Enable JS Debug
+        javascript::set('debug',config::$view_javascript_debug);  // Enable JS Debug
         javascript::set('dir',self::$designpath);  // Designpath
         javascript::set('dialog_button_00',_yes);
         javascript::set('dialog_button_01',_no);
@@ -3461,10 +3502,10 @@ class common {
             preg_replace("|<logged_out>.*?</logged_out>|is", "", $index));
         $index = str_ireplace(["<logged_in>","</logged_in>","<logged_out>","</logged_out>"], '', $index);
 
-        if (debug_save_to_file) {
+        if (config::$debug_save_to_file) {
             DebugConsole::save_log();
         } //Debug save to file
-        $output = view_error_reporting || DebugConsole::get_warning_enable() ? DebugConsole::show_logs().$index : $index; //Debug Console + Index Out
+        $output = config::$view_error_reporting || DebugConsole::get_warning_enable() ? DebugConsole::show_logs().$index : $index; //Debug Console + Index Out
 
         if(!array_key_exists('do_show_dsgvo',$_SESSION)) {
            $_SESSION['do_show_dsgvo'] = true;

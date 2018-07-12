@@ -25,7 +25,7 @@ if(defined('_UserMenu')) {
         }
 
         if (settings::get('securelogin') && (!isset($_POST['secure']) || !common::$securimage->check($_POST['secure']))) {
-            $index = common::error(captcha_mathematic ? _error_invalid_regcode_mathematic : _error_invalid_regcode);
+            $index = common::error(config::$captcha_mathematic ? _error_invalid_regcode_mathematic : _error_invalid_regcode);
         } else {
             $get = common::$sql['default']->fetch("SELECT `id`,`user`,`nick`,`pwd`,`pwd_encoder`,`email`,`level`,`time` "
                         . "FROM `{prefix_users}` "

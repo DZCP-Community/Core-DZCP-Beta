@@ -1,8 +1,8 @@
 {
   "name": "dzcp/mainpage",
   "description": "Hauptseite von DZCP.de",
-  "minimum-stability": "stable",
-  "version": "v1.7.1.0",
+  "minimum-stability": "dev",
+  "version": "v1.8.0.0",
   "license": "proprietary",
   "authors": [
     {

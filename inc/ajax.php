@@ -64,8 +64,8 @@ switch ($mod):
         }
         break;
     case 'conjob':
-        $version = new dzcp_version(false);
-        $version->runUpdate();
+       // $version = new dzcp_version(false);
+      //  $version->runUpdate();
         break;
     case 'less':
         header('Content-type: text/css');
@@ -134,11 +134,11 @@ switch ($mod):
                     break;
             }
 
-            if (captcha_audio_use_sox) {
+            if (config::$captcha_audio_use_sox) {
                 common::$securimage->audio_use_sox = true;
-                common::$securimage->audio_use_noise = captcha_audio_use_noise;
-                common::$securimage->degrade_audio = captcha_degrade_audio;
-                common::$securimage->sox_binary_path = captcha_sox_binary_path;
+                common::$securimage->audio_use_noise = config::$captcha_audio_use_noise;
+                common::$securimage->degrade_audio = config::$captcha_degrade_audio;
+                common::$securimage->sox_binary_path = config::$captcha_sox_binary_path;
             } else {
                 common::$securimage->audio_use_sox = false;
             }
@@ -149,6 +149,6 @@ switch ($mod):
         break;
 endswitch;
 
-if (debug_save_to_file) {
+if (config::$debug_save_to_file) {
     DebugConsole::save_log(); //Debug save to file
 }

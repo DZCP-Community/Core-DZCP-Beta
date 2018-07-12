@@ -429,9 +429,9 @@ class Securimage {
         $this->noise_color     = $this->initColor($this->noise_color,     '#616161');
         $this->signature_color = $this->initColor($this->signature_color, '#616161');
 
-        $this->case_sensitive = captcha_case_sensitive;
+        $this->case_sensitive = config::$captcha_case_sensitive;
 
-        if(captcha_mathematic)
+        if(config::$captcha_mathematic)
             $this->captcha_type  = self::SI_CAPTCHA_MATHEMATIC;
 
         if (is_null($this->ttf_file))

@@ -57,25 +57,25 @@ class DebugConsole {
     }
 
     public static final function insert_log($file,$msg,$back=false,$func="",$line=0)
-    { if(view_error_reporting) self::$log_array[$file][] = ($line != 0 ? 'Line:"'.$line.'" => ' : "").($back ? $msg.$func : $func.$msg); }
+    { if(config::$view_error_reporting) self::$log_array[$file][] = ($line != 0 ? 'Line:"'.$line.'" => ' : "").($back ? $msg.$func : $func.$msg); }
 
     public static final function insert_successful($file,$func)
-    { if(view_error_reporting) self::$log_array[$file][] = '<span style="color:#009900;">'.$func.'</span>'; }
+    { if(config::$view_error_reporting) self::$log_array[$file][] = '<span style="color:#009900;">'.$func.'</span>'; }
 
     public static final function insert_error($file,$msg)
     { self::$log_array[$file][] = '<span style="color:#FF0000;">'.$msg.'</span>'; self::$warning_enable = true; }
 
     public static final function insert_loaded($file,$func)
-    { if(show_loaded && view_error_reporting) self::$log_array[$file][] = '<span style="color:#009900;">'.$func.'</span>'; }
+    { if(show_loaded && config::$view_error_reporting) self::$log_array[$file][] = '<span style="color:#009900;">'.$func.'</span>'; }
 
     public static final function insert_info($file,$info)
-    { if(show_info && view_error_reporting) self::$log_array[$file][] = '<span style="color:#9900CC;">'.$info.'</span>'; }
+    { if(show_info && config::$view_error_reporting) self::$log_array[$file][] = '<span style="color:#9900CC;">'.$info.'</span>'; }
 
     public static final function insert_sql_info($file,$info,$params)
     { self::$log_array[$file][] = '<span color="#2A3AEC">'.$info.' <p> Data for SQL-Query => '.json_encode($params).'</span>'; }
     
     public static final function insert_warning($file,$func)
-    { if(show_warning && view_error_reporting) self::$log_array[$file][] = '<span style="color:#FFFF00;">'.$func.'</span>'; }
+    { if(show_warning && config::$view_error_reporting) self::$log_array[$file][] = '<span style="color:#FFFF00;">'.$func.'</span>'; }
     
     public static final function get_warning_enable()
     { return self::$warning_enable; }
